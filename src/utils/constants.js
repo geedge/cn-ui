@@ -465,10 +465,6 @@ export const knowledgeSourceValue = {
   appTag: 'cn_app_tag_user_defined'
 }
 
-export const pluginSchedule = {
-  always: 'plugin.always'
-}
-
 export const knowledgeBaseSource = [
   {
     name: 'FQDN Category',
@@ -1887,9 +1883,34 @@ export const performanceMetricMapping = {
 
 export const pluginBasicInfo = [
   {
+    id: 1,
+    name: 'HotSpot VPN',
+    type: 'IP',
+    schedule: 'plugin.daily',
+    desc: 'knowledgeBase.desc.hotSpot',
+    iconUrl: 'images/knowledge-base-logo/hotspot-vpn.png'
+  },
+  {
+    id: 2,
+    name: 'IpVanish VPN',
+    type: 'Domain',
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.ipVanishDomain',
+    iconUrl: 'images/knowledge-base-logo/ip-vanish.png'
+  },
+  {
+    id: 3,
+    name: 'IpVanish VPN',
+    type: 'IP',
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.ipVanishIp',
+    iconUrl: 'images/knowledge-base-logo/ip-vanish.png'
+  },
+  {
     id: 109,
     name: 'Psiphon3 VPN',
-    type: 'ip',
+    type: 'IP',
+    schedule: 'plugin.always',
     desc: 'knowledgeBase.desc.psiphon3',
     iconUrl: 'images/knowledge-base-logo/psiphon3-vpn.png'
   }
@@ -2529,6 +2550,10 @@ export const entityDetailTags = {
     {
       name: 'nodeType',
       type: 'negative'
+    },
+    {
+      name: 'vpnServiceName',
+      type: 'normal'
     }
   ],
   ip: [
@@ -2550,6 +2575,10 @@ export const entityDetailTags = {
     },
     {
       name: 'dnsServerRole',
+      type: 'normal'
+    },
+    {
+      name: 'vpnServiceName',
       type: 'normal'
     }
   ],

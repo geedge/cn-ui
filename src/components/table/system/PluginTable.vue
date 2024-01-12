@@ -66,7 +66,7 @@
 import table from '@/mixins/table'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { pluginBasicInfo, pluginSchedule } from '@/utils/constants'
+import { pluginBasicInfo } from '@/utils/constants'
 
 export default {
   name: 'pluginTable',
@@ -117,8 +117,9 @@ export default {
       }
     },
     scheduleText () {
-      return function (type) {
-        return this.$t(pluginSchedule.always)
+      return function (id) {
+        const basicInfo = pluginBasicInfo.find(bi => bi.id === id)
+        return basicInfo ? this.$t(basicInfo.schedule) : ''
       }
     },
     getIconUrl () {
