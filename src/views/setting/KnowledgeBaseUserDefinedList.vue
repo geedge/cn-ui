@@ -63,12 +63,42 @@
       </div>
     </div>
   </div>
+  <el-dialog v-model="showConfirmDialog"
+             :title="$t('overall.hint')"
+             width="480px"
+             custom-class="del-model-hint"
+             :before-close="handleClose">
+    <div class="dialog-message">{{$t('knowledge.deleteDataHint')}}</div>
+    <el-table v-model="delItemList"
+              ref="delDataTable"
+              :data="batchDeleteObjs"
+              @selection-change="secondSelectionChange"
+              height="156px"
+              width="100%"
+              class="dialog-table"
+              cell-style="padding:4px 0px;font-size: 12px;color: #353636;font-weight: 400;"
+              header-cell-style="padding:4px 0px;background: #F5F8FA;font-size: 12px;color: #353636;font-weight: 500;">
+      <el-table-column
+              :resizable="false"
+              align="center"
+              type="selection"
+              width="50">
+      </el-table-column>
+      <el-table-column property="knowledgeId" label="ID" width="150"></el-table-column>
+      <el-table-column property="name" label="Name"></el-table-column>
+    </el-table>
+    <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="showConfirmDialog = false">{{ $t('overall.cancel') }}</el-button>
+          <el-button type="primary" @click="submit">{{ $t('tip.confirm') }}</el-button>
+        </span>
+    </template>
+  </el-dialog>
 </template>
 <script>
 import dataListMixin from '@/mixins/data-list'
 import KnowledgeBaseTableForRow from '@/components/table/setting/KnowledgeBaseTableForRow'
 import { api } from '@/utils/api'
-import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import { knowledgeBaseCategory, knowledgeBaseSource, knowledgeCategoryValue } from '@/utils/constants'
 import axios from 'axios'
 
