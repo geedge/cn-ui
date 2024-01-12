@@ -34,6 +34,7 @@
       </div>
     </div>
   </div>
+  <!--
   <el-dialog v-model="showConfirmDialog"
              :title="$t('overall.hint')"
              width="480px"
@@ -57,8 +58,6 @@
       </el-table-column>
       <el-table-column property="knowledgeId" label="ID" width="150"></el-table-column>
       <el-table-column property="name" label="Name"></el-table-column>
-      <!--  <el-table-column property="category" label="Category" width="100" :formatter = "categoryFormat"></el-table-column>
-        <el-table-column property="source" label="Source" width="110" :formatter = "sourceFormat"></el-table-column> -->
     </el-table>
     <template #footer>
         <span class="dialog-footer">
@@ -67,6 +66,7 @@
         </span>
     </template>
   </el-dialog>
+  -->
 </template>
 <script>
 import dataListMixin from '@/mixins/data-list'
