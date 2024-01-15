@@ -570,46 +570,46 @@ export default {
       return originalImportedData
     },
     uploadSuccess (response) {
-      this.uploaded = true
-      // if (response.code === 200) {
-      // 上传成功后去掉upload和preview的错误提示
-      this.uploadErrorTip = ''
-      this.previewErrorTip = ''
-      this.importedType = this.editObject.source
-      const originalImportedData = _.cloneDeep(response.data.data)
-      this.importedDataNoData = originalImportedData.length === 0
-      if (originalImportedData.length > 0) {
-        originalImportedData.forEach(data => {
-          if (data.isValid === 1) {
-            data.msg = this.$t('overall.success')
-          } else if (data.isValid === 0) {
-            data.msg = this.$t('validate.wrongFormat')
-          }
-        })
-      }
-      this.originalImportInfo = {
-        total: originalImportedData.length,
-        succeeded: originalImportedData.filter(d => d.isValid === 1).length,
-        failed: originalImportedData.filter(d => d.isValid !== 1).length
-      }
-      this.isLoad = false
-      originalImportedData.sort((a, b) => b.isValid - a.isValid)
-      this.importedData = this.handleSpeticalTypeData(originalImportedData)
-      this.addItemList = _.cloneDeep(this.importedData).filter(item => { return item.isValid === 1 })
-      this.updateItemList = []
-      this.deleteItemIds = this.oldItemIds
+      if (response.code === 200) {
+        this.uploaded = true
+        // 上传成功后去掉upload和preview的错误提示
+        this.uploadErrorTip = ''
+        this.previewErrorTip = ''
+        this.importedType = this.editObject.source
+        const originalImportedData = _.cloneDeep(response.data.data)
+        this.importedDataNoData = originalImportedData.length === 0
+        if (originalImportedData.length > 0) {
+          originalImportedData.forEach(data => {
+            if (data.isValid === 1) {
+              data.msg = this.$t('overall.success')
+            } else if (data.isValid === 0) {
+              data.msg = this.$t('validate.wrongFormat')
+            }
+          })
+        }
+        this.originalImportInfo = {
+          total: originalImportedData.length,
+          succeeded: originalImportedData.filter(d => d.isValid === 1).length,
+          failed: originalImportedData.filter(d => d.isValid !== 1).length
+        }
+        this.isLoad = false
+        originalImportedData.sort((a, b) => b.isValid - a.isValid)
+        this.importedData = this.handleSpeticalTypeData(originalImportedData)
+        this.addItemList = _.cloneDeep(this.importedData).filter(item => { return item.isValid === 1 })
+        this.updateItemList = []
+        this.deleteItemIds = this.oldItemIds
 
-      this.handleShowImportedData()
-      this.addEditFlag = false
-      this.editTagErrorTip = ''
-      this.editIndex = -1
-      this.isPreviewChange = true
-      this.stepHeights[2] = itemListHeight.hasData
-      this.stepHeightConstant.third = itemListHeight.hasData
-      /* } else {
+        this.handleShowImportedData()
+        this.addEditFlag = false
+        this.editTagErrorTip = ''
+        this.editIndex = -1
+        this.isPreviewChange = true
+        this.stepHeights[2] = itemListHeight.hasData
+        this.stepHeightConstant.third = itemListHeight.hasData
+      } else {
         this.uploadLoading = false
         this.$message.error(this.$t('tip.uploadFailed', { msg: response.message }))
-      } */
+      }
     },
     onRemove (files) {
       if (files && files.status === 'success') {
