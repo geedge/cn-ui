@@ -17,7 +17,7 @@
               </el-switch>
             </div>
             <div class="card-icon">
-              <img :src="data.iconUrl"/>
+              <img :src="data.iconUrl" style="max-height: 50px;"/>
             </div>
             <div class="card-title">
               <div class="card-title-name" :title="data.label">{{data.label}}</div>
@@ -747,20 +747,26 @@ export default {
       const hint = this.aiTaggingList.find(d => d.knowledgeId === this.switchKnowledgeId)
       const toStatus = hint.status === 0 ? 1 : 0
       const url = toStatus === 0 ? api.knowledgeBaseLearningStop : api.knowledgeBaseLearningStart
-      axios.post(`${url}?knowledgeId=${hint.knowledgeId}`).then(res => {
-        if (res.status === 200) {
-          hint.status = toStatus
-          this.$message.success(this.$t('tip.success'))
-        } else {
-          console.error(res.message)
-          this.$message.error(this.errorMsgHandler(res))
-        }
-      }).catch(e => {
-        console.error(e)
-        this.$message.error(this.errorMsgHandler(e))
-      }).finally(() => {
+      if (hint.knowledgeId === 101 || hint.knowledgeId === 102) {
+        hint.status = toStatus
+        this.$message.success(this.$t('tip.success'))
         this.showConfirmSwitch = false
-      })
+      } else {
+        axios.post(`${url}?knowledgeId=${hint.knowledgeId}`).then(res => {
+          if (res.status === 200) {
+            hint.status = toStatus
+            this.$message.success(this.$t('tip.success'))
+          } else {
+            console.error(res.message)
+            this.$message.error(this.errorMsgHandler(res))
+          }
+        }).catch(e => {
+          console.error(e)
+          this.$message.error(this.errorMsgHandler(e))
+        }).finally(() => {
+          this.showConfirmSwitch = false
+        })
+      }
     }
   },
   watch: {
@@ -798,6 +804,40 @@ export default {
                 this.websketchList.push(item)
               }
             }
+          })
+          // 2024-01-15 以下两个是为105环境演示准备的假数据
+          const data1 = {
+            knowledgeId: 101,
+            name: 'CyberGhost',
+            category: 'ai_tagging',
+            description: 'CyberGhost is a VPN service used to unblock sites and browse privately and anonymously.',
+            isBuiltIn: 1,
+            isPublished: 1,
+            status: 1,
+            showUpdate: false
+          }
+          const basicInfo1 = builtInKnowledgeBaseBasicInfo.find(bi => bi.knowledgeId === data1.knowledgeId)
+          this.aiTaggingList.push({
+            ...data1,
+            ...basicInfo1
+          })
+          const data2 = {
+            knowledgeId: 102,
+            name: 'HotSpotshield VPN',
+            category: 'ai_tagging',
+            description: 'Hotspot Shield is a public VPN service, providing\n' +
+                'a secure proxy connection through an encrypted\n' +
+                'channel between your device and the target\n' +
+                'website, using VPN technology.',
+            isBuiltIn: 1,
+            isPublished: 1,
+            status: 1,
+            showUpdate: false
+          }
+          const basicInfo2 = builtInKnowledgeBaseBasicInfo.find(bi => bi.knowledgeId === data2.knowledgeId)
+          this.aiTaggingList.push({
+            ...data2,
+            ...basicInfo2
           })
         }
       }
@@ -872,9 +912,9 @@ export default {
         const find = this.aiTaggingList.find(item => item.knowledgeId === this.switchKnowledgeId)
         if (find) {
           if (find.status === 0) {
-            tip = this.$t('tip.confirmEnablePsiphon3') + '?'
+            tip = this.$t('tip.confirmEnable') + '?'
           } else if (find.status === 1) {
-            tip = this.$t('tip.confirmDisablePsiphon3') + '?'
+            tip = this.$t('tip.confirmDisable') + '?'
           }
         }
       }

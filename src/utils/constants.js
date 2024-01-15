@@ -1859,6 +1859,22 @@ export const builtInKnowledgeBaseBasicInfo = [
     label: 'Anonymity',
     iconUrl: 'images/knowledge-base-logo/anonymity.png',
     desc: 'Communication system that conceals users\' identities and activities to protect privacy and prevent tracking or surveillance. This database provides lists of Tor nodes, I2P nodes, obfs4, etc.'
+  },
+  // 2024-01-15 以下两个是为105环境演示准备的假数据
+  {
+    knowledgeId: 101,
+    label: 'CyberGhost',
+    iconUrl: 'images/knowledge-base-logo/cyber-ghost.png',
+    desc: 'CyberGhost is a VPN service used to unblock sites and browse privately and anonymously.'
+  },
+  {
+    knowledgeId: 102,
+    label: 'HotSpotshield VPN',
+    iconUrl: 'images/knowledge-base-logo/hospot-vpn.png',
+    desc: 'Hotspot Shield is a public VPN service, providing\n' +
+      'a secure proxy connection through an encrypted\n' +
+      'channel between your device and the target\n' +
+      'website, using VPN technology.'
   }
 ]
 
