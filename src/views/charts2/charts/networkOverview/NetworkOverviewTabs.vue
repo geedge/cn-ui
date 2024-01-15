@@ -111,6 +111,19 @@
                       </el-row>
                     </el-popover>
                   </div>
+                  <div v-else-if="item.columnType === 'chainRatio'" >
+                    <div class="title-unit"  v-if="tableType === 'networkOverview'">
+                      <span class="data-column__span" >{{$t(item.label)}}</span>
+                      {{$t(metricShow.label)}}
+                    </div>
+                    <div class="column-loading" v-else-if="tableType === 'networkAppPerformance' && !item.isInMainUrl">
+                      <loading size="small" class="loading-icon" :loading="getLoading(item.prop)" :key="`loading_${tab.prop}_${item.prop}`"></loading>
+                      <span class="data-column__span" >{{$t(item.label)}}</span>
+                    </div>
+                    <div v-else>
+                      <span class="data-column__span" >{{$t(item.label)}}</span>
+                    </div>
+                  </div>
                   <div v-else>
                     <div class="title-unit"  v-if="tableType === 'networkOverview'">
                       <span class="data-column__span" >{{$t(item.label)}}</span>
@@ -278,6 +291,7 @@
 </template>
 <script>
 import { ref } from 'vue'
+import Loading from '@/components/common/Loading'
 import {
   operationType,
   unitTypes,
@@ -305,6 +319,9 @@ import indexedDBUtils from '@/indexedDB'
 
 export default {
   name: 'NetworkOverviewTabs',
+  components: {
+    Loading
+  },
   data () {
     return {
       dragIndex: '',
@@ -336,7 +353,11 @@ export default {
       columnNameGroup: {},
       cycleColumnNameGroup: {},
       // metricUnit: 'bytes',
-      // loading: false,
+      loading_tcpConEstLatency: false,
+      loading_packetLoss: false,
+      loading_packetRetrans: false,
+      loading_sslResponseLatency: false,
+      loading_httpResponseLatency: false,
       tableColumnType: tableColumnType,
       metricsList: [],
       curTabState: curTabState,
@@ -428,6 +449,16 @@ export default {
   },
   mixins: [chartMixin],
   methods: {
+    getLoading (prop) {
+      switch (prop) {
+        case 'tcpConEstLatency': return this.loading_tcpConEstLatency
+        case 'packetLoss': return this.loading_packetLoss
+        case 'packetRetrans': return this.loading_packetRetrans
+        case 'sslResponseLatency': return this.loading_sslResponseLatency
+        case 'httpResponseLatency': return this.loading_httpResponseLatency
+        default: return false
+      }
+    },
     rowClassName ({ row, rowIndex }) {
       // 把每一行的索引放进row
       row.index = rowIndex
@@ -909,6 +940,19 @@ export default {
       }
       this.changeUrlTabState()
     },
+    toggleColumnLoading (prop, loading) {
+      if (prop === 'tcpConEstLatency') {
+        this.loading_tcpConEstLatency = loading
+      } else if (prop === 'packetLoss') {
+        this.loading_packetLoss = loading
+      } else if (prop === 'packetRetrans') {
+        this.loading_packetRetrans = loading
+      } else if (prop === 'sslResponseLatency') {
+        this.loading_sslResponseLatency = loading
+      } else if (prop === 'httpResponseLatency') {
+        this.loading_httpResponseLatency = loading
+      }
+    },
     async initData () {
       const tabList = []
       const curTab = this.getCurTab()
@@ -1045,6 +1089,7 @@ export default {
               // 查询需要单独查询的，且需要展示环比图标，列的当前周期的数据
               this.customTableTitles.forEach(tableColumn => {
                 if (tableColumn.columnType === tableColumnType.chainRatio && !tableColumn.isInMainUrl) {
+                  this.toggleColumnLoading(tableColumn.prop, true)
                   axios.get(self.gerColumnUrl(tableColumn), { params: queryParams }).then(response => {
                     if (response.status === 200) {
                       if (!tableColumn.showError) {
@@ -1063,12 +1108,6 @@ export default {
                         } else {
                           item.scoreGroup[self.columnNameGroup[tableColumn.prop]] = 0
                         }
-                        /* if (Object.keys(item.scoreGroup).length >= 5) {
-                          item.score = computeScore(item.scoreGroup)
-                          if (!_.isNumber(item.score)) {
-                            item.score = '-'
-                          }
-                        } */
                       })
                     } else {
                       tableColumn.showError = true
@@ -1146,7 +1185,11 @@ export default {
                         console.error(e)
                         tableColumn.showError = true
                         tableColumn.errorMsg = this.errorMsgHandler(e)
+                      }).finally(e => {
+                        this.toggleColumnLoading(tableColumn.prop, false)
                       })
+                    } else {
+                      this.toggleColumnLoading(tableColumn.prop, false)
                     }
                   })
                 }

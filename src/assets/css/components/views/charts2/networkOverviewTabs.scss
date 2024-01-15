@@ -63,6 +63,17 @@
           font-weight: 400;
         }
       }
+      .column-loading {
+        display: flex;
+        flex-direction: row;
+        .loading-icon {
+          position:relative;
+          transform: translateZ(0) scale(0.5);
+          width:20px;
+          height:20px;
+          margin-right:3px;
+        }
+      }
       .tab-table {
         border: 1px solid #E2E5EC;
         border-radius: 4px 4px 0 0;
