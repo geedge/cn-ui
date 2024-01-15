@@ -1883,7 +1883,7 @@ export const performanceMetricMapping = {
 
 export const pluginBasicInfo = [
   {
-    id: 1,
+    id: 110,
     name: 'HotSpot VPN',
     type: 'IP',
     schedule: 'plugin.daily',
@@ -1891,7 +1891,7 @@ export const pluginBasicInfo = [
     iconUrl: 'images/knowledge-base-logo/hotspot-vpn.png'
   },
   {
-    id: 2,
+    id: 111,
     name: 'IpVanish VPN',
     type: 'Domain',
     schedule: 'plugin.hourly',
@@ -1899,7 +1899,7 @@ export const pluginBasicInfo = [
     iconUrl: 'images/knowledge-base-logo/ip-vanish.png'
   },
   {
-    id: 3,
+    id: 112,
     name: 'IpVanish VPN',
     type: 'IP',
     schedule: 'plugin.hourly',
