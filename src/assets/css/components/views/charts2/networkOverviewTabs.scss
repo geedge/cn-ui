@@ -66,8 +66,10 @@
       .column-loading {
         display: flex;
         flex-direction: row;
+        position:relative;
         .loading-icon {
-          position:relative;
+          position:absolute;
+          left: -20px;
           transform: translateZ(0) scale(0.5);
           width:20px;
           height:20px;
