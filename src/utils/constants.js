@@ -1907,6 +1907,78 @@ export const pluginBasicInfo = [
     iconUrl: 'images/knowledge-base-logo/ip-vanish.png'
   },
   {
+    id: 113,
+    name: 'CyberGhost VPN',
+    type: 'Domain',
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.cyberGhostDomain',
+    iconUrl: 'images/knowledge-base-logo/cyber-ghost.png'
+  },
+  {
+    id: 114,
+    name: 'CyberGhost VPN',
+    type: 'IP',
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.cyberGhostIp',
+    iconUrl: 'images/knowledge-base-logo/cyber-ghost.png'
+  },
+  {
+    id: 115,
+    name: 'Gecko VPN',
+    type: 'IP',
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.geckoIp',
+    iconUrl: 'images/knowledge-base-logo/gecko.png'
+  },
+  {
+    id: 116,
+    name: 'Ivacy VPN',
+    type: 'Domain',
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.ivacyDomain',
+    iconUrl: 'images/knowledge-base-logo/ivacy.png'
+  },
+  {
+    id: 117,
+    name: 'Ivacy VPN',
+    type: 'IP',
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.ivacyIp',
+    iconUrl: 'images/knowledge-base-logo/ivacy.png'
+  },
+  {
+    id: 118,
+    name: 'Turbo VPN',
+    type: 'IP',
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.turboIp',
+    iconUrl: 'images/knowledge-base-logo/turbo.png'
+  },
+  {
+    id: 119,
+    name: 'Vpnunlimited',
+    type: 'IP',
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.vpnunlimited',
+    iconUrl: 'images/knowledge-base-logo/vpnunlimited.png'
+  },
+  {
+    id: 120,
+    name: 'Windscribe VPN',
+    type: 'Domain',
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.windscribeDomain',
+    iconUrl: 'images/knowledge-base-logo/windscribe.png'
+  },
+  {
+    id: 121,
+    name: 'Windscribe VPN',
+    type: 'IP',
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.windscribeIp',
+    iconUrl: 'images/knowledge-base-logo/windscribe.png'
+  },
+  {
     id: 109,
     name: 'Psiphon3 VPN',
     type: 'IP',
