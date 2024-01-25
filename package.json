@@ -10,9 +10,8 @@
     "analyz": "cross-env NODE_ENV=production npm_config_report=true npm run build"
   },
   "dependencies": {
-    "@amcharts/amcharts4": "~4.10.0",
+    "@amcharts/amcharts4": "^4.10.38",
     "@amcharts/amcharts4-geodata": "^4.1.20",
-    "@antv/g6": "^4.8.17",
     "axios": "^0.21.1",
     "babel-plugin-lodash": "~3.3.0",
     "codemirror": "^5.65.1",
@@ -21,6 +20,7 @@
     "dexie": "~3.2.0",
     "echarts": "^5.1.1",
     "element-plus": "~1.0.2-beta.71",
+    "force-graph": "~1.43.4",
     "lib-flexible": "^0.3.2",
     "lodash": "^4.17.21",
     "maplibre-gl": "3.6.2",
