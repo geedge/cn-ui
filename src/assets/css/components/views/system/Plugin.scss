@@ -1,3 +1,17 @@
+.plugin-management .list-page {
+  .cn-table {
+    height: 100%;
+    .el-table {
+      height: 100%;
+    }
+    .el-table--group::after,.el-table--border::after, .el-table::before {
+      height: 0;
+    }
+  }
+  .cn-pagination {
+    display: none;
+  }
+}
 .plugin {
   font-size: 12px;
   color: #353636;

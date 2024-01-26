@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%;">
+  <div style="height: 100%;" class="plugin-management">
     <cn-data-list
             ref="dataList"
             :tableId="tableId"
