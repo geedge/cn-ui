@@ -1502,7 +1502,7 @@ export const formatTags = (data, type, list) => {
     if (k !== 'userDefinedTags' && data[k]) {
       if (_.isArray(data[k])) {
         data[k].forEach(k3 => {
-          const find = entityDetailTags[type].find(t => t.name === k3.vpnServiceName)
+          const find = entityDetailTags[type].find(t => t.name === 'vpnServiceName')
           if (find) {
             list.push({ key: 'vpnServiceName', value: tagValueHandler(k3.vpnServiceName), type: find.type })
           } else {

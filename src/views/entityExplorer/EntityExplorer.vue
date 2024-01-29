@@ -49,7 +49,7 @@
             <span>{{ summaryCount.appCount }}</span>
 
             <span class="entity-hide-entity" v-if="q">
-              <span v-if="listData.length !== 0">
+<!--              <span v-if="listData.length !== 0">-->
 <!--                <el-checkbox-->
 <!--                    v-model="isHideRelatedEntities"-->
 <!--                    :label="$t('entity.hideRelatedEntities')"-->
@@ -60,7 +60,7 @@
                   <el-radio :label="true" size="large">{{ $t('entity.entityMode') }}</el-radio>
                   <el-radio :label="false" style="margin-left: -10px;" size="large">{{ $t('entity.relatedMode') }}</el-radio>
                 </el-radio-group>
-              </span>
+<!--              </span>-->
             </span>
           </div>
 
@@ -614,9 +614,9 @@ export default {
           this.listData = []
           this.$nextTick(() => {
             this.listData = response.data.data.list
-            if (this.listData.length === 0) {
+            /*if (this.listData.length === 0) {
               this.isHideRelatedEntities = false
-            }
+            }*/
           })
         } else {
           this.$message.error(response.data.message)

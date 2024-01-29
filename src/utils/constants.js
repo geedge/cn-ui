@@ -2625,7 +2625,7 @@ export const entityDetailTags = {
     },
     {
       name: 'vpnServiceName',
-      type: 'normal'
+      type: 'negative'
     }
   ],
   ip: [
@@ -2651,7 +2651,7 @@ export const entityDetailTags = {
     },
     {
       name: 'vpnServiceName',
-      type: 'normal'
+      type: 'negative'
     }
   ],
   app: [
