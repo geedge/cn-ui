@@ -1285,7 +1285,7 @@ export default class Parser {
     }
 
     if (regexIPv4.test(str) || regexIPv6.test(str)) {
-      const obj = this.columnList.find(t => t.label.toLowerCase() === 'ip')
+      const obj = this.columnList.find(t => t.label.toLowerCase() === 'ip' || t.label.toLowerCase() === 'ip.addr')
       if (obj) {
         return `${obj.label}='${str}'`
       } else {
@@ -1296,7 +1296,7 @@ export default class Parser {
       }
     } else if (regexDomain.test(str)) {
       // 只写作domain即可，schema字段更改几次，避免后续再更改，直接拿this.columnList的label进行替换
-      const obj = this.columnList.find(t => t.label.toLowerCase() === 'domain')
+      const obj = this.columnList.find(t => t.label.toLowerCase() === 'domain' || t.label.toLowerCase() === 'domain.name')
       if (obj) {
         return `${obj.label} LIKE '%${str}'`
       } else {
@@ -1306,7 +1306,7 @@ export default class Parser {
         return str
       }
     } else {
-      const obj = this.columnList.find(t => t.label.toLowerCase() === 'app')
+      const obj = this.columnList.find(t => t.label.toLowerCase() === 'app' || t.label.toLowerCase() === 'app.name')
       if (obj) {
         return `${obj.label} LIKE '%${str}%'`
       } else {
