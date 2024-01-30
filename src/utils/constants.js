@@ -1979,6 +1979,14 @@ export const pluginBasicInfo = [
     iconUrl: 'images/knowledge-base-logo/windscribe.png'
   },
   {
+    id: 122,
+    name: 'Proton VPN',
+    type: 'IP',
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.protonvpn',
+    iconUrl: 'images/knowledge-base-logo/protonvpn.png'
+  },
+  {
     id: 109,
     name: 'Psiphon3 VPN',
     type: 'IP',
