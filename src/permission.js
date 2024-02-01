@@ -179,6 +179,8 @@ export function handleComponent (code) {
       return () => import('@/views/administration/OperationLog')
     case 'appearance':
       return () => import('@/views/administration/Appearance')
+    case 'license':
+      return () => import('@/views/administration/License')
     case 'I18N':
       return () => import('@/views/administration/I18n')
     case 'system':
