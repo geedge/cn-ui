@@ -7,9 +7,13 @@
     >
       <template v-if="meta.meta === condition">
         <!-- 删除按钮 -->
-        <div class="condition__delete" @click="removeCondition(index)"><i class="el-icon-error"></i></div>
+        <div class="condition__delete" @click="removeCondition(index)">
+          <el-icon><CircleCloseFilled /></el-icon>
+          <!--<i class="el-icon-error"></i>-->
+        </div>
         <!-- 字段选择 -->
         <div v-if="meta.column.show" class="condition__column">
+<!--          <div>-->
           <div v-show="meta.column.isEditing">
             <el-select
                 allow-create
@@ -155,10 +159,12 @@
         </el-popover>
       </span>
       <span v-show="metaList.length>0" class="search__suffix search__suffix-close" @click="cleanMetaList">
-        <i class="el-icon-error"></i>
+        <el-icon><CircleCloseFilled /></el-icon>
+        <!--<i class="el-icon-error"></i>-->
       </span>
       <span test-id="tag-search" class="search__suffix" @click="search">
-        <i class="el-icon-search"></i>
+        <el-icon><Search /></el-icon>
+        <!--<i class="el-icon-search"></i>-->
       </span>
     </div>
   </div>

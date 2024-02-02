@@ -24,11 +24,28 @@
     position: absolute;
     right: 10px;
     top: 10px;
+    display: inline-block;
+
+    .el-select__wrapper {
+      font-size: 12px;
+      padding: 0;
+    }
     .el-select__popper.map-select-down {
       top: 32px !important;
       .el-popper__arrow {
         display: none;
       }
+    }
+    .el-select__placeholder {
+      padding-left: 16px;
+      color: #2c72c6;
+    }
+    .el-select__prefix {
+      padding-left: 5px;
+    }
+    .el-select__suffix {
+      padding-right: 10px;
+      padding-bottom: 2px;
     }
     .map-select {
       margin-left: 10px;
@@ -38,6 +55,19 @@
       }
       &.map-select__direction {
         width: 110px;
+      }
+    }
+    .map-select__location {
+      &.el-select {
+        width: 222px;
+      }
+      .el-select__wrapper {
+        min-height: 28px;
+        height: 28px;
+        .el-select__placeholder {
+          padding-left: 4px;
+          color: #c0c4cc;
+        }
       }
     }
   }

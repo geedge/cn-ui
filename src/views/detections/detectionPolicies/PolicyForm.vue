@@ -163,6 +163,7 @@ import { ref } from 'vue'
 import { getDurationsTimeByType, getTimeByDurations } from '@/utils/date-util'
 import Loading from '@/components/common/Loading'
 import { storageKey, detectionUnitList, ZH, EN } from '@/utils/constants'
+import { ElMessageBox } from 'element-plus'
 
 export default {
   name: 'DetectionForm',
@@ -548,12 +549,12 @@ export default {
       }
     },
     confirmMessage (queryInfo) {
-      this.$confirm(this.$t('tip.leavePage'), {
+      ElMessageBox.confirm(this.$t('tip.leavePage'), {
         confirmButtonText: this.$t('tip.confirm'),
         cancelButtonText: this.$t('overall.cancel'),
         message: this.$t('tip.leavePageTips'),
         title: this.$t('tip.leavePage'),
-        type: 'warning',
+        // type: 'warning',
         iconClass: 'width:0px;height:0px;',
         customClass: 'del-model'
       }).then(() => {
@@ -562,6 +563,20 @@ export default {
           query: queryInfo
         })
       }).catch(() => {})
+      // this.$confirm(this.$t('tip.leavePage'), {
+      //   confirmButtonText: this.$t('tip.confirm'),
+      //   cancelButtonText: this.$t('overall.cancel'),
+      //   message: this.$t('tip.leavePageTips'),
+      //   title: this.$t('tip.leavePage'),
+      //   type: 'warning',
+      //   iconClass: 'width:0px;height:0px;',
+      //   customClass: 'del-model'
+      // }).then(() => {
+      //   this.$router.push({
+      //     path: '/detection/policy',
+      //     query: queryInfo
+      //   })
+      // }).catch(() => {})
     },
     resetEditFlag () {
       this.triggerObj.editFlag = true

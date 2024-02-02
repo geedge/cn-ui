@@ -61,14 +61,14 @@
                         <div :ref="`tabSearchRef${tab.prop}`">
                           <div class="tab-search-button" :id="`tabSearchButton${tab.prop}`" v-show="showSearchButton"
                                @click="handlePopoverShow(item.prop,tab.prop)">
-                            <i class="el-icon-search" style="color:#575757;" ></i>
+                            <el-icon style="color:#575757;"><Search /></el-icon>
+                            <!--<i class="el-icon-search" style="color:#575757;" ></i>-->
                           </div>
                           <div class="tab-search-input"  v-show="showSearchInput">
                             <el-input :id="`tabSearchValue${tab.prop}`"
                                       name="tabSearchValue"
                                       size="mini"
                                       readonly
-                                      prefix-icon="cn-icon cn-icon-search"
                                       @click="showListPopover(item.prop)"
                             >
                               <template v-if="curTabProp === 'qtype'">
@@ -1854,20 +1854,18 @@ export default {
       this.activeCustomize = tab.paneName
     },
     tableCellStyle ({ row, column, rowIndex, columnIndex }) {
-      let style = 'border-right:0px;font-size:12px;padding:7px 0 !important;border-bottom: 1px solid #ECECEC;height:39px !important;'
-      if (rowIndex === this.tableData.length - 1) {
-        // style = style + 'border-bottom:0px !important;'
-      }
+      // element-plus 2.5以上版本表头样式支持对象而不是字符串
+      let style = { 'border-right': '0px', 'font-size': '12px', padding: '7px 0 7px 1px !important', 'border-bottom': '1px solid var(--el-table-border-color)', height: '39.54px !important' }
       if (columnIndex === 0) {
-        style = style + 'color:#046ECA;text-align:left;'
+        style = { ...style, color: '#046ECA', 'text-align': 'left' }
       }
       return style
     },
     tableHeaderCellStyle ({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0) {
-        return 'text-align:left;border-right:0px;font-size:12px;font-weight:500;padding:5px 0 !important;border-bottom: 1px solid #E2E5EC;'
+        return { 'text-align': 'left', 'border-right': '0px', 'font-size': '12px', 'font-weight': 500, padding: '5px 0 !important', 'border-bottom': '1px solid var(--el-table-border-color)' }
       } else {
-        return 'border-right:0px;font-size:12px;font-weight:500;padding:4px 0 !important;border-bottom: 1px solid #E2E5EC;'
+        return { 'border-right': 0, 'font-size': '12px', 'font-weight': 500, padding: '4px 0 !important', 'border-bottom': '1px solid var(--el-table-border-color)' }
       }
     },
     getQueryCondition () {

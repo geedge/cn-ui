@@ -170,13 +170,13 @@
                     <td v-else-if="(addEditFlag && editIndex === i) || (addEditFlag && d.tagName === '' && d.tagValue === '')" class="imported-data-btn">
                       <i class="cn-icon cn-icon-save imported-data-save" style="margin: 0 7px"
                          @click="saveImportedData(i)"></i>
-                      <i class="el-icon-close" @click="removeImportedData(i)"></i>
+                      <el-icon @click="removeImportedData(i)"><Close /></el-icon>
                     </td>
                     <!--编辑和删除按钮：进入修改记录状态-->
                     <td v-else class="imported-data-btn">
                       <i class="cn-icon cn-icon-edit1 imported-data-left-btn"
                          @click="editImportedData(i)"></i>
-                      <i class="el-icon-close" @click="removeImportedData(i)"></i>
+                      <el-icon @click="removeImportedData(i)"><Close /></el-icon>
                     </td>
                   </tr>
                 </table>

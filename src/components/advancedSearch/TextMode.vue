@@ -11,7 +11,7 @@
         <el-popover
             popper-class="my-popper-class"
             placement="top"
-            trigger="hover"
+            trigger="click"
             :content="$t('overall.switchToTag')"
         >
           <template #reference>
@@ -21,11 +21,13 @@
       </span>
       <!--删除图标-->
       <span v-show="isCloseIcon" class="search__suffix search__suffix-close" @click="cleanParams">
-        <i class="el-icon-error"></i>
+        <el-icon><CircleCloseFilled /></el-icon>
+        <!--<i class="el-icon-error"></i>-->
       </span>
       <!--搜索图标-->
       <span class="search__suffix" test-id="text-search" @click.stop="search">
-        <i class="el-icon-search"></i>
+        <el-icon><Search /></el-icon>
+        <!--<i class="el-icon-search"></i>-->
       </span>
     </div>
 

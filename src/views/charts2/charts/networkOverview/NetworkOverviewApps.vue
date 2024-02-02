@@ -111,7 +111,7 @@
             </el-tab-pane>
           </el-tabs>
           <div class="body__searcher">
-            <el-input v-model="searcherApp" @input="searcherAppChange" size="mini" :placeholder="$t('networkOverview.search')" prefix-icon="el-icon-search" test-id="search-input"></el-input>
+            <el-input v-model="searcherApp" @input="searcherAppChange" size="mini" :placeholder="$t('networkOverview.search')" prefix-icon="Search" test-id="search-input"></el-input>
           </div>
           <div class="body__loading"><loading :loading="loading"></loading></div>
         </div>

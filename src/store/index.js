@@ -13,7 +13,8 @@ const store = createStore({
       showEntityTypeSelector: false, // 在entity explore页面时，控制header显示实体类型选择框
       from: '', // entity type
       test: 'jest', // 用于单测的demo
-      i18nObj: {} // 存放i18n的值，用于搜索组件切换环境时参数包含其他语言时使用的
+      i18nObj: {}, // 存放i18n的值，用于搜索组件切换环境时参数包含其他语言时使用的
+      theme: 'light'
     }
   },
   getters: {

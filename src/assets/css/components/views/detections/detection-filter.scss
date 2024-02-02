@@ -130,7 +130,10 @@
 }
 .new-detection-filter-content {
   padding: 20px;
-
+  .el-checkbox {
+    display: inline-block !important;
+    height: auto !important;
+  }
   .new-filter-content-title {
     font-family: NotoSansHans-Medium;
     font-size: 14px;
@@ -145,11 +148,12 @@
 
     .new-filter-content-checkbox {
       line-height: 16px;
-      margin-bottom: 10px;
+      margin-bottom: 13.6px;
       font-family: NotoSansSChineseRegular;
       font-size: 14px;
       color: #353636;
       font-weight: 400;
+      display: flex !important;
 
       .el-checkbox__inner {
         width: 16px !important;
@@ -185,6 +189,7 @@
         font-size: 14px;
         color: #353636;
         font-weight: 400;
+        padding-left: 10px !important;
       }
     }
   }

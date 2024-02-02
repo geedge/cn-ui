@@ -86,9 +86,12 @@
   width:28px !important;
   height:28px !important;
   padding:unset !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   i {
     font-size: 14px;
-    color: #575757;
+    color: $--text-color-2;
     margin-right:unset !important;
   }
 }

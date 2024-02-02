@@ -32,8 +32,10 @@
     padding: 0 10px;
     display: flex;
     justify-content: space-around;
-    background: #FFFFFF;
-    border: 1px solid #DEDEDE;
+    //background: #FFFFFF;
+    background: var(--el-fill-color-blank);
+    //border: 1px solid #DEDEDE;
+    border: 1px solid var(--el-border-color);
     box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
     border-radius: 2px;
     height: 28px;
@@ -56,7 +58,8 @@
 
   .date-range-title {
     font-size: 14px;
-    color: #666666;
+    //color: #666666;
+    color: $--text-color-4;
     font-weight: 600;
     padding: 14px 0 7px 8px;
   }
@@ -71,7 +74,8 @@
     white-space: nowrap;
     display: inline-block;
     margin: 0 5px;
-    color: #353636;
+    //color: #353636;
+    color: $--text-color-1;
     .cn-icon-Data {
       color: #575757;
     }
@@ -88,7 +92,8 @@
   .date-range-panel {
     height: 426px;
     width: 500px;
-    background: #FFFFFF;
+    //background: #FFFFFF;
+    background: $--select-bg-color-1;
     box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
     position: absolute;
     right: 0;
@@ -102,7 +107,8 @@
 
       .content-title {
         font-size: 14px;
-        color: #666666;
+        //color: #666666;
+        color: var(--el-text-color-primary);
         font-weight: 400;
         margin-bottom: 12px;
       }
@@ -134,7 +140,8 @@
 
         .date-range-history-item:hover {
           /*font-weight: 600;*/
-          background: #f9f9f9;
+          //background: #f9f9f9;
+          background: $--select-bg-color-hover-1;
         }
       }
     }
@@ -156,15 +163,18 @@
           display: flex;
           flex-direction: column;
           justify-content: center;
-          color: #333333;
+          //color: #333333;
+          color: var(--el-text-color-primary);
           font-weight: 400;
           padding: 0 10px;
           cursor: pointer;
         }
 
         li.active {
-          background: #F2F9FF;
-          color: #0091FF;
+          //background: #F2F9FF;
+          //color: #0091FF;
+          background: $--select-bg-color-1;
+          color: var(--el-color-primary);
           font-weight: 400;
 
           .cn-icon-check {
@@ -175,8 +185,10 @@
         }
 
         li:hover {
-          background: #F2F9FF;
-          color: #0091FF;
+          //background: #F2F9FF;
+          background: var(--el-color-primary-light-9);
+          //color: #0091FF;
+          color: var(--el-color-primary);
         }
       }
     }

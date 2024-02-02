@@ -33,8 +33,9 @@
             </button>
             <div class="top-tool-search margin-l-10" >
               <el-input v-model="keyWord"  size="small" @keyup.enter="onSearch"></el-input>
-              <button class="top-tool-btn  top-tool-btn--search" style="border-radius: 0 2px 2px 0 !important;" @click="onSearch">
-                <i class="el-icon-search"></i>
+              <button class="top-tool-btn top-tool-btn--search" style="border-radius: 0 2px 2px 0 !important;" @click="onSearch">
+                <el-icon><Search /></el-icon>
+                <!--<i class="el-icon-search"></i>-->
               </button>
             </div>
           </div>
