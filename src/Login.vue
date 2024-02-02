@@ -22,15 +22,39 @@
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button
+          <el-button :disabled="licenseStatus === 0"
               v-loading="loading"
               type="primary"
               class="login--input login--button"
+              :class="{'login-btn__license-error':licenseStatus === 0}"
               @click="login"
               @keyup.enter="login"
               style="font-size: 16px;"
             >Login</el-button
           >
+        </el-form-item>
+        <el-form-item v-if="licenseStatus === 0">
+          <div class="license-error-msg">{{licenseStatusErrMsg}}</div>
+          <div class="license-file">
+            <button style="position: relative;" class="license__btn margin-r-20" @click.prevent="downloadFile">
+              <i class="cn-icon-download1 cn-icon margin-r-6"></i><span>Download c2v file</span>
+            </button>
+            <el-upload :action="`${baseUrl}sys/license/upload`"
+                       ref="licenseUpload"
+                       id="licenseUpload"
+                       :multiple="false"
+                       :show-file-list="false"
+                       :accept="fileTypeLimit"
+                       :file-list="fileList"
+                       :auto-upload="false"
+                       :on-change="fileChange"
+                       :on-success="uploadSuccess"
+                       :on-error="uploadError">
+              <button style="position: relative;" class="license__btn" @click.prevent="">
+                <i class="cn-icon-upload1 cn-icon margin-r-6"></i><span>Upload license</span>
+              </button>
+            </el-upload>
+          </div>
         </el-form-item>
       </el-form>
     </div>
@@ -46,6 +70,7 @@ import { api } from '@/utils/api'
 import dayjs from 'dayjs'
 import _ from 'lodash'
 import utc from 'dayjs/plugin/utc'
+import { ref } from 'vue'
 dayjs.extend(utc)
 
 export default {
@@ -55,7 +80,11 @@ export default {
       loading: false,
       username: '',
       pin: '',
-      language: ''
+      language: '',
+      licenseStatus: 1,
+      licenseStatusErrMsg: '',
+      downloadC2vUrl: api.downloadLicenseC2v,
+      supportID: ''
     }
   },
   methods: {
@@ -103,6 +132,70 @@ export default {
         }
       })
     },
+    downloadFile () {
+      axios.get(this.downloadC2vUrl, { responseType: 'blob' }).then(res => {
+        const fileName = 'CN-' + this.supportID + '-license-apply.xml'
+        if (window.navigator.msSaveOrOpenBlob) {
+          // 兼容ie11
+          const blobObject = new Blob([res.data])
+          window.navigator.msSaveOrOpenBlob(blobObject, fileName)
+        } else {
+          const url = URL.createObjectURL(new Blob([res.data]))
+          const a = document.createElement('a')
+          document.body.appendChild(a) // 此处增加了将创建的添加到body当中
+          a.href = url
+          a.download = fileName
+          a.target = '_blank'
+          a.click()
+          a.remove() // 将a标签移除
+        }
+      }, error => {
+        const $self = this
+        const reader = new FileReader()
+        reader.onload = function (event) {
+          const responseText = reader.result
+          const exception = JSON.parse(responseText)
+          if (exception.message) {
+            $self.$message.error(exception.message)
+          } else {
+            console.error(error)
+          }
+        }
+        reader.readAsText(error.response.data)
+      })
+    },
+    fileChange (file, fileList) {
+      if (file.status !== 'ready') return
+      if (!_.endsWith(file.name, '.xml')) {
+        this.fileList = []
+        this.$message.error('Only support '+ this.fileTypeLimit + ' files')
+      } else {
+        this.fileList = fileList.slice(-1)
+        this.$refs.licenseUpload.submit()
+      }
+    },
+    uploadSuccess (response) {
+      this.$message.success('Success')
+      this.licenseStatus = 1
+    },
+    uploadError (error) {
+      let errorMsg
+      if (error.message) {
+        errorMsg = JSON.parse(error.message).message
+      } else {
+        errorMsg = 'error'
+      }
+      this.$message.error('Upload failed: ' + errorMsg)
+    },
+    checkLicenseStatus () {
+      axios.get(api.licenseStatus).then(res => {
+        if (res.status === 200) {
+          this.licenseStatus = res.data.status
+        }
+      }).catch(e => {
+        this.licenseStatusErrMsg = this.errorMsgHandler(e)
+      })
+    },
     queryAppearance () {
       axios.get(api.appearance).then(res => {
         if (res.status === 200) {
@@ -128,13 +221,24 @@ export default {
       localStorage.setItem(storageKey.sysLogo, data.system_logo)
     }
   },
-  mounted () {
+  async mounted () {
     this.queryAppearance()
+    this.checkLicenseStatus()
+    await axios.get(api.license).then(res => {
+      if (res.status === 200) {
+        this.supportID = res.data.data.license.supportID
+      }
+    }).catch(e => {
+      console.log(e)
+    })
   },
   setup (props) {
     const { currentRoute } = useRouter()
     return {
-      loginSuccessPath: currentRoute.value.query.redirect
+      loginSuccessPath: currentRoute.value.query.redirect,
+      baseUrl: BASE_CONFIG.baseUrl,
+      fileTypeLimit: '.xml',
+      fileList: ref([])
     }
   }
 }
@@ -181,7 +285,7 @@ export default {
 }
 .inside {
   width: 414px;
-  height: 524px;
+  height: fit-content;/*524*/
   background: #0B325C;
   border: 1px solid rgba(103,179,245,0.65);
   box-shadow: 0 2px 4px 0 rgba(0,0,0,0.38);
@@ -198,6 +302,7 @@ export default {
 
 .title {
   margin-top: 65px;
+  margin-bottom: 44px;
   text-align: center;
 }
 .title > img {
@@ -208,6 +313,39 @@ export default {
   justify-content: center;
   flex-direction: column;
   align-items: center;
+  .is-disabled {
+    background: #21B4ED;
+    color: #FFFFFF;
+    opacity: 0.6;
+  }
+  .license-error-msg {
+    color:#c73249;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    height:40px;
+  }
+  .license-file {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    align-items: center;
+    justify-content: space-between;
+    .license__btn {
+      height: 40px;
+      padding-left:10px;
+      padding-right:10px;
+      min-width: 74px;
+      color: white;
+      background-color: #21B4ED;
+      border: none;
+      border-radius: 4px;
+      outline: none;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color linear .2s, color linear .1s;
+    }
+  }
 }
 :deep .el-form-item {
   width: 334px;
@@ -220,9 +358,8 @@ export default {
   width: 17px;
   font-size: 17px;
 }
-.login__box .el-form-item:nth-of-type(3) {
-  margin-top: 25px;
-  margin-bottom: 65px;
+.login__box .el-form-item:nth-child(3){
+  margin-bottom: 0px;
 }
 .login--button {
   background: #21B4ED;
@@ -234,5 +371,12 @@ export default {
   line-height: 22px;
   width: 334px;
   height: 52px;
+  margin-top: 25px;
+  margin-bottom:65px;
+}
+.login-btn__license-error {
+  margin-top: 25px;
+  margin-bottom: 10px;
+  height:40px;
 }
 </style>
