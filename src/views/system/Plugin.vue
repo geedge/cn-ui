@@ -87,7 +87,7 @@ export default {
             response.data.data.list[i].triggerStatus = response.data.data.list[i].triggerStatus + ''
             const basicInfo = pluginBasicInfo.find(plugin => plugin.id === response.data.data.list[i].id)
             if (basicInfo) {
-              filterDataList.push(response.data.data.list[i])
+              filterDataList.push(Object.assign({},basicInfo,response.data.data.list[i]))
             }
           }
           this.tableData = filterDataList
