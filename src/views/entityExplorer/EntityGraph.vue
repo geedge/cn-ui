@@ -7,6 +7,7 @@
           v-model="rightBox.show"
           direction="rtl"
           custom-class="entity-graph__detail"
+          class="entity-graph__detail"
           :close-on-click-modal="true"
           :modal="false"
           :size="400"

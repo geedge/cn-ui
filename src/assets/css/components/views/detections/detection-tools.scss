@@ -129,6 +129,10 @@
 
     .el-input--small {
       line-height: 27px;
+      .el-input__wrapper {
+        height: 28px !important;
+        border-radius: 2px 0 0 2px !important;
+      }
 
       .el-input__inner {
         height: 28px;

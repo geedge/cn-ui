@@ -135,6 +135,7 @@
         direction="ttb"
         custom-class="cn-menu"
         modal-class="cn-menu-modal"
+        class="cn-menu"
         :with-header="false"
         :show-close="false"
     >

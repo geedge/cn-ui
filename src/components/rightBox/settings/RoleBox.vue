@@ -27,8 +27,8 @@
             <el-tree :data="menus" :default-expand-all="expandAllFlag" check-strictly="true" :props="{label:labelFormatter}"  @check-change="selectChange" class="tree-border" node-key="id" ref="menuTree" show-checkbox id="role-box-input-menus">
               <template #default="{ data }">
               <span>
-                <el-icon v-if="data.type === 1"><Menu /></el-icon>
-                <el-icon v-if="data.type === 2"><Edit /></el-icon>
+                <el-icon v-if="data.type === '1'"><Menu /></el-icon>
+                <el-icon v-if="data.type === '2'"><Edit /></el-icon>
               </span>
                 {{$t(data.i18n)}}
               </template>

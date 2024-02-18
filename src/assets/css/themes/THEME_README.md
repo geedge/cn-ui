@@ -12,10 +12,10 @@
 -   // $arrow-selector: #{& + '__arrow'};   
     改为 $arrow-selector: '.el-popper__arrow';
 
-### 20240118element-plus升级
+### 20240118__element-plus升级
 #### 变动事项
 
-- elemen-plus由1.0.2-beta.71升级至2.5.1，旧版本是将element-plus源文件放到theme/src中进行部分修改使用，现在启用该方法，直接使用element-plus组件，部分组件有差异改动，对比界面进行调整并记录在xxx.scss
+- elemen-plus由1.0.2-beta.71升级至2.5.1，旧版本是将element-plus源文件放到theme/src中进行部分修改使用，现在弃用该方案，直接使用element-plus组件，部分组件有差异改动，对比界面进行调整并记录在cover-element.scss
 - 弃用之前的主题写法，改为官网的主题切换方法。删除body上的class，在html上添加class="dark"。默认明亮主题light，暗黑主题dark，默认引入theme-light.scss样式文件，暗黑主题theme-dark.scss样式文件
 - 如需添加暗黑样式，先在theme-light.scss添加唯一样式名，再到theme-dark中添加同名样式。如在light中添加字体颜色$--text-color-1: #353636;，则需要在dark中添加$--text-color-1: #d8d8d8;
 - header.vue的第四级面包屑导航栏，以及NetworkOverviewTabs.vue第一列搜索的popover。原结构的popover被上一层div包裹，但在html中解析成两个div，原来的popper-class需要提出来，不要在原div的class下，否则样式错乱
@@ -28,4 +28,6 @@
 - icon图标：老版使用：<i class="el-icon-search" />。新版则是svg文件，需要单独引入封装成component的格式，使用时：<el-icon><Search /></el-icon>
 - select选择器：新版被el-select__wrapper的div包裹，与旧版顺序不同。
 - * input和select的右侧图标和maxlength间距新版比旧版略大
-* 
+- drawer抽屉：在header.vue中遇到，custom-class="cn-menu"，渲染后class中没有cn-menu，也许是按需引入导致的，额外标注
+- message-box弹窗：新版在旧版的el-message-box的外层包裹了一层父div el-overlay-message-box，导致原样式会错乱
+- dialog: custom在2.4版本后被移除，使用class替代，插槽中的title也在2.4版本后移除，使用header替代

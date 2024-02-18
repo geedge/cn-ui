@@ -563,20 +563,6 @@ export default {
           query: queryInfo
         })
       }).catch(() => {})
-      // this.$confirm(this.$t('tip.leavePage'), {
-      //   confirmButtonText: this.$t('tip.confirm'),
-      //   cancelButtonText: this.$t('overall.cancel'),
-      //   message: this.$t('tip.leavePageTips'),
-      //   title: this.$t('tip.leavePage'),
-      //   type: 'warning',
-      //   iconClass: 'width:0px;height:0px;',
-      //   customClass: 'del-model'
-      // }).then(() => {
-      //   this.$router.push({
-      //     path: '/detection/policy',
-      //     query: queryInfo
-      //   })
-      // }).catch(() => {})
     },
     resetEditFlag () {
       this.triggerObj.editFlag = true
@@ -586,7 +572,22 @@ export default {
 </script>
 
 <style lang="scss">
+.el-overlay-message-box, .el-message-box {
+  padding: 0 !important;
+}
+.el-overlay-message-box {
+  text-align: center !important;
+}
+.is-message-box .el-overlay-message-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .del-model {
+  &.el-message-box {
+    max-width: 480px !important;
+  }
   display: flex;
   flex-direction: column;
   padding-bottom: 0 !important;
@@ -600,8 +601,8 @@ export default {
     height: 42px;
     background: #F7F7F7;
     box-shadow: 0 1px 0 0 rgba(53, 54, 54, 0.08);
-    padding-left: 20px;
-    padding-top: 14px;
+    padding-left: 21px;
+    padding-top: 10px;
     padding-bottom: 14px;
 
     .el-message-box__headerbtn {
@@ -611,7 +612,7 @@ export default {
       align-items: center;
       font-size: 10px;
       line-height: 10px;
-      padding-right: 5px !important;
+      padding-right: 10px !important;
 
       i {
         width: 10px;
@@ -634,9 +635,9 @@ export default {
     letter-spacing: 0;
     line-height: 22px;
     font-weight: 400;
-    padding-top: 8px;
+    padding-top: 9px;
     padding-right: 20px;
-    padding-left: 20px;
+    padding-left: 21px;
 
     .el-message-box__message {
       padding-left: 0 !important;
@@ -648,8 +649,11 @@ export default {
     height: 52px;
     border-top: 1px solid #eee;
     box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.07);
-    padding: 11px 0 12px !important;
+    padding: 13px 1px 12px 0 !important;
 
+    .el-button {
+      font-size: 12px;
+    }
     .el-button--small {
       padding: 8px 21px !important;
       line-height: 12px;

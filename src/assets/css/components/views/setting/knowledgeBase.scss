@@ -169,6 +169,8 @@
               align-items: center;
               .card-title-name {
                 width:100%;
+                height: 19.2px;
+                line-height: 19.2px;
                 overflow: hidden; //超出的文本隐藏
                 text-overflow: ellipsis; //溢出用省略号显示
                 white-space:nowrap;
@@ -996,6 +998,10 @@
     padding-left: 20px;
     overflow: auto;
 
+    .el-form--label-top .el-form-item .el-form-item__label {
+      margin-bottom: 3px !important;
+    }
+
     .enable-form__mt {
       .el-form {
         margin-top:6px;
@@ -1176,6 +1182,7 @@
         }
         .el-textarea__inner {
           padding-left: 8px;
+          font-size: 12px;
         }
 
         .form-select__disable {
@@ -1188,6 +1195,13 @@
         .form-select__enable {
           width: 100%;
 
+          .el-select__wrapper {
+            //padding-left: 22px !important;
+            .el-select__inner {
+              background-color: #521919 !important;
+              padding-left: 22px !important;
+            }
+          }
           .el-input__inner {
             background-color: white !important;
             padding-left: 22px !important;
@@ -1899,6 +1913,7 @@
     padding-top:0px;
     padding-right:30px;
     padding-left:30px;
+    padding-bottom:30px;
     .dialog-message {
       padding-left:0px !important;
       padding-right:0px !important;
@@ -1920,12 +1935,21 @@
       &.update-dialog__table--system-user {
         height: calc(100% - 139px);
       }
+      &.el-table .el-table__cell {
+        padding: 12px 0 !important;
+      }
+      &.el-table .el-table__row .el-table__cell {
+        padding: 8px 0 !important;
+      }
     }
     .update-knowledge-form {
       .el-upload {
         width:100%;
       }
       .form-input {
+        .el-input__wrapper {
+          padding: 1px 16px !important;
+        }
         .el-input__inner{
           padding-right: 50px !important;
           font-size: 14px;
@@ -1936,7 +1960,8 @@
         border: 1px solid rgba(222,222,222,1);
         box-shadow: 0px 2px 4px 0px rgba(51,51,51,0.02);
         border-radius: 2px;
-        width:100%;
+        //width:100%;
+        width: 1020px;
         height:28px;
         min-height:28px !important;
         color: #575757;
@@ -1962,6 +1987,16 @@
       }
       .knowledge-remark {
         margin-bottom:0px !important;
+        .el-textarea__inner {
+          font-size: 12px;
+          padding: 5px 15px;
+        }
+      }
+      .el-form--label-top .el-form-item .el-form-item__label {
+        margin-bottom: 0 !important;
+      }
+      .el-form--default.el-form--label-top .el-form-item .el-form-item__label {
+        line-height: 14px;
       }
     }
     .dialog-footer {

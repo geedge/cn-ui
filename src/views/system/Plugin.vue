@@ -71,7 +71,7 @@ export default {
         this.searchLabel = { ...this.searchLabel, ...params }
       }
       // this.searchLabel = { ...this.searchLabel, ...this.pageObj }
-      this.searchLabel = { ...this.searchLabel, jobGroup: 3 }
+      this.searchLabel = { ...this.searchLabel, jobGroup: 3, pageSize: -1 }
       this.isNoData = false
       this.toggleLoading(true)
       delete this.searchLabel.total

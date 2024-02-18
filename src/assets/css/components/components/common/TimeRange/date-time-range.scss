@@ -144,6 +144,9 @@
           background: $--select-bg-color-hover-1;
         }
       }
+      .el-range-editor.el-input__wrapper{
+        opacity: 0;
+      }
     }
 
     .date-range-panel-content-right {
