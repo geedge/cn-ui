@@ -41,7 +41,10 @@
           <template #default="scope">
               <div class="information-aggregation-tags">
                 <div  v-for="ic in scope.row.intelligenceContent" :key="ic.key"
-                      class="entity-tag entity-tag--small margin-r-6" :test-id="`entity-tag${scope.$index}`" :class="`entity-tag--level-two-${ic.type}`">
+                      class="entity-tag entity-tag--small margin-r-6"
+                      :test-id="`entity-tag${scope.$index}`"
+                      :style="getTagColor(ic.color)"
+                      :class="`entity-tag--level-two-${ic.type}`">
                   {{ic.value}}
                 </div>
               </div>
@@ -75,7 +78,7 @@ import { entityDetailTabsName } from '@/utils/constants'
 import { dateFormatByAppearance, getNowTime } from '@/utils/date-util'
 import chartNoData from '@/views/charts/charts/ChartNoData'
 import { ref } from 'vue'
-import { formatTagsOfDetails } from '@/utils/tools'
+import { formatTagsOfDetails, getTagColor } from '@/utils/tools'
 
 export default {
   name: 'InformationAggregation',
@@ -101,6 +104,7 @@ export default {
   components: { chartNoData },
   methods: {
     dateFormatByAppearance,
+    getTagColor,
     intelligenceContentClass ({ columnIndex }) {
       if (columnIndex === 2) {
         return 'padding-0'

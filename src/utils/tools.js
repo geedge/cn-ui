@@ -1534,7 +1534,7 @@ export const formatTagsOfDetails = (data, type, list) => {
         intelligenceContent: []
       }
       if (k === 'userDefinedTag') {
-        aggregation.intelligenceContent.push({ key: k, value: r[k].tagValue, type: 'normal' })
+        aggregation.intelligenceContent.push({ key: k, value: r[k].tagValue, type: 'normal', color: r[k].knowledgeBase ? (r[k].knowledgeBase.color || entityDefaultColor) : entityDefaultColor })
       } else {
         if (_.isArray(r[k])) {
           r[k].forEach(k3 => {
