@@ -170,7 +170,7 @@ export default {
   data () {
     const intervalValidator = (rule, value, callback) => {
       const obj = this.handleIntervalByDateType(rule, value, this.triggerObj.intervalVal)
-      if (!obj.flag && obj.msg) {
+      if (obj && !obj.flag && obj.msg) {
         callback(new Error(obj.msg))
       } else {
         callback()
@@ -178,7 +178,7 @@ export default {
     }
     const intervalValValidator = (rule, value, callback) => {
       const obj = this.handleIntervalByDateType(rule, this.triggerObj.intervalVal, value)
-      if (!obj.flag && obj.msg) {
+      if (obj && !obj.flag && obj.msg) {
         this.$refs.form3.validateField('interval')
         callback()
       } else {
@@ -187,7 +187,7 @@ export default {
     }
     const resetIntervalValidator = (rule, value, callback) => {
       const obj = this.handleIntervalByDateType(rule, value, this.triggerObj.resetIntervalVal)
-      if (!obj.flag && obj.msg) {
+      if (obj && !obj.flag && obj.msg) {
         callback(new Error(obj.msg))
       } else {
         callback()
@@ -195,7 +195,7 @@ export default {
     }
     const resetIntervalValValidator = (rule, value, callback) => {
       const obj = this.handleIntervalByDateType(rule, this.triggerObj.resetIntervalVal, value)
-      if (!obj.flag && obj.msg) {
+      if (obj && !obj.flag && obj.msg) {
         this.$refs.form3.validateField('resetInterval')
         callback()
       } else {
