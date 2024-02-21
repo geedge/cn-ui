@@ -158,6 +158,25 @@
             </div>
           </div>
         </div>
+        <div class="middle-menus middle-menus--location-intelligence">
+          <div class="middle-menus__header">{{ $t('overall.locationIntelligence') }}</div>
+          <div class="middle-menus__body" v-if="locationIntelligenceMenu && locationIntelligenceMenu.children">
+            <div style="width: 260px;">
+              <template v-for="(menu, index) in locationIntelligenceMenu.children" :key="index">
+                <div class="middle-menu" v-if="index < 5" @click="jump(menu.route,'','',2)">
+                  {{ $t(menu.i18n || menu.name) }}
+                </div>
+              </template>
+            </div>
+            <div>
+              <template v-for="(menu, index) in locationIntelligenceMenu.children" :key="index">
+                <div class="middle-menu" v-if="index >= 5 && index < 10" @click="jump(menu.route,'','',2)">
+                  {{ $t(menu.i18n || menu.name) }}
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
       </div>
     </el-drawer>
 
@@ -313,6 +332,9 @@ export default {
   computed: {
     networkAnalyticsMenu () {
       return this.$store.getters.menuList.find(menu => menu.code === 'networkAnalytics')
+    },
+    locationIntelligenceMenu () {
+      return this.$store.getters.menuList.find(menu => menu.code === 'locationIntelligence')
     },
     otherMenu () {
       return this.$store.getters.menuList.filter(menu => ['networkAnalytics', 'I18N', 'entityDetail', 'entityGraph', 'detectionPolicy'].indexOf(menu.code) === -1)
