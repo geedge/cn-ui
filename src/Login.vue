@@ -242,6 +242,7 @@ export default {
 }
 .login--input {
   :deep .el-input__wrapper {
+    background-color: rgb(11, 50, 92) !important;
     box-shadow: none !important;
     //border-bottom: 1px solid rgba(103,179,245,0.65);
     border-bottom: 1px solid #295688;

@@ -35,12 +35,12 @@
               <el-dropdown-item>
                 <div id="header-to-logout" @click="logout">{{ $t('overall.logout') }}</div>
               </el-dropdown-item>
-              <el-dropdown-item>
-                <div id="header-to-theme" @click="switchTheme">
-                  <span>暗黑模式</span>
-                  <el-switch v-model="isDark" size="large" class="mt-2" style="margin-left: 24px" inline-prompt />
-                </div>
-              </el-dropdown-item>
+<!--              <el-dropdown-item>-->
+<!--                <div id="header-to-theme" @click="switchTheme">-->
+<!--                  <span>暗黑模式</span>-->
+<!--                  <el-switch v-model="isDark" size="large" class="mt-2" style="margin-left: 24px" inline-prompt />-->
+<!--                </div>-->
+<!--              </el-dropdown-item>-->
             </el-dropdown-menu>
           </template>
         </el-dropdown>
