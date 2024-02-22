@@ -337,7 +337,7 @@ export default {
       return this.$store.getters.menuList.find(menu => menu.code === 'locationIntelligence')
     },
     otherMenu () {
-      return this.$store.getters.menuList.filter(menu => ['networkAnalytics', 'I18N', 'entityDetail', 'entityGraph', 'detectionPolicy'].indexOf(menu.code) === -1)
+      return this.$store.getters.menuList.filter(menu => ['locationIntelligence','networkAnalytics', 'I18N', 'entityDetail', 'entityGraph', 'detectionPolicy'].indexOf(menu.code) === -1)
 
       /* function excludeButton (menu) {
         for (let i = 0; i < menu.length; i++) {
