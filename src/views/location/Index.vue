@@ -176,6 +176,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import axios from 'axios'
 import { api } from '@/utils/api'
+import {
+  geoToH3
+} from 'h3-js'
 
 export default {
   name: 'Location',
@@ -233,8 +236,8 @@ export default {
               elevationScale: 20,
               extruded: false,
               filled: true,
-              getFillColor: d => _this.getHexagonColor(d.number),
-              // getLineColor: d => [255, (1 - d.value) * 255 * 1.5 > 255 ? 255 : (1 - d.value) * 255 * 1.5, 0],
+              getFillColor: d => _this.getHexagonFillColor(d.number),
+              getLineColor: d => _this.getHexagonLineColor(d.number),
               getLineWidth: 10,
               getHexagon: d => d.hexId,
               wireframe: false,
@@ -303,27 +306,34 @@ export default {
     },
     // 先使用min=0的等宽分组法，若后续出现特大或特小的异常值导致等宽分组效果不理想，考虑用分位数分组法
     calculateValueRamp (data) {
-      const max = _.maxBy(data, d => d.value)
-      const maxLength = String(max).length
-      const maxLegend = ((max / Math.pow(10, maxLength - 1)) + 1) * Math.pow(10, maxLength - 1)
+      const max = _.maxBy(data, d => d.number)
+      const maxLength = String(max.number).length
+      const maxLegend = Math.ceil(max.number / Math.pow(10, maxLength - 1)) * Math.pow(10, maxLength - 1)
       const result = []
       for (let i = 1; i <= 5; i++) {
         const item = {
           start: maxLegend * (i - 1) / 5 + 1,
           end: maxLegend * i / 5,
-          color: `rgb(${this.pieColorRamp[i - 1]})`
+          color: this.pieColorRamp[i - 1]
         }
         item.count = data.filter(d => d.number >= item.start && d.number < item.end).length
         result.push(item)
       }
       return result
     },
-    getHexagonColor (number) {
+    getHexagonFillColor (number) {
       const ramp = this.pieValueRamp.filter(r => number >= r.start && number < r.end)
-      if (ramp) {
-        return ramp.color
+      if (ramp.length > 0) {
+        return ramp[0].color.split(',').map(n => Number(n))
       }
-      return ''
+      return [255, 255, 255]
+    },
+    getHexagonLineColor (number) {
+      const ramp = this.pieValueRamp.filter(r => number >= r.start && number < r.end)
+      if (ramp.length > 0) {
+        return ramp[0].color.split(',').map(n => n / 1.5)
+      }
+      return [255, 255, 255]
     },
     tooltipMouseEnter () {
     },
@@ -455,7 +465,7 @@ export default {
       maxZoom: 14, // 地图最小缩放比例
       minZoom: 3, // 地图最大缩放比例
       unitTypes,
-      defaultZoom: 11, // 地图默认缩放比例
+      defaultZoom: 13, // 地图默认缩放比例
       center: [116.38, 39.9] // 地图默认中心点。北京：[116.38, 39.9] 纽约：[-73.94539, 40.841843]
     }
   },
