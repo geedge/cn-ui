@@ -45,7 +45,7 @@ import axios from 'axios'
 import { api } from '@/utils/api'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import _ from 'lodash'
-import { ref } from 'vue'
+import { ref, shallowRef } from 'vue'
 import { getNowTime, getSecond } from '@/utils/date-util'
 
 export default {
@@ -71,35 +71,23 @@ export default {
         center: this.center,
         maxZoom: this.maxZoom,
         minZoom: this.minZoom,
-        zoom: 7,
-        transformRequest: function (url, resourceType) {
-          if (resourceType === 'Tile' && url.indexOf('https://api.maptiler.com/tiles/v3') > -1) {
-            const urlParams = url.split('.pbf')[0].split('/')
-            const z = urlParams[urlParams.length - 3]
-            const x = urlParams[urlParams.length - 2]
-            const y = urlParams[urlParams.length - 1]
-            const newUrl1 = `${window.location.protocol}//${window.location.host}/tiles/${z}/${x}/${y}.pbf`
-            return {
-              url: newUrl1,
-              credentials: 'include',
-              method: 'GET'
+        zoom: 7
+      })
+      maplibregl.addProtocol('cn', (params, callback) => { // 切片显示接口 防止跨域的问题
+        fetch(`${params.url.split('://')[1]}`)
+          .then(t => {
+            if (t.status == 200) {
+              t.arrayBuffer().then(arr => {
+                callback(null, arr, null, null)
+              })
+            } else {
+              callback(new Error(`Tile fetch error: ${t.statusText}`))
             }
-          }
-          if (resourceType === 'SpriteJSON') {
-            return {
-              url: `${window.location.protocol}//${window.location.host}/tiles/sprite.json`,
-              credentials: 'include',
-              method: 'GET'
-            }
-          }
-          if (resourceType === 'SpriteImage') {
-            return {
-              url: `${window.location.protocol}//${window.location.host}/tiles/sprite.png`,
-              credentials: 'include',
-              method: 'GET'
-            }
-          }
-        }
+          })
+          .catch(e => {
+            callback(new Error(e))
+          })
+        return { cancel: () => { } }
       })
       this.queryData().then(res => {
         map.on('load', () => {
@@ -330,11 +318,13 @@ export default {
     const tooltip = ref({
       showTooltip: false
     })
+    const myChart = shallowRef({})
 
     return {
       timeFilter,
       currentPoint,
       tooltip,
+      myChart,
       maxZoom: 13,
       minZoom: 1,
       center: [116.38, 39.9]

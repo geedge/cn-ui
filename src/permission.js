@@ -36,7 +36,24 @@ router.beforeEach(async (to, from, next) => {
           path: '/',
           name: 'home',
           component: () => import('@/components/layout/Home'),
-          children: []
+          children: [
+            {
+              path: '/temp',
+              component: () => import('@/Temp')
+            },
+            {
+              path: '/temp2',
+              component: () => import('@/Temp2')
+            },
+            {
+              path: '/temp3',
+              component: () => import('@/Temp3')
+            },
+            {
+              path: '/temp4',
+              component: () => import('@/Temp4')
+            }
+          ]
         }
         handleRoutes(menuList, homeRoute.children)
         router.addRoute(homeRoute)
@@ -187,6 +204,9 @@ export function handleComponent (code) {
       return () => import('@/views/system/Index')
     case 'plugin':
       return () => import('@/views/system/Plugin')
+    case 'locationMap':
+    case 'traceTracking':
+      return () => import('@/views/location/Index')
     default:
       return null
   }

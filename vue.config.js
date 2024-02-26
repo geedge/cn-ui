@@ -24,5 +24,16 @@ module.exports = {
   lintOnSave: true,
   devServer: {
     port: 80
+  },
+  configureWebpack: {
+    module: {
+      rules: [
+        {
+          test: /\.mjs$/,
+          include: /node_modules/,
+          type: 'javascript/auto'
+        }
+      ]
+    }
   }
 }

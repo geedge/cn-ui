@@ -900,8 +900,8 @@ export default {
     }],
   metadata: { 'maptiler:copyright': 'This style was generated on MapTiler Cloud. Usage outside of MapTiler Cloud or MapTiler Server requires valid MapTiler Data package: https://www.maptiler.com/data/ -- please contact us.' },
 
-  glyphs: '/tiles/fonts/{fontstack}/{range}.pbf?key=rB2y2a2rG8i9SEjOXQXl',
-  sprite: 'https://www.maptiler.com/tiles/sprite',
+  glyphs: 'cn:///tiles/fonts/{fontstack}/{range}.pbf',
+  sprite: 'cn:///tiles/sprite',
   bearing: 0,
   pitch: 0,
   center: [130, -20],

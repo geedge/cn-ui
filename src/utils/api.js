@@ -351,6 +351,11 @@ export const api = {
       entityNew: apiVersion + '/entity/explorer/overview/new', // entity首页new数据概览
       entityTotal: apiVersion + '/entity/explorer/overview/total' // entity首页total数据概览
     }
+  },
+  location: {
+    map: apiVersion + '/locationIntelligence/map',
+    density: apiVersion + '/locationIntelligence/population/density',
+    trend: apiVersion + '/locationIntelligence/active/subscribers'
   }
 }
 
