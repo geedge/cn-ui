@@ -9,7 +9,7 @@ import commonMixin from '@/mixins/common'
 import { cancelWithChange, noData, myHighLight } from '@/utils/tools'
 import { ClickOutside } from 'element-plus/lib/directives'
 import i18n from '@/i18n'
-import '@/mock/index.js'
+// import '@/mock/index.js'
 import hljsVuePlugin from '@highlightjs/vue-plugin'
 import 'highlight.js/styles/color-brewer.css'
 import '@/assets/css/main.scss' // 样式入口

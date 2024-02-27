@@ -703,10 +703,10 @@ export default {
         if (response.status === 200) {
           const data = response.data.data.result
           if (data.length > 0) {
-            // data.forEach(item => {
-            //   item.eventInfoObj = JSON.parse(item.eventInfo)
-            //   item.startTime = parseFloat(item.startTime)
-            // })
+            data.forEach(item => {
+              item.eventInfoObj = JSON.parse(item.eventInfo)
+              item.startTime = parseFloat(item.startTime)
+            })
             this.listData = data
           } else {
             this.listData = []
