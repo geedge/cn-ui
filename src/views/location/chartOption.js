@@ -3,6 +3,7 @@ export const pieOption = {
     trigger: 'item'
   },
   legend: {
+    show: false,
     right: 'right',
     top: 'middle',
     orient: 'vertical',

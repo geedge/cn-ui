@@ -26,14 +26,23 @@
       <div class="analysis-map" id="analysisMap"></div>
       <div class="analysis-statistics">
         <div class="analysis-statistics__chart">
-          <div class="chart__header">Population Density</div>
-          <div class="chart__drawing" id="populationDensityChart"></div>
+          <div class="chart__header">{{$t('locationIntelligence.populationDensity')}}</div>
+          <div class="chart__body">
+            <div class="chart__drawing" id="populationDensityChart"></div>
+            <div class="chart__legend">
+              <div v-for="legend in pieValueRamp" class="legend-item">
+                <div class="legend-icon" :style="`background:rgb(${legend.color});`"></div>
+                <div class="legend-range" >{{legend.start}}~{{legend.end}}</div>
+                <div class="legend-count">{{legend.count}}</div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="analysis-statistics__chart">
-          <div class="chart__header">Active Subscribers</div>
+          <div class="chart__header">{{$t('locationIntelligence.activeSubscribers')}}</div>
           <div class="chart__statistics">
-            <div class="statistics-number">19334</div>
-            <div class="statistics-trend">-{{valueToRangeValue(0.39542, unitTypes.percent).join(' ')}}</div>
+            <div class="statistics-number">{{activeCount}}</div>
+            <div class="statistics-trend">-{{valueToRangeValue(activeCountChain, unitTypes.percent).join(' ')}}</div>
           </div>
           <div class="chart__drawing" id="activeSubscribersChart"></div>
         </div>
@@ -188,7 +197,9 @@ export default {
         hexagon: 'hexagon',
         baseStation: 'base-station',
         human: 'human'
-      }
+      },
+      activeCount: '',
+      activeCountChain: ''
     }
   },
   methods: {
@@ -254,6 +265,7 @@ export default {
         // 右侧关注列表
 
         // 右上角折线图
+        _this.renderActiveSubscribersLine()
       })
       function hoverTrigger (source, id, hover) {
         map.setFeatureState({ source, id }, { hover })
@@ -279,12 +291,45 @@ export default {
         if (!this.pieChart) {
           this.pieChart = echarts.init(document.getElementById('populationDensityChart'))
         }
-        this.pieChart.setOption(this.pieOption)
+        this.$nextTick(() => {
+          this.pieChart.setOption(this.pieOption)
+        })
       } catch (e) {
         this.errorMsgHandler(e)
         console.error(e)
       } finally {
         this.loading.pieLoading = false
+      }
+    },
+    async renderActiveSubscribersLine () {
+      const params = {
+        ...this.timeFilter
+      }
+      this.loading.lineLoading = true
+      try {
+        const curCountResponse = await axios.get(api.location.count, { ...params, cycle: 0, data: { cycle: 0 } })// 当前周期活跃用户总数
+        const preCountResponse = await axios.get(api.location.count, { ...params, cycle: 1, data: { cycle: 1 } })// 上一周期活跃用户总数
+        this.activeCount = curCountResponse.data.data.total
+        const preActiveCount = preCountResponse.data.data.total
+        if (preActiveCount !== 0) {
+          this.activeCountChain = (this.activeCount - preActiveCount) / preActiveCount
+        }
+        const trendResponse = await axios.get(api.location.trend, { params })
+        const activeSubscribersData = trendResponse.data.data.result.values
+        const option = _.cloneDeep(appListChartOption)
+        option.series[0].data = activeSubscribersData.map(d => {
+          return [d[0], d[1], unitTypes.number]
+        })
+        this.lineOption = option
+        if (!this.lineChart) {
+          this.lineChart = echarts.init(document.getElementById('activeSubscribersChart'))
+        }
+        this.lineChart.setOption(this.lineOption)
+      } catch (e) {
+        this.errorMsgHandler(e)
+        console.error(e)
+      } finally {
+        this.loading.lineLoading = false
       }
     },
     async queryHexagon () {
@@ -569,6 +614,49 @@ export default {
           color: #353636;
           font-size: 16px;
         }
+        .chart__body {
+          display:flex;
+          flex-direction:row;
+          width:100%;
+          height:calc(100% - 32px);
+          .chart__legend {
+            width:calc(60% - 22px);
+            height: 100%;
+            display:flex;
+            flex-direction:column;
+            justify-content: center;
+            .legend-item {
+              display:flex;
+              flex-direction:row;
+              justify-content: left;
+              align-items: center;
+              padding-top:2px;
+              padding-bottom:2px;
+              .legend-icon {
+                width:16px;
+                height:6px;
+                border-radius: 2px;
+                margin-right:10px;
+              }
+              .legend-range {
+                margin-right:40px;
+                width:54px;
+                font-family: Helvetica;
+                font-size: 12px;
+                color: #575757;
+                line-height: 12px;
+                font-weight: 400;
+              }
+              .legend-count {
+                font-family: Helvetica;
+                font-size: 12px;
+                color: #353636;
+                line-height: 12px;
+                font-weight: 400;
+              }
+            }
+          }
+        }
         .chart__statistics {
           display: flex;
           height: 20px;
@@ -590,7 +678,9 @@ export default {
           }
         }
         .chart__drawing {
-          height: calc(100% - 32px);
+          height: 100%;
+          width:calc(40% + 12px);
+          margin-right:10px;
         }
         #activeSubscribersChart {
           height: calc(100% - 52px);

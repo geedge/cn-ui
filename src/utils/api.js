@@ -355,7 +355,8 @@ export const api = {
   location: {
     map: apiVersion + '/locationIntelligence/map',
     density: apiVersion + '/locationIntelligence/population/density',
-    trend: apiVersion + '/locationIntelligence/active/subscribers'
+    trend: apiVersion + '/locationIntelligence/active/trend',
+    count: apiVersion + '/locationIntelligence/active/count'
   }
 }
 
