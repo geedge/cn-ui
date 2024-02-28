@@ -44,7 +44,7 @@
             <div class="statistics-number">{{activeCount}}</div>
             <div class="statistics-trend">-{{valueToRangeValue(activeCountChain, unitTypes.percent).join(' ')}}</div>
           </div>
-          <div class="chart__drawing" id="activeSubscribersChart"></div>
+          <div class="chart-line__drawing" id="activeSubscribersChart"></div>
         </div>
         <div class="analysis-statistics__title">Followed Subscribers</div>
         <div class="analysis-statistics__subscribers">
@@ -681,6 +681,9 @@ export default {
           height: 100%;
           width:calc(40% + 12px);
           margin-right:10px;
+        }
+        .chart-line__drawing {
+          height: calc(100% - 32px);
         }
         #activeSubscribersChart {
           height: calc(100% - 52px);
