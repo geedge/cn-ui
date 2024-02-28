@@ -24,61 +24,61 @@
     </div>
     <div class="geo-analysis__container">
       <div class="analysis-map" id="analysisMap"></div>
-      <div class="analysis-statistics">
-        <div class="analysis-statistics__chart">
-          <div class="chart__header">{{$t('locationIntelligence.populationDensity')}}</div>
-          <div class="chart__body">
-            <div class="chart__drawing" id="populationDensityChart"></div>
-            <div class="chart__legend">
-              <div v-for="legend in pieValueRamp" class="legend-item">
-                <div class="legend-icon" :style="`background:rgb(${legend.color});`"></div>
-                <div class="legend-range" >{{legend.start}}~{{legend.end}}</div>
-                <div class="legend-count">{{legend.count}}</div>
+      <div class="analysis-statistics" v-show="activeTab === 'locationMap'">
+          <div class="analysis-statistics__chart">
+            <div class="chart__header">{{$t('locationIntelligence.populationDensity')}}</div>
+            <div class="chart__body">
+              <div class="chart__drawing" id="populationDensityChart"></div>
+              <div class="chart__legend">
+                <div v-for="legend in pieValueRamp" class="legend-item" :key="legend.color">
+                  <div class="legend-icon" :style="`background:rgb(${legend.color});`"></div>
+                  <div class="legend-range" >{{legend.start}}~{{legend.end}}</div>
+                  <div class="legend-count">{{legend.count}}</div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="analysis-statistics__chart">
-          <div class="chart__header">{{$t('locationIntelligence.activeSubscribers')}}</div>
-          <div class="chart__statistics">
-            <div class="statistics-number">{{activeCount}}</div>
-            <div class="statistics-trend">-{{valueToRangeValue(activeCountChain, unitTypes.percent).join(' ')}}</div>
+          <div class="analysis-statistics__chart">
+            <div class="chart__header">{{$t('locationIntelligence.activeSubscribers')}}</div>
+            <div class="chart__statistics">
+              <div class="statistics-number">{{activeCount}}</div>
+              <div class="statistics-trend">-{{valueToRangeValue(activeCountChain, unitTypes.percent).join(' ')}}</div>
+            </div>
+            <div class="chart-line__drawing" id="activeSubscribersChart"></div>
           </div>
-          <div class="chart-line__drawing" id="activeSubscribersChart"></div>
-        </div>
-        <div class="analysis-statistics__title">Followed Subscribers</div>
-        <div class="analysis-statistics__subscribers">
-          <template v-for="item in 8">
-            <div class="analysis-statistics__subscriber">
-              <div class="subscriber__header">
-                <div class="header__icon">
-                  <div class="icon__box">
-                    <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M366.689524 690.468571l87.283809 83.821715-75.434666 195.486476c-10.971429 27.794286-43.105524 42.081524-72.265143 32.036571-29.159619-10.24-44.080762-41.252571-33.450667-69.241904L366.689524 690.468571zM203.824762 476.306286l51.785143-95.183238a162.279619 162.279619 0 0 1 59.245714-59.977143c119.710476-68.266667 134.777905-67.291429 149.942857-66.218667l80.798476 5.168762c24.868571 0.975238 42.081524 7.314286 125.025524 124.14781a21.26019 21.26019 0 0 0 14.092191 8.289523l99.132952 14.482286c12.873143 1.852952 24.478476 8.582095 32.182857 18.67581a45.494857 45.494857 0 0 1 8.825905 35.108571 46.665143 46.665143 0 0 1-19.504762 30.866286 50.468571 50.468571 0 0 1-36.571429 8.435809l-99.181714-14.433524a119.954286 119.954286 0 0 1-79.774476-47.640381c-4.388571-6.241524-7.558095-11.361524-11.849143-16.579047l-63.634286 193.487238 88.405334 84.845714c12.970667 12.385524 23.698286 29.013333 30.232381 45.494857l67.876571 190.366477c5.022476 13.409524 4.193524 28.233143-2.291809 41.057523a54.613333 54.613333 0 0 1-32.182858 27.160381c-5.851429 2.048-12.092952 3.120762-18.383238 3.169524a58.075429 58.075429 0 0 1-53.930666-36.181333l-67.876572-190.366476c-1.024-2.096762-2.096762-3.120762-3.218285-5.168762L365.616762 623.177143a84.894476 84.894476 0 0 1-24.868572-80.700953l34.523429-146.919619c-3.413333 2.340571-7.070476 4.388571-10.776381 6.290286a58.806857 58.806857 0 0 0-22.674286 22.723048L290.133333 519.801905a49.834667 49.834667 0 0 1-43.105523 24.819809 59.977143 59.977143 0 0 1-22.674286-5.12 46.518857 46.518857 0 0 1-20.48-63.146666z m209.67619-360.448C420.08381 58.465524 473.86819 17.066667 533.650286 23.30819 593.383619 29.549714 636.537905 81.13981 630.00381 138.48381c-6.534095 57.392762-60.269714 98.840381-120.05181 92.550095-59.782095-6.241524-102.985143-57.782857-96.451048-115.175619z" fill="#ffffff"></path></svg>
+          <div class="analysis-statistics__title">Followed Subscribers</div>
+          <div class="analysis-statistics__subscribers">
+            <template v-for="item in 8">
+              <div class="analysis-statistics__subscriber">
+                <div class="subscriber__header">
+                  <div class="header__icon">
+                    <div class="icon__box">
+                      <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M366.689524 690.468571l87.283809 83.821715-75.434666 195.486476c-10.971429 27.794286-43.105524 42.081524-72.265143 32.036571-29.159619-10.24-44.080762-41.252571-33.450667-69.241904L366.689524 690.468571zM203.824762 476.306286l51.785143-95.183238a162.279619 162.279619 0 0 1 59.245714-59.977143c119.710476-68.266667 134.777905-67.291429 149.942857-66.218667l80.798476 5.168762c24.868571 0.975238 42.081524 7.314286 125.025524 124.14781a21.26019 21.26019 0 0 0 14.092191 8.289523l99.132952 14.482286c12.873143 1.852952 24.478476 8.582095 32.182857 18.67581a45.494857 45.494857 0 0 1 8.825905 35.108571 46.665143 46.665143 0 0 1-19.504762 30.866286 50.468571 50.468571 0 0 1-36.571429 8.435809l-99.181714-14.433524a119.954286 119.954286 0 0 1-79.774476-47.640381c-4.388571-6.241524-7.558095-11.361524-11.849143-16.579047l-63.634286 193.487238 88.405334 84.845714c12.970667 12.385524 23.698286 29.013333 30.232381 45.494857l67.876571 190.366477c5.022476 13.409524 4.193524 28.233143-2.291809 41.057523a54.613333 54.613333 0 0 1-32.182858 27.160381c-5.851429 2.048-12.092952 3.120762-18.383238 3.169524a58.075429 58.075429 0 0 1-53.930666-36.181333l-67.876572-190.366476c-1.024-2.096762-2.096762-3.120762-3.218285-5.168762L365.616762 623.177143a84.894476 84.894476 0 0 1-24.868572-80.700953l34.523429-146.919619c-3.413333 2.340571-7.070476 4.388571-10.776381 6.290286a58.806857 58.806857 0 0 0-22.674286 22.723048L290.133333 519.801905a49.834667 49.834667 0 0 1-43.105523 24.819809 59.977143 59.977143 0 0 1-22.674286-5.12 46.518857 46.518857 0 0 1-20.48-63.146666z m209.67619-360.448C420.08381 58.465524 473.86819 17.066667 533.650286 23.30819 593.383619 29.549714 636.537905 81.13981 630.00381 138.48381c-6.534095 57.392762-60.269714 98.840381-120.05181 92.550095-59.782095-6.241524-102.985143-57.782857-96.451048-115.175619z" fill="#ffffff"></path></svg>
+                    </div>
+                  </div>
+                  <div class="header__title">MSISDN</div>
+                  <div class="header__content">15557777000</div>
+                </div>
+                <div class="subscriber__body">
+                  <div class="body__item">
+                    <div class="item__label">Group</div>
+                    <div class="item__value">Terrorist</div>
+                  </div>
+                  <div class="body__item">
+                    <div class="item__label">Info</div>
+                    <div class="item__value">Leader</div>
+                  </div>
+                  <div class="body__item">
+                    <div class="item__label">Location</div>
+                    <div class="item__value">China, Shanghai</div>
                   </div>
                 </div>
-                <div class="header__title">MSISDN</div>
-                <div class="header__content">1-555-7777000</div>
               </div>
-              <div class="subscriber__body">
-                <div class="body__item">
-                  <div class="item__label">Group</div>
-                  <div class="item__value">Terrorist</div>
-                </div>
-                <div class="body__item">
-                  <div class="item__label">Info</div>
-                  <div class="item__value">Leader</div>
-                </div>
-                <div class="body__item">
-                  <div class="item__label">Location</div>
-                  <div class="item__value">China, Shanghai</div>
-                </div>
-              </div>
-            </div>
-          </template>
+            </template>
+          </div>
         </div>
-      </div>
     </div>
-    <div class="geo-analysis__hexagon-tooltip" :class="`geo-analysis__hexagon-tooltip--${tooltip.type}`" v-if="tooltip.showMarkerTooltip || tooltip.showPolygonTooltip" :style="{'left': `${tooltip.x}px`, 'top': `${tooltip.y}px`}" @mouseenter="tooltipMouseEnter" @mouseleave="tooltipMouseLeave" @mousemove="tooltipMouseMove">
+    <div class="geo-analysis__hexagon-tooltip" id="tooltip" :class="`geo-analysis__hexagon-tooltip--${tooltip.type}`" v-if="tooltip.showMarkerTooltip || tooltip.showPolygonTooltip" :style="{'left': `${tooltip.x}px`, 'top': `${tooltip.y}px`}" @mouseenter="tooltipMouseEnter" @mouseleave="tooltipMouseLeave" @mousemove="tooltipMouseMove">
       <div class="hexagon-tooltip__header" :style="`background-color: ${tooltipHeaderColor}`">
         <div class="header__icon">
           <svg v-if="tooltip.type === tooltipType.hexagon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="36" height="36"><path d="M747.52 921.088H277.504L42.496 514.048l235.008-407.04H747.52l235.008 407.04-235.008 407.04z m-425.472-76.8h381.44l190.464-330.24-190.464-330.24h-381.44l-190.464 330.24 190.464 330.24z" fill="#fff"></path></svg>
@@ -100,6 +100,7 @@
         </div>
         <div class="header__content">
           <template v-if="tooltip.type === tooltipType.hexagon">{{currentPolygon.hexId}}</template>
+          <template v-else-if="tooltip.type === tooltipType.baseStation">0xxa8805</template>
         </div>
       </div>
       <div class="hexagon-tooltip__body">
@@ -183,7 +184,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { h3ToGeoBoundary } from 'h3-js'
+import { h3ToGeo, h3ToGeoBoundary } from 'h3-js'
 
 export default {
   name: 'Location',
@@ -201,6 +202,7 @@ export default {
   methods: {
     valueToRangeValue,
     async initMap () {
+      console.info(h3ToGeo('8931aa42cb7ffff'))
       const _this = this
       const map = new maplibregl.Map({
         container: 'analysisMap',
@@ -234,6 +236,7 @@ export default {
       map.on('load', async function () {
         console.info('map loaded')
         /* 地图色块 */
+        _this.updateBoundaryBox()
         const hexagonData = await _this.queryHexagon()
         // 将查到的h3hexagon数据转为geojson
         const polygonSourceData = _this.hexagonDataConverter(hexagonData)
@@ -257,12 +260,16 @@ export default {
 
         /* 地图上的基站 */
         const baseStationData = await _this.queryBaseStation()
+        _this.renderMarker(baseStationData, _this.tooltipType.baseStation)
+
         /* 地图上的人 */
+        const mapFollowedSubscriberData = await _this.queryMapFollowedSubscriber()
+        _this.renderMarker(mapFollowedSubscriberData, _this.tooltipType.human)
 
         /* 右侧关注列表 */
 
         /* 右上角折线图 */
-        _this.renderActiveSubscribersLine()
+        await _this.renderActiveSubscribersLine()
       })
     },
     async renderDensityPie () {
@@ -272,7 +279,7 @@ export default {
       this.loading.pieLoading = true
       try {
         const response = await axios.get(api.location.density, { params })
-        const densityData = response.data.data.list
+        const densityData = response.data.data
         // 按值的大小分为5组，并计算各组数量和颜色
         this.pieValueRamp = this.calculateValueRamp(densityData)
         const option = _.cloneDeep(pieOption)
@@ -301,15 +308,15 @@ export default {
       }
       this.loading.lineLoading = true
       try {
-        const curCountResponse = await axios.get(api.location.count, { ...params, cycle: 0, data: { cycle: 0 } })// 当前周期活跃用户总数
-        const preCountResponse = await axios.get(api.location.count, { ...params, cycle: 1, data: { cycle: 1 } })// 上一周期活跃用户总数
+        const curCountResponse = await axios.get(api.location.count, { params: { ...params, cycle: 0 } })// 当前周期活跃用户总数
+        const preCountResponse = await axios.get(api.location.count, { params: { ...params, cycle: 1 } })// 上一周期活跃用户总数
         this.activeCount = curCountResponse.data.data.total
         const preActiveCount = preCountResponse.data.data.total
         if (preActiveCount !== 0) {
-          this.activeCountChain = (this.activeCount - preActiveCount) / preActiveCount
+          this.activeCountChain = preActiveCount !== '0' ? (this.activeCount - preActiveCount) / preActiveCount : ''
         }
         const trendResponse = await axios.get(api.location.trend, { params })
-        const activeSubscribersData = trendResponse.data.data.result.values
+        const activeSubscribersData = trendResponse.data.data.result
         const option = _.cloneDeep(appListChartOption)
         option.series[0].data = activeSubscribersData.map(d => {
           return [d[0], d[1], unitTypes.number]
@@ -334,7 +341,7 @@ export default {
       this.loading.hexagonLoading = true
       try {
         const response = await axios.get(api.location.map, { params })
-        return response.data.data.list
+        return response.data.data
       } catch (e) {
         this.errorMsgHandler(e)
         console.error(e)
@@ -346,8 +353,34 @@ export default {
     async queryBaseStation () {
       this.loading.baseStationLoading = true
       try {
-        const response = await axios.get(api.location.baseStation)
-        return response.data.data.list
+        // const response = await axios.get(api.location.baseStation)
+        const response = [
+          {
+            longitude: 116.38,
+            latitude: 39.9
+          },
+          {
+            longitude: 116.39,
+            latitude: 39.9
+          },
+          {
+            longitude: 116.383,
+            latitude: 39.886
+          },
+          {
+            longitude: 116.378,
+            latitude: 39.902
+          },
+          {
+            longitude: 116.369,
+            latitude: 39.91
+          },
+          {
+            longitude: 116.38,
+            latitude: 39.91
+          }
+        ]
+        return response // response.data.data.list
       } catch (e) {
         this.errorMsgHandler(e)
         console.error(e)
@@ -356,9 +389,76 @@ export default {
       }
       return []
     },
+    async queryMapFollowedSubscriber () {
+      this.loading.timeBarLoading = true
+      console.info(this.timeFilter)
+      console.info(this.minuteTimeFilter)
+      try {
+        const response = await axios.get(api.location.followedSubscriber, { params: this.minuteTimeFilter })
+        return response.data.data.list
+      } catch (e) {
+        this.errorMsgHandler(e)
+        console.error(e)
+      } finally {
+        this.loading.timeBarLoading = false
+      }
+      return []
+    },
+    renderMarker (data, type) {
+      let svg
+      if (type === this.tooltipType.baseStation) {
+        svg = '<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M164.901926 519.585185a391.35763 391.35763 0 0 1-30.151111-152.38637c0-52.527407 10.05037-105.054815 30.151111-152.348445 15.094519-47.29363 45.283556-89.353481 80.516741-126.103703L174.990222 15.17037C129.706667 62.464 94.511407 114.991407 69.328593 178.062222 44.183704 241.095111 34.133333 304.165926 34.133333 367.198815c0 63.070815 10.05037 131.375407 35.19526 189.174518 25.182815 57.799111 60.378074 115.598222 105.661629 162.891852l70.428445-73.576296c-35.233185-36.788148-65.422222-78.810074-80.516741-126.103704z" p-id="8786" fill="#ffffff"></path><path d="M255.469037 477.563259c15.094519 36.788148 35.195259 68.266667 60.340148 94.549334l70.428445-73.576297a233.168593 233.168593 0 0 1-40.201482-57.761185c-5.044148-26.282667-10.088296-47.29363-10.088296-73.576296 0-26.244741 5.044148-47.29363 15.094518-68.266667 5.006222-26.282667 20.100741-42.097778 35.19526-63.070815l-70.428445-73.576296c-25.144889 26.282667-45.24563 57.799111-60.340148 94.587259-15.094519 36.788148-20.100741 73.576296-20.100741 110.364445 0 36.788148 5.006222 73.53837 20.100741 110.326518zM436.527407 367.198815c0 43.538963 33.792 78.810074 75.472593 78.810074s75.472593-35.271111 75.472593-78.810074c0-43.501037-33.792-78.810074-75.472593-78.810074s-75.472593 35.271111-75.472593 78.810074zM637.76237 498.574222l70.428445 73.576297c25.144889-26.282667 45.24563-57.837037 60.340148-94.58726 15.094519-36.788148 20.100741-73.576296 20.100741-110.364444 0-36.788148-5.006222-73.576296-20.100741-110.364445-15.094519-36.750222-35.195259-68.266667-60.340148-94.549333l-70.428445 73.576296c15.094519 15.739259 30.189037 36.788148 40.201482 57.799111 10.088296 21.010963 15.132444 47.29363 15.132444 68.266667 0 26.282667-5.044148 47.331556-15.094518 68.342519-10.05037 31.516444-25.144889 47.29363-40.239408 68.266666z" p-id="8787" fill="#ffffff"></path><path d="M954.671407 178.062222C929.488593 114.991407 894.293333 62.464 849.009778 15.17037L778.619259 88.746667c35.233185 36.788148 60.378074 78.810074 80.516741 126.103703 20.100741 47.255704 30.151111 99.821037 30.151111 152.348445 0 52.565333-10.05037 105.092741-30.151111 152.38637-20.100741 47.29363-45.283556 89.315556-80.516741 126.103704l70.428445 73.576296c45.283556-47.29363 80.478815-99.858963 105.661629-162.891852 25.144889-63.070815 35.195259-126.103704 35.19526-189.174518 0-63.032889-10.05037-131.337481-35.19526-189.136593zM210.185481 1024h603.629038L512 551.10163 210.185481 1024z m186.102519-105.054815L512 740.238222l115.674074 178.631111h-231.348148z" fill="#ffffff"></path></svg>'
+      } else if (type === this.tooltipType.human) {
+        svg = '<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M366.689524 690.468571l87.283809 83.821715-75.434666 195.486476c-10.971429 27.794286-43.105524 42.081524-72.265143 32.036571-29.159619-10.24-44.080762-41.252571-33.450667-69.241904L366.689524 690.468571zM203.824762 476.306286l51.785143-95.183238a162.279619 162.279619 0 0 1 59.245714-59.977143c119.710476-68.266667 134.777905-67.291429 149.942857-66.218667l80.798476 5.168762c24.868571 0.975238 42.081524 7.314286 125.025524 124.14781a21.26019 21.26019 0 0 0 14.092191 8.289523l99.132952 14.482286c12.873143 1.852952 24.478476 8.582095 32.182857 18.67581a45.494857 45.494857 0 0 1 8.825905 35.108571 46.665143 46.665143 0 0 1-19.504762 30.866286 50.468571 50.468571 0 0 1-36.571429 8.435809l-99.181714-14.433524a119.954286 119.954286 0 0 1-79.774476-47.640381c-4.388571-6.241524-7.558095-11.361524-11.849143-16.579047l-63.634286 193.487238 88.405334 84.845714c12.970667 12.385524 23.698286 29.013333 30.232381 45.494857l67.876571 190.366477c5.022476 13.409524 4.193524 28.233143-2.291809 41.057523a54.613333 54.613333 0 0 1-32.182858 27.160381c-5.851429 2.048-12.092952 3.120762-18.383238 3.169524a58.075429 58.075429 0 0 1-53.930666-36.181333l-67.876572-190.366476c-1.024-2.096762-2.096762-3.120762-3.218285-5.168762L365.616762 623.177143a84.894476 84.894476 0 0 1-24.868572-80.700953l34.523429-146.919619c-3.413333 2.340571-7.070476 4.388571-10.776381 6.290286a58.806857 58.806857 0 0 0-22.674286 22.723048L290.133333 519.801905a49.834667 49.834667 0 0 1-43.105523 24.819809 59.977143 59.977143 0 0 1-22.674286-5.12 46.518857 46.518857 0 0 1-20.48-63.146666z m209.67619-360.448C420.08381 58.465524 473.86819 17.066667 533.650286 23.30819 593.383619 29.549714 636.537905 81.13981 630.00381 138.48381c-6.534095 57.392762-60.269714 98.840381-120.05181 92.550095-59.782095-6.241524-102.985143-57.782857-96.451048-115.175619z" fill="#ffffff"></path></svg>'
+      }
+      data.forEach(marker => {
+        const el = document.createElement('div')
+        el.className = `map-marker map-marker--${type}`
+        el.innerHTML = svg
+        // 鼠标事件，控制tooltip显示和marker尺寸
+        el.addEventListener('mouseenter', e => {
+          this.markerDom = el
+          if (!this.tooltip.mouseInMarkerOrTooltip) {
+            this.tooltip.x = e.clientX + 15 - e.offsetX
+            this.tooltip.y = e.clientY + 15 - e.offsetY
+          }
+          this.tooltip.mouseInMarkerOrTooltip = true
+          this.tooltip.type = this.tooltipType.baseStation
+          this.tooltip.showMarkerTooltip = true
+          el.classList.add('map-marker--hover')
+        })
+        el.addEventListener('mouseleave', event => {
+          const tooltipDom = document.getElementById('tooltip')
+          if (!tooltipDom.contains(event.relatedTarget)) {
+            el.classList.remove('map-marker--hover')
+            this.tooltip.mouseInMarkerOrTooltip = false
+            this.tooltip.showMarkerTooltip = false
+          }
+        })
+
+        new maplibregl.Marker({ element: el })
+          .setLngLat([marker.longitude, marker.latitude])
+          .addTo(this.mapChart)
+      })
+    },
+    updateBoundaryBox () {
+      const boundaryBox = this.mapChart.getBounds()
+      /*this.boundaryBox = {
+        maxLongitude: boundaryBox.getEast(),
+        maxLatitude: boundaryBox.getNorth(),
+        minLongitude: boundaryBox.getWest(),
+        minLatitude: boundaryBox.getSouth()
+      }*/
+      this.boundaryBox = {
+        maxLongitude: 140,
+        maxLatitude: 50,
+        minLongitude: 100,
+        minLatitude: 30
+      }
+    },
     // 先使用min=0的等宽分组法，若后续出现特大或特小的异常值导致等宽分组效果不理想，考虑用分位数分组法
     calculateValueRamp (data) {
-      const max = _.maxBy(data, d => d.number)
+      const max = _.maxBy(data, d => Number(d.number))
       const maxLength = String(max.number).length
       const maxLegend = Math.ceil(max.number / Math.pow(10, maxLength - 1)) * Math.pow(10, maxLength - 1)
       const result = []
@@ -395,7 +495,7 @@ export default {
       }
     },
     getHexagonFillColor (number) {
-      const ramp = this.pieValueRamp.filter(r => number >= r.start && number < r.end)
+      const ramp = this.pieValueRamp.filter(r => Number(number) >= r.start && Number(number) <= r.end)
       if (ramp.length > 0) {
         return ramp[0].color.split(',').map(n => Number(n))
       }
@@ -413,7 +513,7 @@ export default {
         hoverTrigger('hexGrid', _this.currentPolygon.id, false)
       })
       this.mapChart.on('mousemove', 'hexagon', ({ point, originalEvent, features }) => {
-        if (!_this.tooltip.mouseIsInMarker) {
+        if (!_this.tooltip.mouseInMarkerOrTooltip) {
           _this.tooltip.showPolygonTooltip = true
           _this.tooltip.type = _this.tooltipType.hexagon
           if (_this.tooltip.type === _this.tooltipType.hexagon && _this.currentPolygon.id && _this.currentPolygon.id !== features[0].id) {
@@ -434,10 +534,16 @@ export default {
       }
     },
     tooltipMouseEnter () {
+      this.tooltip.mouseInMarkerOrTooltip = true
     },
     tooltipMouseMove () {
     },
-    tooltipMouseLeave () {
+    tooltipMouseLeave (event) {
+      if (this.markerDom && !this.markerDom.contains(event.relatedTarget)) {
+        this.tooltip.mouseInMarkerOrTooltip = false
+        this.tooltip.showMarkerTooltip = false
+        this.markerDom.classList.remove('map-marker--hover')
+      }
     },
     reload (startTime, endTime, dateRangeValue) {
       this.timeFilter = { startTime: getSecond(startTime), endTime: getSecond(endTime), dateRangeValue: dateRangeValue }
@@ -467,6 +573,9 @@ export default {
     }
   },
   watch: {
+    activeTab (n) {
+
+    }
   },
   computed: {
     tooltipHeaderColor () {
@@ -520,7 +629,7 @@ export default {
       timeFilter.value.startTime = parseInt(startTimeParam)
       timeFilter.value.endTime = parseInt(endTimeParam)
     }
-    const minuteTimeFilter = ref({ startTime: timeFilter.value.startTime - 60, endTime: timeFilter.value.endTime })
+    const minuteTimeFilter = ref({ startTime: timeFilter.value.endTime - 60, endTime: timeFilter.value.endTime })
     const tooltip = ref({
       type: ''
     })
@@ -556,6 +665,7 @@ export default {
       pieValueRamp, // 饼图数值坡度，动态获取
       boundaryBox, // 查六边形的范围，minLongitude、maxLongitude、minLatitude、maxLatitude
       mapChart, // 地图对象
+      markerDom: shallowRef(null), // 记录当前鼠标悬停的marker的dom
       pieChart, // 饼图对象
       pieOption,
       lineChart, // 折线图对象
@@ -643,17 +753,41 @@ export default {
         border-radius: 50%;
         cursor: default;
         padding: 0;
+        transition: height .1s linear, width .1s linear;
+
+        svg {
+          transition: height .1s linear, width .1s linear;
+        }
 
         &.map-marker--human {
           background-color: #233447;
+
+          svg {
+            width: 14px;
+            height: 14px;
+          }
         }
         &.map-marker--base-station {
           background-color: #585B5F;
+
+          svg {
+            width: 12px;
+            height: 12px;
+          }
         }
         &.map-marker--hover {
           width: 36px;
           height: 36px;
           border: 2px solid rgba(255,255,255,1);
+
+          &.map-marker--human svg {
+            width: 23px;
+            height: 23px;
+          }
+          &.map-marker--base-station svg {
+            width: 20px;
+            height: 20px;
+          }
         }
       }
     }
