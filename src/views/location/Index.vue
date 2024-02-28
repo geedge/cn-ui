@@ -106,19 +106,19 @@
         <template v-if="tooltip.type === tooltipType.hexagon">
           <div class="body__item">
             <div class="item__label">Number</div>
-            <div class="item__value">{{currentPolygon.count}}</div>
+            <div class="item__value">{{currentPolygon.number}}</div>
           </div>
           <div class="body__item">
             <div class="item__label">Locals</div>
-            <div class="item__value">{{currentPolygon.count}}</div>
+            <div class="item__value">{{currentPolygon.number}}</div>
           </div>
           <div class="body__item">
             <div class="item__label">Visitors</div>
-            <div class="item__value">{{currentPolygon.count}}</div>
+            <div class="item__value">{{currentPolygon.number}}</div>
           </div>
           <div class="body__item">
             <div class="item__label">Roamers</div>
-            <div class="item__value">{{currentPolygon.count}}</div>
+            <div class="item__value">{{currentPolygon.number}}</div>
           </div>
         </template>
         <template v-else-if="tooltip.type === tooltipType.human">
@@ -171,8 +171,6 @@
 import { ref, shallowRef } from 'vue'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import maplibregl from 'maplibre-gl'
-import { MapboxOverlay } from '@deck.gl/mapbox'
-import { H3HexagonLayer } from '@deck.gl/geo-layers'
 import mapStyle from '@/views/charts2/charts/entityDetail/mapStyle'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { valueToRangeValue } from '@/utils/unit-convert'
@@ -185,9 +183,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import {
-  geoToH3
-} from 'h3-js'
+import { h3ToGeoBoundary } from 'h3-js'
 
 export default {
   name: 'Location',
@@ -235,41 +231,39 @@ export default {
       // 最先渲染右上角饼图
       await this.renderDensityPie()
       // 然后渲染地图的色块、基站、人（包括右侧关注列表），最后渲染右上角折线图
-      map.on('load', function () {
+      map.on('load', async function () {
         console.info('map loaded')
-        // 地图色块
-        const hexagonData = _this.queryHexagon()
-        const hexagon = new MapboxOverlay({
-          layers: [
-            new H3HexagonLayer({
-              id: 'hex',
-              data: hexagonData,
-              elevationScale: 20,
-              extruded: false,
-              filled: true,
-              getFillColor: d => _this.getHexagonFillColor(d.number),
-              getLineColor: d => _this.getHexagonLineColor(d.number),
-              getLineWidth: 10,
-              getHexagon: d => d.hexId,
-              wireframe: false,
-              pickable: true
-            })
-          ]
+        /* 地图色块 */
+        const hexagonData = await _this.queryHexagon()
+        // 将查到的h3hexagon数据转为geojson
+        const polygonSourceData = _this.hexagonDataConverter(hexagonData)
+        map.addSource('hexGrid', {
+          type: 'geojson',
+          data: polygonSourceData
         })
-        map.addControl(hexagon)
+        // TODO 六边形边框，考虑加一层line layer
+        map.addLayer({
+          id: 'hexagon',
+          type: 'fill',
+          source: 'hexGrid',
+          layout: {},
+          paint: {
+            'fill-color': ['get', 'color'],
+            'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 1, 0.6]
+          }
+        })
+        // 六边形的鼠标事件
+        _this.bindHexagonEvents()
 
-        // 地图上的基站
+        /* 地图上的基站 */
+        const baseStationData = await _this.queryBaseStation()
+        /* 地图上的人 */
 
-        // 地图上的人
+        /* 右侧关注列表 */
 
-        // 右侧关注列表
-
-        // 右上角折线图
+        /* 右上角折线图 */
         _this.renderActiveSubscribersLine()
       })
-      function hoverTrigger (source, id, hover) {
-        map.setFeatureState({ source, id }, { hover })
-      }
     },
     async renderDensityPie () {
       const params = {
@@ -349,6 +343,19 @@ export default {
       }
       return []
     },
+    async queryBaseStation () {
+      this.loading.baseStationLoading = true
+      try {
+        const response = await axios.get(api.location.baseStation)
+        return response.data.data.list
+      } catch (e) {
+        this.errorMsgHandler(e)
+        console.error(e)
+      } finally {
+        this.loading.hexagonLoading = false
+      }
+      return []
+    },
     // 先使用min=0的等宽分组法，若后续出现特大或特小的异常值导致等宽分组效果不理想，考虑用分位数分组法
     calculateValueRamp (data) {
       const max = _.maxBy(data, d => d.number)
@@ -366,6 +373,27 @@ export default {
       }
       return result
     },
+    hexagonDataConverter (data) {
+      const features = data.map((d, i) => ({
+        id: i + 1,
+        type: 'Feature',
+        geometry: {
+          type: 'Polygon',
+          coordinates: [
+            h3ToGeoBoundary(d.hexId, true)
+          ]
+        },
+        properties: {
+          hexId: d.hexId,
+          number: d.number,
+          color: this.getHexagonFillColor(d.number)
+        }
+      }))
+      return {
+        type: 'FeatureCollection',
+        features: features
+      }
+    },
     getHexagonFillColor (number) {
       const ramp = this.pieValueRamp.filter(r => number >= r.start && number < r.end)
       if (ramp.length > 0) {
@@ -373,12 +401,37 @@ export default {
       }
       return [255, 255, 255]
     },
-    getHexagonLineColor (number) {
-      const ramp = this.pieValueRamp.filter(r => number >= r.start && number < r.end)
-      if (ramp.length > 0) {
-        return ramp[0].color.split(',').map(n => n / 1.5)
+    bindHexagonEvents () {
+      const _this = this
+      this.mapChart.on('mouseenter', 'hexagon', () => {
+        _this.tooltip.mouseIsInPolygon = true
+      })
+      this.mapChart.on('mouseleave', 'hexagon', () => {
+        _this.tooltip.showPolygonTooltip = false
+        _this.tooltip.mouseIsInPolygon = false
+        // 去掉上一块的高亮
+        hoverTrigger('hexGrid', _this.currentPolygon.id, false)
+      })
+      this.mapChart.on('mousemove', 'hexagon', ({ point, originalEvent, features }) => {
+        if (!_this.tooltip.mouseIsInMarker) {
+          _this.tooltip.showPolygonTooltip = true
+          _this.tooltip.type = _this.tooltipType.hexagon
+          if (_this.tooltip.type === _this.tooltipType.hexagon && _this.currentPolygon.id && _this.currentPolygon.id !== features[0].id) {
+            // 去掉上一块的高亮
+            hoverTrigger('hexGrid', _this.currentPolygon.id, false)
+          }
+          _this.currentPolygon = features[0].properties
+          _this.currentPolygon.id = features[0].id
+          _this.tooltip.x = originalEvent.clientX + 15
+          _this.tooltip.y = originalEvent.clientY + 5
+
+          // 鼠标滑过高亮
+          hoverTrigger('hexGrid', _this.currentPolygon.id, true)
+        }
+      })
+      function hoverTrigger (source, id, hover) {
+        _this.mapChart.setFeatureState({ source, id }, { hover })
       }
-      return [255, 255, 255]
     },
     tooltipMouseEnter () {
     },
@@ -418,7 +471,10 @@ export default {
   computed: {
     tooltipHeaderColor () {
       if (this.tooltip.type === this.tooltipType.hexagon) {
-        return `rgba(${this.pieColorRamp[this.currentPolygon.level]},.8)`
+        const color = this.currentPolygon.color.split(',')
+        color[0] = color[0].split('[')[1]
+        color[2] = color[2].split(']')[0]
+        return `rgba(${color.join(',')},.8)`
       } else if (this.tooltip.type === this.tooltipType.human) {
         return '#38ACD2'
       } else if (this.tooltip.type === this.tooltipType.baseStation) {
@@ -469,7 +525,8 @@ export default {
       type: ''
     })
     // const pieColorRamp = ['186,224,255', '105,177,255', '22,119,255', '0,62,179', '0,29,102']
-    const pieColorRamp = ['156,174,29', '241,198,0', '89,202,242', '63,133,186', '37,55,128']
+    // const pieColorRamp = ['156,174,29', '241,198,0', '89,202,242', '63,133,186', '37,55,128']
+    const pieColorRamp = ['196,214,59', '190,230,255', '135,206,250', '63,133,186', '37,55,128']
     const pieValueRamp = ref([])
     const boundaryBox = ref({}) // minLongitude、maxLongitude、minLatitude、maxLatitude
     const mapChart = shallowRef({})
@@ -534,6 +591,9 @@ export default {
   padding: 0 20px 20px;
   position: relative;
 
+  .maplibregl-canvas:focus-visible {
+    outline: none;
+  }
   .geo-tools {
     position: absolute;
     display: flex;

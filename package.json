@@ -26,6 +26,7 @@
     "dexie": "~3.2.0",
     "echarts": "^5.1.1",
     "element-plus": "~1.0.2-beta.71",
+    "h3-js": "~3.7.2",
     "lib-flexible": "^0.3.2",
     "lodash": "^4.17.21",
     "maplibre-gl": "3.6.2",

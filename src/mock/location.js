@@ -300,4 +300,38 @@ if (openMock) {
       }
     }
   })
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'v1/locationIntelligence/baseStation.*'), 'get', function (requestObj) {
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        list: [
+          {
+            longitude: 116.38,
+            latitude: 39.9
+          },
+          {
+            longitude: 116.39,
+            latitude: 39.9
+          },
+          {
+            longitude: 116.383,
+            latitude: 39.886
+          },
+          {
+            longitude: 116.378,
+            latitude: 39.902
+          },
+          {
+            longitude: 116.369,
+            latitude: 39.91
+          },
+          {
+            longitude: 116.38,
+            latitude: 39.91
+          }
+        ]
+      }
+    }
+  })
 }
