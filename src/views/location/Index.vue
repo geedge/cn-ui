@@ -278,7 +278,7 @@ export default {
         const option = _.cloneDeep(pieOption)
         option.color = this.pieColorRamp.map(c => `rgb(${c})`)
         option.series[0].data = this.pieValueRamp.map((r, i) => ({
-          name: `p${i}`,
+          name: `${r.start}~${r.end}`,
           value: r.count
         }))
         this.pieOption = option
