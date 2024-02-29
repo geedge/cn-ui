@@ -4,6 +4,7 @@
       <el-tab-pane :label="$t('geo.locationMap')" name="locationMap"></el-tab-pane>
       <el-tab-pane :label="$t('geo.traceTracking')" name="traceTracking"></el-tab-pane>
     </el-tabs>
+    <!-- 右上角工具栏 -->
     <div class="geo-tools">
       <el-input size="mini" style="margin-right: 10px; width: 200px;" placeholder="Press Enter to Search"></el-input>
       <div class="panel__time">
@@ -23,62 +24,92 @@
       </div>
     </div>
     <div class="geo-analysis__container">
+      <!-- 左侧地图 -->
       <div class="analysis-map" id="analysisMap"></div>
+      <!-- 右侧数据栏-map -->
       <div class="analysis-statistics" v-show="activeTab === 'locationMap'">
-          <div class="analysis-statistics__chart">
-            <div class="chart__header">{{$t('locationIntelligence.populationDensity')}}</div>
-            <div class="chart__body">
-              <div class="chart__drawing" id="populationDensityChart"></div>
-              <div class="chart__legend">
-                <div v-for="legend in pieValueRamp" class="legend-item" :key="legend.color">
-                  <div class="legend-icon" :style="`background:rgb(${legend.color});`"></div>
-                  <div class="legend-range" >{{legend.start}}~{{legend.end}}</div>
-                  <div class="legend-count">{{legend.count}}</div>
-                </div>
+        <div class="analysis-statistics__chart">
+          <div class="chart__header">{{$t('locationIntelligence.populationDensity')}}</div>
+          <div class="chart__body">
+            <div class="chart__drawing" id="populationDensityChart"></div>
+            <div class="chart__legend">
+              <div v-for="legend in pieValueRamp" class="legend-item" :key="legend.color">
+                <div class="legend-icon" :style="`background:rgb(${legend.color});`"></div>
+                <div class="legend-range" >{{legend.start}}~{{legend.end}}</div>
+                <div class="legend-count">{{legend.count}}</div>
               </div>
             </div>
-          </div>
-          <div class="analysis-statistics__chart">
-            <div class="chart__header">{{$t('locationIntelligence.activeSubscribers')}}</div>
-            <div class="chart__statistics">
-              <div class="statistics-number">{{activeCount}}</div>
-              <div class="statistics-trend">-{{valueToRangeValue(activeCountChain, unitTypes.percent).join(' ')}}</div>
-            </div>
-            <div class="chart-line__drawing" id="activeSubscribersChart"></div>
-          </div>
-          <div class="analysis-statistics__title">Followed Subscribers</div>
-          <div class="analysis-statistics__subscribers">
-            <template v-for="item in 8">
-              <div class="analysis-statistics__subscriber">
-                <div class="subscriber__header">
-                  <div class="header__icon">
-                    <div class="icon__box">
-                      <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M366.689524 690.468571l87.283809 83.821715-75.434666 195.486476c-10.971429 27.794286-43.105524 42.081524-72.265143 32.036571-29.159619-10.24-44.080762-41.252571-33.450667-69.241904L366.689524 690.468571zM203.824762 476.306286l51.785143-95.183238a162.279619 162.279619 0 0 1 59.245714-59.977143c119.710476-68.266667 134.777905-67.291429 149.942857-66.218667l80.798476 5.168762c24.868571 0.975238 42.081524 7.314286 125.025524 124.14781a21.26019 21.26019 0 0 0 14.092191 8.289523l99.132952 14.482286c12.873143 1.852952 24.478476 8.582095 32.182857 18.67581a45.494857 45.494857 0 0 1 8.825905 35.108571 46.665143 46.665143 0 0 1-19.504762 30.866286 50.468571 50.468571 0 0 1-36.571429 8.435809l-99.181714-14.433524a119.954286 119.954286 0 0 1-79.774476-47.640381c-4.388571-6.241524-7.558095-11.361524-11.849143-16.579047l-63.634286 193.487238 88.405334 84.845714c12.970667 12.385524 23.698286 29.013333 30.232381 45.494857l67.876571 190.366477c5.022476 13.409524 4.193524 28.233143-2.291809 41.057523a54.613333 54.613333 0 0 1-32.182858 27.160381c-5.851429 2.048-12.092952 3.120762-18.383238 3.169524a58.075429 58.075429 0 0 1-53.930666-36.181333l-67.876572-190.366476c-1.024-2.096762-2.096762-3.120762-3.218285-5.168762L365.616762 623.177143a84.894476 84.894476 0 0 1-24.868572-80.700953l34.523429-146.919619c-3.413333 2.340571-7.070476 4.388571-10.776381 6.290286a58.806857 58.806857 0 0 0-22.674286 22.723048L290.133333 519.801905a49.834667 49.834667 0 0 1-43.105523 24.819809 59.977143 59.977143 0 0 1-22.674286-5.12 46.518857 46.518857 0 0 1-20.48-63.146666z m209.67619-360.448C420.08381 58.465524 473.86819 17.066667 533.650286 23.30819 593.383619 29.549714 636.537905 81.13981 630.00381 138.48381c-6.534095 57.392762-60.269714 98.840381-120.05181 92.550095-59.782095-6.241524-102.985143-57.782857-96.451048-115.175619z" fill="#ffffff"></path></svg>
-                    </div>
-                  </div>
-                  <div class="header__title">MSISDN</div>
-                  <div class="header__content">15557777000</div>
-                </div>
-                <div class="subscriber__body">
-                  <div class="body__item">
-                    <div class="item__label">Group</div>
-                    <div class="item__value">Terrorist</div>
-                  </div>
-                  <div class="body__item">
-                    <div class="item__label">Info</div>
-                    <div class="item__value">Leader</div>
-                  </div>
-                  <div class="body__item">
-                    <div class="item__label">Location</div>
-                    <div class="item__value">China, Shanghai</div>
-                  </div>
-                </div>
-              </div>
-            </template>
           </div>
         </div>
+        <div class="analysis-statistics__chart">
+          <div class="chart__header">{{$t('locationIntelligence.activeSubscribers')}}</div>
+          <div class="chart__statistics">
+            <div class="statistics-number">{{activeCount}}</div>
+            <div class="statistics-trend">-{{valueToRangeValue(activeCountChain, unitTypes.percent).join(' ')}}</div>
+          </div>
+          <div class="chart-line__drawing" id="activeSubscribersChart"></div>
+        </div>
+        <div class="analysis-statistics__title">Followed Subscribers</div>
+        <div class="analysis-statistics__subscribers">
+          <template v-for="item in 8">
+            <div class="analysis-statistics__subscriber">
+              <div class="subscriber__header">
+                <div class="header__icon">
+                  <div class="icon__box">
+                    <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M366.689524 690.468571l87.283809 83.821715-75.434666 195.486476c-10.971429 27.794286-43.105524 42.081524-72.265143 32.036571-29.159619-10.24-44.080762-41.252571-33.450667-69.241904L366.689524 690.468571zM203.824762 476.306286l51.785143-95.183238a162.279619 162.279619 0 0 1 59.245714-59.977143c119.710476-68.266667 134.777905-67.291429 149.942857-66.218667l80.798476 5.168762c24.868571 0.975238 42.081524 7.314286 125.025524 124.14781a21.26019 21.26019 0 0 0 14.092191 8.289523l99.132952 14.482286c12.873143 1.852952 24.478476 8.582095 32.182857 18.67581a45.494857 45.494857 0 0 1 8.825905 35.108571 46.665143 46.665143 0 0 1-19.504762 30.866286 50.468571 50.468571 0 0 1-36.571429 8.435809l-99.181714-14.433524a119.954286 119.954286 0 0 1-79.774476-47.640381c-4.388571-6.241524-7.558095-11.361524-11.849143-16.579047l-63.634286 193.487238 88.405334 84.845714c12.970667 12.385524 23.698286 29.013333 30.232381 45.494857l67.876571 190.366477c5.022476 13.409524 4.193524 28.233143-2.291809 41.057523a54.613333 54.613333 0 0 1-32.182858 27.160381c-5.851429 2.048-12.092952 3.120762-18.383238 3.169524a58.075429 58.075429 0 0 1-53.930666-36.181333l-67.876572-190.366476c-1.024-2.096762-2.096762-3.120762-3.218285-5.168762L365.616762 623.177143a84.894476 84.894476 0 0 1-24.868572-80.700953l34.523429-146.919619c-3.413333 2.340571-7.070476 4.388571-10.776381 6.290286a58.806857 58.806857 0 0 0-22.674286 22.723048L290.133333 519.801905a49.834667 49.834667 0 0 1-43.105523 24.819809 59.977143 59.977143 0 0 1-22.674286-5.12 46.518857 46.518857 0 0 1-20.48-63.146666z m209.67619-360.448C420.08381 58.465524 473.86819 17.066667 533.650286 23.30819 593.383619 29.549714 636.537905 81.13981 630.00381 138.48381c-6.534095 57.392762-60.269714 98.840381-120.05181 92.550095-59.782095-6.241524-102.985143-57.782857-96.451048-115.175619z" fill="#ffffff"></path></svg>
+                  </div>
+                </div>
+                <div class="header__title">MSISDN</div>
+                <div class="header__content">15557777000</div>
+              </div>
+              <div class="subscriber__body">
+                <div class="body__item">
+                  <div class="item__label">Group</div>
+                  <div class="item__value">Terrorist</div>
+                </div>
+                <div class="body__item">
+                  <div class="item__label">Info</div>
+                  <div class="item__value">Leader</div>
+                </div>
+                <div class="body__item">
+                  <div class="item__label">Location</div>
+                  <div class="item__value">China, Shanghai</div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+      <!-- 右侧数据栏-trace -->
+      <div class="analysis-statistics" v-show="activeTab === 'traceTracking'">
+        <div class="analysis-statistics__subscribers">
+          <template v-for="subscriber in trackingSubscribers" :key="subscriber.subscriberId">
+            <div class="analysis-statistics__subscriber">
+              <div class="subscriber__header">
+                <div class="header__icon">
+                  <div class="icon__box">
+                    <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M366.689524 690.468571l87.283809 83.821715-75.434666 195.486476c-10.971429 27.794286-43.105524 42.081524-72.265143 32.036571-29.159619-10.24-44.080762-41.252571-33.450667-69.241904L366.689524 690.468571zM203.824762 476.306286l51.785143-95.183238a162.279619 162.279619 0 0 1 59.245714-59.977143c119.710476-68.266667 134.777905-67.291429 149.942857-66.218667l80.798476 5.168762c24.868571 0.975238 42.081524 7.314286 125.025524 124.14781a21.26019 21.26019 0 0 0 14.092191 8.289523l99.132952 14.482286c12.873143 1.852952 24.478476 8.582095 32.182857 18.67581a45.494857 45.494857 0 0 1 8.825905 35.108571 46.665143 46.665143 0 0 1-19.504762 30.866286 50.468571 50.468571 0 0 1-36.571429 8.435809l-99.181714-14.433524a119.954286 119.954286 0 0 1-79.774476-47.640381c-4.388571-6.241524-7.558095-11.361524-11.849143-16.579047l-63.634286 193.487238 88.405334 84.845714c12.970667 12.385524 23.698286 29.013333 30.232381 45.494857l67.876571 190.366477c5.022476 13.409524 4.193524 28.233143-2.291809 41.057523a54.613333 54.613333 0 0 1-32.182858 27.160381c-5.851429 2.048-12.092952 3.120762-18.383238 3.169524a58.075429 58.075429 0 0 1-53.930666-36.181333l-67.876572-190.366476c-1.024-2.096762-2.096762-3.120762-3.218285-5.168762L365.616762 623.177143a84.894476 84.894476 0 0 1-24.868572-80.700953l34.523429-146.919619c-3.413333 2.340571-7.070476 4.388571-10.776381 6.290286a58.806857 58.806857 0 0 0-22.674286 22.723048L290.133333 519.801905a49.834667 49.834667 0 0 1-43.105523 24.819809 59.977143 59.977143 0 0 1-22.674286-5.12 46.518857 46.518857 0 0 1-20.48-63.146666z m209.67619-360.448C420.08381 58.465524 473.86819 17.066667 533.650286 23.30819 593.383619 29.549714 636.537905 81.13981 630.00381 138.48381c-6.534095 57.392762-60.269714 98.840381-120.05181 92.550095-59.782095-6.241524-102.985143-57.782857-96.451048-115.175619z" fill="#ffffff"></path></svg>
+                  </div>
+                </div>
+                <div class="header__title">MSISDN</div>
+                <div class="header__content">{{subscriber.trackRecords && subscriber.trackRecords[0] && subscriber.trackRecords[0].phoneNumber}}</div>
+              </div>
+              <div class="subscriber__body">
+                <div class="body__item">
+                  <div class="item__label">Group</div>
+                  <div class="item__value">Terrorist</div>
+                </div>
+                <div class="body__item">
+                  <div class="item__label">Info</div>
+                  <div class="item__value">Leader</div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
     </div>
-    <div class="geo-analysis__hexagon-tooltip" id="tooltip" :class="`geo-analysis__hexagon-tooltip--${tooltip.type}`" v-if="tooltip.showMarkerTooltip || tooltip.showPolygonTooltip" :style="{'left': `${tooltip.x}px`, 'top': `${tooltip.y}px`}" @mouseenter="tooltipMouseEnter" @mouseleave="tooltipMouseLeave" @mousemove="tooltipMouseMove">
+    <div class="geo-analysis__hexagon-tooltip" id="tooltip" :class="`geo-analysis__hexagon-tooltip--${tooltip.type}`" v-if="tooltip.showMarkerTooltip || tooltip.showPolygonTooltip" :style="{'left': `${tooltip.x}px`, 'top': `${tooltip.y}px`}" @mouseenter="tooltipMouseEnter" @mouseleave="tooltipMouseLeave">
       <div class="hexagon-tooltip__header" :style="`background-color: ${tooltipHeaderColor}`">
         <div class="header__icon">
           <svg v-if="tooltip.type === tooltipType.hexagon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="36" height="36"><path d="M747.52 921.088H277.504L42.496 514.048l235.008-407.04H747.52l235.008 407.04-235.008 407.04z m-425.472-76.8h381.44l190.464-330.24-190.464-330.24h-381.44l-190.464 330.24 190.464 330.24z" fill="#fff"></path></svg>
@@ -175,7 +206,7 @@ import maplibregl from 'maplibre-gl'
 import mapStyle from '@/views/charts2/charts/entityDetail/mapStyle'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { valueToRangeValue } from '@/utils/unit-convert'
-import { unitTypes } from '@/utils/constants'
+import { unitTypes, storageKey } from '@/utils/constants'
 import * as echarts from 'echarts'
 import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
 import { pieOption } from '@/views/location/chartOption'
@@ -202,75 +233,88 @@ export default {
   methods: {
     valueToRangeValue,
     async initMap () {
-      console.info(h3ToGeo('8931aa42cb7ffff'))
       const _this = this
-      const map = new maplibregl.Map({
-        container: 'analysisMap',
-        style: mapStyle,
-        center: this.center,
-        maxZoom: this.maxZoom,
-        minZoom: this.minZoom,
-        zoom: this.defaultZoom
-      })
-      maplibregl.addProtocol('cn', (params, callback) => { // 切片显示接口 防止跨域的问题
-        fetch(`${params.url.split('://')[1]}`)
-          .then(t => {
-            if (t.status == 200) {
-              t.arrayBuffer().then(arr => {
-                callback(null, arr, null, null)
-              })
-            } else {
-              callback(new Error(`Tile fetch error: ${t.statusText}`))
-            }
-          })
-          .catch(e => {
-            callback(new Error(e))
-          })
-        return { cancel: () => { } }
-      })
-      this.mapChart = map
+      if (!this.mapChart) {
+        this.mapChart = new maplibregl.Map({
+          container: 'analysisMap',
+          style: mapStyle,
+          center: this.center,
+          maxZoom: this.maxZoom,
+          minZoom: this.minZoom,
+          zoom: this.defaultZoom
+        })
+        maplibregl.addProtocol('cn', (params, callback) => { // 切片显示接口 防止跨域的问题
+          fetch(`${params.url.split('://')[1]}`)
+            .then(t => {
+              if (t.status == 200) {
+                t.arrayBuffer().then(arr => {
+                  callback(null, arr, null, null)
+                })
+              } else {
+                callback(new Error(`Tile fetch error: ${t.statusText}`))
+              }
+            })
+            .catch(e => {
+              callback(new Error(e))
+            })
+          return { cancel: () => { } }
+        })
+      }
 
-      // 最先渲染右上角饼图
-      await this.renderDensityPie()
-      // 然后渲染地图的色块、基站、人（包括右侧关注列表），最后渲染右上角折线图
-      map.on('load', async function () {
+      this.mapChart.on('load', async function () {
         console.info('map loaded')
-        /* 地图色块 */
-        _this.updateBoundaryBox()
-        const hexagonData = await _this.queryHexagon()
-        // 将查到的h3hexagon数据转为geojson
-        const polygonSourceData = _this.hexagonDataConverter(hexagonData)
-        map.addSource('hexGrid', {
-          type: 'geojson',
-          data: polygonSourceData
-        })
-        // TODO 六边形边框，考虑加一层line layer
-        map.addLayer({
-          id: 'hexagon',
-          type: 'fill',
-          source: 'hexGrid',
-          layout: {},
-          paint: {
-            'fill-color': ['get', 'color'],
-            'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 1, 0.6]
-          }
-        })
-        // 六边形的鼠标事件
-        _this.bindHexagonEvents()
-
-        /* 地图上的基站 */
+        // 加载地图上的基站，基站不随tab的切换而改变
         const baseStationData = await _this.queryBaseStation()
         _this.renderMarker(baseStationData, _this.tooltipType.baseStation)
 
-        /* 地图上的人 */
-        const mapFollowedSubscriberData = await _this.queryMapFollowedSubscriber()
-        _this.renderMarker(mapFollowedSubscriberData, _this.tooltipType.human)
-
-        /* 右侧关注列表 */
-
-        /* 右上角折线图 */
-        await _this.renderActiveSubscribersLine()
+        if (_this.activeTab === 'locationMap') {
+          await _this.initLocationMapTab()
+        } else if (_this.activeTab === 'traceTracking') {
+          await _this.initTraceTrackingTab()
+        }
       })
+    },
+    async initLocationMapTab () {
+      // 最先渲染右上角饼图
+      await this.renderDensityPie()
+      // 然后渲染地图的色块、基站、人（包括右侧关注列表），最后渲染右上角折线图
+      /* 地图色块 */
+      this.updateBoundaryBox()
+      const hexagonData = await this.queryHexagon()
+      // 将查到的h3hexagon数据转为geojson
+      const polygonSourceData = this.hexagonDataConverter(hexagonData)
+      this.mapChart.addSource('hexGrid', {
+        type: 'geojson',
+        data: polygonSourceData
+      })
+      // TODO 六边形边框，考虑加一层line layer
+      this.mapChart.addLayer({
+        id: 'hexagon',
+        type: 'fill',
+        source: 'hexGrid',
+        layout: {},
+        paint: {
+          'fill-color': ['get', 'color'],
+          'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 1, 0.6]
+        }
+      })
+      // 六边形的鼠标事件
+      this.bindHexagonEvents()
+
+      /* 地图上的人 */
+      const mapFollowedSubscriberData = await this.queryMapFollowedSubscriber()
+      this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
+
+      /* 右侧关注列表 */
+
+      /* 右上角折线图 */
+      await this.renderActiveSubscribersLine()
+    },
+    async initTraceTrackingTab () {
+      if (!this.currentShowSubscriber && this.trackingSubscribers.length > 0) {
+        this.currentShowSubscriber = { subscriberId: this.trackingSubscribers[0].subscriberId }
+      }
+      await this.queryTraceTracking()
     },
     async renderDensityPie () {
       const params = {
@@ -391,8 +435,6 @@ export default {
     },
     async queryMapFollowedSubscriber () {
       this.loading.timeBarLoading = true
-      console.info(this.timeFilter)
-      console.info(this.minuteTimeFilter)
       try {
         const response = await axios.get(api.location.followedSubscriber, { params: this.minuteTimeFilter })
         return response.data.data.list
@@ -403,6 +445,26 @@ export default {
         this.loading.timeBarLoading = false
       }
       return []
+    },
+    async queryTraceTracking () {
+      console.info(this.trackingSubscribers)
+      if (this.trackingSubscribers.length > 0) {
+        const params = {
+          ...this.timeFilter,
+          subscriberIds: this.trackingSubscribers.map(item => `'${item.subscriberId}'`).join(',')
+        }
+        try {
+          const response = await axios.get(api.location.tracking, { params })
+          response.data.data.result.forEach(r => {
+            this.trackingSubscribers.find(item => item.subscriberId === r.subscriberId).trackRecords = r.trackRecords
+          })
+        } catch (e) {
+          this.errorMsgHandler(e)
+          console.error(e)
+        } finally {
+          this.loading.timeBarLoading = false
+        }
+      }
     },
     renderMarker (data, type) {
       let svg
@@ -416,39 +478,25 @@ export default {
         el.className = `map-marker map-marker--${type}`
         el.innerHTML = svg
         // 鼠标事件，控制tooltip显示和marker尺寸
-        el.addEventListener('mouseenter', e => {
-          this.markerDom = el
-          if (!this.tooltip.mouseInMarkerOrTooltip) {
-            this.tooltip.x = e.clientX + 15 - e.offsetX
-            this.tooltip.y = e.clientY + 15 - e.offsetY
-          }
-          this.tooltip.mouseInMarkerOrTooltip = true
-          this.tooltip.type = this.tooltipType.baseStation
-          this.tooltip.showMarkerTooltip = true
-          el.classList.add('map-marker--hover')
-        })
-        el.addEventListener('mouseleave', event => {
-          const tooltipDom = document.getElementById('tooltip')
-          if (!tooltipDom.contains(event.relatedTarget)) {
-            el.classList.remove('map-marker--hover')
-            this.tooltip.mouseInMarkerOrTooltip = false
-            this.tooltip.showMarkerTooltip = false
-          }
-        })
-
-        new maplibregl.Marker({ element: el })
+        this.bindMarkerEvent(el)
+        const mapMarker = new maplibregl.Marker({ element: el })
           .setLngLat([marker.longitude, marker.latitude])
           .addTo(this.mapChart)
+        if (type === this.tooltipType.baseStation) {
+          this.baseStationMarkers.push(mapMarker)
+        } else if (type === this.tooltipType.human) {
+          this.humanMarkers.push(mapMarker)
+        }
       })
     },
     updateBoundaryBox () {
       const boundaryBox = this.mapChart.getBounds()
-      /*this.boundaryBox = {
+      /* this.boundaryBox = {
         maxLongitude: boundaryBox.getEast(),
         maxLatitude: boundaryBox.getNorth(),
         minLongitude: boundaryBox.getWest(),
         minLatitude: boundaryBox.getSouth()
-      }*/
+      } */
       this.boundaryBox = {
         maxLongitude: 140,
         maxLatitude: 50,
@@ -459,17 +507,19 @@ export default {
     // 先使用min=0的等宽分组法，若后续出现特大或特小的异常值导致等宽分组效果不理想，考虑用分位数分组法
     calculateValueRamp (data) {
       const max = _.maxBy(data, d => Number(d.number))
-      const maxLength = String(max.number).length
-      const maxLegend = Math.ceil(max.number / Math.pow(10, maxLength - 1)) * Math.pow(10, maxLength - 1)
       const result = []
-      for (let i = 1; i <= 5; i++) {
-        const item = {
-          start: maxLegend * (i - 1) / 5 + 1,
-          end: maxLegend * i / 5,
-          color: this.pieColorRamp[i - 1]
+      if (max) {
+        const maxLength = String(max.number).length
+        const maxLegend = Math.ceil(max.number / Math.pow(10, maxLength - 1)) * Math.pow(10, maxLength - 1)
+        for (let i = 1; i <= 5; i++) {
+          const item = {
+            start: maxLegend * (i - 1) / 5 + 1,
+            end: maxLegend * i / 5,
+            color: this.pieColorRamp[i - 1]
+          }
+          item.count = data.filter(d => d.number >= item.start && d.number < item.end).length
+          result.push(item)
         }
-        item.count = data.filter(d => d.number >= item.start && d.number < item.end).length
-        result.push(item)
       }
       return result
     },
@@ -502,47 +552,81 @@ export default {
       return [255, 255, 255]
     },
     bindHexagonEvents () {
+      this.mapChart.on('mouseenter', 'hexagon', this.hexagonMouseEnter)
+      this.mapChart.on('mouseleave', 'hexagon', this.hexagonMouseLeave)
+      this.mapChart.on('mousemove', 'hexagon', this.hexagonMouseMove)
+    },
+    unbindHexagonEvents () {
+      this.mapChart.off('mouseenter', this.hexagonMouseEnter)
+      this.mapChart.off('mouseleave', this.hexagonMouseLeave)
+      this.mapChart.off('mousemove', this.hexagonMouseMove)
+    },
+    hexagonMouseEnter () {
+      this.tooltip.mouseIsInPolygon = true
+    },
+    hexagonMouseLeave () {
       const _this = this
-      this.mapChart.on('mouseenter', 'hexagon', () => {
-        _this.tooltip.mouseIsInPolygon = true
-      })
-      this.mapChart.on('mouseleave', 'hexagon', () => {
-        _this.tooltip.showPolygonTooltip = false
-        _this.tooltip.mouseIsInPolygon = false
-        // 去掉上一块的高亮
-        hoverTrigger('hexGrid', _this.currentPolygon.id, false)
-      })
-      this.mapChart.on('mousemove', 'hexagon', ({ point, originalEvent, features }) => {
-        if (!_this.tooltip.mouseInMarkerOrTooltip) {
-          _this.tooltip.showPolygonTooltip = true
-          _this.tooltip.type = _this.tooltipType.hexagon
-          if (_this.tooltip.type === _this.tooltipType.hexagon && _this.currentPolygon.id && _this.currentPolygon.id !== features[0].id) {
-            // 去掉上一块的高亮
-            hoverTrigger('hexGrid', _this.currentPolygon.id, false)
-          }
-          _this.currentPolygon = features[0].properties
-          _this.currentPolygon.id = features[0].id
-          _this.tooltip.x = originalEvent.clientX + 15
-          _this.tooltip.y = originalEvent.clientY + 5
+      this.tooltip.showPolygonTooltip = false
+      this.tooltip.mouseIsInPolygon = false
+      // 去掉上一块的高亮
+      hoverTrigger('hexGrid', this.currentPolygon.id, false)
 
-          // 鼠标滑过高亮
-          hoverTrigger('hexGrid', _this.currentPolygon.id, true)
-        }
-      })
       function hoverTrigger (source, id, hover) {
         _this.mapChart.setFeatureState({ source, id }, { hover })
       }
     },
+    hexagonMouseMove (e) {
+      const _this = this
+      const { originalEvent, features } = e
+      if (!this.tooltip.mouseInMarkerOrTooltip) {
+        this.tooltip.showPolygonTooltip = true
+        this.tooltip.type = this.tooltipType.hexagon
+        if (this.tooltip.type === this.tooltipType.hexagon && this.currentPolygon.id && this.currentPolygon.id !== features[0].id) {
+          // 去掉上一块的高亮
+          hoverTrigger('hexGrid', this.currentPolygon.id, false)
+        }
+        this.currentPolygon = features[0].properties
+        this.currentPolygon.id = features[0].id
+        this.tooltip.x = originalEvent.clientX + 15
+        this.tooltip.y = originalEvent.clientY + 5
+
+        // 鼠标滑过高亮
+        hoverTrigger('hexGrid', this.currentPolygon.id, true)
+      }
+
+      function hoverTrigger (source, id, hover) {
+        _this.mapChart.setFeatureState({ source, id }, { hover })
+      }
+    },
+    bindMarkerEvent (el) {
+      el.addEventListener('mouseenter', e => {
+        this.currentMarkerDom = el
+        if (!this.tooltip.mouseInMarkerOrTooltip) {
+          this.tooltip.x = e.clientX + 15 - e.offsetX
+          this.tooltip.y = e.clientY + 15 - e.offsetY
+        }
+        this.tooltip.mouseInMarkerOrTooltip = true
+        this.tooltip.type = this.tooltipType.baseStation
+        this.tooltip.showMarkerTooltip = true
+        el.classList.add('map-marker--hover')
+      })
+      el.addEventListener('mouseleave', event => {
+        const tooltipDom = document.getElementById('tooltip')
+        if (!tooltipDom.contains(event.relatedTarget)) {
+          el.classList.remove('map-marker--hover')
+          this.tooltip.mouseInMarkerOrTooltip = false
+          this.tooltip.showMarkerTooltip = false
+        }
+      })
+    },
     tooltipMouseEnter () {
       this.tooltip.mouseInMarkerOrTooltip = true
     },
-    tooltipMouseMove () {
-    },
     tooltipMouseLeave (event) {
-      if (this.markerDom && !this.markerDom.contains(event.relatedTarget)) {
+      if (this.currentMarkerDom && !this.currentMarkerDom.contains(event.relatedTarget)) {
         this.tooltip.mouseInMarkerOrTooltip = false
         this.tooltip.showMarkerTooltip = false
-        this.markerDom.classList.remove('map-marker--hover')
+        this.currentMarkerDom.classList.remove('map-marker--hover')
       }
     },
     reload (startTime, endTime, dateRangeValue) {
@@ -573,8 +657,20 @@ export default {
     }
   },
   watch: {
-    activeTab (n) {
-
+    async activeTab (n) {
+      if (n === 'traceTracking') {
+        // 切换到轨迹追踪tab时，先移除地图上已有的图层和事件绑定、人型图标。基站予以保留
+        this.unbindHexagonEvents()
+        this.mapChart.removeLayer('hexagon')
+        this.mapChart.removeSource('hexGrid')
+        this.humanMarkers.forEach(marker => {
+          marker.remove && marker.remove()
+        })
+        this.humanMarkers = []
+        await this.initTraceTrackingTab()
+      } else if (n === 'locationMap') {
+        await this.initLocationMapTab()
+      }
     }
   },
   computed: {
@@ -638,7 +734,10 @@ export default {
     const pieColorRamp = ['196,214,59', '190,230,255', '135,206,250', '63,133,186', '37,55,128']
     const pieValueRamp = ref([])
     const boundaryBox = ref({}) // minLongitude、maxLongitude、minLatitude、maxLatitude
-    const mapChart = shallowRef({})
+    const mapChart = shallowRef(null)
+    const currentMarkerDom = shallowRef(null)
+    const humanMarkers = shallowRef([])
+    const baseStationMarkers = shallowRef([])
     const pieChart = shallowRef(null)
     const pieOption = ref({})
     const lineChart = shallowRef(null)
@@ -646,6 +745,17 @@ export default {
     const currentBaseStation = ref({})
     const currentSubscriber = ref({})
     const currentPolygon = ref({})
+
+    // 从localStorage中获取数据
+    const trackingSubscribers = ref([])
+    localStorage.getItem(storageKey.trackingSubscriberIds) && (trackingSubscribers.value = JSON.parse(localStorage.getItem(storageKey.trackingSubscriberIds)).map(id => ({ subscriberId: id })))
+    const test = ['gary6411', 'test6431', 'test6430', 'test6422']
+    test.forEach(id => {
+      trackingSubscribers.value.push({ subscriberId: id })
+    })
+    console.info(trackingSubscribers)
+
+    const currentShowSubscriber = ref(null)
     const loading = ref({
       mapLoading: true, // mapLoading控制地图的loading，它状态同时受hexagonLoading、timeBarLoading、baseStationLoading影响
       hexagonLoading: true, // 六边形加载状态
@@ -665,7 +775,9 @@ export default {
       pieValueRamp, // 饼图数值坡度，动态获取
       boundaryBox, // 查六边形的范围，minLongitude、maxLongitude、minLatitude、maxLatitude
       mapChart, // 地图对象
-      markerDom: shallowRef(null), // 记录当前鼠标悬停的marker的dom
+      currentMarkerDom, // 记录当前鼠标悬停的marker的dom
+      humanMarkers, // 储存人marker的引用
+      baseStationMarkers, // 储存基站marker的引用
       pieChart, // 饼图对象
       pieOption,
       lineChart, // 折线图对象
@@ -673,6 +785,8 @@ export default {
       currentBaseStation, // 鼠标当前悬浮的基站
       currentSubscriber, // 鼠标当前悬浮的Subscriber
       currentPolygon, // 鼠标当前悬浮的六边形
+      trackingSubscribers, // 存放当前追踪的Subscriber列表
+      currentShowSubscriber, // 当前在地图上展示轨迹的Subscriber TODO 从url获取
       loading, // 控制组件内各处loading图标
       maxZoom: 14, // 地图最小缩放比例
       minZoom: 3, // 地图最大缩放比例
