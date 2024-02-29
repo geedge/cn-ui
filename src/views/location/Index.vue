@@ -447,7 +447,6 @@ export default {
       return []
     },
     async queryTraceTracking () {
-      console.info(this.trackingSubscribers)
       if (this.trackingSubscribers.length > 0) {
         const params = {
           ...this.timeFilter,
@@ -671,6 +670,18 @@ export default {
       } else if (n === 'locationMap') {
         await this.initLocationMapTab()
       }
+    },
+    // 时间轴改变时，重新查询人marker
+    async minuteTimeFilter (n) {
+      this.humanMarkers.forEach(marker => {
+        marker.remove && marker.remove()
+      })
+      this.humanMarkers = []
+
+      const mapFollowedSubscriberData = await this.queryMapFollowedSubscriber()
+      if (mapFollowedSubscriberData.length > 0) {
+        this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
+      }
     }
   },
   computed: {
@@ -753,7 +764,6 @@ export default {
     test.forEach(id => {
       trackingSubscribers.value.push({ subscriberId: id })
     })
-    console.info(trackingSubscribers)
 
     const currentShowSubscriber = ref(null)
     const loading = ref({
