@@ -1,23 +1,24 @@
 <template>
   <div class="time-line">
     <div class="time-line-slider">
-      <el-slider v-model="currentTime" @change="onChange" :show-tooltip="false" />
+      <el-slider v-model="currentTime" @change="onChange" :step="1" :max="timeLine.length" :format-tooltip="formatTooltip"/>
     </div>
     <div style="height: 10px"></div>
     <div class="time-line-container">
       <div v-for="(item, index) in timeLine" :key="index">
-        <div v-if="item.showFlag">{{ item.date }}</div>
+        <div v-if="item.showFlag" style="color: #666;">{{ item.time }}</div>
       </div>
-      <div class="test-line" id="myLine" :style="`position: absolute;top: 9px;left: calc(${currentTime}% + 5.5px);`"></div>
     </div>
   </div>
 </template>
 
 <!--------------调用-------start-------------->
 <!--<time-line :timeFilter="timeFilter" @change="onChange"></time-line>-->
+<!--回调数据：{ startTime: 1709192498339, endTime: 1709192498339 }-->
 <!--------------调用-------end-------------->
 
 <script>
+import { getMillisecond } from '../../utils/date-util'
 import { changeTimestampToTime } from '../../utils/tools'
 
 export default {
@@ -45,118 +46,179 @@ export default {
   },
   methods: {
     getDate () {
-      const diff = (this.timeFilter.endTime - this.timeFilter.startTime) / 100
-      const timeStep = (this.timeFilter.endTime - this.timeFilter.startTime) / 1000
-      // const timeStep1 = (this.timeFilter.endTime - this.timeFilter.startTime) / (1000 * 60)
-
-      const timeList = []
-      let startTime = this.timeFilter.startTime
-      for (let i = 0; i < 100; i++) {
-        let time1 = changeTimestampToTime(startTime)
-        time1 = time1.substring(0, time1.length - 3)
-        const obj = { date: time1, timeStamp: new Date(time1).getTime(), showFlag: false }
-        if (i > 0) {
-          this.getTimeTamp(obj, timeList[timeList.length - 1], timeStep)
-        }
-        timeList.push(obj)
-        startTime += diff
+      // 切换页面进来时，timeFilter时间戳为秒而非毫秒
+      if (JSON.stringify(this.timeFilter.endTime).length < 13) {
+        // eslint-disable-next-line vue/no-mutating-props
+        this.timeFilter.startTime = getMillisecond(this.timeFilter.startTime)
+        // eslint-disable-next-line vue/no-mutating-props
+        this.timeFilter.endTime = getMillisecond(this.timeFilter.endTime)
       }
-      this.timeLine = timeList
 
-      // const timeRange = []
-      // for (let i = this.timeFilter.startTime; i <= this.timeFilter.endTime; i += 5 * 60 * 1000) {
-      //   const time = this.formatTime(i)
-      //   timeRange.push({ date: time, stamp: this.timeFilter.startTime + i, showFlag: true })
-      // }
-      //
-      // this.timeLine = timeRange
+      // 给倒三角滑块添加竖线
+      const blockDom = document.getElementsByClassName('el-slider__button-wrapper')[0]
+      if (blockDom) {
+        this.$nextTick(() => {
+          blockDom.style.cssText += 'left: calc(99% - 6px);'
+          const markDom = document.getElementsByClassName('time-line-mark')[0]
+          if (!markDom) {
+            const childDiv = document.createElement('div')
+            childDiv.className = 'time-line-mark'
+            childDiv.style.cssText += 'width: 0.5px;height: 40px;background: #000;margin-left: 18px;margin-top: -5px;'
+            blockDom.appendChild(childDiv)
+          }
+        })
+      }
+
+      const myTimeRange = []
+      const timeInterval = this.getTimeInterval(this.timeFilter) // 时间间隔
+      const showTimeInterval = this.showTimeTimeInterval(this.timeFilter) // 显示时间的时间间隔
+      let startTime = this.timeFilter.startTime // 开始时间
+      const firstTime = new Date(this.timeFilter.startTime).getMinutes() // 开始时间的分钟数，作为计算基础
+
+      // 根据显示时间间隔计算所需开始时间，如获取3小时的时间，开始时间为第31分钟，则按30分钟开始计算
+      if (showTimeInterval % 5 === 0) {
+        if (firstTime % 5 !== 0) {
+          startTime = startTime - (firstTime % showTimeInterval) * 60 * 1000
+        }
+      } else if (firstTime % 2 !== 0) {
+        startTime = startTime - 60 * 1000
+      }
+
+      for (let i = startTime; i <= this.timeFilter.endTime; i += showTimeInterval * 60 * 1000) {
+        const obj = this.formatTime(i, showTimeInterval, timeInterval)
+        if (obj) {
+          myTimeRange.push({ time: obj.time, time1: obj.time1, stamp: i, showFlag: obj.showFlag })
+        }
+      }
+
+      this.timeLine = myTimeRange
     },
-    formatTime (timestamp) {
+    // 按时间间隔格式化时间
+    formatTime (timestamp, showTimeInterval, timeInterval) {
       const date = new Date(timestamp)
       const minute = date.getMinutes()
-      const remainder = minute % 5
-      if (remainder === 0) {
-        return `${date.getHours() < 10 ? ('0' + date.getHours()) : date.getHours()}:${minute < 10 ? ('0' + minute) : minute}`
-      } else {
-        let roundedMinute = minute - remainder + 5
-        let roundedHour = date.getHours()
-        if (roundedMinute === 60) {
-          roundedMinute = 0
-          roundedHour = roundedHour + 1
+      // const remainder = minute % showTimeInterval
+      const remainder1 = minute % timeInterval
+      // if (remainder === 0) {
+      // 零点，显示年月日
+      if (date.getHours() === 0 && minute === 0) {
+        const month = date.getMonth() + 1
+        const day = date.getDate()
+        const obj = {
+          time: `${date.getFullYear()}-${month < 10 ? ('0' + month) : month}-${day < 10 ? ('0' + day) : day}`,
+          time1: changeTimestampToTime(timestamp).substring(0, changeTimestampToTime(timestamp).length - 3),
+          showFlag: false
         }
-        return `${roundedHour < 10 ? ('0' + roundedHour) : roundedHour}:${roundedMinute < 10 ? ('0' + roundedMinute) : roundedMinute}`
+        if (remainder1 === 0) {
+          obj.showFlag = true
+        }
+        return obj
+      } else {
+        // 非零点显示时分
+        const obj = {
+          time: `${date.getHours() < 10 ? ('0' + date.getHours()) : date.getHours()}:${minute < 10 ? ('0' + minute) : minute}`,
+          time1: changeTimestampToTime(timestamp).substring(0, changeTimestampToTime(timestamp).length - 3),
+          showFlag: false
+        }
+        if (remainder1 === 0) {
+          obj.showFlag = true
+        }
+        return obj
       }
+      // }
     },
-    getTimeTamp (obj, obj1, step) {
-      // 时间间隔（基本保证时间轴上显示12个间隔）：
-      // 15分钟以下1分钟，30分钟--2分钟，1小时--5分钟，3小时--20分钟，6小时--30分钟，1天--1小时，2天--4小时
-      // 一周--12小时，一月--2天，三月--6天，一年--1个月
-      const date = new Date(obj.timeStamp)
-      const minute = date.getMinutes()
+    // 获取间隔时间，如一小时最小间隔时间1分钟，3小时间隔2分钟
+    getTimeInterval (timeFilter) {
+      const step = (timeFilter.endTime - timeFilter.startTime) / (1000 * 60)
       switch (true) {
-        case step < 1800: {
-          if (obj.timeStamp !== obj1.timeStamp) {
-            obj.showFlag = true
-            obj.date = this.substringShowTime(obj.date)
-          }
-          break
+        case step < 30: {
+          return 1
         }
-        case (step >= 1800 && step < 3600): {
-          if (obj.timeStamp !== obj1.timeStamp && minute % 2 === 0) {
-            obj.showFlag = true
-            obj.date = this.substringShowTime(obj.date)
-          }
-          break
+        case step >= 30 && step < 60: {
+          return 2
         }
-        case (step === 3600): {
-          if (obj.timeStamp !== obj1.timeStamp && minute % 5 === 0) {
-            obj.showFlag = true
-            obj.date = this.substringShowTime(obj.date)
-          }
-          // if((parameter.endTime.asLong() - parameter.startTime.asLong())<=3600){1小时
-          //   parameter.step =  60;1分钟
-          // }else if((parameter.endTime.asLong() - parameter.startTime.asLong())<=3*3600){3小时
-          //   parameter.step =  120;2分钟
-          // }else if((parameter.endTime.asLong() - parameter.startTime.asLong())<=6*3600){6小时
-          //   parameter.step =  300;5分钟
-          // }else if((parameter.endTime.asLong() - parameter.startTime.asLong())<=24*3600){1天
-          //   parameter.step =  600;1小时
-          // }else if((parameter.endTime.asLong() - parameter.startTime.asLong())<=48*3600){2天
-          //   parameter.step =  1200;2小时
-          // }else if((parameter.endTime.asLong() - parameter.startTime.asLong())<=168*3600){一周
-          //   parameter.step =  3600;6小时
-          // }else if((parameter.endTime.asLong() - parameter.startTime.asLong())<=720*3600){一个月
-          //   parameter.step =  3600*6;6小时
-          // }else if((parameter.endTime.asLong() - parameter.startTime.asLong())<=2160*3600){三个月
-          //   parameter.step =  3600*12;12小时
-          // }else if((parameter.endTime.asLong() - parameter.startTime.asLong())<=12*30*24*3600){一年
-          //   parameter.step =  3600*24;1天
-          // }
-          break
+        case step === 60: {
+          return 5
         }
-        case step <= 3 * 3600: {
-          if (obj.timeStamp !== obj1.timeStamp && minute % 20 === 0) {
-            obj.showFlag = true
-            obj.date = this.substringShowTime(obj.date)
-          }
-          break
+        case step <= 3 * 60: {
+          return 20
+        }
+        case step <= 6 * 60: {
+          return 30
+        }
+        case step <= 12 * 60: {
+          return 60
+        }
+        case step <= 24 * 60: {
+          return 2 * 60
+        }
+        case step <= 2 * 24 * 60: {
+          return 4 * 60
+        }
+        case step <= 7 * 24 * 60: {
+          return 12 * 60
+        }
+        case step <= 30 * 24 * 60: {
+          return 48 * 60
+        }
+        case step <= 90 * 24 * 60: {
+          return 6 * 24 * 60
+        }
+        case step <= 24 * 30 * 24 * 60: {
+          return 30 * 24 * 60
         }
       }
     },
-    substringShowTime (time) {
-      if (time.slice(-5) === '00:00') {
-        time = time.substring(0, time.length - 6)
-      } else {
-        time = time.slice(-5)
+    // 时间轴显示时间的间隔时间，
+    showTimeTimeInterval (timeFilter) {
+      const step = (timeFilter.endTime - timeFilter.startTime) / (1000 * 60)
+      switch (true) {
+        case step <= 60: {
+          return 1
+        }
+        case step <= 3 * 60: {
+          return 2
+        }
+        case step <= 6 * 60: {
+          return 5
+        }
+        case step <= 12 * 60: {
+          return 10
+        }
+        case step <= 24 * 60: {
+          return 20
+        }
+        case step <= 2 * 24 * 60: {
+          return 40
+        }
+        case step <= 7 * 24 * 60: {
+          return 360
+        }
+        case step <= 30 * 24 * 60: {
+          return 24 * 60
+        }
+        case step <= 90 * 24 * 60: {
+          return 6 * 24 * 60
+        }
+        case step <= 24 * 30 * 24 * 60: {
+          return 30 * 24 * 60
+        }
       }
-      return time
     },
     onChange (e) {
-      const dom = document.getElementById('myLine')
-      if (dom) {
-        dom.style.cssText += `left: calc(${e}% + 5.5px)`
+      if (this.timeLine[e]) {
+        // 返回所选时间后一分钟
+        const timeObj = {
+          startTime: this.timeLine[e].stamp,
+          endTime: this.timeLine[e].stamp - 60 * 1000
+        }
+        this.$emit('change', timeObj)
       }
-      this.$emit('change', this.timeLine[e].timeStamp)
+    },
+    formatTooltip (value) {
+      if (this.timeLine.length > 0 && this.timeLine[value]) {
+        return this.timeLine[value].time1
+      }
     }
   }
 }
@@ -172,9 +234,11 @@ export default {
   .time-line-slider {
     position: absolute;
     width: 100%;
-    top: -14px;
+    top: -8px;
 
     :deep .el-slider__runway {
+      //width: calc(100% - 18px);
+      padding: 0 6px;
       height: 40px;
       background-color: rgba(0, 0, 0, 0);
 
@@ -197,7 +261,8 @@ export default {
   .time-line-container {
     height: 40px;
     line-height: 40px;
-    background-color: rgba(255,255,255,0.60);
+    background-color: rgba(255, 255, 255, 0.60);
+    //background-color: rgb(89, 173, 201);
     display: flex;
     justify-content: space-between;
     padding: 0 6px;
