@@ -83,7 +83,7 @@
       <!-- 右侧数据栏-trace -->
       <div class="analysis-statistics" v-show="activeTab === 'traceTracking'">
         <div class="analysis-statistics__subscribers">
-          <template v-for="subscriber in trackingSubscribers" :key="subscriber.subscriberId">
+          <template v-for="(subscriber, index) in trackingSubscribers" :key="subscriber.subscriberId">
             <div class="analysis-statistics__subscriber">
               <div class="subscriber__header">
                 <div class="header__icon">
@@ -102,6 +102,65 @@
                 <div class="body__item">
                   <div class="item__label">Info</div>
                   <div class="item__value">Leader</div>
+                </div>
+                <div class="body__item">
+                  <div class="item__label">Home</div>
+                  <div class="item__value">China, Shanghai,FACAI District,9527</div>
+                </div>
+                <div class="body__item">
+                  <div class="item__label">Company</div>
+                  <div class="item__value">China, Shanghai,FACAI District,9527</div>
+                </div>
+                <div class="body-item-record">
+                  <div class="item-record__header">Track record</div>
+                  <div class="item-record__info">
+                    <div class="circle"></div>
+                  </div>
+                  <div class="item-record__timeline">
+                    <div class="timeline__info">
+                      <div class="timeline__info--circle">
+                        <div class="info__circle"></div>
+                        <div class="info__line" v-show="subscriber.showLine"></div>
+                      </div>
+                      <div class="timeline__info--item">
+                        <div>
+                          <span>Location: </span><span class="info--item__value">124123</span>
+                        </div>
+                        <div>
+                          <span>Time of arrival: </span><span class="info--item__value">2024-01-09 14:23:41</span>
+                        </div>
+                        <div>
+                          <span>Residence Time: </span><span class="info--item__value">1 Hour</span>
+                        </div>
+                      </div>
+                    </div>
+                    <collapse>
+                      <el-timeline v-show="subscriber.show" style="transition: all 0.2s">
+                        <el-timeline-item
+                            v-for="(activity, index) in activities"
+                            :key="index"
+                            :color="activity.color"
+                        >
+                          <div class="timeline__item" v-if="activity.show">
+                            <div>
+                              <span>Location: </span><span class="item__value">124123</span>
+                            </div>
+                            <div>
+                              <span>Time of arrival: </span><span class="item__value">2024-01-09 14:23:41</span>
+                            </div>
+                            <div>
+                              <span>Residence Time: </span><span class="item__value">1 Hour</span>
+                            </div>
+                          </div>
+                        </el-timeline-item>
+                      </el-timeline>
+                    </collapse>
+
+                    <div class="item-record__btn" @click="clickTrackBlock(index)">
+                      <span v-if="!subscriber.show"><i class="cn-icon cn-icon-down2"></i></span>
+                      <span v-if="subscriber.show"><i class="cn-icon cn-icon-up2"></i></span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -216,6 +275,7 @@ import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import axios from 'axios'
 import { api } from '@/utils/api'
 import { h3ToGeo, h3ToGeoBoundary } from 'h3-js'
+import collapse from '../../components/common/collapse'
 
 export default {
   name: 'Location',
@@ -227,8 +287,12 @@ export default {
         human: 'human'
       },
       activeCount: '',
-      activeCountChain: ''
+      activeCountChain: '',
+      activeNames: ''
     }
+  },
+  components: {
+    collapse
   },
   methods: {
     valueToRangeValue,
@@ -653,6 +717,17 @@ export default {
       } else {
         this.timeFilter = JSON.parse(JSON.stringify(this.timeFilter))
       }
+    },
+    clickTrackBlock (i) {
+      this.trackingSubscribers[i].show = !this.trackingSubscribers[i].show
+      if (this.trackingSubscribers[i].show) {
+        this.trackingSubscribers[i].showLine = true
+      } else {
+        const timer = setTimeout(() => {
+          this.trackingSubscribers[i].showLine = false
+          clearTimeout(timer)
+        }, 200)
+      }
     }
   },
   watch: {
@@ -762,7 +837,7 @@ export default {
     localStorage.getItem(storageKey.trackingSubscriberIds) && (trackingSubscribers.value = JSON.parse(localStorage.getItem(storageKey.trackingSubscriberIds)).map(id => ({ subscriberId: id })))
     const test = ['gary6411', 'test6431', 'test6430', 'test6422']
     test.forEach(id => {
-      trackingSubscribers.value.push({ subscriberId: id })
+      trackingSubscribers.value.push({ subscriberId: id, show: false, showLine: false })
     })
 
     const currentShowSubscriber = ref(null)
@@ -776,6 +851,38 @@ export default {
       pieLoading: true, // 控制饼图加载状态
       lineLoading: true // 控制折线图加载状态
     })
+    const activities = ref([
+      {
+        content: 'Event start',
+        timestamp: '2018-04-15',
+        color: '#DE3434',
+        show: false
+      },
+      {
+        content: 'Approved',
+        timestamp: '2018-04-13',
+        color: '#DE3434',
+        show: true
+      },
+      {
+        content: 'Success',
+        timestamp: '2018-04-11',
+        color: '#DE3434',
+        show: true
+      },
+      {
+        content: 'Success',
+        timestamp: '2018-04-11',
+        color: '#DE3434',
+        show: true
+      },
+      {
+        content: 'Success',
+        timestamp: '2018-04-11',
+        color: '#DE3434',
+        show: true
+      }
+    ])
     return {
       activeTab,
       timeFilter,
@@ -802,17 +909,18 @@ export default {
       minZoom: 3, // 地图最大缩放比例
       unitTypes,
       defaultZoom: 13, // 地图默认缩放比例
-      center: [116.38, 39.9] // 地图默认中心点。北京：[116.38, 39.9] 纽约：[-73.94539, 40.841843]
+      center: [116.38, 39.9], // 地图默认中心点。北京：[116.38, 39.9] 纽约：[-73.94539, 40.841843]
+      activities
     }
   },
   unmounted () {
     if (this.mapChart.remove) {
       this.mapChart && this.mapChart.remove()
     }
-    if (this.pieChart.dispose) {
+    if (this.pieChart && this.pieChart.dispose) {
       this.pieChart && this.pieChart.dispose()
     }
-    if (this.lineChart.dispose) {
+    if (this.lineChart && this.lineChart.dispose) {
       this.lineChart && this.lineChart.dispose()
     }
   }
@@ -1073,6 +1181,91 @@ export default {
                 font-size: 12px;
                 font-weight: bold;
                 color: #233447;
+              }
+            }
+
+            .body-item-record {
+              .item-record__header {
+                font-family: Helvetica;
+                font-size: 16px;
+                color: #353636;
+                font-weight: 400;
+                height: 38px;
+                line-height: 38px;
+              }
+              .item-record__info {
+
+              }
+              .item-record__timeline {
+                .el-timeline {
+                  padding-left: 0;
+                  .el-timeline-item {
+                    padding-bottom: 4px;
+                    .el-timeline-item__tail {
+                      border-left: 2px dotted #cccccc;
+                      margin-left: 2px;
+                    }
+                    .el-timeline-item__node--normal {
+                      background-image: radial-gradient(#DE3434 20%, transparent);
+                      outline: #F7F7F7 solid 6px;
+                      margin-left: 2px;
+                    }
+                  }
+                  .el-timeline-item:last-child {
+                    padding-bottom: 0;
+                  }
+                }
+                .timeline__info {
+                  display: flex;
+                  .timeline__info--circle {
+                    display: flex;
+                    flex-direction: column;
+                    .info__circle {
+                      width: 17px;
+                      height: 17px;
+                      margin-left: -2px;
+                      border-radius: 50%;
+                      background-image: radial-gradient(#DE3434 20%, transparent);
+                      outline: rgba(222,52,52,0.30) solid 4px;
+                      margin-top: 2px;
+                    }
+                    .info__line {
+                      border-left: 2px #cccccc dotted;
+                      height: 34px;
+                      margin-left: 6px;
+                      transition: all 0.2s;
+                    }
+                  }
+                  .timeline__info--item {
+                    padding-left: 13px;
+                    display: flex;
+                    flex-direction: column;
+                    font-size: 12px;
+                    color: #666666;
+
+                    .info--item__value {
+                      color: #333;
+                      font-weight: 500;
+                      margin-left: 4px;
+                    }
+                  }
+                }
+                .timeline__item {
+                  display: flex;
+                  flex-direction: column;
+                  font-size: 12px;
+                  color: #666666;
+
+                  .item__value {
+                    color: #333;
+                    font-weight: 500;
+                    margin-left: 4px;
+                  }
+                }
+                .item-record__btn {
+                  cursor: pointer;
+                  text-align: center;
+                }
               }
             }
           }

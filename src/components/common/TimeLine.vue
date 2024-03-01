@@ -63,7 +63,7 @@ export default {
           if (!markDom) {
             const childDiv = document.createElement('div')
             childDiv.className = 'time-line-mark'
-            childDiv.style.cssText += 'width: 0.5px;height: 40px;background: #000;margin-left: 18px;margin-top: -5px;'
+            childDiv.style.cssText += 'width: 0.5px;height: 40px;background: #000;margin-left: 18px;margin-top: -7px;'
             blockDom.appendChild(childDiv)
           }
         })
@@ -209,8 +209,8 @@ export default {
       if (this.timeLine[e]) {
         // 返回所选时间后一分钟
         const timeObj = {
-          startTime: this.timeLine[e].stamp,
-          endTime: this.timeLine[e].stamp - 60 * 1000
+          startTime: this.timeLine[e].stamp - 60 * 1000,
+          endTime: this.timeLine[e].stamp
         }
         this.$emit('change', timeObj)
       }
@@ -234,7 +234,7 @@ export default {
   .time-line-slider {
     position: absolute;
     width: 100%;
-    top: -8px;
+    top: -6px;
 
     :deep .el-slider__runway {
       //width: calc(100% - 18px);
@@ -251,7 +251,7 @@ export default {
         height: 0;
         border-color: #000 rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
         border-style: solid;
-        border-width: 10px 10px 0 10px;
+        border-width: 8px 8px 0 8px;
         background-color: rgba(0, 0, 0, 0);
         border-radius: 0;
       }
@@ -261,7 +261,7 @@ export default {
   .time-line-container {
     height: 40px;
     line-height: 40px;
-    background-color: rgba(255, 255, 255, 0.60);
+    background-color: rgba(255, 255, 255, 0.50);
     //background-color: rgb(89, 173, 201);
     display: flex;
     justify-content: space-between;
