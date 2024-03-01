@@ -277,6 +277,9 @@ import { api } from '@/utils/api'
 import { h3ToGeo, h3ToGeoBoundary } from 'h3-js'
 import collapse from '../../components/common/collapse'
 
+const humanSvg = '<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M366.689524 690.468571l87.283809 83.821715-75.434666 195.486476c-10.971429 27.794286-43.105524 42.081524-72.265143 32.036571-29.159619-10.24-44.080762-41.252571-33.450667-69.241904L366.689524 690.468571zM203.824762 476.306286l51.785143-95.183238a162.279619 162.279619 0 0 1 59.245714-59.977143c119.710476-68.266667 134.777905-67.291429 149.942857-66.218667l80.798476 5.168762c24.868571 0.975238 42.081524 7.314286 125.025524 124.14781a21.26019 21.26019 0 0 0 14.092191 8.289523l99.132952 14.482286c12.873143 1.852952 24.478476 8.582095 32.182857 18.67581a45.494857 45.494857 0 0 1 8.825905 35.108571 46.665143 46.665143 0 0 1-19.504762 30.866286 50.468571 50.468571 0 0 1-36.571429 8.435809l-99.181714-14.433524a119.954286 119.954286 0 0 1-79.774476-47.640381c-4.388571-6.241524-7.558095-11.361524-11.849143-16.579047l-63.634286 193.487238 88.405334 84.845714c12.970667 12.385524 23.698286 29.013333 30.232381 45.494857l67.876571 190.366477c5.022476 13.409524 4.193524 28.233143-2.291809 41.057523a54.613333 54.613333 0 0 1-32.182858 27.160381c-5.851429 2.048-12.092952 3.120762-18.383238 3.169524a58.075429 58.075429 0 0 1-53.930666-36.181333l-67.876572-190.366476c-1.024-2.096762-2.096762-3.120762-3.218285-5.168762L365.616762 623.177143a84.894476 84.894476 0 0 1-24.868572-80.700953l34.523429-146.919619c-3.413333 2.340571-7.070476 4.388571-10.776381 6.290286a58.806857 58.806857 0 0 0-22.674286 22.723048L290.133333 519.801905a49.834667 49.834667 0 0 1-43.105523 24.819809 59.977143 59.977143 0 0 1-22.674286-5.12 46.518857 46.518857 0 0 1-20.48-63.146666z m209.67619-360.448C420.08381 58.465524 473.86819 17.066667 533.650286 23.30819 593.383619 29.549714 636.537905 81.13981 630.00381 138.48381c-6.534095 57.392762-60.269714 98.840381-120.05181 92.550095-59.782095-6.241524-102.985143-57.782857-96.451048-115.175619z" fill="#ffffff"></path></svg>'
+const baseStationSvg = '<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M164.901926 519.585185a391.35763 391.35763 0 0 1-30.151111-152.38637c0-52.527407 10.05037-105.054815 30.151111-152.348445 15.094519-47.29363 45.283556-89.353481 80.516741-126.103703L174.990222 15.17037C129.706667 62.464 94.511407 114.991407 69.328593 178.062222 44.183704 241.095111 34.133333 304.165926 34.133333 367.198815c0 63.070815 10.05037 131.375407 35.19526 189.174518 25.182815 57.799111 60.378074 115.598222 105.661629 162.891852l70.428445-73.576296c-35.233185-36.788148-65.422222-78.810074-80.516741-126.103704z" p-id="8786" fill="#ffffff"></path><path d="M255.469037 477.563259c15.094519 36.788148 35.195259 68.266667 60.340148 94.549334l70.428445-73.576297a233.168593 233.168593 0 0 1-40.201482-57.761185c-5.044148-26.282667-10.088296-47.29363-10.088296-73.576296 0-26.244741 5.044148-47.29363 15.094518-68.266667 5.006222-26.282667 20.100741-42.097778 35.19526-63.070815l-70.428445-73.576296c-25.144889 26.282667-45.24563 57.799111-60.340148 94.587259-15.094519 36.788148-20.100741 73.576296-20.100741 110.364445 0 36.788148 5.006222 73.53837 20.100741 110.326518zM436.527407 367.198815c0 43.538963 33.792 78.810074 75.472593 78.810074s75.472593-35.271111 75.472593-78.810074c0-43.501037-33.792-78.810074-75.472593-78.810074s-75.472593 35.271111-75.472593 78.810074zM637.76237 498.574222l70.428445 73.576297c25.144889-26.282667 45.24563-57.837037 60.340148-94.58726 15.094519-36.788148 20.100741-73.576296 20.100741-110.364444 0-36.788148-5.006222-73.576296-20.100741-110.364445-15.094519-36.750222-35.195259-68.266667-60.340148-94.549333l-70.428445 73.576296c15.094519 15.739259 30.189037 36.788148 40.201482 57.799111 10.088296 21.010963 15.132444 47.29363 15.132444 68.266667 0 26.282667-5.044148 47.331556-15.094518 68.342519-10.05037 31.516444-25.144889 47.29363-40.239408 68.266666z" p-id="8787" fill="#ffffff"></path><path d="M954.671407 178.062222C929.488593 114.991407 894.293333 62.464 849.009778 15.17037L778.619259 88.746667c35.233185 36.788148 60.378074 78.810074 80.516741 126.103703 20.100741 47.255704 30.151111 99.821037 30.151111 152.348445 0 52.565333-10.05037 105.092741-30.151111 152.38637-20.100741 47.29363-45.283556 89.315556-80.516741 126.103704l70.428445 73.576296c45.283556-47.29363 80.478815-99.858963 105.661629-162.891852 25.144889-63.070815 35.195259-126.103704 35.19526-189.174518 0-63.032889-10.05037-131.337481-35.19526-189.136593zM210.185481 1024h603.629038L512 551.10163 210.185481 1024z m186.102519-105.054815L512 740.238222l115.674074 178.631111h-231.348148z" fill="#ffffff"></path></svg>'
+
 export default {
   name: 'Location',
   data () {
@@ -346,7 +349,7 @@ export default {
       this.updateBoundaryBox()
       const hexagonData = await this.queryHexagon()
       // 将查到的h3hexagon数据转为geojson
-      const polygonSourceData = this.hexagonDataConverter(hexagonData)
+      const polygonSourceData = this.hexagonDataConverter(hexagonData, 'locationMap')
       this.mapChart.addSource('hexGrid', {
         type: 'geojson',
         data: polygonSourceData
@@ -375,10 +378,48 @@ export default {
       await this.renderActiveSubscribersLine()
     },
     async initTraceTrackingTab () {
-      if (!this.currentShowSubscriber && this.trackingSubscribers.length > 0) {
-        this.currentShowSubscriber = { subscriberId: this.trackingSubscribers[0].subscriberId }
-      }
       await this.queryTraceTracking()
+      // 如果未指定展示谁的轨迹，则默认取追踪用户中的第一个
+      if (!this.currentShowSubscriber && this.trackingSubscribers.length > 0) {
+        this.currentShowSubscriber = this.trackingSubscribers[0]
+      }
+      if (this.currentShowSubscriber.trackRecords && this.currentShowSubscriber.trackRecords.length > 0) {
+        // 六边形
+        const polygonSourceData = this.hexagonDataConverter(this.currentShowSubscriber.trackRecords, 'traceTracking')
+        this.mapChart.addSource('trackingHexGrid', {
+          type: 'geojson',
+          data: polygonSourceData
+        })
+        this.mapChart.addLayer({
+          id: 'trackingHexagon',
+          type: 'fill',
+          source: 'trackingHexGrid',
+          layout: {},
+          paint: {
+            'fill-color': ['get', 'color'],
+            'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.75, 0.5]
+          }
+        })
+        // 轨迹线
+        const mapLineSourceData = this.mapLineDataConverter(polygonSourceData)
+        this.mapChart.addSource('trackingLineSource', {
+          type: 'geojson',
+          data: mapLineSourceData
+        })
+        this.mapChart.addLayer({
+          id: 'trackingLine',
+          type: 'line',
+          source: 'trackingLineSource',
+          paint: {
+            'line-color': 'rgba(222, 52, 52, .8)',
+            'line-width': 3
+          }
+        })
+        // 最后所在地的图标
+        const coordinate = h3ToGeo(this.currentShowSubscriber.trackRecords[0].hexId)
+        this.renderTrackingMarker([coordinate[1], coordinate[0]])
+        this.bindTrackingHexagonEvents()
+      }
     },
     async renderDensityPie () {
       const params = {
@@ -532,9 +573,9 @@ export default {
     renderMarker (data, type) {
       let svg
       if (type === this.tooltipType.baseStation) {
-        svg = '<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M164.901926 519.585185a391.35763 391.35763 0 0 1-30.151111-152.38637c0-52.527407 10.05037-105.054815 30.151111-152.348445 15.094519-47.29363 45.283556-89.353481 80.516741-126.103703L174.990222 15.17037C129.706667 62.464 94.511407 114.991407 69.328593 178.062222 44.183704 241.095111 34.133333 304.165926 34.133333 367.198815c0 63.070815 10.05037 131.375407 35.19526 189.174518 25.182815 57.799111 60.378074 115.598222 105.661629 162.891852l70.428445-73.576296c-35.233185-36.788148-65.422222-78.810074-80.516741-126.103704z" p-id="8786" fill="#ffffff"></path><path d="M255.469037 477.563259c15.094519 36.788148 35.195259 68.266667 60.340148 94.549334l70.428445-73.576297a233.168593 233.168593 0 0 1-40.201482-57.761185c-5.044148-26.282667-10.088296-47.29363-10.088296-73.576296 0-26.244741 5.044148-47.29363 15.094518-68.266667 5.006222-26.282667 20.100741-42.097778 35.19526-63.070815l-70.428445-73.576296c-25.144889 26.282667-45.24563 57.799111-60.340148 94.587259-15.094519 36.788148-20.100741 73.576296-20.100741 110.364445 0 36.788148 5.006222 73.53837 20.100741 110.326518zM436.527407 367.198815c0 43.538963 33.792 78.810074 75.472593 78.810074s75.472593-35.271111 75.472593-78.810074c0-43.501037-33.792-78.810074-75.472593-78.810074s-75.472593 35.271111-75.472593 78.810074zM637.76237 498.574222l70.428445 73.576297c25.144889-26.282667 45.24563-57.837037 60.340148-94.58726 15.094519-36.788148 20.100741-73.576296 20.100741-110.364444 0-36.788148-5.006222-73.576296-20.100741-110.364445-15.094519-36.750222-35.195259-68.266667-60.340148-94.549333l-70.428445 73.576296c15.094519 15.739259 30.189037 36.788148 40.201482 57.799111 10.088296 21.010963 15.132444 47.29363 15.132444 68.266667 0 26.282667-5.044148 47.331556-15.094518 68.342519-10.05037 31.516444-25.144889 47.29363-40.239408 68.266666z" p-id="8787" fill="#ffffff"></path><path d="M954.671407 178.062222C929.488593 114.991407 894.293333 62.464 849.009778 15.17037L778.619259 88.746667c35.233185 36.788148 60.378074 78.810074 80.516741 126.103703 20.100741 47.255704 30.151111 99.821037 30.151111 152.348445 0 52.565333-10.05037 105.092741-30.151111 152.38637-20.100741 47.29363-45.283556 89.315556-80.516741 126.103704l70.428445 73.576296c45.283556-47.29363 80.478815-99.858963 105.661629-162.891852 25.144889-63.070815 35.195259-126.103704 35.19526-189.174518 0-63.032889-10.05037-131.337481-35.19526-189.136593zM210.185481 1024h603.629038L512 551.10163 210.185481 1024z m186.102519-105.054815L512 740.238222l115.674074 178.631111h-231.348148z" fill="#ffffff"></path></svg>'
+        svg = baseStationSvg
       } else if (type === this.tooltipType.human) {
-        svg = '<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M366.689524 690.468571l87.283809 83.821715-75.434666 195.486476c-10.971429 27.794286-43.105524 42.081524-72.265143 32.036571-29.159619-10.24-44.080762-41.252571-33.450667-69.241904L366.689524 690.468571zM203.824762 476.306286l51.785143-95.183238a162.279619 162.279619 0 0 1 59.245714-59.977143c119.710476-68.266667 134.777905-67.291429 149.942857-66.218667l80.798476 5.168762c24.868571 0.975238 42.081524 7.314286 125.025524 124.14781a21.26019 21.26019 0 0 0 14.092191 8.289523l99.132952 14.482286c12.873143 1.852952 24.478476 8.582095 32.182857 18.67581a45.494857 45.494857 0 0 1 8.825905 35.108571 46.665143 46.665143 0 0 1-19.504762 30.866286 50.468571 50.468571 0 0 1-36.571429 8.435809l-99.181714-14.433524a119.954286 119.954286 0 0 1-79.774476-47.640381c-4.388571-6.241524-7.558095-11.361524-11.849143-16.579047l-63.634286 193.487238 88.405334 84.845714c12.970667 12.385524 23.698286 29.013333 30.232381 45.494857l67.876571 190.366477c5.022476 13.409524 4.193524 28.233143-2.291809 41.057523a54.613333 54.613333 0 0 1-32.182858 27.160381c-5.851429 2.048-12.092952 3.120762-18.383238 3.169524a58.075429 58.075429 0 0 1-53.930666-36.181333l-67.876572-190.366476c-1.024-2.096762-2.096762-3.120762-3.218285-5.168762L365.616762 623.177143a84.894476 84.894476 0 0 1-24.868572-80.700953l34.523429-146.919619c-3.413333 2.340571-7.070476 4.388571-10.776381 6.290286a58.806857 58.806857 0 0 0-22.674286 22.723048L290.133333 519.801905a49.834667 49.834667 0 0 1-43.105523 24.819809 59.977143 59.977143 0 0 1-22.674286-5.12 46.518857 46.518857 0 0 1-20.48-63.146666z m209.67619-360.448C420.08381 58.465524 473.86819 17.066667 533.650286 23.30819 593.383619 29.549714 636.537905 81.13981 630.00381 138.48381c-6.534095 57.392762-60.269714 98.840381-120.05181 92.550095-59.782095-6.241524-102.985143-57.782857-96.451048-115.175619z" fill="#ffffff"></path></svg>'
+        svg = humanSvg
       }
       data.forEach(marker => {
         const el = document.createElement('div')
@@ -551,6 +592,14 @@ export default {
           this.humanMarkers.push(mapMarker)
         }
       })
+    },
+    renderTrackingMarker (coordinates) {
+      const el = document.createElement('div')
+      el.className = 'map-tracking-marker'
+      el.innerHTML = `<div class="tracking-marker__inner-circle">${humanSvg}</div>`
+      this.trackingHumanMarker = new maplibregl.Marker({ element: el })
+        .setLngLat(coordinates)
+        .addTo(this.mapChart)
     },
     updateBoundaryBox () {
       const boundaryBox = this.mapChart.getBounds()
@@ -586,33 +635,75 @@ export default {
       }
       return result
     },
-    hexagonDataConverter (data) {
-      const features = data.map((d, i) => ({
-        id: i + 1,
-        type: 'Feature',
-        geometry: {
-          type: 'Polygon',
-          coordinates: [
-            h3ToGeoBoundary(d.hexId, true)
-          ]
-        },
-        properties: {
-          hexId: d.hexId,
-          number: d.number,
-          color: this.getHexagonFillColor(d.number)
-        }
-      }))
-      return {
-        type: 'FeatureCollection',
-        features: features
+    hexagonDataConverter (data, tab) {
+      const featureCollection = { type: 'FeatureCollection' }
+      if (tab === 'locationMap') {
+        featureCollection.features = data.map((d, i) => ({
+          id: i + 1,
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [
+              h3ToGeoBoundary(d.hexId, true)
+            ]
+          },
+          properties: {
+            hexId: d.hexId,
+            number: d.number,
+            color: this.getHexagonFillColor(d.number)
+          }
+        }))
+      } else if (tab === 'traceTracking') {
+        // 对hexId去重，将重复的hexId的时间合并
+        const hexagons = []
+        data.forEach(d => {
+          const find = hexagons.find(h => h.hexId === d.hexId)
+          if (!find) {
+            hexagons.push({ hexId: d.hexId, time: [d.time] })
+          } else {
+            find.time.push(d.time)
+          }
+        })
+        featureCollection.features = hexagons.map((d, i) => ({
+          id: i + 100000,
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [
+              h3ToGeoBoundary(d.hexId, true)
+            ]
+          },
+          properties: {
+            hexId: d.hexId,
+            number: d.number,
+            color: [37, 55, 128]
+          }
+        }))
       }
+      return featureCollection
     },
     getHexagonFillColor (number) {
       const ramp = this.pieValueRamp.filter(r => Number(number) >= r.start && Number(number) <= r.end)
       if (ramp.length > 0) {
         return ramp[0].color.split(',').map(n => Number(n))
       }
-      return [255, 255, 255]
+      return [229, 229, 229]
+    },
+    mapLineDataConverter (polygonSourceData) {
+      const feature = {
+        type: 'Feature',
+        geometry: {
+          type: 'LineString',
+          coordinates: polygonSourceData.features.map(d => {
+            const cs = h3ToGeo(d.properties.hexId)
+            return [cs[1], cs[0]]
+          })
+        }
+      }
+      return {
+        type: 'FeatureCollection',
+        features: [feature]
+      }
     },
     bindHexagonEvents () {
       this.mapChart.on('mouseenter', 'hexagon', this.hexagonMouseEnter)
@@ -623,6 +714,16 @@ export default {
       this.mapChart.off('mouseenter', this.hexagonMouseEnter)
       this.mapChart.off('mouseleave', this.hexagonMouseLeave)
       this.mapChart.off('mousemove', this.hexagonMouseMove)
+    },
+    bindTrackingHexagonEvents () {
+      this.mapChart.on('mouseenter', 'trackingHexagon', this.trackingHexagonMouseEnter)
+      this.mapChart.on('mouseleave', 'trackingHexagon', this.trackingHexagonMouseLeave)
+      this.mapChart.on('mousemove', 'trackingHexagon', this.trackingHexagonMouseMove)
+    },
+    unbindTrackingHexagonEvents () {
+      this.mapChart.off('mouseenter', this.trackingHexagonMouseEnter)
+      this.mapChart.off('mouseleave', this.trackingHexagonMouseLeave)
+      this.mapChart.off('mousemove', this.trackingHexagonMouseMove)
     },
     hexagonMouseEnter () {
       this.tooltip.mouseIsInPolygon = true
@@ -661,6 +762,44 @@ export default {
         _this.mapChart.setFeatureState({ source, id }, { hover })
       }
     },
+    trackingHexagonMouseEnter () {
+      this.tooltip.mouseIsInPolygon = true
+    },
+    trackingHexagonMouseLeave () {
+      const _this = this
+      this.tooltip.showPolygonTooltip = false
+      this.tooltip.mouseIsInPolygon = false
+      // 去掉上一块的高亮
+      hoverTrigger('trackingHexGrid', this.currentPolygon.id, false)
+
+      function hoverTrigger (source, id, hover) {
+        _this.mapChart.setFeatureState({ source, id }, { hover })
+      }
+    },
+    trackingHexagonMouseMove (e) {
+      const _this = this
+      const { originalEvent, features } = e
+      if (!this.tooltip.mouseInMarkerOrTooltip) {
+        this.tooltip.showPolygonTooltip = true
+        this.tooltip.type = this.tooltipType.hexagon
+        if (this.tooltip.type === this.tooltipType.hexagon && this.currentPolygon.id && this.currentPolygon.id !== features[0].id) {
+          // 去掉上一块的高亮
+          hoverTrigger('trackingHexGrid', this.currentPolygon.id, false)
+        }
+        this.currentPolygon = features[0].properties
+        this.currentPolygon.id = features[0].id
+        this.tooltip.x = originalEvent.clientX + 15
+        this.tooltip.y = originalEvent.clientY + 5
+
+        // 鼠标滑过高亮
+        hoverTrigger('trackingHexGrid', this.currentPolygon.id, true)
+      }
+
+      function hoverTrigger (source, id, hover) {
+        _this.mapChart.setFeatureState({ source, id }, { hover })
+      }
+    },
+
     bindMarkerEvent (el) {
       el.addEventListener('mouseenter', e => {
         this.currentMarkerDom = el
@@ -735,14 +874,20 @@ export default {
       if (n === 'traceTracking') {
         // 切换到轨迹追踪tab时，先移除地图上已有的图层和事件绑定、人型图标。基站予以保留
         this.unbindHexagonEvents()
-        this.mapChart.removeLayer('hexagon')
-        this.mapChart.removeSource('hexGrid')
+        this.mapChart.getLayer('hexagon') && this.mapChart.removeLayer('hexagon')
+        this.mapChart.getSource('hexGrid') && this.mapChart.removeSource('hexGrid')
         this.humanMarkers.forEach(marker => {
           marker.remove && marker.remove()
         })
         this.humanMarkers = []
         await this.initTraceTrackingTab()
       } else if (n === 'locationMap') {
+        this.mapChart.getLayer('trackingHexagon') && this.mapChart.removeLayer('trackingHexagon')
+        this.mapChart.getLayer('trackingLine') && this.mapChart.removeLayer('trackingLine')
+        this.mapChart.getSource('trackingHexGrid') && this.mapChart.removeSource('trackingHexGrid')
+        this.mapChart.getSource('trackingLineSource') && this.mapChart.removeSource('trackingLineSource')
+        this.trackingHumanMarker.remove && this.trackingHumanMarker.remove()
+        this.trackingHumanMarker = {}
         await this.initLocationMapTab()
       }
     },
@@ -824,6 +969,7 @@ export default {
     const currentMarkerDom = shallowRef(null)
     const humanMarkers = shallowRef([])
     const baseStationMarkers = shallowRef([])
+    const trackingHumanMarker = shallowRef({})
     const pieChart = shallowRef(null)
     const pieOption = ref({})
     const lineChart = shallowRef(null)
@@ -895,6 +1041,7 @@ export default {
       currentMarkerDom, // 记录当前鼠标悬停的marker的dom
       humanMarkers, // 储存人marker的引用
       baseStationMarkers, // 储存基站marker的引用
+      trackingHumanMarker, // 追踪页的人marker
       pieChart, // 饼图对象
       pieOption,
       lineChart, // 折线图对象
@@ -1017,6 +1164,31 @@ export default {
             height: 23px;
           }
           &.map-marker--base-station svg {
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
+      .map-tracking-marker {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: pulse 2s infinite;
+        background-color: rgba(204,68,68,0.50);
+        border-radius: 50%;
+
+        .tracking-marker__inner-circle {
+          width: 25px;
+          height: 25px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: rgba(204,68,68,0.80);
+          border-radius: 50%;
+
+          svg {
             width: 20px;
             height: 20px;
           }
@@ -1353,6 +1525,17 @@ export default {
         cursor: pointer;
       }
     }
+  }
+}
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
   }
 }
 </style>
