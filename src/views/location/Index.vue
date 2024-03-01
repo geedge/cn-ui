@@ -6,7 +6,42 @@
     </el-tabs>
     <!-- 右上角工具栏 -->
     <div class="geo-tools">
-      <el-input size="mini" style="margin-right: 10px; width: 200px;" placeholder="Press Enter to Search"></el-input>
+      <el-select
+              id="searchValue"
+              ref="searchValue"
+              v-model="dropDownValue"
+              size="mini"
+              clearable
+              filterable
+              remote
+              placeholder="Press Enter to Search"
+              popper-class="search-select"
+              placement="bottom"
+              @blur="searchBlur"
+              @focus="searchFocus"
+              @change="changeSearchValue"
+              @clear="clearSearchValue"
+              @visible-change="visibleChange"
+              :remote-method="dropDownSearch"
+              v-select-load-more="onLoadMore"
+              style="margin-right: 10px;"
+      >
+        <el-option
+                v-for="item in searchValueListShow"
+                :key="item.subscriberId"
+                :value="item.phoneNumber"
+                @click="changeValue(item)"
+        >
+          <span class="search-active" :class="item.active === 1 ? 'active-icon' : 'inactive-icon'"></span>
+          <span class="search-value" >{{ item.phoneNumber }}</span>
+          <span class="search-follow__icon" @click.stop="followSubscribers(item)">
+            <i class="cn-icon-a- cn-icon" v-if="item.follow === 1"></i>
+            <i class="cn-icon-a-1 cn-icon" v-else></i>
+          </span>
+        </el-option>
+        <template v-slot:empty >
+        </template>
+      </el-select>
       <div class="panel__time">
         <date-time-range
             class="date-time-range"
@@ -45,122 +80,35 @@
           <div class="chart__header">{{$t('locationIntelligence.activeSubscribers')}}</div>
           <div class="chart__statistics">
             <div class="statistics-number">{{activeCount}}</div>
-            <div class="statistics-trend">-{{valueToRangeValue(activeCountChain, unitTypes.percent).join(' ')}}</div>
+            <div class="statistics-trend">{{activeCountChain === '-' ? '-' : (activeCountChain < 0 ? '-'+valueToRangeValue(Math.abs(activeCountChain), unitTypes.percent).join(' '): valueToRangeValue(activeCountChain, unitTypes.percent).join(' '))}}</div>
           </div>
           <div class="chart-line__drawing" id="activeSubscribersChart"></div>
         </div>
-        <div class="analysis-statistics__title">Followed Subscribers</div>
+        <div class="analysis-statistics__title">{{$t('location.followedSubscribers')}}</div>
         <div class="analysis-statistics__subscribers">
-          <template v-for="item in 8">
+          <template v-for="item in followedSubscribersList">
             <div class="analysis-statistics__subscriber">
-              <div class="subscriber__header">
+              <div class="subscriber__header" :class="item.active === 1 ? 'subscriber-active__header' : 'subscriber-inactive__header'" >
                 <div class="header__icon">
                   <div class="icon__box">
                     <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M366.689524 690.468571l87.283809 83.821715-75.434666 195.486476c-10.971429 27.794286-43.105524 42.081524-72.265143 32.036571-29.159619-10.24-44.080762-41.252571-33.450667-69.241904L366.689524 690.468571zM203.824762 476.306286l51.785143-95.183238a162.279619 162.279619 0 0 1 59.245714-59.977143c119.710476-68.266667 134.777905-67.291429 149.942857-66.218667l80.798476 5.168762c24.868571 0.975238 42.081524 7.314286 125.025524 124.14781a21.26019 21.26019 0 0 0 14.092191 8.289523l99.132952 14.482286c12.873143 1.852952 24.478476 8.582095 32.182857 18.67581a45.494857 45.494857 0 0 1 8.825905 35.108571 46.665143 46.665143 0 0 1-19.504762 30.866286 50.468571 50.468571 0 0 1-36.571429 8.435809l-99.181714-14.433524a119.954286 119.954286 0 0 1-79.774476-47.640381c-4.388571-6.241524-7.558095-11.361524-11.849143-16.579047l-63.634286 193.487238 88.405334 84.845714c12.970667 12.385524 23.698286 29.013333 30.232381 45.494857l67.876571 190.366477c5.022476 13.409524 4.193524 28.233143-2.291809 41.057523a54.613333 54.613333 0 0 1-32.182858 27.160381c-5.851429 2.048-12.092952 3.120762-18.383238 3.169524a58.075429 58.075429 0 0 1-53.930666-36.181333l-67.876572-190.366476c-1.024-2.096762-2.096762-3.120762-3.218285-5.168762L365.616762 623.177143a84.894476 84.894476 0 0 1-24.868572-80.700953l34.523429-146.919619c-3.413333 2.340571-7.070476 4.388571-10.776381 6.290286a58.806857 58.806857 0 0 0-22.674286 22.723048L290.133333 519.801905a49.834667 49.834667 0 0 1-43.105523 24.819809 59.977143 59.977143 0 0 1-22.674286-5.12 46.518857 46.518857 0 0 1-20.48-63.146666z m209.67619-360.448C420.08381 58.465524 473.86819 17.066667 533.650286 23.30819 593.383619 29.549714 636.537905 81.13981 630.00381 138.48381c-6.534095 57.392762-60.269714 98.840381-120.05181 92.550095-59.782095-6.241524-102.985143-57.782857-96.451048-115.175619z" fill="#ffffff"></path></svg>
                   </div>
                 </div>
                 <div class="header__title">MSISDN</div>
-                <div class="header__content">15557777000</div>
+                <div class="header__content">{{item.subscriberId}}</div>
               </div>
               <div class="subscriber__body">
                 <div class="body__item">
-                  <div class="item__label">Group</div>
-                  <div class="item__value">Terrorist</div>
+                  <div class="item__label">{{$t('location.group')}}</div>
+                  <div class="item__value">{{item.group}}</div>
                 </div>
                 <div class="body__item">
-                  <div class="item__label">Info</div>
-                  <div class="item__value">Leader</div>
+                  <div class="item__label">{{$t('overall.info')}}</div>
+                  <div class="item__value">{{item.info}}</div>
                 </div>
                 <div class="body__item">
-                  <div class="item__label">Location</div>
-                  <div class="item__value">China, Shanghai</div>
-                </div>
-              </div>
-            </div>
-          </template>
-        </div>
-      </div>
-      <!-- 右侧数据栏-trace -->
-      <div class="analysis-statistics" v-show="activeTab === 'traceTracking'">
-        <div class="analysis-statistics__subscribers">
-          <template v-for="(subscriber, index) in trackingSubscribers" :key="subscriber.subscriberId">
-            <div class="analysis-statistics__subscriber">
-              <div class="subscriber__header">
-                <div class="header__icon">
-                  <div class="icon__box">
-                    <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M366.689524 690.468571l87.283809 83.821715-75.434666 195.486476c-10.971429 27.794286-43.105524 42.081524-72.265143 32.036571-29.159619-10.24-44.080762-41.252571-33.450667-69.241904L366.689524 690.468571zM203.824762 476.306286l51.785143-95.183238a162.279619 162.279619 0 0 1 59.245714-59.977143c119.710476-68.266667 134.777905-67.291429 149.942857-66.218667l80.798476 5.168762c24.868571 0.975238 42.081524 7.314286 125.025524 124.14781a21.26019 21.26019 0 0 0 14.092191 8.289523l99.132952 14.482286c12.873143 1.852952 24.478476 8.582095 32.182857 18.67581a45.494857 45.494857 0 0 1 8.825905 35.108571 46.665143 46.665143 0 0 1-19.504762 30.866286 50.468571 50.468571 0 0 1-36.571429 8.435809l-99.181714-14.433524a119.954286 119.954286 0 0 1-79.774476-47.640381c-4.388571-6.241524-7.558095-11.361524-11.849143-16.579047l-63.634286 193.487238 88.405334 84.845714c12.970667 12.385524 23.698286 29.013333 30.232381 45.494857l67.876571 190.366477c5.022476 13.409524 4.193524 28.233143-2.291809 41.057523a54.613333 54.613333 0 0 1-32.182858 27.160381c-5.851429 2.048-12.092952 3.120762-18.383238 3.169524a58.075429 58.075429 0 0 1-53.930666-36.181333l-67.876572-190.366476c-1.024-2.096762-2.096762-3.120762-3.218285-5.168762L365.616762 623.177143a84.894476 84.894476 0 0 1-24.868572-80.700953l34.523429-146.919619c-3.413333 2.340571-7.070476 4.388571-10.776381 6.290286a58.806857 58.806857 0 0 0-22.674286 22.723048L290.133333 519.801905a49.834667 49.834667 0 0 1-43.105523 24.819809 59.977143 59.977143 0 0 1-22.674286-5.12 46.518857 46.518857 0 0 1-20.48-63.146666z m209.67619-360.448C420.08381 58.465524 473.86819 17.066667 533.650286 23.30819 593.383619 29.549714 636.537905 81.13981 630.00381 138.48381c-6.534095 57.392762-60.269714 98.840381-120.05181 92.550095-59.782095-6.241524-102.985143-57.782857-96.451048-115.175619z" fill="#ffffff"></path></svg>
-                  </div>
-                </div>
-                <div class="header__title">MSISDN</div>
-                <div class="header__content">{{subscriber.trackRecords && subscriber.trackRecords[0] && subscriber.trackRecords[0].phoneNumber}}</div>
-              </div>
-              <div class="subscriber__body">
-                <div class="body__item">
-                  <div class="item__label">Group</div>
-                  <div class="item__value">Terrorist</div>
-                </div>
-                <div class="body__item">
-                  <div class="item__label">Info</div>
-                  <div class="item__value">Leader</div>
-                </div>
-                <div class="body__item">
-                  <div class="item__label">Home</div>
-                  <div class="item__value">China, Shanghai,FACAI District,9527</div>
-                </div>
-                <div class="body__item">
-                  <div class="item__label">Company</div>
-                  <div class="item__value">China, Shanghai,FACAI District,9527</div>
-                </div>
-                <div class="body-item-record">
-                  <div class="item-record__header">Track record</div>
-                  <div class="item-record__info">
-                    <div class="circle"></div>
-                  </div>
-                  <div class="item-record__timeline">
-                    <div class="timeline__info">
-                      <div class="timeline__info--circle">
-                        <div class="info__circle"></div>
-                        <div class="info__line" v-show="subscriber.showLine"></div>
-                      </div>
-                      <div class="timeline__info--item">
-                        <div>
-                          <span>Location: </span><span class="info--item__value">124123</span>
-                        </div>
-                        <div>
-                          <span>Time of arrival: </span><span class="info--item__value">2024-01-09 14:23:41</span>
-                        </div>
-                        <div>
-                          <span>Residence Time: </span><span class="info--item__value">1 Hour</span>
-                        </div>
-                      </div>
-                    </div>
-                    <collapse>
-                      <el-timeline v-show="subscriber.show" style="transition: all 0.2s">
-                        <el-timeline-item
-                            v-for="(activity, index) in activities"
-                            :key="index"
-                            :color="activity.color"
-                        >
-                          <div class="timeline__item" v-if="activity.show">
-                            <div>
-                              <span>Location: </span><span class="item__value">124123</span>
-                            </div>
-                            <div>
-                              <span>Time of arrival: </span><span class="item__value">2024-01-09 14:23:41</span>
-                            </div>
-                            <div>
-                              <span>Residence Time: </span><span class="item__value">1 Hour</span>
-                            </div>
-                          </div>
-                        </el-timeline-item>
-                      </el-timeline>
-                    </collapse>
-
-                    <div class="item-record__btn" @click="clickTrackBlock(index)">
-                      <span v-if="!subscriber.show"><i class="cn-icon cn-icon-down2"></i></span>
-                      <span v-if="subscriber.show"><i class="cn-icon cn-icon-up2"></i></span>
-                    </div>
-                  </div>
+                  <div class="item__label">{{$t('location.location')}}</div>
+                  <div class="item__value">{{item.location}}</div>
                 </div>
               </div>
             </div>
@@ -168,6 +116,94 @@
         </div>
       </div>
     </div>
+    <!-- 右侧数据栏-trace -->
+    <div class="analysis-statistics" v-show="activeTab === 'traceTracking'">
+      <div class="analysis-statistics__subscribers">
+        <template v-for="(subscriber, index) in trackingSubscribers" :key="subscriber.subscriberId">
+          <div class="analysis-statistics__subscriber">
+            <div class="subscriber__header">
+              <div class="header__icon">
+                <div class="icon__box">
+                  <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M366.689524 690.468571l87.283809 83.821715-75.434666 195.486476c-10.971429 27.794286-43.105524 42.081524-72.265143 32.036571-29.159619-10.24-44.080762-41.252571-33.450667-69.241904L366.689524 690.468571zM203.824762 476.306286l51.785143-95.183238a162.279619 162.279619 0 0 1 59.245714-59.977143c119.710476-68.266667 134.777905-67.291429 149.942857-66.218667l80.798476 5.168762c24.868571 0.975238 42.081524 7.314286 125.025524 124.14781a21.26019 21.26019 0 0 0 14.092191 8.289523l99.132952 14.482286c12.873143 1.852952 24.478476 8.582095 32.182857 18.67581a45.494857 45.494857 0 0 1 8.825905 35.108571 46.665143 46.665143 0 0 1-19.504762 30.866286 50.468571 50.468571 0 0 1-36.571429 8.435809l-99.181714-14.433524a119.954286 119.954286 0 0 1-79.774476-47.640381c-4.388571-6.241524-7.558095-11.361524-11.849143-16.579047l-63.634286 193.487238 88.405334 84.845714c12.970667 12.385524 23.698286 29.013333 30.232381 45.494857l67.876571 190.366477c5.022476 13.409524 4.193524 28.233143-2.291809 41.057523a54.613333 54.613333 0 0 1-32.182858 27.160381c-5.851429 2.048-12.092952 3.120762-18.383238 3.169524a58.075429 58.075429 0 0 1-53.930666-36.181333l-67.876572-190.366476c-1.024-2.096762-2.096762-3.120762-3.218285-5.168762L365.616762 623.177143a84.894476 84.894476 0 0 1-24.868572-80.700953l34.523429-146.919619c-3.413333 2.340571-7.070476 4.388571-10.776381 6.290286a58.806857 58.806857 0 0 0-22.674286 22.723048L290.133333 519.801905a49.834667 49.834667 0 0 1-43.105523 24.819809 59.977143 59.977143 0 0 1-22.674286-5.12 46.518857 46.518857 0 0 1-20.48-63.146666z m209.67619-360.448C420.08381 58.465524 473.86819 17.066667 533.650286 23.30819 593.383619 29.549714 636.537905 81.13981 630.00381 138.48381c-6.534095 57.392762-60.269714 98.840381-120.05181 92.550095-59.782095-6.241524-102.985143-57.782857-96.451048-115.175619z" fill="#ffffff"></path></svg>
+                </div>
+              </div>
+              <div class="header__title">MSISDN</div>
+              <div class="header__content">{{subscriber.trackRecords && subscriber.trackRecords[0] && subscriber.trackRecords[0].phoneNumber}}</div>
+            </div>
+            <div class="subscriber__body">
+              <div class="body__item">
+                <div class="item__label">Group</div>
+                <div class="item__value">Terrorist</div>
+              </div>
+              <div class="body__item">
+                <div class="item__label">Info</div>
+                <div class="item__value">Leader</div>
+              </div>
+              <div class="body__item">
+                <div class="item__label">Home</div>
+                <div class="item__value">China, Shanghai,FACAI District,9527</div>
+              </div>
+              <div class="body__item">
+                <div class="item__label">Company</div>
+                <div class="item__value">China, Shanghai,FACAI District,9527</div>
+              </div>
+              <div class="body-item-record">
+                <div class="item-record__header">Track record</div>
+                <div class="item-record__info">
+                  <div class="circle"></div>
+                </div>
+                <div class="item-record__timeline">
+                  <div class="timeline__info">
+                    <div class="timeline__info--circle">
+                      <div class="info__circle"></div>
+                      <div class="info__line" v-show="subscriber.showLine"></div>
+                    </div>
+                    <div class="timeline__info--item">
+                      <div>
+                        <span>Location: </span><span class="info--item__value">124123</span>
+                      </div>
+                      <div>
+                        <span>Time of arrival: </span><span class="info--item__value">2024-01-09 14:23:41</span>
+                      </div>
+                      <div>
+                        <span>Residence Time: </span><span class="info--item__value">1 Hour</span>
+                      </div>
+                    </div>
+                  </div>
+                  <collapse>
+                    <el-timeline v-show="subscriber.show" style="transition: all 0.2s">
+                      <el-timeline-item
+                              v-for="(activity, index) in activities"
+                              :key="index"
+                              :color="activity.color"
+                      >
+                        <div class="timeline__item" v-if="activity.show">
+                          <div>
+                            <span>Location: </span><span class="item__value">124123</span>
+                          </div>
+                          <div>
+                            <span>Time of arrival: </span><span class="item__value">2024-01-09 14:23:41</span>
+                          </div>
+                          <div>
+                            <span>Residence Time: </span><span class="item__value">1 Hour</span>
+                          </div>
+                        </div>
+                      </el-timeline-item>
+                    </el-timeline>
+                  </collapse>
+
+                  <div class="item-record__btn" @click="clickTrackBlock(index)">
+                    <span v-if="!subscriber.show"><i class="cn-icon cn-icon-down2"></i></span>
+                    <span v-if="subscriber.show"><i class="cn-icon cn-icon-up2"></i></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
     <div class="geo-analysis__hexagon-tooltip" id="tooltip" :class="`geo-analysis__hexagon-tooltip--${tooltip.type}`" v-if="tooltip.showMarkerTooltip || tooltip.showPolygonTooltip" :style="{'left': `${tooltip.x}px`, 'top': `${tooltip.y}px`}" @mouseenter="tooltipMouseEnter" @mouseleave="tooltipMouseLeave">
       <div class="hexagon-tooltip__header" :style="`background-color: ${tooltipHeaderColor}`">
         <div class="header__icon">
@@ -291,6 +327,7 @@ export default {
       },
       activeCount: '',
       activeCountChain: '',
+      curPageNum: 1,
       activeNames: ''
     }
   },
@@ -373,7 +410,7 @@ export default {
       this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
 
       /* 右侧关注列表 */
-
+      this.queryFollowedList()
       /* 右上角折线图 */
       await this.renderActiveSubscribersLine()
     },
@@ -462,7 +499,9 @@ export default {
         this.activeCount = curCountResponse.data.data.total
         const preActiveCount = preCountResponse.data.data.total
         if (preActiveCount !== 0) {
-          this.activeCountChain = preActiveCount !== '0' ? (this.activeCount - preActiveCount) / preActiveCount : ''
+          this.activeCountChain = (this.activeCount - preActiveCount) / preActiveCount
+        } else {
+          this.activeCountChain = '-'
         }
         const trendResponse = await axios.get(api.location.trend, { params })
         const activeSubscribersData = trendResponse.data.data.result
@@ -480,6 +519,22 @@ export default {
         console.error(e)
       } finally {
         this.loading.lineLoading = false
+      }
+    },
+    async queryFollowedList () {
+      const params = {
+        ...this.timeFilter,
+        pageSize: -1
+      }
+      this.loading.followSubscriberLoading = true
+      try {
+        const response = await axios.get(api.location.followedSubscriber, { params })
+        this.followedSubscribersList = response.data.data.list
+      } catch (e) {
+        this.errorMsgHandler(e)
+        console.error(e)
+      } finally {
+        this.loading.followSubscriberLoading = false
       }
     },
     async queryHexagon () {
@@ -867,7 +922,97 @@ export default {
           clearTimeout(timer)
         }, 200)
       }
-    }
+    },
+    async initDropdownList (curSearchValue) {
+      if(curSearchValue !== '') {
+        const params = {
+          startTime: this.timeFilter.startTime,
+          endTime: this.timeFilter.endTime,
+          pageNo: this.curPageNum++,
+          pageSize: 10,
+          params: "phone_number like '%"+ curSearchValue +"%'"
+        }
+        //this.loading.searchLoading = true
+        try {
+          axios.get(api.location.list, { params }).then(async response => {
+            if (response.status === 200) {
+              this.searchValueListShow = this.searchValueListShow.concat(response.data.data)
+              if(response.data.data.length === 0) {
+                this.curPageNum--
+              }
+            }
+          })
+        } catch (e) {
+          this.errorMsgHandler(e)
+          console.error(e)
+        } finally {
+          //this.loading.searchLoading = false
+        }
+      }
+    },
+    changeValue (item) {
+    },
+    changeSearchValue (value) {
+      const selectDom = document.querySelector('.search-select .el-scrollbar__wrap')
+      if(selectDom) {
+        selectDom.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+    },
+    searchBlur() {
+    },
+    searchFocus() {
+    },
+    onLoadMore() {
+      this.initDropdownList(this.curSearchValue)
+    },
+    followSubscribers(item) {
+      if(item.follow === 1) {
+        axios.delete(api.location.follow + '?subscriberId=' + item.subscriberId).then(res => {
+          if (res.status === 200) {
+            this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancleFollow.success') })
+            item.follow = 0
+          } else {
+            this.$message.error(res.data.message)
+          }
+        }).catch(e => {
+          this.$message.error(this.errorMsgHandler(e))
+        })
+      } else {
+        axios.post(api.location.follow, {subscriberId: item.subscriberId}).then(res => {
+          if (res.status === 200) {
+            this.$message({ duration: 2000, type: 'success', message: this.$t('location.follow.success') })
+            item.follow = 1
+          } else {
+            this.$message.error(res.data.message)
+          }
+        }).catch(e => {
+          this.$message.error(this.errorMsgHandler(e))
+        })
+      }
+      /* 刷新右侧关注列表 */
+      this.queryFollowedList()
+    },
+    clearSearchValue() {
+    },
+    visibleChange(state) {
+      this.searchValueListShow = []
+      if(!state) {
+        const selectDom = document.querySelector('.search-select .el-scrollbar__wrap')
+        if(selectDom) {
+          selectDom.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+      }
+    },
+    dropDownSearch (curVal) {
+      this.curSearchValue = curVal
+      this.curPageNum = 1
+      this.searchValueListShow = []
+      const selectDom = document.querySelector('.search-select .el-scrollbar__wrap')
+      if(selectDom) {
+        selectDom.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+      this.initDropdownList(curVal)
+    },
   },
   watch: {
     async activeTab (n) {
@@ -926,6 +1071,8 @@ export default {
     const { currentRoute } = useRouter()
     const currentPath = currentRoute.value.path
     const activeTab = ref('')
+    const dropDownValue = ref('')
+    const curSearchValue = ref('')
     switch (currentPath) {
       case ('/location/map'): {
         activeTab.value = 'locationMap'
@@ -964,6 +1111,8 @@ export default {
     // const pieColorRamp = ['156,174,29', '241,198,0', '89,202,242', '63,133,186', '37,55,128']
     const pieColorRamp = ['196,214,59', '190,230,255', '135,206,250', '63,133,186', '37,55,128']
     const pieValueRamp = ref([])
+    const followedSubscribersList = ref([])
+    const searchValueListShow = ref([])
     const boundaryBox = ref({}) // minLongitude、maxLongitude、minLatitude、maxLatitude
     const mapChart = shallowRef(null)
     const currentMarkerDom = shallowRef(null)
@@ -995,7 +1144,8 @@ export default {
 
       followSubscriberLoading: true, // 控制右侧关注用户列表加载状态
       pieLoading: true, // 控制饼图加载状态
-      lineLoading: true // 控制折线图加载状态
+      lineLoading: true, // 控制折线图加载状态
+      searchLoading: false //搜索框加载状态
     })
     const activities = ref([
       {
@@ -1031,11 +1181,15 @@ export default {
     ])
     return {
       activeTab,
+      dropDownValue,
+      curSearchValue,
       timeFilter,
       minuteTimeFilter, // 底下时间轴的时间
+      searchValueListShow,//搜索框下拉列表
       tooltip, // 控制鼠标悬浮框
       pieColorRamp, // 六边形颜色坡度
       pieValueRamp, // 饼图数值坡度，动态获取
+      followedSubscribersList,//Location关注用户列表
       boundaryBox, // 查六边形的范围，minLongitude、maxLongitude、minLatitude、maxLatitude
       mapChart, // 地图对象
       currentMarkerDom, // 记录当前鼠标悬停的marker的dom
@@ -1061,7 +1215,7 @@ export default {
     }
   },
   unmounted () {
-    if (this.mapChart.remove) {
+    if (this.mapChart && this.mapChart.remove) {
       this.mapChart && this.mapChart.remove()
     }
     if (this.pieChart && this.pieChart.dispose) {
@@ -1074,6 +1228,48 @@ export default {
 }
 </script>
 <style lang="scss">
+.search-active {
+  float: left;
+  border-radius: 3px;
+  width: 6px;
+  height: 6px;
+  margin-right: 10px;
+  position:relative;
+  top:50%;
+  transform: translateY(-50%);
+  text-align:center;
+}
+.search-value {
+  float: left;
+  margin-right:20px;
+}
+.search-follow__icon {
+  float: right;
+  color: #6f6f6e;
+  font-size: 13px;
+  width: 10px;
+  height: 24px;
+  margin-right: 10px;
+  text-align: center;
+  i {
+    font-size: 8px !important;
+    font-weight: bold;
+  }
+}
+.active-icon {
+  background: #38ACD2;
+}
+.inactive-icon {
+  background: #CCCCCC;
+}
+.search-select {
+  max-height: 150px;
+}
+.search-select .el-scrollbar__wrap{
+  max-height: 150px;
+  //height: 100px;
+  overflow-y:auto;
+}
 .geo-analysis {
   display: flex;
   flex-direction: column;
@@ -1088,7 +1284,9 @@ export default {
     display: flex;
     top: 11px;
     right: 20px;
-
+    .el-select .el-input__inner {
+      cursor: text;
+    }
     .panel__time {
       display: flex;
     }
@@ -1306,13 +1504,19 @@ export default {
           border: 1px solid rgba(226,229,236,1);
           border-radius: 2px;
 
+          .subscriber-inactive__header {
+            background-color: #CCCCCC;
+          }
+          .subscriber-active__header {
+            background-color: #38ACD2;
+          }
+
           .subscriber__header {
             position: relative;
             flex-direction: column;
             padding: 6px 0 0 70px;
             color: white;
             height: 58px;
-            background-color: #38ACD2;
 
             .header__icon {
               position: absolute;

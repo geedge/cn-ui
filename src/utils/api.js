@@ -358,8 +358,10 @@ export const api = {
     trend: apiVersion + '/locationIntelligence/active/trend',
     count: apiVersion + '/locationIntelligence/active/count',
     baseStation: apiVersion + '/locationIntelligence/baseStation',
+    list: apiVersion + '/locationIntelligence/list',
     followedSubscriber: apiVersion + '/locationIntelligence/followed/subscribers',
-    tracking: apiVersion + '/locationIntelligence/trace/tracking'
+    tracking: apiVersion + '/locationIntelligence/trace/tracking',
+    follow: apiVersion + '/locationIntelligence/follow'
   }
 }
 

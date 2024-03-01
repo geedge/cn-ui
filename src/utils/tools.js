@@ -294,6 +294,33 @@ export const cancelWithChange = {
   }
 }
 
+/* 滚动条指令 */
+export const selectLoadMore = {
+  mounted (el, binding) {
+    const selectDom = document.querySelector('.search-select .el-select-dropdown__wrap')
+    function loadMores() {
+      //判断是否到底
+      const isBase = this.scrollHeight - this.scrollTop <= this.clientHeight
+      if(isBase) {
+        binding.value && binding.value()
+      }
+    }
+    //将获取到的dom和函数挂载到el-select上，实例销毁时好处理
+    el.selectDomInfo = selectDom
+    el.selectLoadMore = loadMores
+    //监听滚动事件
+    selectDom.addEventListener('scroll',loadMores.bind(selectDom))
+  },
+  unmounted (el, binding) {
+    // 解除事件监听
+    if(el.selectLoadMore) {
+      el.selectDomInfo.removeEventListener('scroll', el.selectLoadMore)
+      delete el.selectDomInfo
+      delete el.selectLoadMore
+    }
+  }
+}
+
 function noDataDomFactory () {
   const noDataDom = document.createElement('div')
   noDataDom.setAttribute('class', 'no-data')

@@ -7,9 +7,7 @@ if (openMock) {
     return {
       msg: 'success',
       code: 200,
-      data: {
-        list: data.map(d => ({ subscriberId: d, number: d }))
-      }
+      data: data.map(d => ({ subscriberId: d, number: d }))
     }
   })
   Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'v1/locationIntelligence/map.*'), 'get', function (requestObj) {
@@ -274,9 +272,7 @@ if (openMock) {
       msg: 'success',
       code: 200,
       data: {
-        result: {
-          values: lineData
-        }
+        result: lineData
       }
     }
   })
@@ -287,7 +283,7 @@ if (openMock) {
         msg: 'success',
         code: 200,
         data: {
-          total: 19366
+          total: 16366
         }
       }
     } else {
@@ -295,7 +291,7 @@ if (openMock) {
         msg: 'success',
         code: 200,
         data: {
-          total: 16366
+          total: 19366
         }
       }
     }
@@ -329,6 +325,112 @@ if (openMock) {
           {
             longitude: 116.38,
             latitude: 39.91
+          }
+        ]
+      }
+    }
+  })
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'v1/locationIntelligence/followed/subscribers.*'), 'get', function (requestObj) {
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        list: [
+          {
+            "subscriberId":111,
+            "group": "terrorist",
+            "info": "terrorist leader",
+            "location": "china",
+            "active": 1
+          },
+          {
+            "subscriberId":444,
+            "group": "terrorist",
+            "info": "terrorist leader",
+            "location": "china",
+            "active": 1
+          },
+          {
+            "subscriberId":555,
+            "group": "terrorist",
+            "info": "terrorist leader",
+            "location": "china",
+            "active": 0
+          },{
+            "subscriberId":666,
+            "group": "terrorist",
+            "info": "terrorist leader",
+            "location": "china",
+            "active": 1
+          },{
+            "subscriberId":777,
+            "group": "terrorist",
+            "info": "terrorist leader",
+            "location": "china",
+            "active": 0
+          },{
+            "subscriberId":888,
+            "group": "terrorist",
+            "info": "terrorist leader",
+            "location": "china",
+            "active": 1
+          }
+        ]
+      }
+    }
+  })
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'v1/locationIntelligence/list.*'), 'get', function (requestObj) {
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        total:1,
+        pageSize:20,
+        pageNo:1,
+        pages:1,
+        list: [
+          {
+            "subscriberId":111,
+            "active": 1,
+            "phone_number": 18601680302,
+            "follow": 1
+          },
+          {
+            "subscriberId":222,
+            "active": 1,
+            "phone_number": 18601680303,
+            "follow": 0
+          },
+          {
+            "subscriberId":333,
+            "active": 0,
+            "phone_number": 18601680304,
+            "follow": 0
+          },{
+            "subscriberId":444,
+            "active": 1,
+            "phone_number": 18601680305,
+            "follow": 1
+          },{
+            "subscriberId":555,
+            "active": 0,
+            "phone_number": 18601680306,
+            "follow": 1
+          },{
+            "subscriberId":666,
+            "active": 1,
+            "phone_number": 18601680307,
+            "follow": 1
+          },{
+            "subscriberId":777,
+            "active": 1,
+            "phone_number": 18601680308,
+            "follow": 1
+          },{
+            "subscriberId":888,
+            "active": 1,
+            "phone_number": 18601680300,
+            "follow": 1
           }
         ]
       }
