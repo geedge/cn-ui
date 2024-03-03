@@ -47,11 +47,9 @@ export default {
   methods: {
     getDate () {
       // 切换页面进来时，timeFilter时间戳为秒而非毫秒
-      if (JSON.stringify(this.timeFilter.endTime).length < 13) {
-        // eslint-disable-next-line vue/no-mutating-props
-        this.timeFilter.startTime = getMillisecond(this.timeFilter.startTime)
-        // eslint-disable-next-line vue/no-mutating-props
-        this.timeFilter.endTime = getMillisecond(this.timeFilter.endTime)
+      const timeFilter = {
+        startTime: getMillisecond(this.timeFilter.startTime),
+        endTime: getMillisecond(this.timeFilter.endTime)
       }
 
       // 给倒三角滑块添加竖线
@@ -70,10 +68,10 @@ export default {
       }
 
       const myTimeRange = []
-      const timeInterval = this.getTimeInterval(this.timeFilter) // 时间间隔
-      const showTimeInterval = this.showTimeTimeInterval(this.timeFilter) // 显示时间的时间间隔
-      let startTime = this.timeFilter.startTime // 开始时间
-      const firstTime = new Date(this.timeFilter.startTime).getMinutes() // 开始时间的分钟数，作为计算基础
+      const timeInterval = this.getTimeInterval(timeFilter) // 时间间隔
+      const showTimeInterval = this.showTimeTimeInterval(timeFilter) // 显示时间的时间间隔
+      let startTime = timeFilter.startTime // 开始时间
+      const firstTime = new Date(timeFilter.startTime).getMinutes() // 开始时间的分钟数，作为计算基础
 
       // 根据显示时间间隔计算所需开始时间，如获取3小时的时间，开始时间为第31分钟，则按30分钟开始计算
       if (showTimeInterval % 5 === 0) {
@@ -84,7 +82,7 @@ export default {
         startTime = startTime - 60 * 1000
       }
 
-      for (let i = startTime; i <= this.timeFilter.endTime; i += showTimeInterval * 60 * 1000) {
+      for (let i = startTime; i <= timeFilter.endTime; i += showTimeInterval * 60 * 1000) {
         const obj = this.formatTime(i, showTimeInterval, timeInterval)
         if (obj) {
           myTimeRange.push({ time: obj.time, time1: obj.time1, stamp: i, showFlag: obj.showFlag })

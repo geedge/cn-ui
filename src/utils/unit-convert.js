@@ -56,7 +56,7 @@ export function timeUnitFormatter (time, sourceUnit = 'ms', targetUnit, dot = 2)
   let multi = 1
   let result = parseFloat(time)
   if (targetIndex < 0) {
-    while (sourceIndex < timeUnit.length - 1 && result > timeUnit[sourceIndex + 1].step) {
+    while (sourceIndex < timeUnit.length - 1 && result >= timeUnit[sourceIndex + 1].step) {
       sourceIndex++
       multi = timeUnit[sourceIndex].step
       result /= multi
