@@ -36,24 +36,7 @@ router.beforeEach(async (to, from, next) => {
           path: '/',
           name: 'home',
           component: () => import('@/components/layout/Home'),
-          children: [
-            {
-              path: '/temp',
-              component: () => import('@/Temp')
-            },
-            {
-              path: '/temp2',
-              component: () => import('@/Temp2')
-            },
-            {
-              path: '/temp3',
-              component: () => import('@/Temp3')
-            },
-            {
-              path: '/temp4',
-              component: () => import('@/Temp4')
-            }
-          ]
+          children: []
         }
         handleRoutes(menuList, homeRoute.children)
         router.addRoute(homeRoute)

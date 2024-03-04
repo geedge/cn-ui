@@ -1,8 +1,8 @@
 <template>
   <div class="geo-analysis">
     <el-tabs v-model="activeTab">
-      <el-tab-pane :label="$t('geo.locationMap')" name="locationMap"></el-tab-pane>
-      <el-tab-pane :label="$t('geo.traceTracking')" name="traceTracking"></el-tab-pane>
+      <el-tab-pane :label="$t('location.locationMap')" name="locationMap"></el-tab-pane>
+      <el-tab-pane :label="$t('location.traceTracking')" name="traceTracking"></el-tab-pane>
     </el-tabs>
     <!-- 右上角工具栏 -->
     <div class="geo-tools">
@@ -73,7 +73,7 @@
       <div class="analysis-statistics" v-show="activeTab === 'locationMap'">
         <div class="analysis-statistics__chart">
           <simple-loading size="small" placement="top-end" :loading="loading.pieLoading"></simple-loading>
-          <div class="chart__header">{{$t('locationIntelligence.populationDensity')}}</div>
+          <div class="chart__header">{{$t('location.populationDensity')}}</div>
           <div class="chart__body">
             <div class="chart__drawing" id="populationDensityChart"></div>
             <div class="chart__legend">
@@ -87,7 +87,7 @@
         </div>
         <div class="analysis-statistics__chart">
           <simple-loading size="small" placement="top-end" :loading="loading.lineLoading"></simple-loading>
-          <div class="chart__header">{{$t('locationIntelligence.activeSubscribers')}}</div>
+          <div class="chart__header">{{$t('location.activeSubscribers')}}</div>
           <div class="chart__statistics">
             <div class="statistics-number">{{activeCount}}</div>
             <div class="statistics-trend">{{activeCountChain === '-' ? '-' : (activeCountChain < 0 ? '-'+valueToRangeValue(Math.abs(activeCountChain), unitTypes.percent).join(' '): valueToRangeValue(activeCountChain, unitTypes.percent).join(' '))}}</div>
@@ -272,7 +272,7 @@
             <div class="item__label">{{$t('overall.location')}}</div>
             <div class="item__value">China, Shanghai</div>
           </div>
-          <div class="body__tracking" @click="trackSubscriber(currentSubscriber)">{{$t('geo.traceTracking')}}</div>
+          <div class="body__tracking" @click="trackSubscriber(currentSubscriber)">{{$t('location.traceTracking')}}</div>
         </template>
         <template v-else-if="tooltip.type === tooltipType.baseStation">
           <div class="body__item">
@@ -284,16 +284,8 @@
             <div class="item__value">1</div>
           </div>
           <div class="body__item">
-            <div class="item__label">Signal Strength</div>
-            <div class="item__value">4</div>
-          </div>
-          <div class="body__item">
             <div class="item__label">Communication Type</div>
             <div class="item__value">4G</div>
-          </div>
-          <div class="body__item">
-            <div class="item__label">Number of Online</div>
-            <div class="item__value">1442</div>
           </div>
           <div class="body__item">
             <div class="item__label">{{$t('overall.location')}}</div>
@@ -599,14 +591,6 @@ export default {
         }
         try {
           const response = await axios.get(api.location.tracking, { params })
-          /*response.data.data.result.forEach(r => {
-            const find = this.trackingSubscribers.find(item => item.subscriberId === r.subscriberId)
-            if (find) {
-              find.trackRecords = r.trackRecords
-            } else {
-              find.trackRecords = []
-            }
-          })*/
           if (response.data.data.result) {
             this.trackingSubscribers.forEach(s => {
               const find = response.data.data.result.find(item => item.subscriberId === s.subscriberId)
@@ -644,6 +628,8 @@ export default {
         } finally {
           this.loading.trackingMapLoading = false
         }
+      } else {
+        this.loading.trackingMapLoading = false
       }
     },
     renderTrackingHexagon () {
@@ -1002,7 +988,9 @@ export default {
       }
     },
     changeCurrentShowSubscriber (subscriber) {
-      this.currentShowSubscriber = subscriber
+      if (subscriber.subscriberId !== this.currentShowSubscriber.subscriberId) {
+        this.currentShowSubscriber = subscriber
+      }
     },
     // 地图上人图标鼠标悬浮框中点击追踪事件
     trackSubscriber (subscriber) {
@@ -1182,6 +1170,12 @@ export default {
         this.initTraceTrackingTab()
       }
     },
+    trackingSubscribers: {
+      deep: true,
+      handler (n) {
+        sessionStorage.setItem(storageKey.trackingSubscriberIds, JSON.stringify(n.map(item => item.subscriberId)))
+      }
+    },
     // 控制map loading
     'loading.hexagonLoading': {
       handler (n) {
@@ -1243,11 +1237,11 @@ export default {
     // 优先级：url > config.js > 默认值。
     const dateRangeValue = rangeParam ? parseInt(rangeParam) : (DEFAULT_TIME_FILTER_RANGE.dashboard || 60)
     const timeFilter = ref({ dateRangeValue })
-    if (!startTimeParam || !endTimeParam) {
+    if (!startTimeParam || !endTimeParam || dateRangeValue > -1) {
       const { startTime, endTime } = getNowTime(dateRangeValue)
       timeFilter.value.startTime = getSecond(startTime)
       timeFilter.value.endTime = getSecond(endTime)
-      // 如果没有时间参数，就将参数写入url
+      // 将参数写入url
       const newUrl = urlParamsHandler(window.location.href, useRoute().query, { startTime: timeFilter.value.startTime, endTime: timeFilter.value.endTime, range: dateRangeValue })
       overwriteUrl(newUrl)
     } else {
@@ -1280,8 +1274,8 @@ export default {
 
     // 从localStorage中获取数据
     const trackingSubscribers = ref([])
-    /*localStorage.getItem(storageKey.trackingSubscriberIds) && (trackingSubscribers.value = JSON.parse(localStorage.getItem(storageKey.trackingSubscriberIds)).map(id => ({ subscriberId: id })))
-    const test = ['gary6411', 'test6431', 'test6430', 'test6422']
+    sessionStorage.getItem(storageKey.trackingSubscriberIds) && (trackingSubscribers.value = JSON.parse(sessionStorage.getItem(storageKey.trackingSubscriberIds)).map(id => ({ subscriberId: id, show: false, showLine: false })))
+    /*const test = ['gary6411', 'test6431', 'test6430', 'test6422']
     test.forEach(id => {
       trackingSubscribers.value.push({ subscriberId: id, show: false, showLine: false })
     })*/
