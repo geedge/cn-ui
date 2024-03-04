@@ -39,8 +39,6 @@
             <i class="cn-icon-a-1 cn-icon" v-else></i>
           </span>
         </el-option>
-        <template v-slot:empty >
-        </template>
       </el-select>
       <div class="panel__time">
         <date-time-range
@@ -98,14 +96,27 @@
         <div class="analysis-statistics__subscribers">
           <template v-for="item in followedSubscribersList" :key="item.subscriberId">
             <div class="analysis-statistics__subscriber">
-              <div class="subscriber__header" :class="item.active === 1 ? 'subscriber__header' : 'subscriber__header--inactive'" >
+              <div class="subscriber__header" :class="item.active === 1 ? '' : 'subscriber__header-inactive'" >
                 <div class="header__icon">
                   <div class="icon__box">
                     <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M366.689524 690.468571l87.283809 83.821715-75.434666 195.486476c-10.971429 27.794286-43.105524 42.081524-72.265143 32.036571-29.159619-10.24-44.080762-41.252571-33.450667-69.241904L366.689524 690.468571zM203.824762 476.306286l51.785143-95.183238a162.279619 162.279619 0 0 1 59.245714-59.977143c119.710476-68.266667 134.777905-67.291429 149.942857-66.218667l80.798476 5.168762c24.868571 0.975238 42.081524 7.314286 125.025524 124.14781a21.26019 21.26019 0 0 0 14.092191 8.289523l99.132952 14.482286c12.873143 1.852952 24.478476 8.582095 32.182857 18.67581a45.494857 45.494857 0 0 1 8.825905 35.108571 46.665143 46.665143 0 0 1-19.504762 30.866286 50.468571 50.468571 0 0 1-36.571429 8.435809l-99.181714-14.433524a119.954286 119.954286 0 0 1-79.774476-47.640381c-4.388571-6.241524-7.558095-11.361524-11.849143-16.579047l-63.634286 193.487238 88.405334 84.845714c12.970667 12.385524 23.698286 29.013333 30.232381 45.494857l67.876571 190.366477c5.022476 13.409524 4.193524 28.233143-2.291809 41.057523a54.613333 54.613333 0 0 1-32.182858 27.160381c-5.851429 2.048-12.092952 3.120762-18.383238 3.169524a58.075429 58.075429 0 0 1-53.930666-36.181333l-67.876572-190.366476c-1.024-2.096762-2.096762-3.120762-3.218285-5.168762L365.616762 623.177143a84.894476 84.894476 0 0 1-24.868572-80.700953l34.523429-146.919619c-3.413333 2.340571-7.070476 4.388571-10.776381 6.290286a58.806857 58.806857 0 0 0-22.674286 22.723048L290.133333 519.801905a49.834667 49.834667 0 0 1-43.105523 24.819809 59.977143 59.977143 0 0 1-22.674286-5.12 46.518857 46.518857 0 0 1-20.48-63.146666z m209.67619-360.448C420.08381 58.465524 473.86819 17.066667 533.650286 23.30819 593.383619 29.549714 636.537905 81.13981 630.00381 138.48381c-6.534095 57.392762-60.269714 98.840381-120.05181 92.550095-59.782095-6.241524-102.985143-57.782857-96.451048-115.175619z" fill="#ffffff"></path></svg>
                   </div>
                 </div>
-                <div class="header__title">MSISDN</div>
-                <div class="header__content">{{item.subscriberId}}</div>
+                <div class="header__right">
+                  <div class="header-msisdn">
+                    <div class="header__title">MSISDN</div>
+                    <div class="header__content">{{item.subscriberId}}</div>
+                  </div>
+                  <div class="header__operation">
+                    <div class="trajectory-text">
+                        <i class="cn-icon-a-1 cn-icon"></i>Trajectory
+                    </div>
+                    <div class="cancle-follow" @click.stop="cancleFollowSubscribers(item)">
+                      <i class="cn-icon-close cn-icon"></i>
+                    </div>
+                  </div>
+                </div>
+
               </div>
               <div class="subscriber__body">
                 <div class="body__item">
@@ -333,7 +344,8 @@ export default {
       activeCount: '',
       activeCountChain: '',
       curPageNum: 1,
-      activeNames: ''
+      activeNames: '',
+      isLoadingMore: false
     }
   },
   components: {
@@ -418,9 +430,9 @@ export default {
       this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
 
       /* 右侧关注列表 */
-      await this.queryFollowedList()
+      this.queryFollowedList()
       /* 右上角折线图 */
-      await this.renderActiveSubscribersLine()
+      this.renderActiveSubscribersLine()
     },
     async initTraceTrackingTab () {
       await this.queryTraceTracking()
@@ -446,6 +458,7 @@ export default {
         this.pieValueRamp = this.calculateValueRamp(densityData)
         const option = _.cloneDeep(pieOption)
         option.color = this.pieColorRamp.map(c => `rgb(${c})`)
+        option.series[0].name = this.$t('location.populationDensity')
         option.series[0].data = this.pieValueRamp.map((r, i) => ({
           name: `${r.start}~${r.end}`,
           value: r.count
@@ -1012,11 +1025,27 @@ export default {
         }
         this.loading.searchLoading = true
         try {
-          axios.get(api.location.list, { params }).then(async response => {
+          this.isLoadingMore = true
+          await axios.get(api.location.list, { params }).then(async response => {
             if (response.status === 200) {
-              this.searchValueListShow = this.searchValueListShow.concat(response.data.data)
-              if (response.data.data.length === 0) {
+              if(this.curPageNum === 1) {
+                this.searchValueListShow = response.data.data
+              } else {
+                this.searchValueListShow = this.searchValueListShow.concat(response.data.data)
+              }
+              if (response.data.data.length === 0 && this.curPageNum > 1) {
                 this.curPageNum--
+              }
+              if(params.pageNo === 1) {
+                this.$nextTick(() => {
+                  const selectDom = document.getElementsByClassName('el-select-dropdown search-select')
+                  if(selectDom) {
+                    let dom = selectDom[0].getElementsByClassName('el-scrollbar__thumb')
+                    if (dom && dom[1]) {
+                      dom[1].style = "transform: translateY(0%) !important;"
+                    }
+                  }
+                })
               }
             }
           })
@@ -1024,6 +1053,7 @@ export default {
           this.errorMsgHandler(e)
           console.error(e)
         } finally {
+          this.isLoadingMore = false
           this.loading.searchLoading = false
         }
       }
@@ -1031,17 +1061,29 @@ export default {
     changeValue (item) {
     },
     changeSearchValue (value) {
-      const selectDom = document.querySelector('.search-select .el-scrollbar__wrap')
-      if (selectDom) {
-        selectDom.scrollTo({ top: 0, behavior: 'smooth' })
-      }
     },
     searchBlur () {
+
     },
     searchFocus () {
     },
     onLoadMore () {
-      this.initDropdownList(this.curSearchValue)
+      if(!this.isLoadingMore) {
+        this.initDropdownList(this.curSearchValue)
+      }
+    },
+    cancleFollowSubscribers(item) {
+      axios.delete(api.location.follow + '?subscriberId=' + item.subscriberId).then(res => {
+        if (res.status === 200) {
+          this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancleFollow.success') })
+          /* 刷新右侧关注列表 */
+          this.queryFollowedList()
+        } else {
+          this.$message.error(res.data.message)
+        }
+      }).catch(e => {
+        this.$message.error(this.errorMsgHandler(e))
+      })
     },
     followSubscribers (item) {
       if (item.follow === 1) {
@@ -1074,21 +1116,12 @@ export default {
     },
     visibleChange (state) {
       this.searchValueListShow = []
-      if (!state) {
-        const selectDom = document.querySelector('.search-select .el-scrollbar__wrap')
-        if (selectDom) {
-          selectDom.scrollTo({ top: 0, behavior: 'smooth' })
-        }
-      }
     },
     dropDownSearch (curVal) {
+      //this.isLoadingMore = false
       this.curSearchValue = curVal
       this.curPageNum = 1
       this.searchValueListShow = []
-      const selectDom = document.querySelector('.search-select .el-scrollbar__wrap')
-      if (selectDom) {
-        selectDom.scrollTo({ top: 0, behavior: 'smooth' })
-      }
       this.initDropdownList(curVal)
     },
     mapTimeLineChange (timeFilter) {
@@ -1381,7 +1414,6 @@ export default {
 }
 .search-select .el-scrollbar__wrap{
   max-height: 150px;
-  //height: 100px;
   overflow-y:auto;
 }
 .geo-analysis {
@@ -1642,7 +1674,7 @@ export default {
           border: 1px solid rgb(226,229,236);
           border-radius: 2px;
 
-          .subscriber__header--inactive {
+          .subscriber__header-inactive {
             background-color: #CCCCCC;
           }
           .subscriber__header {
@@ -1671,12 +1703,47 @@ export default {
                 border-radius: 50%;
               }
             }
-            .header__title {
-              font-size: 16px;
+            .header__right {
+              display:flex;
+              flex-direction: row;
+              justify-content: space-between;
+              .header-msisdn {
+                display:flex;
+                flex-direction: column;
+                .header__title {
+                  font-size: 16px;
+                }
+                .header__content {
+                  font-size: 14px;
+                }
+              }
+              .header__operation {
+                display:flex;
+                flex-direction: row;
+                align-items: center;
+                .trajectory-text {
+                  margin-right:12px;
+                  font-family: Helvetica-Bold;
+                  font-size: 12px;
+                  color: #233447;
+                  font-weight: 700;
+                  i {
+                    font-size: 12px !important;
+                    font-weight: bolder;
+                    margin-right:3px;
+                    color: #233447;
+                  }
+                }
+                .cancle-follow {
+                  margin-right:14px;
+                  i {
+                    cursor: pointer;
+                    font-size:8px;
+                  }
+                }
+              }
             }
-            .header__content {
-              font-size: 14px;
-            }
+
           }
           .subscriber__body {
             padding: 10px 18px;

@@ -300,7 +300,7 @@ export const selectLoadMore = {
     const selectDom = document.querySelector('.search-select .el-select-dropdown__wrap')
     function loadMores() {
       //判断是否到底
-      const isBase = this.scrollHeight - this.scrollTop <= this.clientHeight
+      const isBase = this.scrollHeight - this.scrollTop <= this.clientHeight + 10
       if(isBase) {
         binding.value && binding.value()
       }
@@ -309,7 +309,9 @@ export const selectLoadMore = {
     el.selectDomInfo = selectDom
     el.selectLoadMore = loadMores
     //监听滚动事件
-    selectDom.addEventListener('scroll',loadMores.bind(selectDom))
+    if(selectDom) {
+      selectDom.addEventListener('scroll',loadMores.bind(selectDom))
+    }
   },
   unmounted (el, binding) {
     // 解除事件监听
