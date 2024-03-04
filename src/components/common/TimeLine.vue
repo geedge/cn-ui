@@ -1,9 +1,8 @@
 <template>
   <div class="time-line">
     <div class="time-line-slider">
-      <el-slider v-model="currentTime" @change="onChange" :step="1" :max="timeLine.length" :format-tooltip="formatTooltip"/>
+      <el-slider v-model="currentTime" @change="onChange" :step="1" :max="timeLine.length>0?timeLine.length-1:99" :format-tooltip="formatTooltip"/>
     </div>
-    <div style="height: 10px"></div>
     <div class="time-line-container">
       <div v-for="(item, index) in timeLine" :key="index">
         <div v-if="item.showFlag" style="color: #666;">{{ item.time }}</div>
@@ -37,6 +36,7 @@ export default {
   watch: {
     timeFilter (n) {
       if (n) {
+        this.currentTime = 99
         this.getDate()
       }
     }
@@ -56,12 +56,12 @@ export default {
       const blockDom = document.getElementsByClassName('el-slider__button-wrapper')[0]
       if (blockDom) {
         this.$nextTick(() => {
-          blockDom.style.cssText += 'left: calc(99% - 6px);'
+          blockDom.style.cssText += 'left: 100%;'
           const markDom = document.getElementsByClassName('time-line-mark')[0]
           if (!markDom) {
             const childDiv = document.createElement('div')
             childDiv.className = 'time-line-mark'
-            childDiv.style.cssText += 'width: 0.5px;height: 40px;background: #000;margin-left: 18px;margin-top: -7px;'
+            childDiv.style.cssText += 'width: 0.5px;height: 40px;background: #000;margin-left: 8px;margin-top: -7px;'
             blockDom.appendChild(childDiv)
           }
         })
@@ -225,13 +225,14 @@ export default {
 <style scoped lang="scss">
 .time-line {
   width: 100%;
-  height: 50px !important;
+  height: 40px !important;
   padding: 0 6px;
   position: relative;
 
   .time-line-slider {
     position: absolute;
-    width: 100%;
+    width: calc(100% - 16px);
+    height: 40px;
     top: -6px;
 
     :deep .el-slider__runway {
@@ -239,9 +240,15 @@ export default {
       padding: 0 6px;
       height: 40px;
       background-color: rgba(0, 0, 0, 0);
+      margin: 0;
 
       .el-slider__bar {
         background-color: rgba(0, 0, 0, 0);
+      }
+      .el-slider__button-wrapper {
+        width: 10px;
+        height: 10px;
+        margin-top: 7px;
       }
 
       .el-slider__button {
