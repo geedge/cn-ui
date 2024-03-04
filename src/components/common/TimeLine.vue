@@ -38,6 +38,7 @@ export default {
       if (n) {
         this.currentTime = 99
         this.getDate()
+        this.onChange('change')
       }
     }
   },
@@ -85,7 +86,7 @@ export default {
       for (let i = startTime; i <= timeFilter.endTime; i += showTimeInterval * 60 * 1000) {
         const obj = this.formatTime(i, showTimeInterval, timeInterval)
         if (obj) {
-          myTimeRange.push({ time: obj.time, time1: obj.time1, stamp: i, showFlag: obj.showFlag })
+          myTimeRange.push({ time: obj.time, time1: obj.time1, stamp: new Date(obj.time1).getTime(), showFlag: obj.showFlag })
         }
       }
 
@@ -204,7 +205,14 @@ export default {
       }
     },
     onChange (e) {
-      if (this.timeLine[e]) {
+      if (e === 'change') {
+        // 切换timeFilter时，选取最后一分钟
+        const timeObj = {
+          startTime: this.timeLine.slice(-1)[0].stamp - 60 * 1000,
+          endTime: this.timeLine.slice(-1)[0].stamp
+        }
+        this.$emit('change', timeObj)
+      } else if (this.timeLine[e]) {
         // 返回所选时间后一分钟
         const timeObj = {
           startTime: this.timeLine[e].stamp - 60 * 1000,
