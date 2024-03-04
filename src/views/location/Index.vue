@@ -14,7 +14,7 @@
               clearable
               filterable
               remote
-              placeholder="Press Enter to Search"
+              :placeholder="$t('location.enterPhoneNumberToSearch')"
               popper-class="search-select"
               placement="bottom"
               @blur="searchBlur"
@@ -144,15 +144,15 @@
               </div>
               <div class="subscriber__body">
                 <div class="body__item">
-                  <div class="item__label">Group</div>
+                  <div class="item__label">{{$t('entities.group')}}</div>
                   <div class="item__value">Terrorist</div>
                 </div>
                 <div class="body__item">
-                  <div class="item__label">Info</div>
+                  <div class="item__label">{{$t('overall.info')}}</div>
                   <div class="item__value">Leader</div>
                 </div>
                 <div class="body__item">
-                  <div class="item__label">Location</div>
+                  <div class="item__label">{{$t('overall.location')}}</div>
                   <div class="item__value">China, Shanghai</div>
                 </div>
                 <div class="body-item-record">
@@ -169,7 +169,7 @@
                         </div>
                         <div class="timeline__info--item">
                           <div>
-                            <span>Location: </span><span class="info--item__value">{{subscriber.trackRecords[0].subscriberLongitude}},{{subscriber.trackRecords[0].subscriberLatitude}}</span>
+                            <span>{{$t('overall.location')}}: </span><span class="info--item__value">{{subscriber.trackRecords[0].subscriberLongitude}},{{subscriber.trackRecords[0].subscriberLatitude}}</span>
                           </div>
                           <div>
                             <span>Time of Arrival: </span><span class="info--item__value">{{dateFormatByAppearance(Number(subscriber.trackRecords[0].time))}}</span>
@@ -188,7 +188,7 @@
                           >
                             <div class="timeline__item">
                               <div>
-                                <span>Location: </span><span class="item__value">{{record.subscriberLongitude}},{{record.subscriberLatitude}}</span>
+                                <span>{{$t('overall.location')}}: </span><span class="item__value">{{record.subscriberLongitude}},{{record.subscriberLatitude}}</span>
                               </div>
                               <div>
                                 <span>Time of arrival: </span><span class="item__value">{{dateFormatByAppearance(Number(record.time))}}</span>
@@ -236,6 +236,7 @@
         </div>
         <div class="header__content">
           <template v-if="tooltip.type === tooltipType.hexagon">{{currentPolygon.hexId}}</template>
+          <template v-else-if="tooltip.type === tooltipType.human">{{currentSubscriber.subscriberDto.phoneNumber}}</template>
           <template v-else-if="tooltip.type === tooltipType.baseStation">0xxa8805</template>
         </div>
       </div>
@@ -260,18 +261,18 @@
         </template>
         <template v-else-if="tooltip.type === tooltipType.human">
           <div class="body__item">
-            <div class="item__label">Group</div>
+            <div class="item__label">{{$t('entities.group')}}</div>
             <div class="item__value">Terrorist</div>
           </div>
           <div class="body__item">
-            <div class="item__label">Info</div>
+            <div class="item__label">{{$t('overall.info')}}</div>
             <div class="item__value">Leader</div>
           </div>
           <div class="body__item">
-            <div class="item__label">Location</div>
+            <div class="item__label">{{$t('overall.location')}}</div>
             <div class="item__value">China, Shanghai</div>
           </div>
-          <div class="body__tracking">Trace Tracking</div>
+          <div class="body__tracking" @click="trackSubscriber(currentSubscriber)">{{$t('geo.traceTracking')}}</div>
         </template>
         <template v-else-if="tooltip.type === tooltipType.baseStation">
           <div class="body__item">
@@ -295,7 +296,7 @@
             <div class="item__value">1442</div>
           </div>
           <div class="body__item">
-            <div class="item__label">Location</div>
+            <div class="item__label">{{$t('overall.location')}}</div>
             <div class="item__value">China, Shanghai</div>
           </div>
         </template>
@@ -434,6 +435,10 @@ export default {
       // 如果未指定展示谁的轨迹，则默认取追踪用户中的第一个
       if (!this.currentShowSubscriber && this.trackingSubscribers.length > 0) {
         this.currentShowSubscriber = this.trackingSubscribers[0]
+      }
+      const find = this.trackingSubscribers.find(s => s.subscriberId === this.currentShowSubscriber.subscriberId)
+      if (find) {
+        this.currentShowSubscriber.trackRecords = find.trackRecords
       }
       this.renderTrackingHexagon()
     },
@@ -594,9 +599,28 @@ export default {
         }
         try {
           const response = await axios.get(api.location.tracking, { params })
-          response.data.data.result.forEach(r => {
-            this.trackingSubscribers.find(item => item.subscriberId === r.subscriberId).trackRecords = r.trackRecords
-          })
+          /*response.data.data.result.forEach(r => {
+            const find = this.trackingSubscribers.find(item => item.subscriberId === r.subscriberId)
+            if (find) {
+              find.trackRecords = r.trackRecords
+            } else {
+              find.trackRecords = []
+            }
+          })*/
+          if (response.data.data.result) {
+            this.trackingSubscribers.forEach(s => {
+              const find = response.data.data.result.find(item => item.subscriberId === s.subscriberId)
+              if (find) {
+                s.trackRecords = find.trackRecords
+              } else {
+                s.trackRecords = []
+              }
+            })
+          } else {
+            this.trackingSubscribers.forEach(s => {
+              s.trackRecords = []
+            })
+          }
           // 计算停留时间
           this.trackingSubscribers.forEach(s => {
             if (s.trackRecords && s.trackRecords.length > 0) {
@@ -668,21 +692,34 @@ export default {
       } else if (type === this.tooltipType.human) {
         svg = humanSvg
       }
-      data.forEach(marker => {
-        const el = document.createElement('div')
-        el.className = `map-marker map-marker--${type}`
-        el.innerHTML = svg
-        // 鼠标事件，控制tooltip显示和marker尺寸
-        this.bindMarkerEvent(el)
-        const mapMarker = new maplibregl.Marker({ element: el })
-          .setLngLat([marker.longitude, marker.latitude])
-          .addTo(this.mapChart)
-        if (type === this.tooltipType.baseStation) {
-          this.baseStationMarkers.push(mapMarker)
-        } else if (type === this.tooltipType.human) {
-          this.humanMarkers.push(mapMarker)
-        }
-      })
+      try {
+        data.forEach(marker => {
+          if (type === this.tooltipType.human && marker.subscriberDto && marker.subscriberDto.hexId) {
+            const geo = h3ToGeo(marker.subscriberDto.hexId)
+            const el = document.createElement('div')
+            el.className = `map-marker map-marker--${type}`
+            el.innerHTML = svg
+            // 鼠标事件，控制tooltip显示和marker尺寸
+            this.bindMarkerEvent(el, marker, type)
+            const mapMarker = new maplibregl.Marker({ element: el })
+              .setLngLat([geo[1], geo[0]])
+              .addTo(this.mapChart)
+            this.humanMarkers.push(mapMarker)
+          } else if (type === this.tooltipType.baseStation) {
+            const el = document.createElement('div')
+            el.className = `map-marker map-marker--${type}`
+            el.innerHTML = svg
+            // 鼠标事件，控制tooltip显示和marker尺寸
+            this.bindMarkerEvent(el, marker, type)
+            const mapMarker = new maplibregl.Marker({ element: el })
+              .setLngLat([marker.longitude, marker.latitude])
+              .addTo(this.mapChart)
+            this.baseStationMarkers.push(mapMarker)
+          }
+        })
+      } catch (e) {
+        console.error(e)
+      }
     },
     renderTrackingMarker (coordinates) {
       const el = document.createElement('div')
@@ -891,15 +928,20 @@ export default {
       }
     },
 
-    bindMarkerEvent (el) {
+    bindMarkerEvent (el, markerData, type) {
       el.addEventListener('mouseenter', e => {
         this.currentMarkerDom = el
+        if (type === this.tooltipType.human) {
+          this.currentSubscriber = markerData
+        } else if (type === this.tooltipType.baseStation) {
+          this.currentBaseStation = markerData
+        }
         if (!this.tooltip.mouseInMarkerOrTooltip) {
           this.tooltip.x = e.clientX + 15 - e.offsetX
           this.tooltip.y = e.clientY + 15 - e.offsetY
         }
         this.tooltip.mouseInMarkerOrTooltip = true
-        this.tooltip.type = this.tooltipType.baseStation
+        this.tooltip.type = type
         this.tooltip.showMarkerTooltip = true
         el.classList.add('map-marker--hover')
       })
@@ -961,6 +1003,15 @@ export default {
     },
     changeCurrentShowSubscriber (subscriber) {
       this.currentShowSubscriber = subscriber
+    },
+    // 地图上人图标鼠标悬浮框中点击追踪事件
+    trackSubscriber (subscriber) {
+      const find = this.trackingSubscribers.find(s => s.subscriberId === subscriber.subscriberId)
+      if (!find) {
+        this.trackingSubscribers.push({ ...subscriber, show: false, showLine: false })
+      }
+      this.currentShowSubscriber = subscriber
+      this.activeTab = 'traceTracking'
     },
     async initDropdownList (curSearchValue) {
       if (curSearchValue !== '') {
@@ -1113,8 +1164,21 @@ export default {
     },
     timeFilter (n) {
       if (this.activeTab === 'locationMap') {
+        this.unbindHexagonEvents()
+        this.mapChart.getLayer('hexagon') && this.mapChart.removeLayer('hexagon')
+        this.mapChart.getSource('hexGrid') && this.mapChart.removeSource('hexGrid')
+        this.humanMarkers.forEach(marker => {
+          marker.remove && marker.remove()
+        })
+        this.humanMarkers = []
         this.initLocationMapTab()
       } else if (this.activeTab === 'traceTracking') {
+        this.mapChart.getLayer('trackingHexagon') && this.mapChart.removeLayer('trackingHexagon')
+        this.mapChart.getLayer('trackingLine') && this.mapChart.removeLayer('trackingLine')
+        this.mapChart.getSource('trackingHexGrid') && this.mapChart.removeSource('trackingHexGrid')
+        this.mapChart.getSource('trackingLineSource') && this.mapChart.removeSource('trackingLineSource')
+        this.trackingHumanMarker.remove && this.trackingHumanMarker.remove()
+        this.trackingHumanMarker = {}
         this.initTraceTrackingTab()
       }
     },
@@ -1216,11 +1280,11 @@ export default {
 
     // 从localStorage中获取数据
     const trackingSubscribers = ref([])
-    localStorage.getItem(storageKey.trackingSubscriberIds) && (trackingSubscribers.value = JSON.parse(localStorage.getItem(storageKey.trackingSubscriberIds)).map(id => ({ subscriberId: id })))
+    /*localStorage.getItem(storageKey.trackingSubscriberIds) && (trackingSubscribers.value = JSON.parse(localStorage.getItem(storageKey.trackingSubscriberIds)).map(id => ({ subscriberId: id })))
     const test = ['gary6411', 'test6431', 'test6430', 'test6422']
     test.forEach(id => {
       trackingSubscribers.value.push({ subscriberId: id, show: false, showLine: false })
-    })
+    })*/
 
     const currentShowSubscriber = ref(null)
     const loading = ref({
@@ -1421,17 +1485,17 @@ export default {
           }
         }
         &.map-marker--hover {
-          width: 36px;
-          height: 36px;
+          width: 30px;
+          height: 30px;
           border: 2px solid rgba(255,255,255,1);
 
           &.map-marker--human svg {
-            width: 23px;
-            height: 23px;
+            width: 21px;
+            height: 21px;
           }
           &.map-marker--base-station svg {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
           }
         }
       }
