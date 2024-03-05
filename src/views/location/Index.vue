@@ -105,31 +105,34 @@
                 <div class="header__right">
                   <div class="header-msisdn">
                     <div class="header__title">MSISDN</div>
-                    <div class="header__content">{{item.subscriberId}}</div>
+                    <div class="header__content">{{$_.get(item, 'subscriberDto.phoneNumber', '-')}}</div>
                   </div>
                   <div class="header__operation">
                     <div class="trajectory-text">
-                        <i class="cn-icon-a-1 cn-icon"></i>{{ $t('location.trajectory') }}
+                        <i class="cn-icon-a-1 cn-icon"></i>{{$t('location.track')}}
                     </div>
                     <div class="cancel-follow" @click.stop="cancleFollowSubscribers(item)">
                       <i class="cn-icon-close cn-icon"></i>
                     </div>
                   </div>
                 </div>
-
               </div>
               <div class="subscriber__body">
                 <div class="body__item">
+                  <div class="item__label">ID</div>
+                  <div class="item__value">{{item.subscriberId}}</div>
+                </div>
+                <div class="body__item">
                   <div class="item__label">{{$t('location.group')}}</div>
-                  <div class="item__value">{{item.group}}</div>
+                  <div class="item__value">Terrorist</div>
                 </div>
                 <div class="body__item">
                   <div class="item__label">{{$t('overall.info')}}</div>
-                  <div class="item__value">{{item.info}}</div>
+                  <div class="item__value">Leader</div>
                 </div>
                 <div class="body__item">
                   <div class="item__label">{{$t('location.location')}}</div>
-                  <div class="item__value">{{item.location}}</div>
+                  <div class="item__value">China, Shanghai</div>
                 </div>
               </div>
             </div>
@@ -154,6 +157,10 @@
                 <div class="header__content">{{subscriber.trackRecords && subscriber.trackRecords.length > 0 && subscriber.trackRecords[0].phoneNumber}}</div>
               </div>
               <div class="subscriber__body">
+                <div class="body__item">
+                  <div class="item__label">ID</div>
+                  <div class="item__value">{{subscriber.subscriberId}}</div>
+                </div>
                 <div class="body__item">
                   <div class="item__label">{{$t('entities.group')}}</div>
                   <div class="item__value">Terrorist</div>
@@ -430,9 +437,9 @@ export default {
       this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
 
       /* 右侧关注列表 */
-      this.queryFollowedList()
+      await this.queryFollowedList()
       /* 右上角折线图 */
-      this.renderActiveSubscribersLine()
+      await this.renderActiveSubscribersLine()
     },
     async initTraceTrackingTab () {
       await this.queryTraceTracking()
@@ -693,15 +700,14 @@ export default {
       }
       try {
         data.forEach(marker => {
-          if (type === this.tooltipType.human && marker.subscriberDto && marker.subscriberDto.hexId) {
-            const geo = h3ToGeo(marker.subscriberDto.hexId)
+          if (type === this.tooltipType.human && marker.subscriberDto) {
             const el = document.createElement('div')
             el.className = `map-marker map-marker--${type}`
             el.innerHTML = svg
             // 鼠标事件，控制tooltip显示和marker尺寸
             this.bindMarkerEvent(el, marker, type)
             const mapMarker = new maplibregl.Marker({ element: el })
-              .setLngLat([geo[1], geo[0]])
+              .setLngLat([marker.subscriberDto.subscriberLongitude, marker.subscriberDto.subscriberLatitude])
               .addTo(this.mapChart)
             this.humanMarkers.push(mapMarker)
           } else if (type === this.tooltipType.baseStation) {
@@ -1281,7 +1287,7 @@ export default {
       timeFilter.value.startTime = parseInt(startTimeParam)
       timeFilter.value.endTime = parseInt(endTimeParam)
     }
-    const minuteTimeFilter = ref({ startTime: timeFilter.value.endTime - 60, endTime: timeFilter.value.endTime })
+    const minuteTimeFilter = ref({})
     const tooltip = ref({
       type: ''
     })
@@ -1674,11 +1680,12 @@ export default {
           border: 1px solid rgb(226,229,236);
           border-radius: 2px;
 
-          .subscriber__header-inactive {
-            background-color: #CCCCCC;
-          }
           .subscriber__header {
             background-color: #38ACD2;
+
+            &.subscriber__header-inactive {
+              background-color: #CCCCCC;
+            }
           }
 
           .subscriber__header {
