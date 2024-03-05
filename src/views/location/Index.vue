@@ -109,9 +109,9 @@
                   </div>
                   <div class="header__operation">
                     <div class="trajectory-text">
-                        <i class="cn-icon-a-1 cn-icon"></i>Trajectory
+                        <i class="cn-icon-a-1 cn-icon"></i>{{ $t('location.trajectory') }}
                     </div>
-                    <div class="cancle-follow" @click.stop="cancleFollowSubscribers(item)">
+                    <div class="cancel-follow" @click.stop="cancleFollowSubscribers(item)">
                       <i class="cn-icon-close cn-icon"></i>
                     </div>
                   </div>
@@ -167,7 +167,7 @@
                   <div class="item__value">China, Shanghai</div>
                 </div>
                 <div class="body-item-record">
-                  <div class="item-record__header">Track record</div>
+                  <div class="item-record__header">{{ $t('location.trackRecord') }}</div>
                   <template v-if="subscriber.trackRecords && subscriber.trackRecords.length > 0">
                     <div class="item-record__info">
                       <div class="circle"></div>
@@ -183,10 +183,10 @@
                             <span>{{$t('overall.location')}}: </span><span class="info--item__value">{{subscriber.trackRecords[0].subscriberLongitude}},{{subscriber.trackRecords[0].subscriberLatitude}}</span>
                           </div>
                           <div>
-                            <span>Time of Arrival: </span><span class="info--item__value">{{dateFormatByAppearance(Number(subscriber.trackRecords[0].time))}}</span>
+                            <span>{{ $t('location.timeOfArrival') }}: </span><span class="info--item__value">{{dateFormatByAppearance(Number(subscriber.trackRecords[0].time))}}</span>
                           </div>
                           <div>
-                            <span>Residence Time: </span><span class="info--item__value">-</span>
+                            <span>{{ $t('location.residenceTime') }}: </span><span class="info--item__value">-</span>
                           </div>
                         </div>
                       </div>
@@ -202,10 +202,10 @@
                                 <span>{{$t('overall.location')}}: </span><span class="item__value">{{record.subscriberLongitude}},{{record.subscriberLatitude}}</span>
                               </div>
                               <div>
-                                <span>Time of arrival: </span><span class="item__value">{{dateFormatByAppearance(Number(record.time))}}</span>
+                                <span>{{ $t('location.timeOfArrival') }}: </span><span class="item__value">{{dateFormatByAppearance(Number(record.time))}}</span>
                               </div>
                               <div>
-                                <span>Residence Time: </span><span class="item__value">{{record.stayTime}}</span>
+                                <span>{{ $t('location.residenceTime') }}: </span><span class="item__value">{{record.stayTime}}</span>
                               </div>
                             </div>
                           </el-timeline-item>
@@ -254,19 +254,19 @@
       <div class="hexagon-tooltip__body">
         <template v-if="tooltip.type === tooltipType.hexagon">
           <div class="body__item">
-            <div class="item__label">Number</div>
+            <div class="item__label">{{ $t('location.number') }}</div>
             <div class="item__value">{{currentPolygon.number}}</div>
           </div>
           <div class="body__item">
-            <div class="item__label">Locals</div>
+            <div class="item__label">{{ $t('location.locals') }}</div>
             <div class="item__value">{{currentPolygon.number}}</div>
           </div>
           <div class="body__item">
-            <div class="item__label">Visitors</div>
+            <div class="item__label">{{ $t('location.visitors') }}</div>
             <div class="item__value">{{currentPolygon.number}}</div>
           </div>
           <div class="body__item">
-            <div class="item__label">Roamers</div>
+            <div class="item__label">{{ $t('location.roamers') }}</div>
             <div class="item__value">{{currentPolygon.number}}</div>
           </div>
         </template>
@@ -287,15 +287,15 @@
         </template>
         <template v-else-if="tooltip.type === tooltipType.baseStation">
           <div class="body__item">
-            <div class="item__label">Location Area Code</div>
+            <div class="item__label">{{ $t('location.locationAreaCode') }}</div>
             <div class="item__value">12</div>
           </div>
           <div class="body__item">
-            <div class="item__label">Mobile Network Code</div>
+            <div class="item__label">{{ $t('location.mobileNetworkCode') }}</div>
             <div class="item__value">1</div>
           </div>
           <div class="body__item">
-            <div class="item__label">Communication Type</div>
+            <div class="item__label">{{ $t('location.communicationType') }}</div>
             <div class="item__value">4G</div>
           </div>
           <div class="body__item">
@@ -1308,10 +1308,10 @@ export default {
     // 从localStorage中获取数据
     const trackingSubscribers = ref([])
     sessionStorage.getItem(storageKey.trackingSubscriberIds) && (trackingSubscribers.value = JSON.parse(sessionStorage.getItem(storageKey.trackingSubscriberIds)).map(id => ({ subscriberId: id, show: false, showLine: false })))
-    /*const test = ['gary6411', 'test6431', 'test6430', 'test6422']
+    /* const test = ['gary6411', 'test6431', 'test6430', 'test6422']
     test.forEach(id => {
       trackingSubscribers.value.push({ subscriberId: id, show: false, showLine: false })
-    })*/
+    }) */
 
     const currentShowSubscriber = ref(null)
     const loading = ref({
@@ -1734,7 +1734,7 @@ export default {
                     color: #233447;
                   }
                 }
-                .cancle-follow {
+                .cancel-follow {
                   margin-right:14px;
                   i {
                     cursor: pointer;
