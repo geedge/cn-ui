@@ -1177,7 +1177,7 @@ export default {
     },
     // 时间轴改变时，重新查询人marker
     async minuteTimeFilter (n) {
-      this.debounceFunc()
+      this.debounceFunc?.()
     },
     // 切换追踪的用户
     currentShowSubscriber (n) {

@@ -43,10 +43,10 @@ export default {
     }
   },
   mounted () {
-    this.getDate()
+    this.getDate('init')
   },
   methods: {
-    getDate () {
+    getDate (e) {
       // 切换页面进来时，timeFilter时间戳为秒而非毫秒
       const timeFilter = {
         startTime: getMillisecond(this.timeFilter.startTime),
@@ -91,6 +91,13 @@ export default {
       }
 
       this.timeLine = myTimeRange
+      if (e === 'init') {
+        const timeObj = {
+          startTime: this.timeLine.slice(-1)[0].stamp - 60 * 1000,
+          endTime: this.timeLine.slice(-1)[0].stamp
+        }
+        this.$emit('change', timeObj)
+      }
     },
     // 按时间间隔格式化时间
     formatTime (timestamp, showTimeInterval, timeInterval) {
