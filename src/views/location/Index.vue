@@ -10,6 +10,7 @@
               id="searchValue"
               ref="searchValue"
               v-model="dropDownValue"
+              v-show="activeTab === 'locationMap'"
               size="mini"
               clearable
               filterable
@@ -108,10 +109,10 @@
                     <div class="header__content">{{$_.get(item, 'subscriberDto.phoneNumber', '-')}}</div>
                   </div>
                   <div class="header__operation">
-                    <div class="trajectory-text">
-                        <i class="cn-icon-a-1 cn-icon"></i>{{$t('location.track')}}
+                    <div class="trajectory-text" @click="addOrRemoveTrackingSubscriber(item)">
+                        <i class="cn-icon" :class="symbolClass(item)"></i>{{$t('location.track')}}
                     </div>
-                    <div class="cancel-follow" @click.stop="cancleFollowSubscribers(item)">
+                    <div class="cancel-follow" @click.stop="cancelFollowSubscribers(item)">
                       <i class="cn-icon-close cn-icon"></i>
                     </div>
                   </div>
@@ -141,6 +142,7 @@
       </div>
       <!-- 右侧数据栏-trace -->
       <div class="analysis-statistics" v-show="activeTab === 'traceTracking'">
+        <div class="analysis-statistics__no-tracking-tip" v-if="trackingSubscribers.length === 0" @click="activeTab = 'locationMap'">{{$t('location.noTrackingYet')}}</div>
         <div class="analysis-statistics__subscribers">
           <template v-for="(subscriber, index) in trackingSubscribers" :key="subscriber.subscriberId">
             <div
@@ -153,8 +155,17 @@
                     <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M366.689524 690.468571l87.283809 83.821715-75.434666 195.486476c-10.971429 27.794286-43.105524 42.081524-72.265143 32.036571-29.159619-10.24-44.080762-41.252571-33.450667-69.241904L366.689524 690.468571zM203.824762 476.306286l51.785143-95.183238a162.279619 162.279619 0 0 1 59.245714-59.977143c119.710476-68.266667 134.777905-67.291429 149.942857-66.218667l80.798476 5.168762c24.868571 0.975238 42.081524 7.314286 125.025524 124.14781a21.26019 21.26019 0 0 0 14.092191 8.289523l99.132952 14.482286c12.873143 1.852952 24.478476 8.582095 32.182857 18.67581a45.494857 45.494857 0 0 1 8.825905 35.108571 46.665143 46.665143 0 0 1-19.504762 30.866286 50.468571 50.468571 0 0 1-36.571429 8.435809l-99.181714-14.433524a119.954286 119.954286 0 0 1-79.774476-47.640381c-4.388571-6.241524-7.558095-11.361524-11.849143-16.579047l-63.634286 193.487238 88.405334 84.845714c12.970667 12.385524 23.698286 29.013333 30.232381 45.494857l67.876571 190.366477c5.022476 13.409524 4.193524 28.233143-2.291809 41.057523a54.613333 54.613333 0 0 1-32.182858 27.160381c-5.851429 2.048-12.092952 3.120762-18.383238 3.169524a58.075429 58.075429 0 0 1-53.930666-36.181333l-67.876572-190.366476c-1.024-2.096762-2.096762-3.120762-3.218285-5.168762L365.616762 623.177143a84.894476 84.894476 0 0 1-24.868572-80.700953l34.523429-146.919619c-3.413333 2.340571-7.070476 4.388571-10.776381 6.290286a58.806857 58.806857 0 0 0-22.674286 22.723048L290.133333 519.801905a49.834667 49.834667 0 0 1-43.105523 24.819809 59.977143 59.977143 0 0 1-22.674286-5.12 46.518857 46.518857 0 0 1-20.48-63.146666z m209.67619-360.448C420.08381 58.465524 473.86819 17.066667 533.650286 23.30819 593.383619 29.549714 636.537905 81.13981 630.00381 138.48381c-6.534095 57.392762-60.269714 98.840381-120.05181 92.550095-59.782095-6.241524-102.985143-57.782857-96.451048-115.175619z" fill="#ffffff"></path></svg>
                   </div>
                 </div>
-                <div class="header__title">MSISDN</div>
-                <div class="header__content">{{subscriber.trackRecords && subscriber.trackRecords.length > 0 && subscriber.trackRecords[0].phoneNumber}}</div>
+                <div class="header__right">
+                  <div class="header-msisdn">
+                    <div class="header__title">MSISDN</div>
+                    <div class="header__content">{{$_.get(subscriber, 'subscriberDto.phoneNumber', '-')}}</div>
+                  </div>
+                  <div class="header__operation">
+                    <div class="cancel-follow" @click.stop="removeTrackingSubscriber(subscriber)">
+                      <i class="cn-icon-close cn-icon"></i>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div class="subscriber__body">
                 <div class="body__item">
@@ -278,6 +289,10 @@
           </div>
         </template>
         <template v-else-if="tooltip.type === tooltipType.human">
+          <div class="body__item">
+            <div class="item__label">ID</div>
+            <div class="item__value">{{currentSubscriber.subscriberId}}</div>
+          </div>
           <div class="body__item">
             <div class="item__label">{{$t('entities.group')}}</div>
             <div class="item__value">Terrorist</div>
@@ -1011,6 +1026,38 @@ export default {
         this.currentShowSubscriber = subscriber
       }
     },
+    // 关注列表的添加、删除追踪
+    addOrRemoveTrackingSubscriber (subscriber) {
+      const find = this.trackingSubscribers.find(s => s.subscriberId === subscriber.subscriberId)
+      if (find) {
+        const index = this.trackingSubscribers.findIndex(s => s.subscriberId === subscriber.subscriberId)
+        this.trackingSubscribers.splice(index, 1)
+      } else {
+        this.trackingSubscribers.push({ ...subscriber, show: false, showLine: false })
+      }
+    },
+    // 追踪页删除追踪
+    removeTrackingSubscriber (subscriber) {
+      const find = this.trackingSubscribers.find(s => s.subscriberId === subscriber.subscriberId)
+      if (find) {
+        const index = this.trackingSubscribers.findIndex(s => s.subscriberId === subscriber.subscriberId)
+        this.trackingSubscribers.splice(index, 1)
+        if (subscriber.subscriberId === this.currentShowSubscriber.subscriberId) {
+          // 如果删除的是当前正在地图上展示的，那么切换为展示第一个；如果删除后追踪列表清空了，则置为空
+          if (this.trackingSubscribers.length === 0) {
+            this.currentShowSubscriber = null
+          } else {
+            this.currentShowSubscriber = this.trackingSubscribers[0]
+          }
+        }
+      }
+      console.info(this.currentShowSubscriber)
+    },
+    // 关注列表追踪图标class
+    symbolClass (subscriber) {
+      const find = this.trackingSubscribers.find(s => s.subscriberId === subscriber.subscriberId)
+      return find ? 'cn-icon-a-' : 'cn-icon-a-1'
+    },
     // 地图上人图标鼠标悬浮框中点击追踪事件
     trackSubscriber (subscriber) {
       const find = this.trackingSubscribers.find(s => s.subscriberId === subscriber.subscriberId)
@@ -1048,7 +1095,7 @@ export default {
                   if(selectDom) {
                     let dom = selectDom[0].getElementsByClassName('el-scrollbar__thumb')
                     if (dom && dom[1]) {
-                      dom[1].style = "transform: translateY(0%) !important;"
+                      dom[1].style = 'transform: translateY(0%) !important;'
                     }
                   }
                 })
@@ -1074,11 +1121,11 @@ export default {
     searchFocus () {
     },
     onLoadMore () {
-      if(!this.isLoadingMore) {
+      if (!this.isLoadingMore) {
         this.initDropdownList(this.curSearchValue)
       }
     },
-    cancleFollowSubscribers(item) {
+    cancelFollowSubscribers (item) {
       axios.delete(api.location.follow + '?subscriberId=' + item.subscriberId).then(res => {
         if (res.status === 200) {
           this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancleFollow.success') })
@@ -1187,7 +1234,9 @@ export default {
       this.mapChart.getSource('trackingLineSource') && this.mapChart.removeSource('trackingLineSource')
       this.trackingHumanMarker.remove && this.trackingHumanMarker.remove()
       this.trackingHumanMarker = {}
-      this.renderTrackingHexagon()
+      if (n) {
+        this.renderTrackingHexagon()
+      }
     },
     timeFilter (n) {
       if (this.activeTab === 'locationMap') {
@@ -1212,7 +1261,8 @@ export default {
     trackingSubscribers: {
       deep: true,
       handler (n) {
-        sessionStorage.setItem(storageKey.trackingSubscriberIds, JSON.stringify(n.map(item => item.subscriberId)))
+        console.info(n)
+        sessionStorage.setItem(storageKey.trackingSubscribers, JSON.stringify(n.map(item => ({ subscriberId: item.subscriberId, subscriberDto: { phoneNumber: item.subscriberDto.phoneNumber } }))))
       }
     },
     // 控制map loading
@@ -1313,7 +1363,7 @@ export default {
 
     // 从localStorage中获取数据
     const trackingSubscribers = ref([])
-    sessionStorage.getItem(storageKey.trackingSubscriberIds) && (trackingSubscribers.value = JSON.parse(sessionStorage.getItem(storageKey.trackingSubscriberIds)).map(id => ({ subscriberId: id, show: false, showLine: false })))
+    sessionStorage.getItem(storageKey.trackingSubscribers) && (trackingSubscribers.value = JSON.parse(sessionStorage.getItem(storageKey.trackingSubscribers)).map(item => ({ ...item, show: false, showLine: false })))
     /* const test = ['gary6411', 'test6431', 'test6430', 'test6422']
     test.forEach(id => {
       trackingSubscribers.value.push({ subscriberId: id, show: false, showLine: false })
@@ -1662,6 +1712,12 @@ export default {
         font-size: 16px;
         color: #353636;
       }
+      .analysis-statistics__no-tracking-tip {
+        padding: 0 20px;
+        cursor: pointer;
+        color: #046eca;
+        text-decoration: underline;
+      }
       .analysis-statistics__subscribers {
         padding-left: 20px;
 
@@ -1728,12 +1784,15 @@ export default {
                 display:flex;
                 flex-direction: row;
                 align-items: center;
+
                 .trajectory-text {
                   margin-right:12px;
                   font-family: Helvetica-Bold;
                   font-size: 12px;
                   color: #233447;
                   font-weight: 700;
+                  cursor: pointer;
+
                   i {
                     font-size: 12px !important;
                     font-weight: bolder;

@@ -47,7 +47,7 @@ export const storageKey = {
   linkInfo: 'cn-link-info',
   history: 'cn-history',
   schemaEntityExplore: 'schema_entity_explore',
-  trackingSubscriberIds: 'tracking-subscriber-ids'
+  trackingSubscribers: 'tracking-subscribers'
 }
 export const largeCountryList = ['CN', 'US', 'RU', 'AU', 'CA', 'KZ', 'IN', 'BR']
 
