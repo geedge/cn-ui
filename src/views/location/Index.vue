@@ -1224,7 +1224,11 @@ export default {
     },
     // 时间轴改变时，重新查询人marker
     async minuteTimeFilter (n) {
-      this.debounceFunc?.()
+      if (!this.isInit) {
+        this.debounceFunc?.()
+      } else {
+        this.isInit = false
+      }
     },
     // 切换追踪的用户
     currentShowSubscriber (n) {
@@ -1414,7 +1418,8 @@ export default {
       unitTypes,
       defaultZoom: 13, // 地图默认缩放比例
       center: [116.38, 39.9], // 地图默认中心点。北京：[116.38, 39.9] 纽约：[-73.94539, 40.841843]
-      debounceFunc: shallowRef(null)
+      debounceFunc: shallowRef(null),
+      isInit: ref(true) // init标志
     }
   },
   unmounted () {
