@@ -86,14 +86,14 @@ export default {
       for (let i = startTime; i <= timeFilter.endTime; i += showTimeInterval * 60 * 1000) {
         const obj = this.formatTime(i, showTimeInterval, timeInterval)
         if (obj) {
-          myTimeRange.push({ time: obj.time, time1: obj.time1, stamp: new Date(obj.time1).getTime(), showFlag: obj.showFlag })
+          myTimeRange.push({ time: obj.time, time1: obj.time1, stamp: new Date(obj.time1).getTime(), lastStamp: new Date(obj.time1).getTime() - showTimeInterval * 60 * 1000, showFlag: obj.showFlag })
         }
       }
 
       this.timeLine = myTimeRange
       if (e === 'init') {
         const timeObj = {
-          startTime: this.timeLine.slice(-1)[0].stamp - 60 * 1000,
+          startTime: this.timeLine.slice(-1)[0].lastStamp,
           endTime: this.timeLine.slice(-1)[0].stamp
         }
         this.$emit('change', timeObj)
@@ -215,14 +215,14 @@ export default {
       if (e === 'change') {
         // 切换timeFilter时，选取最后一分钟
         const timeObj = {
-          startTime: this.timeLine.slice(-1)[0].stamp - 60 * 1000,
+          startTime: this.timeLine.slice(-1)[0].lastStamp,
           endTime: this.timeLine.slice(-1)[0].stamp
         }
         this.$emit('change', timeObj)
       } else if (this.timeLine[e]) {
         // 返回所选时间后一分钟
         const timeObj = {
-          startTime: this.timeLine[e].stamp - 60 * 1000,
+          startTime: this.timeLine[e].lastStamp,
           endTime: this.timeLine[e].stamp
         }
         this.$emit('change', timeObj)

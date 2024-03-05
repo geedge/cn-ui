@@ -141,7 +141,7 @@
         </div>
       </div>
       <!-- 右侧数据栏-trace -->
-      <div class="analysis-statistics" v-show="activeTab === 'traceTracking'">
+      <div class="analysis-statistics" id="subscribersBlock" v-show="activeTab === 'traceTracking'">
         <div class="analysis-statistics__no-tracking-tip" v-if="trackingSubscribers.length === 0" @click="activeTab = 'locationMap'">{{$t('location.noTrackingYet')}}</div>
         <div class="analysis-statistics__subscribers">
           <template v-for="(subscriber, index) in trackingSubscribers" :key="subscriber.subscriberId">
@@ -230,9 +230,9 @@
                         </template>
                       </el-timeline>
 
-                      <div class="item-record__btn" @click.stop="clickTrackBlock(index)">
-                        <span v-if="!subscriber.show"><i class="cn-icon cn-icon-down2"></i></span>
-                        <span v-if="subscriber.show"><i class="cn-icon cn-icon-up2"></i></span>
+                      <div :class="subscriber.trackRecords.length === 1 ? 'item-record__btn-disabled' : 'item-record__btn'" @click.stop="clickTrackBlock(index)">
+                        <span v-if="!subscriber.show"><i class="cn-icon cn-icon-down2" :style="subscriber.trackRecords.length === 1 ? 'color: #C0C4CC' : ''"></i></span>
+                        <span v-if="subscriber.show"><i class="cn-icon cn-icon-up2" :style="subscriber.trackRecords.length === 1 ? 'color: #C0C4CC' : ''"></i></span>
                       </div>
                     </div>
                   </template>
@@ -384,7 +384,8 @@ export default {
       activeCountChain: '',
       curPageNum: 1,
       activeNames: '',
-      isLoadingMore: false
+      isLoadingMore: false,
+      initNum: 0
     }
   },
   components: {
@@ -425,7 +426,6 @@ export default {
       }
 
       this.mapChart.on('load', async function () {
-        console.info('map loaded')
         // 加载地图上的基站，基站不随tab的切换而改变
         const baseStationData = await _this.queryBaseStation()
         _this.renderMarker(baseStationData, _this.tooltipType.baseStation)
@@ -482,6 +482,15 @@ export default {
       const find = this.trackingSubscribers.find(s => s.subscriberId === this.currentShowSubscriber.subscriberId)
       if (find) {
         this.currentShowSubscriber.trackRecords = find.trackRecords
+
+        // 滚动条定位到id所在的dom
+        const findIndex = this.trackingSubscribers.findIndex(s => s.subscriberId === this.currentShowSubscriber.subscriberId)
+        const dom = document.getElementById('subscribersBlock')
+        if (findIndex && dom) {
+          this.$nextTick(() => {
+            dom.scrollTop = 207 * findIndex
+          })
+        }
       }
       this.renderTrackingHexagon()
     },
@@ -651,6 +660,7 @@ export default {
               } else {
                 s.trackRecords = []
               }
+              s.show = false // 切换到track tracking时就收起时间线
             })
           } else {
             this.trackingSubscribers.forEach(s => {
@@ -665,14 +675,29 @@ export default {
                 if (i === 0) {
                   s.trackRecords[i].stayTime = '-'
                 } else {
-                  const stayTime = unitConvert(s.trackRecords[i - 1].time - s.trackRecords[i].time, unitTypes.time, 's')
-                  if (Number(stayTime[0]) === Number(Number(stayTime[0]).toFixed(0))) {
-                    stayTime[0] = Number(stayTime[0]).toFixed(0)
+                  if ((s.trackRecords[i - 1].subscriberLongitude === s.trackRecords[i].subscriberLongitude) && (s.trackRecords[i - 1].subscriberLatitude === s.trackRecords[i].subscriberLatitude)) {
+                    // 如果连续两条地址重复，则将时间累加，并将上一条标注repeatFlag为true，最后进行删除
+                    if (s.trackRecords[i - 2]) {
+                      const stayTime = unitConvert(s.trackRecords[i - 2].time - s.trackRecords[i].time, unitTypes.time, 's')
+                      if (Number(stayTime[0]) === Number(Number(stayTime[0]).toFixed(0))) {
+                        stayTime[0] = Number(stayTime[0]).toFixed(0)
+                      }
+                      s.trackRecords[i - 1].repeatFlag = true
+                      s.trackRecords[i].stayTime = stayTime.join(' ')
+                    }
+                  } else {
+                    const stayTime = unitConvert(s.trackRecords[i - 1].time - s.trackRecords[i].time, unitTypes.time, 's')
+                    if (Number(stayTime[0]) === Number(Number(stayTime[0]).toFixed(0))) {
+                      stayTime[0] = Number(stayTime[0]).toFixed(0)
+                    }
+                    s.trackRecords[i].stayTime = stayTime.join(' ')
                   }
-                  s.trackRecords[i].stayTime = stayTime.join(' ')
                 }
               }
             }
+          })
+          this.trackingSubscribers.forEach(item => {
+            item.trackRecords = item.trackRecords.filter(dataItem => !dataItem.repeatFlag)
           })
         } catch (e) {
           this.errorMsgHandler(e)
@@ -1031,14 +1056,16 @@ export default {
       }
     },
     clickTrackBlock (i) {
-      this.trackingSubscribers[i].show = !this.trackingSubscribers[i].show
-      if (this.trackingSubscribers[i].show) {
-        this.trackingSubscribers[i].showLine = true
-      } else {
-        const timer = setTimeout(() => {
-          this.trackingSubscribers[i].showLine = false
-          clearTimeout(timer)
-        }, 200)
+      if (this.trackingSubscribers[i].trackRecords.length > 1) {
+        this.trackingSubscribers[i].show = !this.trackingSubscribers[i].show
+        if (this.trackingSubscribers[i].show) {
+          this.trackingSubscribers[i].showLine = true
+        } else {
+          const timer = setTimeout(() => {
+            this.trackingSubscribers[i].showLine = false
+            clearTimeout(timer)
+          }, 200)
+        }
       }
     },
     changeCurrentShowSubscriber (subscriber) {
@@ -1212,7 +1239,7 @@ export default {
       this.searchValueListShow = []
     },
     dropDownSearch (curVal) {
-      //this.isLoadingMore = false
+      // this.isLoadingMore = false
       this.curSearchValue = curVal
       this.curPageNum = 1
       this.searchValueListShow = []
@@ -1225,14 +1252,19 @@ export default {
       }
     },
     async minuteTimeFilterChange () {
-      this.humanMarkers.forEach(marker => {
-        marker.remove && marker.remove()
-      })
-      this.humanMarkers = []
+      // 避免初始化时请求，造成人的图标会闪一下，使用true置为false并未生效
+      if (this.initNum < 1) {
+        this.initNum += this.initNum
+      } else {
+        this.humanMarkers.forEach(marker => {
+          marker.remove && marker.remove()
+        })
+        this.humanMarkers = []
 
-      const mapFollowedSubscriberData = await this.queryMapFollowedSubscriber()
-      if (mapFollowedSubscriberData.length > 0) {
-        this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
+        const mapFollowedSubscriberData = await this.queryMapFollowedSubscriber()
+        if (mapFollowedSubscriberData.length > 0) {
+          this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
+        }
       }
     }
   },
@@ -1304,7 +1336,6 @@ export default {
     trackingSubscribers: {
       deep: true,
       handler (n) {
-        console.info(n)
         sessionStorage.setItem(storageKey.trackingSubscribers, JSON.stringify(n.map(item => ({ subscriberId: item.subscriberId, subscriberDto: { phoneNumber: item.subscriberDto.phoneNumber } }))))
       }
     },
@@ -1962,10 +1993,13 @@ export default {
                     margin-left: 4px;
                   }
                 }
-                .item-record__btn {
+                .item-record__btn, .item-record__btn-disabled {
                   padding-right: 6px;
                   cursor: pointer;
                   text-align: center;
+                }
+                .item-record__btn-disabled {
+                  cursor: no-drop;
                 }
               }
             }
