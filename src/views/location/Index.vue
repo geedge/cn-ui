@@ -271,22 +271,39 @@
       </div>
       <div class="hexagon-tooltip__body">
         <template v-if="tooltip.type === tooltipType.hexagon">
-          <div class="body__item">
-            <div class="item__label">{{ $t('location.number') }}</div>
-            <div class="item__value">{{currentPolygon.number}}</div>
-          </div>
-          <div class="body__item">
-            <div class="item__label">{{ $t('location.locals') }}</div>
-            <div class="item__value">{{currentPolygon.number}}</div>
-          </div>
-          <div class="body__item">
-            <div class="item__label">{{ $t('location.visitors') }}</div>
-            <div class="item__value">{{currentPolygon.number}}</div>
-          </div>
-          <div class="body__item">
-            <div class="item__label">{{ $t('location.roamers') }}</div>
-            <div class="item__value">{{currentPolygon.number}}</div>
-          </div>
+          <template v-if="activeTab === 'locationMap'">
+            <div class="body__item">
+              <div class="item__label">{{ $t('location.number') }}</div>
+              <div class="item__value">{{currentPolygon.number}}</div>
+            </div>
+            <div class="body__item">
+              <div class="item__label">{{ $t('location.locals') }}</div>
+              <div class="item__value">{{currentPolygon.number}}</div>
+            </div>
+            <div class="body__item">
+              <div class="item__label">{{ $t('location.visitors') }}</div>
+              <div class="item__value">{{currentPolygon.number}}</div>
+            </div>
+            <div class="body__item">
+              <div class="item__label">{{ $t('location.roamers') }}</div>
+              <div class="item__value">{{currentPolygon.number}}</div>
+            </div>
+          </template>
+          <template v-else>
+            <div class="body__timeline" v-for="item in JSON.parse(currentPolygon.locations)" :key="item.hexId">
+              <div class="timeline-symbol"></div>
+              <div>
+                <div class="body__item">
+                  <div class="item__label">{{ $t('location.location') }}</div>
+                  <div class="item__value">{{item.longitude}},&nbsp;{{item.latitude}}</div>
+                </div>
+                <div class="body__item">
+                  <div class="item__label">Time</div>
+                  <div class="item__value">{{dateFormatByAppearance(Number(item.time))}}</div>
+                </div>
+              </div>
+            </div>
+          </template>
         </template>
         <template v-else-if="tooltip.type === tooltipType.human">
           <div class="body__item">
@@ -807,9 +824,9 @@ export default {
         data.forEach(d => {
           const find = hexagons.find(h => h.hexId === d.hexId)
           if (!find) {
-            hexagons.push({ hexId: d.hexId, time: [d.time] })
+            hexagons.push({ hexId: d.hexId, locations: [{ time: d.time, longitude: d.subscriberLongitude, latitude: d.subscriberLatitude }] })
           } else {
-            find.time.push(d.time)
+            find.locations.push({ time: d.time, longitude: d.subscriberLongitude, latitude: d.subscriberLatitude })
           }
         })
         featureCollection.features = hexagons.map((d, i) => ({
@@ -824,6 +841,7 @@ export default {
           properties: {
             hexId: d.hexId,
             number: d.number,
+            locations: d.locations,
             color: [37, 55, 128]
           }
         }))
@@ -936,6 +954,7 @@ export default {
         }
         this.currentPolygon = features[0].properties
         this.currentPolygon.id = features[0].id
+        this.currentPolygon.location = `${h3ToGeo(this.currentPolygon.hexId)[1]}, ${h3ToGeo(this.currentPolygon.hexId)[0]}`
         this.tooltip.x = originalEvent.clientX + 15
         this.tooltip.y = originalEvent.clientY + 5
 
@@ -1066,6 +1085,7 @@ export default {
       }
       this.currentShowSubscriber = subscriber
       this.activeTab = 'traceTracking'
+      this.tooltip.showMarkerTooltip = false
     },
     async initDropdownList (curSearchValue) {
       if (curSearchValue !== '') {
@@ -1210,6 +1230,7 @@ export default {
         overwriteUrl(newUrl)
         this.timeRefreshChange()
       } else if (n === 'locationMap') {
+        this.unbindTrackingHexagonEvents()
         this.mapChart.getLayer('trackingHexagon') && this.mapChart.removeLayer('trackingHexagon')
         this.mapChart.getLayer('trackingLine') && this.mapChart.removeLayer('trackingLine')
         this.mapChart.getSource('trackingHexGrid') && this.mapChart.removeSource('trackingHexGrid')
@@ -1224,11 +1245,7 @@ export default {
     },
     // 时间轴改变时，重新查询人marker
     async minuteTimeFilter (n) {
-      if (!this.isInit) {
-        this.debounceFunc?.()
-      } else {
-        this.isInit = false
-      }
+      this.debounceFunc?.()
     },
     // 切换追踪的用户
     currentShowSubscriber (n) {
@@ -1253,6 +1270,7 @@ export default {
         this.humanMarkers = []
         this.initLocationMapTab()
       } else if (this.activeTab === 'traceTracking') {
+        this.unbindTrackingHexagonEvents()
         this.mapChart.getLayer('trackingHexagon') && this.mapChart.removeLayer('trackingHexagon')
         this.mapChart.getLayer('trackingLine') && this.mapChart.removeLayer('trackingLine')
         this.mapChart.getSource('trackingHexGrid') && this.mapChart.removeSource('trackingHexGrid')
@@ -1418,8 +1436,7 @@ export default {
       unitTypes,
       defaultZoom: 13, // 地图默认缩放比例
       center: [116.38, 39.9], // 地图默认中心点。北京：[116.38, 39.9] 纽约：[-73.94539, 40.841843]
-      debounceFunc: shallowRef(null),
-      isInit: ref(true) // init标志
+      debounceFunc: shallowRef(null)
     }
   },
   unmounted () {
@@ -1814,11 +1831,9 @@ export default {
                 }
               }
             }
-
           }
           .subscriber__body {
             padding: 10px 18px;
-
             .body__item {
               display: flex;
 
@@ -1993,7 +2008,23 @@ export default {
     }
     .hexagon-tooltip__body {
       padding: 8px 18px;
+      max-height: 230px;
+      overflow: auto;
 
+      .body__timeline {
+        display: flex;
+        flex-direction: row;
+        padding: 3px 0;
+
+        .timeline-symbol {
+          margin-top: 6px;
+          margin-right: 6px;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: #DE3434;
+        }
+      }
       .body__item {
         display: flex;
 
