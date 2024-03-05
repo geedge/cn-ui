@@ -741,6 +741,7 @@ export default {
             const mapMarker = new maplibregl.Marker({ element: el })
               .setLngLat([marker.subscriberDto.subscriberLongitude, marker.subscriberDto.subscriberLatitude])
               .addTo(this.mapChart)
+            mapMarker.subscriberId = marker.subscriberId
             this.humanMarkers.push(mapMarker)
           } else if (type === this.tooltipType.baseStation) {
             const el = document.createElement('div')
@@ -1151,6 +1152,12 @@ export default {
           this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancleFollow.success') })
           /* 刷新右侧关注列表 */
           this.queryFollowedList()
+          // 删除地图中对应的人
+          this.humanMarkers.forEach(marker => {
+            if (marker.subscriberId === item.subscriberId) {
+              marker.remove()
+            }
+          })
         } else {
           this.$message.error(res.data.message)
         }
@@ -1164,6 +1171,14 @@ export default {
           if (res.status === 200) {
             this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancleFollow.success') })
             item.follow = 0
+            // 删除地图中对应的人
+            this.humanMarkers.forEach(marker => {
+              if (marker.subscriberId === item.subscriberId) {
+                marker.remove()
+              }
+            })
+            /* 刷新右侧关注列表 */
+            this.queryFollowedList()
           } else {
             this.$message.error(res.data.message)
           }
@@ -1171,10 +1186,19 @@ export default {
           this.$message.error(this.errorMsgHandler(e))
         })
       } else {
-        axios.post(api.location.follow, { subscriberId: item.subscriberId }).then(res => {
+        axios.post(api.location.follow, { subscriberId: item.subscriberId }).then(async res => {
           if (res.status === 200) {
             this.$message({ duration: 2000, type: 'success', message: this.$t('location.follow.success') })
             item.follow = 1
+            /* 刷新右侧关注列表 */
+            await this.queryFollowedList()
+            // 刷新地图上的人
+            this.humanMarkers.forEach(marker => {
+              marker.remove && marker.remove()
+            })
+            this.humanMarkers = []
+            const mapFollowedSubscriberData = await this.queryMapFollowedSubscriber()
+            this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
           } else {
             this.$message.error(res.data.message)
           }
@@ -1182,8 +1206,6 @@ export default {
           this.$message.error(this.errorMsgHandler(e))
         })
       }
-      /* 刷新右侧关注列表 */
-      this.queryFollowedList()
     },
     clearSearchValue () {
     },
