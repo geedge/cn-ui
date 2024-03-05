@@ -1071,7 +1071,6 @@ export default {
           }
         }
       }
-      console.info(this.currentShowSubscriber)
     },
     // 关注列表追踪图标class
     symbolClass (subscriber) {
@@ -1102,7 +1101,7 @@ export default {
           this.isLoadingMore = true
           await axios.get(api.location.list, { params }).then(async response => {
             if (response.status === 200) {
-              if(this.curPageNum === 1) {
+              if (this.curPageNum === 1) {
                 this.searchValueListShow = response.data.data
               } else {
                 this.searchValueListShow = this.searchValueListShow.concat(response.data.data)
@@ -1110,7 +1109,7 @@ export default {
               if (response.data.data.length === 0 && this.curPageNum > 1) {
                 this.curPageNum--
               }
-              if(params.pageNo === 1) {
+              if (params.pageNo === 1) {
                 this.$nextTick(() => {
                   const selectDom = document.getElementsByClassName('el-select-dropdown search-select')
                   if(selectDom) {
