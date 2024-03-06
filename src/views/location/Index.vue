@@ -685,28 +685,30 @@ export default {
           this.trackingSubscribers.forEach(s => {
             if (s.trackRecords && s.trackRecords.length > 0) {
               for (let i = 0; i < s.trackRecords.length; i++) {
-                // 最新的位置点不计算停留时间
-                if (i === 0) {
-                  s.trackRecords[i].stayTime = '-'
-                } else {
-                  if ((s.trackRecords[i - 1].subscriberLongitude === s.trackRecords[i].subscriberLongitude) && (s.trackRecords[i - 1].subscriberLatitude === s.trackRecords[i].subscriberLatitude)) {
-                    // 如果连续两条地址重复，则将时间累加，并将上一条删除，键值-1继续循环
-                    if (s.trackRecords[i - 2]) {
-                      const stayTime = unitConvert(s.trackRecords[i - 2].time - s.trackRecords[i].time, unitTypes.time, 's')
-                      if (Number(stayTime[0]) === Number(Number(stayTime[0]).toFixed(0))) {
-                        stayTime[0] = Number(stayTime[0]).toFixed(0)
-                      }
-                      s.trackRecords[i].stayTime = stayTime.join(' ')
-                      s.trackRecords.splice(i - 1, 1)
-                      i = i - 1
+                if ((s.trackRecords[i - 1].subscriberLongitude === s.trackRecords[i].subscriberLongitude) && (s.trackRecords[i - 1].subscriberLatitude === s.trackRecords[i].subscriberLatitude)) {
+                  // 如果连续两条地址重复，则将时间累加，并将上一条删除，键值-1继续循环
+                  if (s.trackRecords[i - 2]) {
+                    const stayTime = unitConvert(s.trackRecords[i - 2].time - s.trackRecords[i].time, unitTypes.time, 's')
+                    if (Number(stayTime[0]) === Number(Number(stayTime[0]).toFixed(0))) {
+                      stayTime[0] = Number(stayTime[0]).toFixed(0)
                     }
+                    s.trackRecords[i].stayTime = stayTime.join(' ')
                   } else {
+                    // 数据只有2条，或者第1条和第2条地点重复，删除1，合并时间
                     const stayTime = unitConvert(s.trackRecords[i - 1].time - s.trackRecords[i].time, unitTypes.time, 's')
                     if (Number(stayTime[0]) === Number(Number(stayTime[0]).toFixed(0))) {
                       stayTime[0] = Number(stayTime[0]).toFixed(0)
                     }
                     s.trackRecords[i].stayTime = stayTime.join(' ')
                   }
+                  s.trackRecords.splice(i - 1, 1)
+                  i = i - 1
+                } else {
+                  const stayTime = unitConvert(s.trackRecords[i - 1].time - s.trackRecords[i].time, unitTypes.time, 's')
+                  if (Number(stayTime[0]) === Number(Number(stayTime[0]).toFixed(0))) {
+                    stayTime[0] = Number(stayTime[0]).toFixed(0)
+                  }
+                  s.trackRecords[i].stayTime = stayTime.join(' ')
                 }
               }
             }
