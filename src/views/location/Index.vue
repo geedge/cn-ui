@@ -710,6 +710,9 @@ export default {
       }
     },
     renderTrackingHexagon () {
+      if (!this.currentShowSubscriber) {
+        return true
+      }
       if (this.currentShowSubscriber.trackRecords && this.currentShowSubscriber.trackRecords.length > 0) {
         // 六边形
         const polygonSourceData = this.hexagonDataConverter(this.currentShowSubscriber.trackRecords, 'traceTracking')
