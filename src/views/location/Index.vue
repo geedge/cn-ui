@@ -149,7 +149,7 @@
                 class="analysis-statistics__subscriber"
                 :class="currentShowSubscriber && currentShowSubscriber.subscriberId === subscriber.subscriberId ? 'analysis-statistics__subscriber--active' : ''"
                 @click="changeCurrentShowSubscriber(subscriber)">
-              <div class="subscriber__header">
+              <div class="subscriber__header" :class="subscriber.trackRecords && subscriber.trackRecords.length > 0 ? '' : 'subscriber__header-inactive'">
                 <div class="header__icon">
                   <div class="icon__box">
                     <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M366.689524 690.468571l87.283809 83.821715-75.434666 195.486476c-10.971429 27.794286-43.105524 42.081524-72.265143 32.036571-29.159619-10.24-44.080762-41.252571-33.450667-69.241904L366.689524 690.468571zM203.824762 476.306286l51.785143-95.183238a162.279619 162.279619 0 0 1 59.245714-59.977143c119.710476-68.266667 134.777905-67.291429 149.942857-66.218667l80.798476 5.168762c24.868571 0.975238 42.081524 7.314286 125.025524 124.14781a21.26019 21.26019 0 0 0 14.092191 8.289523l99.132952 14.482286c12.873143 1.852952 24.478476 8.582095 32.182857 18.67581a45.494857 45.494857 0 0 1 8.825905 35.108571 46.665143 46.665143 0 0 1-19.504762 30.866286 50.468571 50.468571 0 0 1-36.571429 8.435809l-99.181714-14.433524a119.954286 119.954286 0 0 1-79.774476-47.640381c-4.388571-6.241524-7.558095-11.361524-11.849143-16.579047l-63.634286 193.487238 88.405334 84.845714c12.970667 12.385524 23.698286 29.013333 30.232381 45.494857l67.876571 190.366477c5.022476 13.409524 4.193524 28.233143-2.291809 41.057523a54.613333 54.613333 0 0 1-32.182858 27.160381c-5.851429 2.048-12.092952 3.120762-18.383238 3.169524a58.075429 58.075429 0 0 1-53.930666-36.181333l-67.876572-190.366476c-1.024-2.096762-2.096762-3.120762-3.218285-5.168762L365.616762 623.177143a84.894476 84.894476 0 0 1-24.868572-80.700953l34.523429-146.919619c-3.413333 2.340571-7.070476 4.388571-10.776381 6.290286a58.806857 58.806857 0 0 0-22.674286 22.723048L290.133333 519.801905a49.834667 49.834667 0 0 1-43.105523 24.819809 59.977143 59.977143 0 0 1-22.674286-5.12 46.518857 46.518857 0 0 1-20.48-63.146666z m209.67619-360.448C420.08381 58.465524 473.86819 17.066667 533.650286 23.30819 593.383619 29.549714 636.537905 81.13981 630.00381 138.48381c-6.534095 57.392762-60.269714 98.840381-120.05181 92.550095-59.782095-6.241524-102.985143-57.782857-96.451048-115.175619z" fill="#ffffff"></path></svg>
@@ -196,9 +196,9 @@
                           <div class="info__circle"></div>
                           <div class="info__line" v-show="subscriber.showLine"></div>
                         </div>
-                        <div class="timeline__info--item">
+                        <div class="timeline__info--item" @mouseenter="timelineMouseEnter(subscriber, subscriber.trackRecords[0])" @mouseleave="timelineMouseLeave(subscriber, subscriber.trackRecords[0])">
                           <div>
-                            <span>{{$t('overall.location')}}: </span><span class="info--item__value">{{subscriber.trackRecords[0].subscriberLongitude}},{{subscriber.trackRecords[0].subscriberLatitude}}</span>
+                            <span>{{$t('overall.location')}}: </span><span class="info--item__value">{{subscriber.trackRecords[0].subscriberLongitude}},&nbsp;{{subscriber.trackRecords[0].subscriberLatitude}}</span>
                           </div>
                           <div>
                             <span>{{ $t('location.timeOfArrival') }}: </span><span class="info--item__value">{{dateFormatByAppearance(Number(subscriber.trackRecords[0].time))}}</span>
@@ -214,10 +214,12 @@
                               :key="index"
                               v-if="index > 0"
                               color="#de3434"
+                              @mouseenter="timelineMouseEnter(subscriber, record)"
+                              @mouseleave="timelineMouseLeave(subscriber, record)"
                           >
                             <div class="timeline__item">
                               <div>
-                                <span>{{$t('overall.location')}}: </span><span class="item__value">{{record.subscriberLongitude}},{{record.subscriberLatitude}}</span>
+                                <span>{{$t('overall.location')}}: </span><span class="item__value">{{record.subscriberLongitude}},&nbsp;{{record.subscriberLatitude}}</span>
                               </div>
                               <div>
                                 <span>{{ $t('location.timeOfArrival') }}: </span><span class="item__value">{{dateFormatByAppearance(Number(record.time))}}</span>
@@ -290,19 +292,22 @@
             </div>
           </template>
           <template v-else>
-            <div class="body__timeline" v-for="item in JSON.parse(currentPolygon.locations)" :key="item.hexId">
-              <div class="timeline-symbol"></div>
-              <div>
-                <div class="body__item">
-                  <div class="item__label">{{ $t('location.location') }}</div>
-                  <div class="item__value">{{item.longitude}},&nbsp;{{item.latitude}}</div>
-                </div>
-                <div class="body__item">
-                  <div class="item__label">Time</div>
-                  <div class="item__value">{{dateFormatByAppearance(Number(item.time))}}</div>
+            <template v-for="(item, i) in JSON.parse(currentPolygon.locations)" :key="item.hexId">
+              <div class="body__timeline" v-if="i < 5">
+                <div class="timeline-symbol"></div>
+                <div>
+                  <div class="body__item">
+                    <div class="item__label">{{ $t('location.location') }}</div>
+                    <div class="item__value">{{item.longitude}},&nbsp;{{item.latitude}}</div>
+                  </div>
+                  <div class="body__item">
+                    <div class="item__label">Time</div>
+                    <div class="item__value">{{dateFormatByAppearance(Number(item.time))}}</div>
+                  </div>
                 </div>
               </div>
-            </div>
+            </template>
+            <div class="body__timeline" v-if="JSON.parse(currentPolygon.locations).length > 5">...</div>
           </template>
         </template>
         <template v-else-if="tooltip.type === tooltipType.human">
@@ -496,7 +501,8 @@ export default {
     },
     async renderDensityPie () {
       const params = {
-        ...this.timeFilter
+        ...this.timeFilter,
+        level: this.mapLevel
       }
       this.loading.pieLoading = true
       try {
@@ -527,7 +533,8 @@ export default {
     },
     async renderActiveSubscribersLine () {
       const params = {
-        ...this.timeFilter
+        ...this.timeFilter,
+        level: this.mapLevel
       }
       this.loading.lineLoading = true
       try {
@@ -561,7 +568,8 @@ export default {
     async queryFollowedList () {
       const params = {
         ...this.timeFilter,
-        pageSize: -1
+        pageSize: -1,
+        level: this.mapLevel
       }
       this.loading.followSubscriberLoading = true
       try {
@@ -577,7 +585,8 @@ export default {
     async queryHexagon () {
       const params = {
         ...this.boundaryBox,
-        ...this.timeFilter
+        ...this.timeFilter,
+        level: this.mapLevel
       }
       this.loading.hexagonLoading = true
       try {
@@ -632,8 +641,12 @@ export default {
     },
     async queryMapFollowedSubscriber () {
       this.loading.timeBarLoading = true
+      const params = {
+        ...this.minuteTimeFilter,
+        level: this.mapLevel
+      }
       try {
-        const response = await axios.get(api.location.followedSubscriber, { params: this.minuteTimeFilter })
+        const response = await axios.get(api.location.followedSubscriber, { params })
         return response.data.data.list
       } catch (e) {
         this.errorMsgHandler(e)
@@ -648,7 +661,8 @@ export default {
         this.loading.trackingMapLoading = true
         const params = {
           ...this.timeFilter,
-          subscriberIds: this.trackingSubscribers.map(item => `'${item.subscriberId}'`).join(',')
+          subscriberIds: this.trackingSubscribers.map(item => `'${item.subscriberId}'`).join(','),
+          level: this.mapLevel
         }
         try {
           const response = await axios.get(api.location.tracking, { params })
@@ -715,10 +729,12 @@ export default {
       }
       if (this.currentShowSubscriber.trackRecords && this.currentShowSubscriber.trackRecords.length > 0) {
         // 六边形
-        const polygonSourceData = this.hexagonDataConverter(this.currentShowSubscriber.trackRecords, 'traceTracking')
+        const trackingPolygonSourceData = this.hexagonDataConverter(this.currentShowSubscriber.trackRecords, 'traceTracking')
+        console.info(this.currentShowSubscriber)
+        this.trackingPolygonSourceData = _.cloneDeep(trackingPolygonSourceData)
         this.mapChart.addSource('trackingHexGrid', {
           type: 'geojson',
-          data: polygonSourceData
+          data: trackingPolygonSourceData
         })
         this.mapChart.addLayer({
           id: 'trackingHexagon',
@@ -731,7 +747,7 @@ export default {
           }
         })
         // 轨迹线
-        const mapLineSourceData = this.mapLineDataConverter(polygonSourceData)
+        const mapLineSourceData = this.mapLineDataConverter(trackingPolygonSourceData)
         this.mapChart.addSource('trackingLineSource', {
           type: 'geojson',
           data: mapLineSourceData
@@ -815,16 +831,28 @@ export default {
       const max = _.maxBy(data, d => Number(d.number))
       const result = []
       if (max) {
-        const maxLength = String(max.number).length
-        const maxLegend = Math.ceil(max.number / Math.pow(10, maxLength - 1)) * Math.pow(10, maxLength - 1)
-        for (let i = 1; i <= 5; i++) {
-          const item = {
-            start: maxLegend * (i - 1) / 5 + 1,
-            end: maxLegend * i / 5,
-            color: this.pieColorRamp[i - 1]
+        if (max.number < 10) {
+          for (let i = 1; i <= 5; i++) {
+            const item = {
+              start: i * 2 - 1,
+              end: i * 2,
+              color: this.pieColorRamp[i - 1]
+            }
+            item.count = data.filter(d => d.number >= item.start && d.number < item.end).length
+            result.push(item)
           }
-          item.count = data.filter(d => d.number >= item.start && d.number < item.end).length
-          result.push(item)
+        } else {
+          const maxLength = String(max.number).length
+          const maxLegend = Math.ceil(max.number / Math.pow(10, maxLength - 1)) * Math.pow(10, maxLength - 1)
+          for (let i = 1; i <= 5; i++) {
+            const item = {
+              start: maxLegend * (i - 1) / 5 + 1,
+              end: maxLegend * i / 5,
+              color: this.pieColorRamp[i - 1]
+            }
+            item.count = data.filter(d => d.number >= item.start && d.number < item.end).length
+            result.push(item)
+          }
         }
       }
       return result
@@ -855,7 +883,9 @@ export default {
           if (!find) {
             hexagons.push({ hexId: d.hexId, locations: [{ time: d.time, longitude: d.subscriberLongitude, latitude: d.subscriberLatitude }] })
           } else {
-            find.locations.push({ time: d.time, longitude: d.subscriberLongitude, latitude: d.subscriberLatitude })
+            if (find.locations.length < 5) {
+              find.locations.push({ time: d.time, longitude: d.subscriberLongitude, latitude: d.subscriberLatitude })
+            }
           }
         })
         featureCollection.features = hexagons.map((d, i) => ({
@@ -900,6 +930,9 @@ export default {
         features: [feature]
       }
     },
+    hoverTrigger (source, id, hover) {
+      this.mapChart.setFeatureState({ source, id }, { hover })
+    },
     bindHexagonEvents () {
       this.mapChart.on('mouseenter', 'hexagon', this.hexagonMouseEnter)
       this.mapChart.on('mouseleave', 'hexagon', this.hexagonMouseLeave)
@@ -924,90 +957,81 @@ export default {
       this.tooltip.mouseIsInPolygon = true
     },
     hexagonMouseLeave () {
-      const _this = this
       this.tooltip.showPolygonTooltip = false
       this.tooltip.mouseIsInPolygon = false
       // 去掉上一块的高亮
-      hoverTrigger('hexGrid', this.currentPolygon.id, false)
-
-      function hoverTrigger (source, id, hover) {
-        _this.mapChart.setFeatureState({ source, id }, { hover })
-      }
+      this.hoverTrigger('hexGrid', this.currentPolygon.id, false)
     },
     hexagonMouseMove (e) {
-      const _this = this
       const { originalEvent, features } = e
       if (!this.tooltip.mouseInMarkerOrTooltip) {
         this.tooltip.showPolygonTooltip = true
         this.tooltip.type = this.tooltipType.hexagon
         if (this.tooltip.type === this.tooltipType.hexagon && this.currentPolygon.id && this.currentPolygon.id !== features[0].id) {
           // 去掉上一块的高亮
-          hoverTrigger('hexGrid', this.currentPolygon.id, false)
+          this.hoverTrigger('hexGrid', this.currentPolygon.id, false)
         }
         this.currentPolygon = features[0].properties
         this.currentPolygon.id = features[0].id
         this.tooltip.x = originalEvent.clientX + 15
-        this.tooltip.y = originalEvent.clientY + 5
+        this.tooltip.y = (originalEvent.clientY + 5 + this.tooltipDomHeight.hexagon) > this.mapDomHeight ? (this.mapDomHeight - this.tooltipDomHeight.hexagon) : (originalEvent.clientY + 5)
 
         // 鼠标滑过高亮
-        hoverTrigger('hexGrid', this.currentPolygon.id, true)
-      }
-
-      function hoverTrigger (source, id, hover) {
-        _this.mapChart.setFeatureState({ source, id }, { hover })
+        this.hoverTrigger('hexGrid', this.currentPolygon.id, true)
       }
     },
     trackingHexagonMouseEnter () {
       this.tooltip.mouseIsInPolygon = true
     },
     trackingHexagonMouseLeave () {
-      const _this = this
       this.tooltip.showPolygonTooltip = false
       this.tooltip.mouseIsInPolygon = false
       // 去掉上一块的高亮
-      hoverTrigger('trackingHexGrid', this.currentPolygon.id, false)
-
-      function hoverTrigger (source, id, hover) {
-        _this.mapChart.setFeatureState({ source, id }, { hover })
-      }
+      this.hoverTrigger('trackingHexGrid', this.currentPolygon.id, false)
     },
     trackingHexagonMouseMove (e) {
-      const _this = this
       const { originalEvent, features } = e
       if (!this.tooltip.mouseInMarkerOrTooltip) {
         this.tooltip.showPolygonTooltip = true
         this.tooltip.type = this.tooltipType.hexagon
         if (this.tooltip.type === this.tooltipType.hexagon && this.currentPolygon.id && this.currentPolygon.id !== features[0].id) {
           // 去掉上一块的高亮
-          hoverTrigger('trackingHexGrid', this.currentPolygon.id, false)
+          this.hoverTrigger('trackingHexGrid', this.currentPolygon.id, false)
         }
         this.currentPolygon = features[0].properties
         this.currentPolygon.id = features[0].id
         this.currentPolygon.location = `${h3ToGeo(this.currentPolygon.hexId)[1]}, ${h3ToGeo(this.currentPolygon.hexId)[0]}`
         this.tooltip.x = originalEvent.clientX + 15
         this.tooltip.y = originalEvent.clientY + 5
+        /* this.$nextTick(() => {
+          const tooltipDom = document.getElementById('tooltip')
+          const tooltipDomHeight = tooltipDom.offsetHeight
+          this.tooltip.x = originalEvent.clientX + 15
+          this.tooltip.y = originalEvent.clientY + 5
+          this.tooltip.y = (originalEvent.clientY + 5 + tooltipDomHeight) > this.mapDomHeight ? (this.mapDomHeight - tooltipDomHeight) : (originalEvent.clientY + 5)
+        })*/
 
         // 鼠标滑过高亮
-        hoverTrigger('trackingHexGrid', this.currentPolygon.id, true)
-      }
-
-      function hoverTrigger (source, id, hover) {
-        _this.mapChart.setFeatureState({ source, id }, { hover })
+        this.hoverTrigger('trackingHexGrid', this.currentPolygon.id, true)
       }
     },
-
     bindMarkerEvent (el, markerData, type) {
       el.addEventListener('mouseenter', e => {
         this.currentMarkerDom = el
         if (type === this.tooltipType.human) {
           this.currentSubscriber = markerData
+          if (!this.tooltip.mouseInMarkerOrTooltip) {
+            this.tooltip.x = e.clientX + 15 - e.offsetX
+            this.tooltip.y = (e.clientY + 15 - e.offsetY + this.tooltipDomHeight.human) > this.mapDomHeight ? (this.mapDomHeight - this.tooltipDomHeight.human) : (e.clientY + 15 - e.offsetY)
+          }
         } else if (type === this.tooltipType.baseStation) {
           this.currentBaseStation = markerData
+          if (!this.tooltip.mouseInMarkerOrTooltip) {
+            this.tooltip.x = e.clientX + 15 - e.offsetX
+            this.tooltip.y = (e.clientY + 15 - e.offsetY + this.tooltipDomHeight.baseStation) > this.mapDomHeight ? (this.mapDomHeight - this.tooltipDomHeight.baseStation) : (e.clientY + 15 - e.offsetY)
+          }
         }
-        if (!this.tooltip.mouseInMarkerOrTooltip) {
-          this.tooltip.x = e.clientX + 15 - e.offsetX
-          this.tooltip.y = e.clientY + 15 - e.offsetY
-        }
+
         this.tooltip.mouseInMarkerOrTooltip = true
         this.tooltip.type = type
         this.tooltip.showMarkerTooltip = true
@@ -1044,6 +1068,22 @@ export default {
         range: dateRangeValue.value
       })
       overwriteUrl(newUrl)
+    },
+    timelineMouseEnter (subscriber, record) {
+      if (this.currentShowSubscriber.subscriberId === subscriber.subscriberId) {
+        const find = this.trackingPolygonSourceData.features.find(d => d.properties.hexId === record.hexId)
+        if (find) {
+          this.hoverTrigger('trackingHexGrid', find.id, true)
+        }
+      }
+    },
+    timelineMouseLeave (subscriber, record) {
+      if (this.currentShowSubscriber.subscriberId === subscriber.subscriberId) {
+        const find = this.trackingPolygonSourceData.features.find(d => d.properties.hexId === record.hexId)
+        if (find) {
+          this.hoverTrigger('trackingHexGrid', find.id, false)
+        }
+      }
     },
     timeRefreshChange () {
       // 不是自选时间
@@ -1269,6 +1309,11 @@ export default {
           this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
         }
       }
+    },
+    onResize () {
+      this.$nextTick(() => {
+        this.mapDomHeight = document.getElementById('analysisMap').offsetHeight + 150
+      })
     }
   },
   watch: {
@@ -1378,6 +1423,8 @@ export default {
   async mounted () {
     await this.initMap()
     this.debounceFunc = _.debounce(this.minuteTimeFilterChange, 500)
+    this.debounceFunc2 = _.debounce(this.onResize, 500)
+    this.onResize()
   },
   setup () {
     const { currentRoute } = useRouter()
@@ -1460,6 +1507,13 @@ export default {
       searchLoading: false, // 搜索框加载状态
       trackingMapLoading: true // 控制追踪地图加载状态
     })
+
+    const mapDomHeight = ref(0)
+    const tooltipDomHeight = {
+      hexagon: 153,
+      baseStation: 153,
+      human: 167
+    }
     return {
       activeTab,
       dropDownValue,
@@ -1481,6 +1535,8 @@ export default {
       pieOption,
       lineChart, // 折线图对象
       lineOption,
+      mapPolygonSourceData: shallowRef({}), // locationMap 的 maplibre sourceData
+      trackingPolygonSourceData: shallowRef({}), // traceTracking 的 maplibre sourceData
       currentBaseStation, // 鼠标当前悬浮的基站
       currentSubscriber, // 鼠标当前悬浮的Subscriber
       currentPolygon, // 鼠标当前悬浮的六边形
@@ -1489,10 +1545,14 @@ export default {
       loading, // 控制组件内各处loading图标
       maxZoom: 14, // 地图最小缩放比例
       minZoom: 3, // 地图最大缩放比例
+      mapLevel: 2, // 地图精度  1、2、3
       unitTypes,
-      defaultZoom: 13, // 地图默认缩放比例
-      center: [116.38, 39.9], // 地图默认中心点。北京：[116.38, 39.9] 纽约：[-73.94539, 40.841843]
-      debounceFunc: shallowRef(null)
+      defaultZoom: 12, // 地图默认缩放比例
+      center: [116.38, 39.92], // 地图默认中心点。北京：[116.38, 39.9] 纽约：[-73.94539, 40.841843]
+      debounceFunc: shallowRef(null),
+      debounceFunc2: shallowRef(null),
+      mapDomHeight, // 地图dom的高度，用来计算悬浮框的位置
+      tooltipDomHeight // 计算悬浮框位置时默认的悬浮框高度
     }
   },
   unmounted () {
@@ -1806,8 +1866,8 @@ export default {
             margin-bottom: 0;
           }
           &.analysis-statistics__subscriber--active {
-            border: 1px solid rgba(0,0,0,0.2);
-            box-shadow: 0 1px 5px 0 rgba(0,0,0,0.5);
+            border: 1px solid #38acd2;
+            box-shadow: 0 1px 1px 0 #38acd2;
           }
 
           background-color: #F7F7F7;
