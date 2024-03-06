@@ -149,7 +149,7 @@
                 class="analysis-statistics__subscriber"
                 :class="currentShowSubscriber && currentShowSubscriber.subscriberId === subscriber.subscriberId ? 'analysis-statistics__subscriber--active' : ''"
                 @click="changeCurrentShowSubscriber(subscriber)">
-              <div class="subscriber__header" :class="subscriber.trackRecords && subscriber.trackRecords.length > 0 ? '' : 'subscriber__header-inactive'">
+              <div class="subscriber__header" :class="trackingSubscriberRecordMap[subscriber.subscriberId] && trackingSubscriberRecordMap[subscriber.subscriberId].length > 0 ? '' : 'subscriber__header-inactive'">
                 <div class="header__icon">
                   <div class="icon__box">
                     <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M366.689524 690.468571l87.283809 83.821715-75.434666 195.486476c-10.971429 27.794286-43.105524 42.081524-72.265143 32.036571-29.159619-10.24-44.080762-41.252571-33.450667-69.241904L366.689524 690.468571zM203.824762 476.306286l51.785143-95.183238a162.279619 162.279619 0 0 1 59.245714-59.977143c119.710476-68.266667 134.777905-67.291429 149.942857-66.218667l80.798476 5.168762c24.868571 0.975238 42.081524 7.314286 125.025524 124.14781a21.26019 21.26019 0 0 0 14.092191 8.289523l99.132952 14.482286c12.873143 1.852952 24.478476 8.582095 32.182857 18.67581a45.494857 45.494857 0 0 1 8.825905 35.108571 46.665143 46.665143 0 0 1-19.504762 30.866286 50.468571 50.468571 0 0 1-36.571429 8.435809l-99.181714-14.433524a119.954286 119.954286 0 0 1-79.774476-47.640381c-4.388571-6.241524-7.558095-11.361524-11.849143-16.579047l-63.634286 193.487238 88.405334 84.845714c12.970667 12.385524 23.698286 29.013333 30.232381 45.494857l67.876571 190.366477c5.022476 13.409524 4.193524 28.233143-2.291809 41.057523a54.613333 54.613333 0 0 1-32.182858 27.160381c-5.851429 2.048-12.092952 3.120762-18.383238 3.169524a58.075429 58.075429 0 0 1-53.930666-36.181333l-67.876572-190.366476c-1.024-2.096762-2.096762-3.120762-3.218285-5.168762L365.616762 623.177143a84.894476 84.894476 0 0 1-24.868572-80.700953l34.523429-146.919619c-3.413333 2.340571-7.070476 4.388571-10.776381 6.290286a58.806857 58.806857 0 0 0-22.674286 22.723048L290.133333 519.801905a49.834667 49.834667 0 0 1-43.105523 24.819809 59.977143 59.977143 0 0 1-22.674286-5.12 46.518857 46.518857 0 0 1-20.48-63.146666z m209.67619-360.448C420.08381 58.465524 473.86819 17.066667 533.650286 23.30819 593.383619 29.549714 636.537905 81.13981 630.00381 138.48381c-6.534095 57.392762-60.269714 98.840381-120.05181 92.550095-59.782095-6.241524-102.985143-57.782857-96.451048-115.175619z" fill="#ffffff"></path></svg>
@@ -186,7 +186,7 @@
                 </div>
                 <div class="body-item-record">
                   <div class="item-record__header">{{ $t('location.trackRecord') }}</div>
-                  <template v-if="subscriber.trackRecords && subscriber.trackRecords.length > 0">
+                  <template v-if="trackingSubscriberRecordMap[subscriber.subscriberId] && trackingSubscriberRecordMap[subscriber.subscriberId].length > 0">
                     <div class="item-record__info">
                       <div class="circle"></div>
                     </div>
@@ -196,12 +196,12 @@
                           <div class="info__circle"></div>
                           <div class="info__line" v-show="subscriber.showLine"></div>
                         </div>
-                        <div class="timeline__info--item" @mouseenter="timelineMouseEnter(subscriber, subscriber.trackRecords[0])" @mouseleave="timelineMouseLeave(subscriber, subscriber.trackRecords[0])">
+                        <div class="timeline__info--item" @mouseenter="timelineMouseEnter(subscriber, trackingSubscriberRecordMap[subscriber.subscriberId][0])" @mouseleave="timelineMouseLeave(subscriber, trackingSubscriberRecordMap[subscriber.subscriberId][0])">
                           <div>
-                            <span>{{$t('overall.location')}}: </span><span class="info--item__value">{{subscriber.trackRecords[0].subscriberLongitude}},&nbsp;{{subscriber.trackRecords[0].subscriberLatitude}}</span>
+                            <span>{{$t('overall.location')}}: </span><span class="info--item__value">{{trackingSubscriberRecordMap[subscriber.subscriberId][0].subscriberLongitude}},&nbsp;{{trackingSubscriberRecordMap[subscriber.subscriberId][0].subscriberLatitude}}</span>
                           </div>
                           <div>
-                            <span>{{ $t('location.timeOfArrival') }}: </span><span class="info--item__value">{{dateFormatByAppearance(Number(subscriber.trackRecords[0].time))}}</span>
+                            <span>{{ $t('location.timeOfArrival') }}: </span><span class="info--item__value">{{dateFormatByAppearance(Number(trackingSubscriberRecordMap[subscriber.subscriberId][0].time))}}</span>
                           </div>
                           <div>
                             <span>{{ $t('location.residenceTime') }}: </span><span class="info--item__value">-</span>
@@ -209,7 +209,7 @@
                         </div>
                       </div>
                       <el-timeline v-show="subscriber.show" :class="subscriber.show ? '' : 'el-timeline--hide'">
-                        <template v-for="(record, index) in subscriber.trackRecords">
+                        <template v-for="(record, index) in trackingSubscriberRecordMap[subscriber.subscriberId]">
                           <el-timeline-item
                               :key="index"
                               v-if="index > 0"
@@ -232,9 +232,9 @@
                         </template>
                       </el-timeline>
 
-                      <div :class="subscriber.trackRecords.length === 1 ? 'item-record__btn-disabled' : 'item-record__btn'" @click.stop="clickTrackBlock(index)">
-                        <span v-if="!subscriber.show"><i class="cn-icon cn-icon-down2" :style="subscriber.trackRecords.length === 1 ? 'color: #C0C4CC' : ''"></i></span>
-                        <span v-if="subscriber.show"><i class="cn-icon cn-icon-up2" :style="subscriber.trackRecords.length === 1 ? 'color: #C0C4CC' : ''"></i></span>
+                      <div :class="trackingSubscriberRecordMap[subscriber.subscriberId].length === 1 ? 'item-record__btn-disabled' : 'item-record__btn'" @click.stop="clickTrackBlock(index)">
+                        <span v-if="!subscriber.show"><i class="cn-icon cn-icon-down2" :style="trackingSubscriberRecordMap[subscriber.subscriberId].length === 1 ? 'color: #C0C4CC' : ''"></i></span>
+                        <span v-if="subscriber.show"><i class="cn-icon cn-icon-up2" :style="trackingSubscriberRecordMap[subscriber.subscriberId].length === 1 ? 'color: #C0C4CC' : ''"></i></span>
                       </div>
                     </div>
                   </template>
@@ -369,7 +369,6 @@ import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import axios from 'axios'
 import { api } from '@/utils/api'
 import { h3ToGeo, h3ToGeoBoundary } from 'h3-js'
-import collapse from '../../components/common/collapse'
 import TimeLine from '@/components/common/TimeLine.vue'
 import SimpleLoading from '@/components/common/SimpleLoading.vue'
 
@@ -394,7 +393,6 @@ export default {
     }
   },
   components: {
-    collapse,
     TimeLine,
     SimpleLoading
   },
@@ -486,13 +484,11 @@ export default {
       }
       const find = this.trackingSubscribers.find(s => s.subscriberId === this.currentShowSubscriber.subscriberId)
       if (find) {
-        this.currentShowSubscriber.trackRecords = find.trackRecords
-
         // 滚动条定位到id所在的dom
         const findIndex = this.trackingSubscribers.findIndex(s => s.subscriberId === this.currentShowSubscriber.subscriberId)
         const dom = document.getElementById('subscribersBlock')
         if (findIndex && dom) {
-          this.$nextTick(() => {
+          await this.$nextTick(() => {
             dom.scrollTop = 207 * findIndex
           })
         }
@@ -666,50 +662,53 @@ export default {
         }
         try {
           const response = await axios.get(api.location.tracking, { params })
+          const trackingSubscribers = _.cloneDeep(this.trackingSubscribers)
           if (response.data.data.result) {
-            this.trackingSubscribers.forEach(s => {
+            trackingSubscribers.forEach(s => {
               const find = response.data.data.result.find(item => item.subscriberId === s.subscriberId)
               if (find) {
-                s.trackRecords = find.trackRecords
+                this.trackingSubscriberRecordMap[s.subscriberId] = find.trackRecords
               } else {
-                s.trackRecords = []
+                this.trackingSubscriberRecordMap[s.subscriberId] = []
               }
               s.show = false // 切换到track tracking时就收起时间线
             })
+            this.trackingSubscribers = trackingSubscribers
           } else {
-            this.trackingSubscribers.forEach(s => {
-              s.trackRecords = []
+            Object.keys(this.trackingSubscriberRecordMap).forEach(k => {
+              this.trackingSubscriberRecordMap[k] = []
             })
           }
           // 计算停留时间
           this.trackingSubscribers.forEach(s => {
-            if (s.trackRecords && s.trackRecords.length > 0) {
-              for (let i = 0; i < s.trackRecords.length; i++) {
+            const trackRecords = this.trackingSubscriberRecordMap[s.subscriberId]
+            if (trackRecords && trackRecords.length > 0) {
+              for (let i = 0; i < trackRecords.length; i++) {
                 if (i > 0) {
-                  if ((s.trackRecords[i - 1].subscriberLongitude === s.trackRecords[i].subscriberLongitude) && (s.trackRecords[i - 1].subscriberLatitude === s.trackRecords[i].subscriberLatitude)) {
+                  if ((trackRecords[i - 1].subscriberLongitude === trackRecords[i].subscriberLongitude) && (trackRecords[i - 1].subscriberLatitude === trackRecords[i].subscriberLatitude)) {
                     // 如果连续两条地址重复，则将时间累加，并将上一条删除，键值-1继续循环
-                    if (i > 1 && s.trackRecords[i - 2]) {
-                      const stayTime = unitConvert(s.trackRecords[i - 2].time - s.trackRecords[i].time, unitTypes.time, 's')
+                    if (i > 1 && trackRecords[i - 2]) {
+                      const stayTime = unitConvert(trackRecords[i - 2].time - trackRecords[i].time, unitTypes.time, 's')
                       if (Number(stayTime[0]) === Number(Number(stayTime[0]).toFixed(0))) {
                         stayTime[0] = Number(stayTime[0]).toFixed(0)
                       }
-                      s.trackRecords[i].stayTime = stayTime.join(' ')
+                      trackRecords[i].stayTime = stayTime.join(' ')
                     } else {
                       // 数据只有2条，或者第1条和第2条地点重复，删除1，合并时间
-                      const stayTime = unitConvert(s.trackRecords[i - 1].time - s.trackRecords[i].time, unitTypes.time, 's')
+                      const stayTime = unitConvert(trackRecords[i - 1].time - trackRecords[i].time, unitTypes.time, 's')
                       if (Number(stayTime[0]) === Number(Number(stayTime[0]).toFixed(0))) {
                         stayTime[0] = Number(stayTime[0]).toFixed(0)
                       }
-                      s.trackRecords[i].stayTime = stayTime.join(' ')
+                      trackRecords[i].stayTime = stayTime.join(' ')
                     }
-                    s.trackRecords.splice(i - 1, 1)
+                    trackRecords.splice(i - 1, 1)
                     i = i - 1
                   } else {
-                    const stayTime = unitConvert(s.trackRecords[i - 1].time - s.trackRecords[i].time, unitTypes.time, 's')
+                    const stayTime = unitConvert(trackRecords[i - 1].time - trackRecords[i].time, unitTypes.time, 's')
                     if (Number(stayTime[0]) === Number(Number(stayTime[0]).toFixed(0))) {
                       stayTime[0] = Number(stayTime[0]).toFixed(0)
                     }
-                    s.trackRecords[i].stayTime = stayTime.join(' ')
+                    trackRecords[i].stayTime = stayTime.join(' ')
                   }
                 }
               }
@@ -729,13 +728,13 @@ export default {
       if (!this.currentShowSubscriber) {
         return true
       }
-      if (this.currentShowSubscriber.trackRecords && this.currentShowSubscriber.trackRecords.length > 0) {
+      const currentShowSubscriberRecords = this.trackingSubscriberRecordMap[this.currentShowSubscriber.subscriberId]
+      if (currentShowSubscriberRecords && currentShowSubscriberRecords.length > 0) {
         // 六边形
-        const trackingPolygonSourceData = this.hexagonDataConverter(this.currentShowSubscriber.trackRecords, 'traceTracking')
-        this.trackingPolygonSourceData = _.cloneDeep(trackingPolygonSourceData)
+        this.trackingPolygonSourceData = this.hexagonDataConverter(this.trackingSubscriberRecordMap[this.currentShowSubscriber.subscriberId], 'traceTracking')
         this.mapChart.addSource('trackingHexGrid', {
           type: 'geojson',
-          data: trackingPolygonSourceData
+          data: this.trackingPolygonSourceData
         })
         this.mapChart.addLayer({
           id: 'trackingHexagon',
@@ -748,7 +747,7 @@ export default {
           }
         })
         // 轨迹线
-        const mapLineSourceData = this.mapLineDataConverter(trackingPolygonSourceData)
+        const mapLineSourceData = this.mapLineDataConverter()
         this.mapChart.addSource('trackingLineSource', {
           type: 'geojson',
           data: mapLineSourceData
@@ -763,7 +762,7 @@ export default {
           }
         })
         // 最后所在地的图标
-        const coordinate = h3ToGeo(this.currentShowSubscriber.trackRecords[0].hexId)
+        const coordinate = h3ToGeo(currentShowSubscriberRecords[0].hexId)
         this.renderTrackingMarker([coordinate[1], coordinate[0]])
         this.bindTrackingHexagonEvents()
       }
@@ -915,13 +914,14 @@ export default {
       }
       return [229, 229, 229]
     },
-    mapLineDataConverter (polygonSourceData) {
+    mapLineDataConverter () {
+      const records = this.trackingSubscriberRecordMap[this.currentShowSubscriber.subscriberId]
       const feature = {
         type: 'Feature',
         geometry: {
           type: 'LineString',
-          coordinates: polygonSourceData.features.map(d => {
-            const cs = h3ToGeo(d.properties.hexId)
+          coordinates: records.map(d => {
+            const cs = h3ToGeo(d.hexId)
             return [cs[1], cs[0]]
           })
         }
@@ -1100,7 +1100,7 @@ export default {
       }
     },
     clickTrackBlock (i) {
-      if (this.trackingSubscribers[i].trackRecords.length > 1) {
+      if (this.trackingSubscriberRecordMap[this.trackingSubscribers[i].subscriberId].length > 1) {
         this.trackingSubscribers[i].show = !this.trackingSubscribers[i].show
         if (this.trackingSubscribers[i].show) {
           this.trackingSubscribers[i].showLine = true
@@ -1386,7 +1386,7 @@ export default {
     trackingSubscribers: {
       deep: true,
       handler (n) {
-        sessionStorage.setItem(storageKey.trackingSubscribers, JSON.stringify(n.map(item => ({ subscriberId: item.subscriberId, subscriberDto: { phoneNumber: item.subscriberDto.phoneNumber } }))))
+        sessionStorage.setItem(storageKey.trackingSubscribers, JSON.stringify(n.map(item => ({ subscriberId: item.subscriberId, subscriberDto: item.subscriberDto ? { phoneNumber: item.subscriberDto.phoneNumber } : null }))))
       }
     },
     // 控制map loading
@@ -1543,6 +1543,7 @@ export default {
       currentPolygon, // 鼠标当前悬浮的六边形
       trackingSubscribers, // 存放当前追踪的Subscriber列表
       currentShowSubscriber, // 当前在地图上展示轨迹的Subscriber TODO 从url获取
+      trackingSubscriberRecordMap: [], // record数据量大时，vue监听性能开销太大，所以单独用非监听的数组来维护subscriberId与record的关系
       loading, // 控制组件内各处loading图标
       maxZoom: 14, // 地图最小缩放比例
       minZoom: 3, // 地图最大缩放比例
