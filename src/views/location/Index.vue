@@ -223,8 +223,8 @@
                           </div>
                         </div>
                       </div>
-                      <el-timeline v-show="subscriber.show" :class="subscriber.show ? '' : 'el-timeline--hide'">
-                        <template v-for="(record, index) in trackingSubscriberRecordMap[subscriber.subscriberId]">
+                      <el-timeline :id="subscriber.subscriberId" v-show="subscriber.show" :class="subscriber.show ? '' : 'el-timeline--hide'">
+                        <template v-for="(record, index) in trackingSubscriberRecordMap[subscriber.subscriberId].slice(0, subscriber.scrollNum)">
                           <el-timeline-item
                               :key="index"
                               v-if="index > 0"
@@ -698,6 +698,12 @@ export default {
           // 计算停留时间
           this.trackingSubscribers.forEach(s => {
             const trackRecords = this.trackingSubscriberRecordMap[s.subscriberId]
+            if (trackRecords.length < 20) {
+              s.scrollNum = trackRecords.length
+            } else {
+              s.scrollNum = 20
+            }
+
             if (trackRecords && trackRecords.length > 0) {
               for (let i = 0; i < trackRecords.length; i++) {
                 if (i > 0) {
@@ -828,8 +834,8 @@ export default {
         .addTo(this.mapChart)
     },
     updateBoundaryBox () {
-      const boundaryBox = this.mapChart.getBounds()
-      /* this.boundaryBox = {
+      /* const boundaryBox = this.mapChart.getBounds()
+        this.boundaryBox = {
         maxLongitude: boundaryBox.getEast(),
         maxLatitude: boundaryBox.getNorth(),
         minLongitude: boundaryBox.getWest(),
@@ -1026,7 +1032,7 @@ export default {
           this.tooltip.x = originalEvent.clientX + 15
           this.tooltip.y = originalEvent.clientY + 5
           this.tooltip.y = (originalEvent.clientY + 5 + tooltipDomHeight) > this.mapDomHeight ? (this.mapDomHeight - tooltipDomHeight) : (originalEvent.clientY + 5)
-        })*/
+        }) */
 
         // 鼠标滑过高亮
         this.hoverTrigger('trackingHexGrid', this.currentPolygon.id, true)
@@ -1128,7 +1134,8 @@ export default {
       }
     },
     clickTrackBlock (i) {
-      if (this.trackingSubscriberRecordMap[this.trackingSubscribers[i].subscriberId].length > 1) {
+      const length = this.trackingSubscriberRecordMap[this.trackingSubscribers[i].subscriberId].length
+      if (length > 1) {
         this.trackingSubscribers[i].show = !this.trackingSubscribers[i].show
         if (this.trackingSubscribers[i].show) {
           this.trackingSubscribers[i].showLine = true
@@ -1138,6 +1145,23 @@ export default {
             clearTimeout(timer)
           }, 200)
         }
+      }
+
+      const dom = document.getElementById(this.trackingSubscribers[i].subscriberId)
+      if (dom) {
+        dom.addEventListener('scroll', (e) => {
+          const clientHeight = e.target.clientHeight
+          const scrollTop = e.target.scrollTop
+          const scrollHeight = e.target.scrollHeight
+          if (scrollTop && _.ceil(clientHeight + scrollTop) >= scrollHeight) {
+            if (this.trackingSubscribers[i].scrollNum < length) {
+              this.trackingSubscribers[i].scrollNum = this.trackingSubscribers[i].scrollNum + 20
+              if (this.trackingSubscribers[i].scrollNum > length) {
+                this.trackingSubscribers[i].scrollNum = length
+              }
+            }
+          }
+        })
       }
     },
     changeCurrentShowSubscriber (subscriber) {
@@ -1152,15 +1176,15 @@ export default {
         const index = this.trackingSubscribers.findIndex(s => s.subscriberId === subscriber.subscriberId)
         this.trackingSubscribers.splice(index, 1)
       } else {
-        this.trackingSubscribers.push({ ...subscriber, show: false, showLine: false })
+        this.trackingSubscribers.push({ ...subscriber, show: false, showLine: false, scrollNum: 0 })
       }
       this.opacity = 0
       setInterval(() => {
         this.opacity += 0.05
-        if(this.opacity >= 1) {
+        if (this.opacity >= 1) {
           this.opacity = 1
         }
-      },16)
+      }, 16)
     },
     // 追踪页删除追踪
     removeTrackingSubscriber (subscriber) {
@@ -1187,7 +1211,7 @@ export default {
     trackSubscriber (subscriber) {
       const find = this.trackingSubscribers.find(s => s.subscriberId === subscriber.subscriberId)
       if (!find) {
-        this.trackingSubscribers.push({ ...subscriber, show: false, showLine: false })
+        this.trackingSubscribers.push({ ...subscriber, show: false, showLine: false, scrollNum: 0 })
       }
       this.currentShowSubscriber = subscriber
       this.activeTab = 'traceTracking'
@@ -1200,7 +1224,7 @@ export default {
           endTime: this.timeFilter.endTime,
           pageNo: this.curPageNum++,
           pageSize: 10,
-          params: "phone_number like '%"+ curSearchValue +"%'"
+          params: "phone_number like '%" + curSearchValue + "%'"
         }
         try {
           this.loading.searchLoading = true
@@ -1218,8 +1242,8 @@ export default {
               if (params.pageNo === 1) {
                 this.$nextTick(() => {
                   const selectDom = document.getElementsByClassName('el-select-dropdown search-select')
-                  if(selectDom) {
-                    let dom = selectDom[0].getElementsByClassName('el-scrollbar__thumb')
+                  if (selectDom) {
+                    const dom = selectDom[0].getElementsByClassName('el-scrollbar__thumb')
                     if (dom && dom[1]) {
                       dom[1].style = 'transform: translateY(0%) !important;'
                     }
@@ -1233,7 +1257,7 @@ export default {
           console.error(e)
         } finally {
           this.loading.searchLoading = false
-          if(this.searchValueListShow.length === 0) {
+          if (this.searchValueListShow.length === 0) {
             this.emptyTip = 'No Data'
           }
         }
@@ -1519,7 +1543,7 @@ export default {
 
     // 从localStorage中获取数据
     const trackingSubscribers = ref([])
-    sessionStorage.getItem(storageKey.trackingSubscribers) && (trackingSubscribers.value = JSON.parse(sessionStorage.getItem(storageKey.trackingSubscribers)).map(item => ({ ...item, show: false, showLine: false })))
+    sessionStorage.getItem(storageKey.trackingSubscribers) && (trackingSubscribers.value = JSON.parse(sessionStorage.getItem(storageKey.trackingSubscribers)).map(item => ({ ...item, show: false, showLine: false, scrollNum: 0 })))
     /* const test = ['gary6411', 'test6431', 'test6430', 'test6422']
     test.forEach(id => {
       trackingSubscribers.value.push({ subscriberId: id, show: false, showLine: false })
