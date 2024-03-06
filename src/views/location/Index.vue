@@ -1,8 +1,17 @@
 <template>
   <div class="geo-analysis">
-    <el-tabs v-model="activeTab">
+    <el-tabs v-model="activeTab"  class="location-tabs">
       <el-tab-pane :label="$t('location.locationMap')" name="locationMap"></el-tab-pane>
-      <el-tab-pane :label="$t('location.traceTracking')" name="traceTracking"></el-tab-pane>
+      <el-tab-pane :label="$t('location.traceTracking')" name="traceTracking">
+        <template #label>
+          <div class="traceTracking-tabs_label">
+            {{$t('location.traceTracking')}}
+            <div class="traceTracking-num" :style="`opacity:${opacity};`">
+              {{trackingSubscribers.length}}
+            </div>
+          </div>
+        </template>
+      </el-tab-pane>
     </el-tabs>
     <!-- 右上角工具栏 -->
     <div class="geo-tools">
@@ -395,7 +404,8 @@ export default {
       curPageNum: 1,
       activeNames: '',
       initFlag: true,
-      emptyTip: ''
+      emptyTip: '',
+      opacity: 1
     }
   },
   components: {
@@ -1144,6 +1154,13 @@ export default {
       } else {
         this.trackingSubscribers.push({ ...subscriber, show: false, showLine: false })
       }
+      this.opacity = 0
+      setInterval(() => {
+        this.opacity += 0.05
+        if(this.opacity >= 1) {
+          this.opacity = 1
+        }
+      },16)
     },
     // 追踪页删除追踪
     removeTrackingSubscriber (subscriber) {
@@ -1630,6 +1647,32 @@ export default {
   flex-direction: column;
   padding: 0 20px 20px;
   position: relative;
+  .location-tabs  {
+    .el-tabs__content {
+      padding: 32px;
+      color: #6b778c;
+      font-size: 32px;
+      font-weight: 600;
+    }
+    .traceTracking-tabs_label {
+      display:flex;
+      flex-display: row;
+      .traceTracking-num {
+        margin-top: 5px;
+        border-radius: 10px;
+        font-size: 12px;
+        color: #FFFFFF;
+        font-weight: 500;
+        height: 20px;
+        width: fit-content;
+        min-width: 20px;
+        padding:0 5px 0 5px;
+        line-height: 20px;
+        text-align: center;
+        background: #E26154;
+      }
+    }
+  }
 
   .maplibregl-canvas:focus-visible {
     outline: none;
