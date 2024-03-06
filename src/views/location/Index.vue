@@ -385,7 +385,7 @@ export default {
       curPageNum: 1,
       activeNames: '',
       isLoadingMore: false,
-      initNum: 0
+      initFlag: true
     }
   },
   components: {
@@ -1252,9 +1252,9 @@ export default {
       }
     },
     async minuteTimeFilterChange () {
-      // 避免初始化时请求，造成人的图标会闪一下，使用true置为false并未生效
-      if (this.initNum < 1) {
-        this.initNum += this.initNum
+      // 避免初始化时请求，造成人的图标会闪一下
+      if (this.initFlag) {
+        this.initFlag = false
       } else {
         this.humanMarkers.forEach(marker => {
           marker.remove && marker.remove()
@@ -1270,6 +1270,7 @@ export default {
   },
   watch: {
     async activeTab (n) {
+      this.initFlag = true
       if (n === 'traceTracking') {
         // 切换到轨迹追踪tab时，先移除地图上已有的图层和事件绑定、人型图标。基站予以保留
         this.unbindHexagonEvents()
