@@ -83,7 +83,8 @@ const panel = {
         p90: null
       }
     },
-    chartTabList: null // chartTabs组件的tab状态点击列表，初始化为null方便原有逻辑计算
+    chartTabList: null, // chartTabs组件的tab状态点击列表，初始化为null方便原有逻辑计算
+    headerMenuByTab: 'locationMap'
   },
   mutations: {
     setShowRightBox (state, flag) {
@@ -228,6 +229,9 @@ const panel = {
     },
     setChartTabList (state, list) {
       state.chartTabList = list
+    },
+    setHeaderMenuByTab (state, data) {
+      state.headerMenuByTab = data
     }
   },
   getters: {
@@ -311,6 +315,9 @@ const panel = {
     },
     getScoreBase (state) {
       return state.scoreBase
+    },
+    getHeaderMenuByTab (state) {
+      return state.headerMenuByTab
     }
   },
   actions: {
@@ -342,6 +349,9 @@ const panel = {
     },
     dispatchChartTabList (store, list) {
       store.commit('setChartTabList', list)
+    },
+    dispatchHeaderMenuByTab (store, data) {
+      store.commit('setHeaderMenuByTab', data)
     }
   }
 }

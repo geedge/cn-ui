@@ -354,7 +354,7 @@ export default {
     },
     breadcrumb () {
       const breadcrumb = []
-      this.generateBreadcrumb(breadcrumb, this.$store.getters.menuList)
+      this.generateBreadcrumb(breadcrumb, this.$store.getters.menuList, this.$store.state.headerMenuByTab)
       if (breadcrumb) {
         // panel菜单是否可以点击跳转：一级菜单不可点击，二级菜单可以点击
         if (breadcrumb[0] && breadcrumb[1] && breadcrumb[1].route &&
@@ -414,6 +414,26 @@ export default {
       if (newVal && Object.keys(newVal).length > 0) {
         this.chartTimeFilter = newVal
       }
+    },
+    '$store.state.headerMenuByTab': function (newVal) {
+      if (newVal) {
+        const find = this.$store.getters.menuList.find(d => d.code === 'locationIntelligence')
+        if (find) {
+          const children = find.children
+          const item = children.find(d => d.code === newVal)
+          if (this.breadcrumb[0].code === find.code) {
+            const obj = {
+              code: item.code,
+              value: item.i18n ? this.$t(item.i18n) : item.name,
+              route: item.route,
+              type: 1,
+              clickable: true
+            }
+            this.breadcrumb[1] = obj
+          }
+        }
+        this.chartTimeFilter = newVal
+      }
     }
   },
   async mounted () {
@@ -457,7 +477,7 @@ export default {
     }
   },
   methods: {
-    generateBreadcrumb (breadcrumb, menus) {
+    generateBreadcrumb (breadcrumb, menus, tab) {
       const menu = menus.find(m => m.route === this.route)
       if (menu) {
         breadcrumb.unshift({

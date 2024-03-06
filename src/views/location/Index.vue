@@ -1373,6 +1373,7 @@ export default {
   watch: {
     async activeTab (n) {
       this.initFlag = true
+      this.$store.state.headerMenuByTab = n
       if (n === 'traceTracking') {
         // 切换到轨迹追踪tab时，先移除地图上已有的图层和事件绑定、人型图标。基站予以保留
         this.unbindHexagonEvents()
