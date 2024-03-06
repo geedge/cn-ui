@@ -96,10 +96,13 @@
           </div>
           <div class="chart-line__drawing" id="activeSubscribersChart"></div>
         </div>
-        <div class="analysis-statistics__title">{{$t('location.followedSubscribers')}}</div>
+        <div class="analysis-statistics__title">
+          {{$t('location.followedSubscribers')}}
+          <simple-loading :loading="loading.followSubscriberLoading" placement="right" size="small"></simple-loading>
+        </div>
         <div class="analysis-statistics__subscribers">
           <template v-for="item in followedSubscribersList" :key="item.subscriberId">
-            <div class="analysis-statistics__subscriber">
+            <div class="analysis-statistics__subscriber" @mouseenter="subscriberListMouseEnter(item)" @mouseleave="subscriberListMouseLeave(item)">
               <div class="subscriber__header" :class="item.active === 1 ? '' : 'subscriber__header-inactive'" >
                 <div class="header__icon">
                   <div class="icon__box">
@@ -1089,6 +1092,18 @@ export default {
         }
       }
     },
+    subscriberListMouseEnter (subscriber) {
+      const target = this.humanMarkers.find(m => subscriber.subscriberId === m.subscriberId)
+      if (target) {
+        target.getElement().classList.add('map-marker--hover')
+      }
+    },
+    subscriberListMouseLeave (subscriber) {
+      const target = this.humanMarkers.find(m => subscriber.subscriberId === m.subscriberId)
+      if (target) {
+        target.getElement().classList.remove('map-marker--hover')
+      }
+    },
     timeRefreshChange () {
       // 不是自选时间
       if (this.$refs.dateTimeRange) {
@@ -1848,6 +1863,7 @@ export default {
         }
       }
       .analysis-statistics__title {
+        position: relative;
         margin-bottom: 10px;
         padding-left: 20px;
         font-size: 16px;
