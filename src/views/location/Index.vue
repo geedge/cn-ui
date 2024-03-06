@@ -1466,7 +1466,8 @@ export default {
     })
     // const pieColorRamp = ['186,224,255', '105,177,255', '22,119,255', '0,62,179', '0,29,102']
     // const pieColorRamp = ['156,174,29', '241,198,0', '89,202,242', '63,133,186', '37,55,128']
-    const pieColorRamp = ['196,214,59', '190,230,255', '135,206,250', '63,133,186', '37,55,128']
+    // const pieColorRamp = ['196,214,59', '190,230,255', '135,206,250', '63,133,186', '37,55,128']
+    const pieColorRamp = ['196,214,59', '135,206,250', '63,133,186', '42,60,135', '34,7,94']
     const pieValueRamp = ref([])
     const followedSubscribersList = ref([])
     const searchValueListShow = ref([])
@@ -1539,7 +1540,7 @@ export default {
       currentSubscriber, // 鼠标当前悬浮的Subscriber
       currentPolygon, // 鼠标当前悬浮的六边形
       trackingSubscribers, // 存放当前追踪的Subscriber列表
-      currentShowSubscriber, // 当前在地图上展示轨迹的Subscriber TODO 从url获取
+      currentShowSubscriber, // 当前在地图上展示轨迹的Subscriber
       trackingSubscriberRecordMap: [], // record数据量大时，vue监听性能开销太大，所以单独用非监听的数组来维护subscriberId与record的关系
       loading, // 控制组件内各处loading图标
       maxZoom: 14, // 地图最小缩放比例
