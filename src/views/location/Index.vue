@@ -690,14 +690,15 @@ export default {
                   s.trackRecords[i].stayTime = '-'
                 } else {
                   if ((s.trackRecords[i - 1].subscriberLongitude === s.trackRecords[i].subscriberLongitude) && (s.trackRecords[i - 1].subscriberLatitude === s.trackRecords[i].subscriberLatitude)) {
-                    // 如果连续两条地址重复，则将时间累加，并将上一条标注repeatFlag为true，最后进行删除
+                    // 如果连续两条地址重复，则将时间累加，并将上一条删除，键值-1继续循环
                     if (s.trackRecords[i - 2]) {
                       const stayTime = unitConvert(s.trackRecords[i - 2].time - s.trackRecords[i].time, unitTypes.time, 's')
                       if (Number(stayTime[0]) === Number(Number(stayTime[0]).toFixed(0))) {
                         stayTime[0] = Number(stayTime[0]).toFixed(0)
                       }
-                      s.trackRecords[i - 1].repeatFlag = true
                       s.trackRecords[i].stayTime = stayTime.join(' ')
+                      s.trackRecords.splice(i - 1, 1)
+                      i = i - 1
                     }
                   } else {
                     const stayTime = unitConvert(s.trackRecords[i - 1].time - s.trackRecords[i].time, unitTypes.time, 's')
@@ -709,9 +710,6 @@ export default {
                 }
               }
             }
-          })
-          this.trackingSubscribers.forEach(item => {
-            item.trackRecords = item.trackRecords.filter(dataItem => !dataItem.repeatFlag)
           })
         } catch (e) {
           this.errorMsgHandler(e)
