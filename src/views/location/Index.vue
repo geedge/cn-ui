@@ -18,20 +18,15 @@
               :placeholder="$t('location.enterPhoneNumberToSearch')"
               popper-class="search-select"
               placement="bottom"
-              @blur="searchBlur"
-              @focus="searchFocus"
-              @change="changeSearchValue"
-              @clear="clearSearchValue"
               @visible-change="visibleChange"
               :remote-method="dropDownSearch"
               v-select-load-more="onLoadMore"
-              style="margin-right: 10px;"
+              style="margin-right: 10px;width:220px;"
       >
         <el-option
                 v-for="item in searchValueListShow"
                 :key="item.subscriberId"
                 :value="item.phoneNumber"
-                @click="changeValue(item)"
         >
           <span class="search-active" :class="item.active === 1 ? 'active-icon' : 'inactive-icon'"></span>
           <span class="search-value" >{{ item.phoneNumber }}</span>
@@ -40,6 +35,14 @@
             <i class="cn-icon-a-1 cn-icon" v-else></i>
           </span>
         </el-option>
+        <template #empty>
+          <div v-if="loading.searchLoading" style="height:40px;padding:10px 0;text-align: center;color:#909399;font-size:12px;display:flex;align-items: center;justify-content: center;">
+            <simple-loading style="padding-top:10px;" size="small" placement="top" :loading="loading.searchLoading" ></simple-loading>
+          </div>
+          <div v-else-if="emptyTip !== ''" style="height:40px;padding:10px 0;text-align: center;color:#909399;font-size:12px;display:flex;align-items: center;justify-content: center;">
+            {{emptyTip}}
+          </div>
+        </template>
       </el-select>
       <div class="panel__time">
         <date-time-range
@@ -388,8 +391,8 @@ export default {
       activeCountChain: '',
       curPageNum: 1,
       activeNames: '',
-      isLoadingMore: false,
-      initFlag: true
+      initFlag: true,
+      emptyTip: ''
     }
   },
   components: {
@@ -1167,12 +1170,12 @@ export default {
           pageSize: 10,
           params: "phone_number like '%"+ curSearchValue +"%'"
         }
-        this.loading.searchLoading = true
         try {
-          this.isLoadingMore = true
+          this.loading.searchLoading = true
+          this.emptyTip = ''
           await axios.get(api.location.list, { params }).then(async response => {
             if (response.status === 200) {
-              if (this.curPageNum === 1) {
+              if (params.pageNo === 1) {
                 this.searchValueListShow = response.data.data
               } else {
                 this.searchValueListShow = this.searchValueListShow.concat(response.data.data)
@@ -1197,22 +1200,18 @@ export default {
           this.errorMsgHandler(e)
           console.error(e)
         } finally {
-          this.isLoadingMore = false
           this.loading.searchLoading = false
+          if(this.searchValueListShow.length === 0) {
+            this.emptyTip = 'No Data'
+          }
         }
       }
     },
     changeValue (item) {
     },
-    changeSearchValue (value) {
-    },
-    searchBlur () {
 
-    },
-    searchFocus () {
-    },
     onLoadMore () {
-      if (!this.isLoadingMore) {
+      if (!this.loading.searchLoading) {
         this.initDropdownList(this.curSearchValue)
       }
     },
@@ -1277,16 +1276,14 @@ export default {
         })
       }
     },
-    clearSearchValue () {
-    },
     visibleChange (state) {
       this.searchValueListShow = []
     },
     dropDownSearch (curVal) {
-      // this.isLoadingMore = false
       this.curSearchValue = curVal
       this.curPageNum = 1
       this.searchValueListShow = []
+      this.emptyTip = ''
       this.initDropdownList(curVal)
     },
     mapTimeLineChange (timeFilter) {
@@ -1627,6 +1624,9 @@ export default {
     top: 11px;
     right: 20px;
     .el-select .el-input__inner {
+      cursor: text;
+    }
+    .el-select .el-input .el-select__caret {
       cursor: text;
     }
     .panel__time {
