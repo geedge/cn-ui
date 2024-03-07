@@ -1673,12 +1673,6 @@ export default {
   padding: 0 20px 20px;
   position: relative;
   .location-tabs  {
-    .el-tabs__content {
-      padding: 32px;
-      color: #6b778c;
-      font-size: 32px;
-      font-weight: 600;
-    }
     .traceTracking-tabs_label {
       display:flex;
       flex-display: row;
