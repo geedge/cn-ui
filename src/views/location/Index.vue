@@ -40,8 +40,8 @@
           <span class="search-active" :class="item.active === 1 ? 'active-icon' : 'inactive-icon'"></span>
           <span class="search-value" >{{ item.phoneNumber }}</span>
           <span class="search-follow__icon" @click.stop="followSubscribers(item)">
-            <i class="cn-icon-a- cn-icon" v-if="item.follow === 1"></i>
-            <i class="cn-icon-a-1 cn-icon" v-else></i>
+            <i class="cn-icon-follow-fill cn-icon" v-if="item.follow === 1"></i>
+            <i class="cn-icon-follow cn-icon" v-else></i>
           </span>
         </el-option>
         <template #empty>
@@ -905,7 +905,7 @@ export default {
           if (!find) {
             hexagons.push({ hexId: d.hexId, locations: [{ time: d.time, longitude: d.subscriberLongitude, latitude: d.subscriberLatitude }] })
           } else {
-            if (find.locations.length < 5) {
+            if (find.locations.length < 6) {
               find.locations.push({ time: d.time, longitude: d.subscriberLongitude, latitude: d.subscriberLatitude })
             }
           }
@@ -1650,8 +1650,7 @@ export default {
   margin-right: 10px;
   text-align: center;
   i {
-    font-size: 8px !important;
-    font-weight: bold;
+    font-size: 12px;
   }
 }
 .active-icon {
@@ -2209,8 +2208,6 @@ export default {
     }
     .hexagon-tooltip__body {
       padding: 8px 18px;
-      max-height: 230px;
-      overflow: auto;
 
       .body__timeline {
         display: flex;
