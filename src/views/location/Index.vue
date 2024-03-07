@@ -26,11 +26,12 @@
               remote
               :placeholder="$t('location.enterPhoneNumberToSearch')"
               popper-class="search-select"
+              :popper-append-to-body="false"
               placement="bottom"
               @visible-change="visibleChange"
               :remote-method="dropDownSearch"
               v-select-load-more="onLoadMore"
-              style="margin-right: 10px;width:220px;"
+              style="margin-right: 10px; width:250px;"
       >
         <el-option
                 v-for="item in searchValueListShow"
@@ -38,7 +39,10 @@
                 :value="item.phoneNumber"
         >
           <span class="search-active" :class="item.active === 1 ? 'active-icon' : 'inactive-icon'"></span>
-          <span class="search-value" >{{ item.phoneNumber }}</span>
+          <div class="search-content">
+            <span class="search-value">{{ item.phoneNumber }}</span>
+            <span class="" style="color: #999;">ID&nbsp;&nbsp;{{ item.subscriberId }}</span>
+          </div>
           <span class="search-follow__icon" @click.stop="followSubscribers(item)">
             <i class="cn-icon-follow-fill cn-icon" v-if="item.follow === 1"></i>
             <i class="cn-icon-follow cn-icon" v-else></i>
@@ -1626,46 +1630,6 @@ export default {
 }
 </script>
 <style lang="scss">
-.search-active {
-  float: left;
-  border-radius: 3px;
-  width: 6px;
-  height: 6px;
-  margin-right: 10px;
-  position:relative;
-  top:50%;
-  transform: translateY(-50%);
-  text-align:center;
-}
-.search-value {
-  float: left;
-  margin-right:20px;
-}
-.search-follow__icon {
-  float: right;
-  color: #6f6f6e;
-  font-size: 13px;
-  width: 10px;
-  height: 24px;
-  margin-right: 10px;
-  text-align: center;
-  i {
-    font-size: 12px;
-  }
-}
-.active-icon {
-  background: #38ACD2;
-}
-.inactive-icon {
-  background: #CCCCCC;
-}
-.search-select {
-  max-height: 150px;
-}
-.search-select .el-scrollbar__wrap{
-  max-height: 150px;
-  overflow-y:auto;
-}
 .geo-analysis {
   display: flex;
   flex-direction: column;
@@ -1708,6 +1672,59 @@ export default {
     }
     .panel__time {
       display: flex;
+    }
+    .el-select {
+      .search-active {
+        float: left;
+        border-radius: 3px;
+        width: 6px;
+        height: 6px;
+        margin-right: 10px;
+        position:relative;
+        top:50%;
+        transform: translateY(-50%);
+        text-align:center;
+      }
+      .search-value {
+        font-size: 14px;
+        margin-right:20px;
+      }
+      .search-follow__icon {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        color: #6f6f6e;
+        margin-right: 10px;
+        text-align: center;
+        i {
+          font-size: 12px;
+        }
+      }
+      .search-content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: center;
+      }
+      .active-icon {
+        background: #38ACD2;
+      }
+      .inactive-icon {
+        background: #CCCCCC;
+      }
+      .search-select {
+        max-height: 250px;
+      }
+      .search-select .el-scrollbar__wrap{
+        max-height: 250px;
+        overflow-y: auto;
+      }
+      .el-select-dropdown .el-scrollbar .el-select-dropdown__wrap .el-scrollbar__view.el-select-dropdown__list .el-select-dropdown__item {
+        position: relative;
+        height: 48px;
+        line-height: 16px;
+      }
     }
   }
   .el-tabs {
