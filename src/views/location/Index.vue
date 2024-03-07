@@ -1721,6 +1721,7 @@ export default {
     .el-tabs__active-bar {
       height: 3px;
       background-color: #046eca;
+      bottom: 1px;
     }
     .el-tabs__item {
       &.is-active {
