@@ -1,4 +1,10 @@
 .detection-table {
+  .el-table td, .el-table th {
+    padding: 12px 0;
+  }
+  .el-table .el-table__cell.is-center {
+    padding-top: 4px;
+  }
   .el-table th > .cell, .el-table .cell {
     padding-left: 0 !important;
     padding-right: 0 !important;

@@ -35,6 +35,12 @@
               <el-dropdown-item>
                 <div id="header-to-logout" @click="logout">{{ $t('overall.logout') }}</div>
               </el-dropdown-item>
+<!--              <el-dropdown-item>-->
+<!--                <div id="header-to-theme" @click="switchTheme">-->
+<!--                  <span>暗黑模式</span>-->
+<!--                  <el-switch v-model="isDark" size="large" class="mt-2" style="margin-left: 24px" inline-prompt />-->
+<!--                </div>-->
+<!--              </el-dropdown-item>-->
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -46,8 +52,9 @@
         <el-breadcrumb-item class="header__left-breadcrumb-item" :id="`breadcrumb${item.value}`" :title="index===3?item.value:''"
                             v-for="(item,index) in breadcrumb" :key="item.value">
           <template v-if="index===3" >
-            <div class="header__left-breadcrumb-item-select" >
+            <div class="header__left-breadcrumb-item-select" style="position: relative">
               <el-popover placement="bottom-start"
+                          style="position: absolute"
                           ref="breadcrumbPopover"
                           :show-arrow="false"
                           :append-to-body="false"
@@ -128,6 +135,7 @@
         direction="ttb"
         custom-class="cn-menu"
         modal-class="cn-menu-modal"
+        class="cn-menu"
         :with-header="false"
         :show-close="false"
     >
@@ -241,6 +249,7 @@ import {
 import { getNowTime, getSecond } from '@/utils/date-util'
 import _ from 'lodash'
 import { useRoute } from 'vue-router'
+import { useDark, useToggle } from '@vueuse/core'
 
 export default {
   name: 'Header',
@@ -326,7 +335,8 @@ export default {
       wholeScreenRouterMapping,
       logo: 'images/logo-header.svg',
       ZH,
-      EN
+      EN,
+      isDark: useDark()
     }
   },
   computed: {
@@ -516,9 +526,15 @@ export default {
       this.showChangePin = true
     },
     logout () {
+      //
       sessionStorage.removeItem(storageKey.tokenExpireCurrentPath)
       localStorage.removeItem(storageKey.token)
       axios.get(api.logout)
+    },
+    switchTheme () {
+      useToggle(this.isDark)
+      const theme = this.isDark ? 'light' : 'dark'
+      localStorage.setItem(storageKey.theme, theme)
     },
     refreshLang () {
       this.language = localStorage.getItem(storageKey.language)

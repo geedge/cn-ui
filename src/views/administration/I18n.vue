@@ -51,7 +51,7 @@
     <el-drawer
         v-model="rightBox.show"
         direction="rtl"
-        custom-class="common-right-box"
+        class="common-right-box"
         :size="700"
         :with-header="false"
         destroy-on-close>

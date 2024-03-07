@@ -60,3 +60,23 @@ $--border-color-light: #E7EAED;
 $--chart-box-border-color: $--border-color-light;
 $--chart-title-hover-background-color: #323238;
 @import './common';
+
+
+$--border-color: #363637;
+$--text-color-1: #d8d8d8;
+$--text-color-2: #afafaf;
+$--text-color-3: #a4adb7;
+$--text-color-4: #BEBEBE;
+$--text-color-5: #D8D8D8;
+$--text-color-6: #2764ad;
+
+$--button-color-1: #1D1D1D;
+$--button-bg-color-1: #303030;
+$--border-color-1: var(--el-text-color-disabled);
+$--border-color-2: #6C6E72;
+
+$--select-bg-color-1: #1D1E1F;
+$--select-bg-color-hover-1: #18222C;
+$--select-bg-color-hover-2: #18222C;
+
+$--block-bg-color-1: #181818;

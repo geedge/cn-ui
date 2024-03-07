@@ -170,13 +170,13 @@
                     <td v-else-if="(addEditFlag && editIndex === i) || (addEditFlag && d.tagName === '' && d.tagValue === '')" class="imported-data-btn">
                       <i class="cn-icon cn-icon-save imported-data-save" style="margin: 0 7px"
                          @click="saveImportedData(i)"></i>
-                      <i class="el-icon-close" @click="removeImportedData(i)"></i>
+                      <el-icon @click="removeImportedData(i)"><Close /></el-icon>
                     </td>
                     <!--编辑和删除按钮：进入修改记录状态-->
                     <td v-else class="imported-data-btn">
                       <i class="cn-icon cn-icon-edit1 imported-data-left-btn"
                          @click="editImportedData(i)"></i>
-                      <i class="el-icon-close" @click="removeImportedData(i)"></i>
+                      <el-icon @click="removeImportedData(i)"><Close /></el-icon>
                     </td>
                   </tr>
                 </table>
@@ -244,6 +244,7 @@ import { api } from '@/utils/api'
 import { regular } from '@/utils/regular'
 import unitConvert from '@/utils/unit-convert'
 import Loading from '@/components/common/Loading'
+import { ElMessageBox } from 'element-plus'
 
 export default {
   name: 'CreateKnowledgeBase',
@@ -653,12 +654,12 @@ export default {
         this.isShowUploadTips = true
         const self = this
         if (this.importedData.length > 0) {
-          this.$confirm(this.$t('tip.uploadFile'), {
+          ElMessageBox.confirm(this.$t('tip.uploadFile'), {
             confirmButtonText: this.$t('tip.confirm'),
             cancelButtonText: this.$t('overall.cancel'),
             message: this.$t('tip.uploadFileTips'),
             title: this.$t('tip.uploadFile'),
-            type: 'warning',
+            // type: 'warning',
             iconClass: 'width:0px;height:0px;',
             customClass: 'del-model'
           }).then(() => {
@@ -670,6 +671,7 @@ export default {
         } else {
           this.isClick = true
           this.isShowUploadTips = false
+          self.$refs.upload.submit()
           self.$refs.upload.$refs.uploadRef.handleClick()
         }
       }
@@ -693,12 +695,12 @@ export default {
         } else {
           if (!this.isClick) {
             if (this.importedData.length > 0) {
-              this.$confirm(this.$t('tip.uploadFile'), {
+              ElMessageBox.confirm(this.$t('tip.uploadFile'), {
                 confirmButtonText: this.$t('tip.confirm'),
                 cancelButtonText: this.$t('overall.cancel'),
                 message: this.$t('tip.uploadFileTips'),
                 title: this.$t('tip.uploadFile'),
-                type: 'warning',
+                // type: 'warning',
                 iconClass: 'width:0px;height:0px;',
                 customClass: 'del-model'
               }).then(() => {
@@ -797,12 +799,12 @@ export default {
     cancel () {
       const self = this
       if (this.isPreviewChange) {
-        this.$confirm(this.$t('tip.leavePage'), {
+        ElMessageBox.confirm(this.$t('tip.leavePage'), {
           confirmButtonText: this.$t('tip.confirm'),
           cancelButtonText: this.$t('overall.cancel'),
           message: this.$t('tip.leavePageTips'),
           title: this.$t('tip.leavePage'),
-          type: 'warning',
+          // type: 'warning',
           iconClass: 'width:0px;height:0px;',
           customClass: 'del-model'
         }).then(() => {
@@ -1441,7 +1443,22 @@ export default {
 </script>
 
 <style lang="scss">
+.el-overlay-message-box, .el-message-box {
+  padding: 0 !important;
+}
+.el-overlay-message-box {
+  text-align: center !important;
+}
+.is-message-box .el-overlay-message-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .del-model {
+  &.el-message-box {
+    max-width: 480px !important;
+  }
   display: flex;
   flex-direction: column;
   padding-bottom: 0 !important;
@@ -1455,8 +1472,8 @@ export default {
     height: 42px;
     background: #F7F7F7;
     box-shadow: 0 1px 0 0 rgba(53, 54, 54, 0.08);
-    padding-left: 20px;
-    padding-top: 14px;
+    padding-left: 21px;
+    padding-top: 10px;
     padding-bottom: 14px;
 
     .el-message-box__headerbtn {
@@ -1466,7 +1483,7 @@ export default {
       align-items: center;
       font-size: 10px;
       line-height: 10px;
-      padding-right: 5px !important;
+      padding-right: 10px !important;
 
       i {
         width: 10px;
@@ -1489,9 +1506,9 @@ export default {
     letter-spacing: 0;
     line-height: 22px;
     font-weight: 400;
-    padding-top: 8px;
+    padding-top: 9px;
     padding-right: 20px;
-    padding-left: 20px;
+    padding-left: 21px;
 
     .el-message-box__message {
       padding-left: 0 !important;
@@ -1503,8 +1520,11 @@ export default {
     height: 52px;
     border-top: 1px solid #eee;
     box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.07);
-    padding: 11px 0 12px !important;
+    padding: 13px 1px 12px 0;
 
+    .el-button {
+      font-size: 12px;
+    }
     .el-button--small {
       padding: 8px 21px !important;
       line-height: 12px;

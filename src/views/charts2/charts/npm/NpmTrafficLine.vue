@@ -13,7 +13,7 @@
               :popper-append-to-body="false"
               @change="metricChange"
           >
-            <el-option v-for="item in metricOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            <el-option v-for="item in metricOptions" :key="item.value" :label="$t(item.label)" :value="item.value"></el-option>
           </el-select>
         </div>
       </div>

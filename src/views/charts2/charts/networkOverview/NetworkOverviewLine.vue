@@ -53,7 +53,7 @@
     </div>
     <div style="height: calc(100% - 74px); position: relative">
       <chart-no-data v-if="isNoData && !showError"></chart-no-data>
-      <div class="chart-drawing" v-show="showMarkLine && !isNoData && !showError" ref="overviewLineChart"></div>
+      <div class="chart-drawing" v-show="showMarkLine && !isNoData && !showError" ref="overviewLineChart" id="overviewLineChart"></div>
     </div>
   </div>
 </template>
@@ -353,7 +353,8 @@ export default {
           if (this.myChart) {
             this.myChart.dispose()
           }
-          this.myChart = echarts.init(this.$refs.overviewLineChart)
+          // this.myChart = echarts.init(this.$refs.overviewLineChart)
+          this.myChart = echarts.init(document.getElementById('overviewLineChart'))
           this.myChart.setOption(this.chartOption)
 
           this.myChart.dispatchAction({

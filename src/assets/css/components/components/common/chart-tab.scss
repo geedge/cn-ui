@@ -17,8 +17,9 @@
     box-shadow: none;
 
     &>.el-tabs__header {
-      background-color: white;
-      border-color: #E2E5EC;
+      //background-color: white;
+      background-color: $--select-bg-color-1;
+      border-color: $--border-color-2;
 
       .el-tabs__nav-wrap {
         padding-left: 27px;
@@ -33,6 +34,7 @@
   }
   .el-tabs__nav {
     z-index: 1;
+    display: inline-block;
   }
 
   .el-tabs__item.is-top {
@@ -40,7 +42,7 @@
     line-height: 35px;
 
     .chart-tabs__label {
-      color: #353636;
+      color: $--text-color-1;
       font-size: 14px;
       font-weight: bold;
       box-sizing: border-box;
@@ -53,7 +55,7 @@
     }
     &.is-active {
       .chart-tabs__label {
-        color: #353636;
+        color: $--text-color-1;
 
         i {
           color: #046EC9;

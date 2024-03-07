@@ -32,7 +32,7 @@
   <div class="center-dialog">
     <el-dialog v-model="showUpdateDialog"
                :destroy-on-close="true"
-               :custom-class="showAddUpdateDialog ? 'update-knowledge update-knowledge--upload' : 'update-knowledge'"
+               :class="showAddUpdateDialog ? 'update-knowledge update-knowledge--upload' : 'update-knowledge'"
                :before-close="beforeClose"
                :after-close="handleClose">
       <div class="knowledge-update__top" >
@@ -107,9 +107,8 @@
                     'update-dialog__table--psiphon3': updateKnowledge.source === 'cn_psiphon3_ip' && activeTab === 'intelligenceLearning',
                     'update-dialog__table--system-user': updateKnowledge.source === 'cn_psiphon3_ip' && activeTab !== 'intelligenceLearning'
                   }"
-                  :header-cell-style="{background:'#f5f7fa',color:'#353636',fontWeight: '400',fontSize: '12px',borderRight: 'none',borderBottom: 'none'}"
-                  cell-style="padding:6px 0px;font-size: 12px;color: #353636;font-weight: 400;line-height: 20px;border-right:none;"
-                  header-cell-style="padding:8px 0px;font-size: 12px;color: #353636;font-weight: 500;border-right:none;">
+                  :cell-style="myCellStyle"
+                  :header-cell-style="myHeaderCellStyle">
           <el-table-column prop="opTime" :label="$t('entities.tab.informationAggregation.updateTime')" width="150" >
             <template #default="scope" :column="item">
               <span>{{scope.row.opTime ? dateFormatByAppearance(scope.row.opTime) : '-'}}</span>
@@ -202,6 +201,7 @@
                          :on-error="uploadError"
                          :class="uploadErrorTip ? 'el-upload--error' : ''"
                          :accept="fileTypeLimit"
+                         style="margin-bottom: -10px"
                          :auto-upload="false"
                          ref="knowledgeUpload"
                          id="knowledgeUpload"
@@ -228,7 +228,7 @@
     </el-dialog>
     <el-dialog v-model="showConfirmDialog"
                :title="$t('overall.tips')"
-               custom-class="update-knowledge-tip"
+               class="update-knowledge-tip"
                :width="480"
                :before-close="handleConfirmClose">
       <div class="dialog-message">{{$t('knowledge.updateTips')}}</div>
@@ -326,7 +326,27 @@
           { value: 10080, name: this.$t('dateTime.last7Days') },
           { value: 21600, name: this.$t('dateTime.last15Days') },
           { value: 43200, name: this.$t('dateTime.last30Days') }
-        ]
+        ],
+        myCellStyle: {
+          padding: '6px 0px',
+          'font-size': '12px',
+          color: '#353636',
+          'font-weight': 400,
+          'line-height': '20px',
+          'border-right': 'none'
+        },
+        myHeaderCellStyle: {
+          padding: '8px 0px',
+          'font-size': '12px',
+          color: '#353636',
+          'font-weight': 500,
+          'border-right': 'none',
+          background: '#f5f7fa',
+          fontWeight: '400',
+          fontSize: '12px',
+          borderRight: 'none',
+          borderBottom: 'none'
+        }
       }
     },
     setup () {

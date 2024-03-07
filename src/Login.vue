@@ -7,15 +7,18 @@
       <el-form class="login__box">
         <el-form-item>
           <el-input
-              prefix-icon="cn-icon cn-icon-user2"
               class="login--input login__input"
             v-model="username"
-          ></el-input>
+          >
+            <template #prefix>
+              <i class="cn-icon cn-icon-user2"></i>
+            </template>
+          </el-input>
         </el-form-item>
         <el-form-item>
           <el-input
               class="login--input"
-              prefix-icon="el-icon-lock"
+              prefix-icon="Lock"
               type="password"
               @keyup.enter="login"
             v-model="pin"
@@ -118,6 +121,7 @@ export default {
             // localStorage.setItem(storageKey.userId, res.data.data.user.userId)
             localStorage.setItem(storageKey.userId, res.data.data.user.id)
             localStorage.setItem(storageKey.token, res.data.data.token)
+            // const theme =
             this.$i18n.locale = localStorage.getItem(storageKey.language)
           }
         }
@@ -244,7 +248,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .logins {
   background-color: #000C18;
   background-size: auto;
@@ -257,12 +261,12 @@ export default {
 }
 
 :deep .el-input__inner {
-  background-color: #0B325C !important;
+  //background-color: #0B325C !important;
   border: none;
-  border-radius: 0px;
-  border-bottom: 1px solid #295688;
+  //border-radius: 0px;
+  //border-bottom: 1px solid #295688;
   font-size: 14px;
-  line-height: 14px;
+  //line-height: 14px;
 }
 :deep .el-input__inner:hover {
   border-color: #295688;
@@ -282,6 +286,7 @@ export default {
   -webkit-text-fill-color: rgba(231,234,237, .8) !important;
   transition: background-color 500000000000000000s ease-in-out 0s !important;
   caret-color: #fff ;
+  font-size: 14px;
 }
 .inside {
   width: 414px;
@@ -378,5 +383,22 @@ export default {
   margin-top: 25px;
   margin-bottom: 10px;
   height:40px;
+}
+.login--input {
+  :deep .el-input__wrapper {
+    background-color: rgb(11, 50, 92) !important;
+    box-shadow: none !important;
+    //border-bottom: 1px solid rgba(103,179,245,0.65);
+    border-bottom: 1px solid #295688;
+    border-radius: 0;
+    height: 40px;
+    line-height: 40px;
+    font-size: 14px;
+    padding: 1px 4px 2px 5px;
+  }
+
+  :deep .el-input__wrapper.is-focus {
+    box-shadow: none !important;
+  }
 }
 </style>

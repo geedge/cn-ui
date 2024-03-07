@@ -48,7 +48,7 @@
                 <span style="color: #41ABFD">{...}</span>
               </template>
               <div class="highlight-box">
-                <span class="highlight-box__copy-btn" @click="copyValue(scope.row[item.prop])"><i class="el-icon-document-copy"></i></span>
+                <span class="highlight-box__copy-btn" @click="copyValue(scope.row[item.prop])"><el-icon><CopyDocument /></el-icon></span>
                 <highlightjs
                     language="json"
                     :code="scope.row[item.prop]"
@@ -70,7 +70,7 @@
                 <span style="color: #41ABFD">{...}</span>
               </template>
               <div class="highlight-box">
-                <span class="highlight-box__copy-btn" @click="copyValue(scope.row[item.prop])"><i class="el-icon-document-copy"></i></span>
+                <span class="highlight-box__copy-btn" @click="copyValue(scope.row[item.prop])"><el-icon><CopyDocument /></el-icon></span>
                 <highlightjs
                     language="js"
                     :code="scope.row[item.prop]"

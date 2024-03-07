@@ -3,8 +3,9 @@
     <el-table
         id="reportTable"
         ref="dataTable"
+        :header-cell-class-name="headerCellClass"
         :data="tableData"
-        :height="height"
+        height="100%"
         :expand-row-keys="expandedIds"
         border
         empty-text=" "
@@ -213,7 +214,7 @@ import Loading from '@/components/common/Loading'
 import axios from 'axios'
 import { api } from '@/utils/api'
 import { storageKey, report } from '@/utils/constants'
-import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
+import { urlParamsHandler, overwriteUrl, headerCellClass } from '@/utils/tools'
 import { ref } from 'vue'
 import { dateFormatToUTC, getNowTime } from '@/utils/date-util'
 import chartDetectionPagination from '@/views/charts/charts/chartDetectionPagination'
@@ -479,6 +480,7 @@ export default {
     })
   },
   methods: {
+    headerCellClass,
     /**
      * 进入页面判断是否需要展开表格
      * 即展开表格后刷新界面，保持展开效果
@@ -783,3 +785,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.list-page .cn-table .el-table:not(.chart-table) td {
+  padding: 7.5px 0;
+}
+</style>

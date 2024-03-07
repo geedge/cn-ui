@@ -41,11 +41,11 @@
         ></explorer-search>
 
         <div style="display: flex;flex-direction: column;height: calc(100% - 42px);">
-          <div class="explorer-result" v-if="showList" style="position: relative;">
+          <div class="explorer-result" v-if="showList" style="position: relative;display: flex">
             <loading :loading="loadingCount" style="width: 240px"></loading>
-            <span>{{ summaryCount.totalCount }}&nbsp;</span>{{$t('overall.results')}}，IP
-            <span>{{ summaryCount.ipCount }}</span>，{{$t('overall.domain')}}
-            <span>{{ summaryCount.domainCount }}</span>，APP
+            <span>{{ summaryCount.totalCount }}&nbsp;</span>{{$t('overall.results')}}，IP<span class="margin-r-3"></span>
+            <span>{{ summaryCount.ipCount }}</span>，{{$t('overall.domain')}}<span class="margin-r-3"></span>
+            <span>{{ summaryCount.domainCount }}</span>，APP<span class="margin-r-3"></span>
             <span>{{ summaryCount.appCount }}</span>
 
             <span class="entity-hide-entity" v-if="q">

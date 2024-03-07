@@ -65,6 +65,9 @@
         }
       }
     }
+    .container__form {
+
+    }
     .el-form-item__content {
       .input-box {
         .el-textarea {
@@ -135,6 +138,9 @@
         }
         .el-input__inner:focus {
           border-color: darken($--right-box-border-color, 20%);
+        }
+        .el-form-item__label {
+          padding-bottom: 2px;
         }
       }
       .el-form-item.is-error .el-input__inner, .el-form-item.is-error .el-input__inner:focus, .el-form-item.is-error .el-textarea__inner, .el-form-item.is-error .el-textarea__inner:focus, .el-message-box__input input.invalid, .el-message-box__input input.invalid:focus {
@@ -300,5 +306,25 @@
   }
   .el-form-item__content .el-autocomplete .el-input-group {
     vertical-align: unset;
+  }
+  .el-input__wrapper {
+    border-radius: 2px;
+    height: 32px !important;
+    line-height: 32px !important;
+    //box-shadow: 0 0 0 1px var(--el-input-border-color,var(--el-border-color)) inset;
+    box-shadow: 0 0 0 1px #e7eaed inset;
+  }
+  .el-input__inner, .el-textarea__inner {
+    border: none !important;
+  }
+  .el-select__wrapper {
+    height: 32px;
+    line-height: 32px;
+  }
+  .el-switch.is-checked .el-switch__core {
+    background-color: $--color-primary;
+  }
+  .el-textarea__inner {
+    font-size: 12px;
   }
 }

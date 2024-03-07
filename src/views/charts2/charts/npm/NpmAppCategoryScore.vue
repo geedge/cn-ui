@@ -27,7 +27,7 @@
       <template v-for="(item, index) in customTableTitles" :key="index">
         <el-table-column class="data-column">
           <template #header>
-            <span class="data-column__span">{{$t(item.label)}}</span>
+            <span class="data-column__span" style="margin-left: -2px;">{{$t(item.label)}}</span>
           </template>
           <template  #default="scope" :column="item">
             <div class="data-total">

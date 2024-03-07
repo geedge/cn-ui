@@ -7,7 +7,7 @@
 
     .network-overview-apps-title {
       font-size: 14px;
-      color: #353636;
+      color: $--text-color-1;
       font-weight: 600;
       display: flex;
       align-items: flex-end;
@@ -20,7 +20,7 @@
 
       &>span {
         font-size: 12px;
-        color: #575757;
+        color: $--text-color-2;
         font-weight: 400;
         margin-right: 3px;
       }
@@ -45,7 +45,7 @@
             .el-select__caret {
               line-height: 24px;
               width: 16px;
-              color: #575757;
+              color: $--text-color-2;
             }
           }
         }
@@ -62,14 +62,14 @@
     padding-top: 10px;
 
     .app-card {
-      border: 1px solid #E2E5EC;
+      border: 1px solid $--border-color;
       border-radius: 4px;
       display: flex;
       height: 100px;
       flex-direction: column;
 
       &.app-card--create {
-        background-color: #F7F7F7;
+        background-color: $--block-bg-color-1;
         justify-content: center;
         align-items: center;
 
@@ -81,7 +81,7 @@
         }
         span {
           font-size: 12px;
-          color: #353636;
+          color: $--text-color-1;
           cursor: pointer;
         }
       }
@@ -119,12 +119,12 @@
             border-radius: 2px;
             font-size: 12px;
             padding-left: 6.8px;
-            color: #353636;
+            color: $--text-color-1;
             font-weight: 400;
             i {
               margin-right: 5.67px;
               font-size: 12px;
-              color: #575757;
+              color: $--text-color-2;
             }
           }
           .app-card-title-more-delete:hover {
@@ -155,7 +155,7 @@
           display: flex;
           .app-card__body-content-number {
             font-size: 14px;
-            color: #353636;
+            color: $--text-color-1;
             font-weight: 700;
             margin-right: 6px;
           }
@@ -171,7 +171,7 @@
           justify-content: center;
           position: relative;
           top: 50%;
-          color: #717171;
+          color: $--text-color-3;
           margin-top: -10px;
           background-color: rgba(113, 113, 113, 0.12);
         }
@@ -188,12 +188,12 @@
         margin-top: -2px;
         margin-bottom: 2px;
         font-size: 12px;
-        color: #778391;
+        color: $--text-color-3;
       }
       .app-card__body-previous {
         display: flex;
         font-size: 12px;
-        color: #353636;
+        color: $--text-color-1;
         font-weight: 400;
         div:nth-of-type(1) {
           margin-right: 5px;
@@ -207,6 +207,10 @@
   .add-app-drawer {
     height: 526px !important;
 
+    .el-drawer__body {
+      padding: 0 !important;
+    }
+
     .add-app {
       display: flex;
       flex-direction: column;
@@ -216,14 +220,14 @@
         display: flex;
         justify-content: space-between;
         height: 46px;
-        background-color: white;
+        background-color: $--select-bg-color-1;
 
         .header__title {
           padding-left: 20px;
           font-size: 16px;
           font-weight: bold;
           line-height: 46px;
-          color: #353636;
+          color: $--text-color-1;
         }
         .header__operations {
           display: flex;
@@ -261,6 +265,12 @@
           flex: 1;
           position: relative;
         }
+        .el-tabs__item {
+          display: inline-block;
+        }
+        .el-tabs__item:hover {
+          color: #046eca;
+        }
         .el-tabs__item.is-top {
           height: 50px;
           line-height: 60px;
@@ -280,18 +290,25 @@
           right: 28px;
           top: 11px;
           width: 280px;
-          .el-input.el-input--mini {
-            .el-input__inner {
-              background: #FFFFFF;
-              border: 1px solid #DEDEDE;
-              box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
-              border-radius: 14px;
+          .el-input__wrapper {
+            border-radius: 14px;
+            font-size: 12px;
+            .el-input.el-input--mini {
+              .el-input__inner {
+                font-size: 12px !important;
+                //background: #FFFFFF;
+                //border: 1px solid #DEDEDE;
+                //box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
+                //border-radius: 14px;
+              }
             }
-            &.el-input--prefix {
+            .el-input__prefix-inner {
               i {
-                color: #575757;
+                color: $--text-color-2;
                 font-size: 16px;
                 font-weight: 600;
+                margin-left: -2px;
+                margin-right: 6px
               }
             }
           }
@@ -350,7 +367,7 @@
                 .body__app-left-title {
                   font-family: Helvetica-Bold;
                   font-size: 16px;
-                  color: #353636;
+                  color: $--text-color-1;
                   font-weight: 700;
                   margin-bottom: 6px;
                 }
@@ -375,7 +392,7 @@
             }
             .body__app-value {
               font-size: 12px;
-              color: #717171;
+              color: $--text-color-3;
               line-height: 18px;
               font-weight: 400;
               max-height: 54px;

@@ -178,7 +178,7 @@
     <div class="overview__content overview__content-loading">
       <loading :loading="loadingAlert" size="small" inner-style="left: 10rem"></loading>
       <div class="overview__row" v-if="performanceData.length === 0">
-        <span  class="no-recent-alerts"><i class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
+        <span  class="no-recent-alerts"><el-icon><SuccessFilled /></el-icon>{{$t('relationShip.noRecentAlerts')}}</span>
       </div>
       <div class="overview__row" v-if="performanceData.length > 0">
         <div class="row__label row__label--width130">{{$t('entities.recentAlert')}}</div>
@@ -204,7 +204,7 @@
     <div class="overview__content overview__content-loading">
       <loading :loading="loadingSecurityEvents" size="small" inner-style="left: 10rem"></loading>
       <div class="overview__row" v-if="securityData.length === 0">
-        <span class="no-recent-alerts"><i class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
+        <span class="no-recent-alerts"><el-icon><SuccessFilled /></el-icon>{{$t('relationShip.noRecentAlerts')}}</span>
       </div>
       <div class="overview__row" v-if="securityData.length > 0">
         <div class="row__label row__label--width130">{{$t('entities.recentSecurity')}}</div>

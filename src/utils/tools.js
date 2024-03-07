@@ -1594,3 +1594,7 @@ const tagValueHandler = (value) => {
   const find = tagValueLabelMapping.find(t => t.value === value)
   return find ? find.name : value
 }
+
+export const headerCellClass = (row) => {
+  return 'my-header-cell-class'
+}

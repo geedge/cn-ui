@@ -51,7 +51,7 @@
         <button style="position: relative;" :class="{'footer__btn--disabled': blockOperation.save}" :disabled="blockOperation.save" class="footer__btn" @click="save"
                 v-if="hasPermission('editAppearence')"
         >
-          <loading size="small" :loading="blockOperation.save"></loading>
+          <el-loading size="small" :loading="blockOperation.save"></el-loading>
           <span>{{$t('overall.save')}}</span>
         </button>
       </div>

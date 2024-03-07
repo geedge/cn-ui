@@ -17,8 +17,9 @@
   .refresh-list{
     position: absolute;
     z-index: 2;
-    background: #FFFFFF;
-    border: 1px solid #DEDEDE;
+    //background: #FFFFFF;
+    background: $--select-bg-color-1;
+    border: 1px solid var(--el-border-color);
     box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
     border-radius: 2px;
     top: 30px;
@@ -29,13 +30,13 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      color: #333333;
+      color: $--text-color-5;
       cursor: pointer;
       position: relative;
       padding: 8px 0 8px 12px;
     }
     .refresh-list-item.active{
-      background: #F2F9FF;
+      background: $--select-bg-color-1;
       color: #0091FF;
       font-weight: 400;
       .cn-icon-check{
@@ -45,7 +46,8 @@
       }
     }
     .refresh-list-item:hover{
-      background: #F2F9FF;
+      //background: #F2F9FF;
+      background: $--select-bg-color-hover-1;
       color: #0091FF;
     }
   }
@@ -66,5 +68,6 @@
   .el-button--mini{
     padding: 4px 6px !important;
     min-height: 28px !important;
+    height: 28px !important;
   }
 }

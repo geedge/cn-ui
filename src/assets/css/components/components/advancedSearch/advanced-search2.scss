@@ -16,7 +16,7 @@
           margin-right: 12px;
           background-color: transparent;
 
-          .el-icon-search {
+          i {
             color: #3976CB;
           }
         }
@@ -51,14 +51,14 @@
           line-height: 39px;
           background: #38ACD2;
 
-          .el-icon-search {
+          i {
             font-size: 22px;
             color: #fff;
           }
         }
       }
       .search__suffix-close {
-        .el-icon-error {
+        i {
           font-size: 17px;
           color: #C4C4C4;
           cursor: pointer;
@@ -87,7 +87,7 @@
   border-radius: 2px;
   padding-left: 10px;
   padding-right: 80px;
-  background-color: white;
+  background-color: $--select-bg-color-1;
   border: 1px solid #DEDEDE;
 
   &::-webkit-scrollbar {
@@ -151,6 +151,20 @@
         color: #333;
         font-weight: bold;
         cursor: text;
+        .el-select {
+          min-width: 210px !important;
+          min-height: 20px !important;
+          height: 20px;
+          cursor: pointer;
+        }
+        .el-select__wrapper {
+          height: 28px;
+          margin-top: -4px;
+          cursor: pointer;
+        }
+        .el-select__wrapper.is-focused {
+          box-shadow: 0 0 0 1px $--color-primary inset !important;
+        }
       }
       .condition__operator {
         color: #3976CB;
@@ -180,7 +194,13 @@
   padding-left: 65px;
 }
 
-.el-popover.my-popper-class {
+.my-popper-class {
   width: auto !important;
-  padding: 8px 12px !important;
+  padding: 8px 10px !important;
+}
+.el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px $--color-primary inset !important;
+}
+.el-select-dropdown__item.is-selected {
+  color: #2c72c6 !important;
 }

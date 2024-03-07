@@ -58,4 +58,7 @@
     -webkit-line-clamp: 2; // 超出多少行
     -webkit-box-orient: vertical;
   }
+  .cn-table .el-table:not(.chart-table) td {
+    padding: 8px 0 !important;
+  }
 }

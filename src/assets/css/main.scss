@@ -27,18 +27,20 @@ $--font-path: '~@/assets/css/themes/src/fonts'; // 避免ele原字体加载语�
 
 /* 主题 */
 
-.theme-light {
-  $--theme: light;
-  @import './themes/theme-light.scss'; // 加载主题变量
-  @import './themes/src/index.scss'; // 加载ele样式
-  @import './components/index'; // 加载cn组件样式
-  @import './common/index.scss'; // 加载通用样式
-}
+$--color-text-primary: #303133 !default;
+$--border-color: #E2E5EC;
 
-.theme-dark {
+@import './themes/theme-light.scss'; // 加载主题变量
+@import './components/index'; // 加载cn组件样式
+@import './common/index.scss'; // 加载通用样式
+@import "common/cover-element-plus"; // 覆盖新版elemen-plus样式
+
+.dark {
   $--theme: dark;
   @import './themes/theme-dark.scss'; // 加载主题变量
-  @import './themes/src/index.scss'; // 加载ele样式
   @import './components/index'; // 加载cn组件样式
   @import './common/index.scss'; // 加载通用样式
+  .fixed-button:hover {
+    background: #40474b !important;
+  }
 }

@@ -78,10 +78,36 @@
               color: #1b2e3b;
               background: #ebeef5;
             }
+            .el-range-editor--small.el-input__wrapper {
+              height: 32px;
+              line-height: 32px;
+            }
             .cn-detection__footer {
               text-align: center;
+              display: flex;
+              justify-content: center;
               .el-pagination__jump {
                 margin-left: 3px;
+              }
+              .el-pagination__goto {
+                display: none;
+              }
+              .el-input--small {
+                width: 46px !important;
+                .el-input__wrapper {
+                  height: 22px;
+                }
+              }
+              .el-pagination--small {
+                .btn-prev {
+                  margin-right: 10px;
+                }
+                .btn-next {
+                  margin-left: 10px;
+                }
+                &span {
+                  color: $--color-text-primary;
+                }
               }
             }
           }
@@ -175,6 +201,12 @@
               }
             }
           }
+        }
+        .el-table__border-left-patch, .el-table--border::before {
+          width: 0;
+        }
+        .el-table--border .el-table__inner-wrapper::after, .el-table__inner-wrapper::before {
+          height: 0;
         }
       }
     }

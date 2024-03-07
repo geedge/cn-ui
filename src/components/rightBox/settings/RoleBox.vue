@@ -18,7 +18,7 @@
             <el-input maxlength="255" show-word-limit :rows="2" size='mini' type="textarea" v-model="editRole.remark" id="role-box-input-remark"/>
           </el-form-item>
 
-          <el-form-item :label="$t('config.roles.permission')">
+          <el-form-item :label="$t('config.roles.permission')" class="my-form-item">
             <!--<div class="tree-option">
               <button type="button" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new option-btn" style="margin-left: 0px;" @click="expandAllOrNone" :class="{'btn-active':expandAllFlag}">展开/收缩</button>
               <button type="button" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new option-btn" @click="selectAllOrNone" :class="{'btn-active':selectAllFlag}"><span ><i class="cn-icon cn-icon-delete"></i></span></button>
@@ -27,8 +27,8 @@
             <el-tree :data="menus" :default-expand-all="expandAllFlag" check-strictly="true" :props="{label:labelFormatter}"  @check-change="selectChange" class="tree-border" node-key="id" ref="menuTree" show-checkbox id="role-box-input-menus">
               <template #default="{ data }">
               <span>
-                <i v-if="data.type === '1'" class="el-icon-menu"></i>
-                <i v-if="data.type === '2'" class="el-icon-edit"></i>
+                <el-icon v-if="data.type === '1'"><Menu /></el-icon>
+                <el-icon v-if="data.type === '2'"><Edit /></el-icon>
               </span>
                 {{$t(data.i18n)}}
               </template>
