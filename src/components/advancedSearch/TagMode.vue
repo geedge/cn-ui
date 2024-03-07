@@ -18,7 +18,7 @@
             <el-select
                 allow-create
                 filterable
-                size="mini"
+                size="small"
                 v-model="meta.column.label"
                 ref="columnSelect"
                 :placeholder="meta.column.label || ' '"
@@ -49,7 +49,7 @@
             <el-select
                 allow-create
                 filterable
-                size="mini"
+                size="small"
                 v-model="meta.value.value"
                 ref="columnValue"
                 :placeholder="meta.value.value || ' '"
@@ -71,7 +71,7 @@
                 v-model="myCheckboxList"
                 ref="valuesSelect"
                 multiple
-                size="mini"
+                size="small"
                 collapse-tags
                 collapse-tags-tooltip
                 :placeholder="meta.value.value || ' '"
@@ -100,7 +100,7 @@
             <el-input
                 ref="valueInput"
                 v-model="meta.value.value"
-                size="mini"
+                size="small"
                 @blur="valueBlur(meta)"
                 @focus="valueFocus(meta)"
                 @keyup.enter="valueBlur(meta)"></el-input>
@@ -129,7 +129,7 @@
 <!--            <el-select-->
 <!--                :placeholder="meta.value"-->
 <!--                v-model="meta.value"-->
-<!--                size="mini"-->
+<!--                size="small"-->
 <!--                @change="(value) => selectConnection(value, meta)"-->
 <!--            >-->
 <!--              <el-option-->

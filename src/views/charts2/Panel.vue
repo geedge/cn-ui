@@ -22,12 +22,11 @@
       </div>
       <div class="panel__tools">
         <el-select
-            size="mini"
+            size="small"
             v-model="metric"
             placeholder=" "
-            popper-class="common-select"
             v-if="showMetric"
-            :popper-append-to-body="false"
+            :teleported="false"
             @change="metricChange"
         >
           <template #prefix>

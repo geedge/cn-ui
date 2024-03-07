@@ -321,8 +321,9 @@
     height: 32px;
     line-height: 32px;
   }
-  .el-switch.is-checked .el-switch__core {
-    background-color: $--color-primary;
+  .el-switch {
+    --el-switch-on-color: #699DC9;
+    --el-switch-off-color: #C0CEDB;
   }
   .el-textarea__inner {
     font-size: 12px;

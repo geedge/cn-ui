@@ -7,11 +7,11 @@
           <el-select v-model="tableType"
                      class="option__select select-column"
                      popper-class="option-popper common-select"
-                     :popper-append-to-body="false"
+                     :teleported="false"
                      key="tabMetric"
                      :placeholder="$t('overall.select')"
                      @change="changeMetric"
-                     size="mini"
+                     size="small"
                      width="100">
             <el-option
                 v-for="item in options"
@@ -26,11 +26,11 @@
           <el-select v-model="tableSeverity"
                      class="option__select select-column"
                      popper-class="option-popper common-select"
-                     :popper-append-to-body="false"
+                     :teleported="false"
                      key="tabMetric"
                      :placeholder="$t('overall.select')"
                      @change="changeMetric"
-                     size="mini"
+                     size="small"
                      width="100">
             <el-option
                 v-for="item in severityOption"

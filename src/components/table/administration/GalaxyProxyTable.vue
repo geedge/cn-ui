@@ -4,7 +4,6 @@
     id="userTable"
     ref="dataTable"
     :data="tableData"
-    :height="height"
     tooltip-effect="light"
     border
     empty-text=" "

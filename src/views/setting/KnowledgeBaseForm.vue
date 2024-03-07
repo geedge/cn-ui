@@ -16,7 +16,7 @@
             <!--name-->
             <el-form-item :label="$t('config.roles.name')" prop="name">
               <el-input class="form-input" maxlength="64" placeholder="" :disabled="!!editObject.knowledgeId" show-word-limit
-                        size="mini" type="text" v-model="editObject.name" @blur="tagNameBlur"></el-input>
+                        size="small" type="text" v-model="editObject.name" @blur="tagNameBlur"></el-input>
             </el-form-item>
             <el-form-item :label="$t('overall.type')" prop="source">
               <el-select v-model="editObject.source"
@@ -24,7 +24,7 @@
                          placeholder=" "
                          popper-class="form-select-popper"
                          :disabled="!!editObject.knowledgeId || (uploaded && !importedDataNoData)"
-                         size="mini"
+                         size="small"
               >
                 <template v-for="type in knowledgeBaseType" :key="type.name">
                   <el-option :label="type.label" :value="type.value"></el-option>
@@ -36,7 +36,7 @@
                          class="form-select__enable"
                          placeholder=" "
                          popper-class="form-select-popper"
-                         size="mini"
+                         size="small"
                          @change="changeColor"
               >
                 <template #prefix>

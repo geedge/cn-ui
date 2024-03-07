@@ -156,11 +156,11 @@
                 <div class="bar-select-time">
                   <div class="bar-select__operation">
                     <el-select
-                            size="mini"
+                            size="small"
                             v-model="selectTime"
                             placeholder=" "
                             popper-class="common-select"
-                            :popper-append-to-body="false"
+                            :teleported="false"
                             @change="timeChange"
                     >
                       <template #prefix>
@@ -187,7 +187,7 @@
             <!--name-->
             <el-form-item :label="$t('overall.name')" prop="name">
               <el-input class="form-input" maxlength="64" placeholder="" disabled show-word-limit
-                        size="mini" type="text" v-model="updateObject.label"></el-input>
+                        size="small" type="text" v-model="updateObject.label"></el-input>
             </el-form-item>
             <el-form-item :label="$t('knowledge.upload')" prop="file">
               <el-upload :action="`${baseUrl}${apiVersion}/knowledgeBase/items/batch`"
@@ -212,7 +212,7 @@
 
             <el-form-item :label="$t('knowledge.version')" prop="version">
               <el-input class="form-input" maxlength="64" placeholder="" disabled show-word-limit
-                        size="mini" type="text" v-model="currentVersion"></el-input>
+                        size="small" type="text" v-model="currentVersion"></el-input>
             </el-form-item>
             <el-form-item :label="$t('overall.remark')" prop="description" class="knowledge-remark">
               <el-input  maxlength="255" show-word-limit :rows="4" size='mini' type="textarea" resize='none'

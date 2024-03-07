@@ -47,11 +47,11 @@
           <div class="line-select-metric">
             <span class="select-prefix line-margin-right">{{$t('network.metric')}}:</span>
             <el-select
-                size="mini"
+                size="small"
                 v-model="metric"
                 placeholder=" "
                 popper-class="common-select"
-                :popper-append-to-body="false"
+                :teleported="false"
                 @change="metricChange"
             >
               <el-option v-for="item in metricOptions" :key="item.value" :label="$t(item.label)" :value="item.value"></el-option>
@@ -62,12 +62,12 @@
           <span class="line-margin-right">{{ $t('network.referenceLine') }}:</span>
           <div class="line-select__operation">
             <el-select
-                size="mini"
+                size="small"
                 v-model="lineRefer"
                 :disabled="!lineTab"
                 placeholder=" "
                 popper-class="common-select"
-                :popper-append-to-body="false"
+                :teleported="false"
                 @change="referenceSelectChange"
             >
               <el-option :key="options2[0].value" :label="$t(options2[0].label)" :value="options2[0].value"></el-option>

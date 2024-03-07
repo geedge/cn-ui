@@ -39,17 +39,17 @@
     <!--      </div>-->
     <!--    </div>-->
     <!--    <div class="custom-bottom-btns">-->
-    <!--      <el-button size="mini" v-if="isCancel" :id="tableId+'-element-set-none'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new is-cancel" @click="batchHandler(false)">-->
+    <!--      <el-button size="small" v-if="isCancel" :id="tableId+'-element-set-none'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new is-cancel" @click="batchHandler(false)">-->
     <!--        <span class="top-tool-btn-txt">{{$t('overall.clear')}}</span>-->
     <!--      </el-button>-->
-    <!--      <el-button size="mini" v-if="!isCancel" :id="tableId+'-element-set-all'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" @click="batchHandler(true)">-->
+    <!--      <el-button size="small" v-if="!isCancel" :id="tableId+'-element-set-all'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" @click="batchHandler(true)">-->
     <!--        <span class="top-tool-btn-txt">{{$t('overall.all')}}</span>-->
     <!--      </el-button>-->
     <!--      <div class="custom-bottom-btns-right">-->
-    <!--        <el-button size="mini" :id="tableId+'-element-set-esc'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" @click="esc">-->
+    <!--        <el-button size="small" :id="tableId+'-element-set-esc'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" @click="esc">-->
     <!--          <span class="top-tool-btn-txt">{{$t('overall.cancel')}}</span>-->
     <!--        </el-button>-->
-    <!--        <el-button size="mini" :id="tableId+'-element-set-save'" class="cn-btn cn-btn-size-small-new cn-btn-style-normal-new" @click="save" style="background-color: #0091ff;color:#DCDFE6">-->
+    <!--        <el-button size="small" :id="tableId+'-element-set-save'" class="cn-btn cn-btn-size-small-new cn-btn-style-normal-new" @click="save" style="background-color: #0091ff;color:#DCDFE6">-->
     <!--          <span class="top-tool-btn-txt top-tool-btn-save">{{$t('overall.save')}}</span>-->
     <!--        </el-button>-->
     <!--      </div>-->

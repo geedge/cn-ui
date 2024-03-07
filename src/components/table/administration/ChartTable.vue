@@ -3,7 +3,6 @@
           id="chartTable"
           ref="dataTable"
           :data="tableData"
-          :height="height"
           border
           empty-text=" "
           @header-dragend="dragend"
@@ -107,7 +106,7 @@ export default {
     return {
       panelTypeAndRouteMapping: panelTypeAndRouteMapping,
       tableTitle: [ // 原table列
-      
+
         {
           label: 'ID',
           prop: 'id',

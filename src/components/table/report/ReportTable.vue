@@ -10,6 +10,7 @@
         border
         empty-text=" "
         tooltip-effect="light"
+        style="border-top: 1px solid #ebeef5; border-left: 1px solid #ebeef5;"
         :row-key="(row) => { return row.id }"
         :reserve-selection="true"
         @header-dragend="dragend"

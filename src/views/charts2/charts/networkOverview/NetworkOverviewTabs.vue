@@ -67,7 +67,7 @@
                           <div class="tab-search-input"  v-show="showSearchInput">
                             <el-input :id="`tabSearchValue${tab.prop}`"
                                       name="tabSearchValue"
-                                      size="mini"
+                                      size="small"
                                       readonly
                                       @click="showListPopover(item.prop)"
                             >
@@ -90,7 +90,7 @@
                       <el-row type="flex" justify="center" style="width: fit-content;flex-direction: column;">
                         <div class="search-input">
                           <el-input :placeholder="`${$t('networkOverview.search')} ${$t(item.label)}`"
-                                    size="mini"
+                                    size="small"
                                     v-model="dropDownValue"
                                     @input="dropDownSearch(item.prop)"></el-input>
                         </div>

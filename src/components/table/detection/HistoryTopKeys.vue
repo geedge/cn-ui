@@ -7,7 +7,7 @@
       </div>
 
       <div class="key-search">
-        <el-input v-model="searchKey" @keyup.enter="onSearch" size="mini" placeholder="Search for">
+        <el-input v-model="searchKey" @keyup.enter="onSearch" size="small" placeholder="Search for">
           <template #prefix>
             <i class="cn-icon cn-icon-search key-search-icon"></i>
           </template>

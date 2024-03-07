@@ -20,13 +20,13 @@
               ref="searchValue"
               v-model="dropDownValue"
               v-show="activeTab === 'locationMap'"
-              size="mini"
+              size="small"
               clearable
               filterable
               remote
               :placeholder="$t('location.enterPhoneNumberToSearch')"
               popper-class="search-select"
-              :popper-append-to-body="false"
+              :teleported="false"
               placement="bottom"
               @visible-change="visibleChange"
               :remote-method="dropDownSearch"

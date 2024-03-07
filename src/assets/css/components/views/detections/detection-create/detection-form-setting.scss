@@ -116,7 +116,7 @@
   .form-setting__select {
     width: 620px !important;
 
-    .el-input--mini .el-input__inner {
+    .el-input--small .el-input__inner {
       height: 24px !important;
       line-height: 24px !important;
     }
@@ -170,7 +170,7 @@
     }
   }
 
-  .el-input--mini .el-input__inner {
+  .el-input--small .el-input__inner {
     height: 24px !important;
     line-height: 24px !important;
   }
@@ -280,7 +280,7 @@
       width: 170px;
     }
 
-    .el-input--mini .el-input__inner {
+    .el-input--small .el-input__inner {
       height: 24px;
       line-height: 24px;
     }

@@ -3,7 +3,6 @@
       id="i18nTable"
       ref="dataTable"
       :data="tableData"
-      :height="height"
       border
       empty-text=" "
       @header-dragend="dragend"

@@ -2,9 +2,6 @@
   .el-table td, .el-table th {
     padding: 12px 0;
   }
-  .el-table .el-table__cell.is-center {
-    padding-top: 4px;
-  }
   .el-table th > .cell, .el-table .cell {
     padding-left: 0 !important;
     padding-right: 0 !important;
@@ -17,7 +14,6 @@
     color: #353636;
   }
   .el-table--border th {
-    font-family: NotoSansHans-Medium;
     font-weight: 500;
     padding: 0;
   }
@@ -29,7 +25,6 @@
   }
 
   .el-table__body td {
-    font-family: NotoSansSChineseRegular;
     font-weight: 400;
   }
 

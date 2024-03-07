@@ -57,16 +57,16 @@
                 <div class="trigger-block-item margin-b-10">
                   <div>At least</div>
                   <el-form-item prop="atLeast">
-                    <el-input size="mini" maxlength="5" v-model="triggerObj.atLeast" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
+                    <el-input size="small" maxlength="5" v-model="triggerObj.atLeast" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
                   </el-form-item>
                   <div>times within</div>
 
                   <el-form-item prop="interval" class="policy-form-item">
-                    <el-input size="mini" maxlength="5" v-model="triggerObj.interval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
+                    <el-input size="small" maxlength="5" v-model="triggerObj.interval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
                   </el-form-item>
 
                   <el-form-item prop="intervalVal">
-                    <el-select v-model="triggerObj.intervalVal" class="form-trigger__select" placeholder=" " size="mini" @change="resetEditFlag">
+                    <el-select v-model="triggerObj.intervalVal" class="form-trigger__select" placeholder=" " size="small" @change="resetEditFlag">
                       <el-option
                           v-for="item in intervalList"
                           :key="item.value"
@@ -80,10 +80,10 @@
                 <div class="trigger-block-item">
                   <div>With the counter resetting after no activity for</div>
                   <el-form-item prop="resetInterval" class="policy-form-item">
-                    <el-input size="mini" maxlength="5" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
+                    <el-input size="small" maxlength="5" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
                   </el-form-item>
                   <el-form-item prop="resetIntervalVal">
-                    <el-select v-model="triggerObj.resetIntervalVal" class="form-trigger__select" placeholder=" " size="mini"  @change="resetEditFlag">
+                    <el-select v-model="triggerObj.resetIntervalVal" class="form-trigger__select" placeholder=" " size="small"  @change="resetEditFlag">
                       <el-option
                           v-for="item in intervalList"
                           :key="item.value"
@@ -98,11 +98,11 @@
                 <div class="trigger-block-item margin-b-10">
                   在
                   <el-form-item prop="interval">
-                    <el-input size="mini" maxlength="5" v-model="triggerObj.interval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
+                    <el-input size="small" maxlength="5" v-model="triggerObj.interval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
                   </el-form-item>
 
                   <el-form-item prop="intervalVal">
-                    <el-select v-model="triggerObj.intervalVal" class="form-trigger__select" placeholder=" " size="mini" @change="resetEditFlag">
+                    <el-select v-model="triggerObj.intervalVal" class="form-trigger__select" placeholder=" " size="small" @change="resetEditFlag">
                       <el-option
                           v-for="item in intervalList"
                           :key="item.value"
@@ -113,7 +113,7 @@
                   </el-form-item>
                   内至少发生
                   <el-form-item prop="atLeast">
-                    <el-input size="mini" maxlength="5" v-model="triggerObj.atLeast" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
+                    <el-input size="small" maxlength="5" v-model="triggerObj.atLeast" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
                   </el-form-item>
                   次
                 </div>
@@ -121,10 +121,10 @@
                 <div class="trigger-block-item">
                   若连续
                   <el-form-item prop="resetInterval">
-                    <el-input size="mini" maxlength="5" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
+                    <el-input size="small" maxlength="5" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
                   </el-form-item>
                   <el-form-item prop="resetIntervalVal">
-                    <el-select v-model="triggerObj.resetIntervalVal" class="form-trigger__select" placeholder=" " size="mini" @change="resetEditFlag">
+                    <el-select v-model="triggerObj.resetIntervalVal" class="form-trigger__select" placeholder=" " size="small" @change="resetEditFlag">
                       <el-option
                           v-for="item in intervalList"
                           :key="item.value"
@@ -570,114 +570,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.el-overlay-message-box, .el-message-box {
-  padding: 0 !important;
-}
-.el-overlay-message-box {
-  text-align: center !important;
-}
-.is-message-box .el-overlay-message-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.del-model {
-  &.el-message-box {
-    max-width: 480px !important;
-  }
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 0 !important;
-  width: 480px !important;
-  height: 190px;
-
-  .el-message-box__header {
-    display: flex;
-    flex-direction: row;
-    border-bottom: 1px solid #eee;
-    height: 42px;
-    background: #F7F7F7;
-    box-shadow: 0 1px 0 0 rgba(53, 54, 54, 0.08);
-    padding-left: 21px;
-    padding-top: 10px;
-    padding-bottom: 14px;
-
-    .el-message-box__headerbtn {
-      display: flex !important;
-      flex-direction: row-reverse;
-      justify-content: center;
-      align-items: center;
-      font-size: 10px;
-      line-height: 10px;
-      padding-right: 10px !important;
-
-      i {
-        width: 10px;
-        height: 10px;
-      }
-    }
-
-    .el-message-box__title {
-      font-size: 14px !important;
-      color: #353636;
-      letter-spacing: 0;
-      font-weight: 400;
-    }
-  }
-
-  .el-message-box__content {
-    height: 96px;
-    font-size: 14px;
-    color: #353636;
-    letter-spacing: 0;
-    line-height: 22px;
-    font-weight: 400;
-    padding-top: 9px;
-    padding-right: 20px;
-    padding-left: 21px;
-
-    .el-message-box__message {
-      padding-left: 0 !important;
-      padding-right: 0 !important;
-    }
-  }
-
-  .el-message-box__btns {
-    height: 52px;
-    border-top: 1px solid #eee;
-    box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.07);
-    padding: 13px 1px 12px 0 !important;
-
-    .el-button {
-      font-size: 12px;
-    }
-    .el-button--small {
-      padding: 8px 21px !important;
-      line-height: 12px;
-      font-family: NotoSansHans-Medium !important;
-      font-size: 12px;
-      font-weight: 500;
-      min-height: 28px;
-    }
-
-    .el-button:nth-child(1) {
-      margin-right: 20px;
-      width: 80px;
-      height: 28px;
-      color: #353636;
-    }
-
-    .el-button:nth-child(2) {
-      width: 80px;
-      height: 28px;
-      margin-right: 20px;
-      margin-left: 0 !important;
-      background-color: #2d8cf0;
-      border-color: #2d8cf0;
-    }
-  }
-}
-</style>

@@ -36,8 +36,10 @@
     flex: 1;
     .list-page .main-container {
       padding: 0;
+
       .cn-table {
         height: calc(100% - 62px) !important;
+
         .el-table--fit.el-table--border {
           height: calc(100% - 55px) !important;
         }
@@ -47,6 +49,9 @@
         .has-gutter .el-table-column--selection .el-checkbox {
           border-left: none;
           display: none;
+        }
+        .el-scrollbar__bar.is-vertical {
+          z-index: 1000;
         }
         .el-table__row .el-table-column--selection .cell {
           padding: 0;
@@ -59,7 +64,6 @@
         .el-table__body-wrapper {
           .el-table__expanded-cell {
             z-index: 100;
-            border-top: 1px solid #E7EAED;
           }
         }
         .el-table__fixed,

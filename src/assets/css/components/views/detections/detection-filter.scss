@@ -149,7 +149,6 @@
     .new-filter-content-checkbox {
       line-height: 16px;
       margin-bottom: 13.6px;
-      font-family: NotoSansSChineseRegular;
       font-size: 14px;
       color: #353636;
       font-weight: 400;
@@ -171,6 +170,10 @@
         background: #FFFFFF;
         border-radius: 1px;
       }
+      .el-checkbox__inner::after {
+        top: 2px;
+        left: 5px;
+      }
       .el-checkbox__input.is-checked {
         .el-checkbox__inner {
           border-color: #38ACD2;
@@ -185,7 +188,6 @@
       }
 
       .el-checkbox__label {
-        font-family: NotoSansSChineseRegular;
         font-size: 14px;
         color: #353636;
         font-weight: 400;

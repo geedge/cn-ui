@@ -7,23 +7,20 @@
   line-height: var(--el-tabs-header-height);
 }
 
-.el-table--border::before, .el-table__border-left-patch {
+/*.el-table--border::before, .el-table__border-left-patch {
   width: 0 !important;
 }
 .el-table--border .el-table__inner-wrapper::after, .el-table__inner-wrapper::before {
   height: 0 !important;
-}
+}*/
 
-.el-popper.is-pure {
-  margin-top: -10px;
-}
 .el-select__wrapper {
   min-height: 28px !important;
 }
 .el-input__wrapper {
   height: 28px;
 }
-.el-input--mini .el-input__inner {
+.el-input--small .el-input__inner {
   height: 28px !important;
   line-height: 28px !important;
 }
@@ -72,9 +69,6 @@
 .el-dialog {
   padding: 0 !important;
 }
-.el-switch.is-checked .el-switch__core {
-  background-color: $--color-primary !important;
-}
 .el-date-table td.end-date .el-date-table-cell__text, .el-date-table td.start-date .el-date-table-cell__text {
   background-color: $--color-primary !important;
 }
@@ -83,6 +77,10 @@
 }
 .el-picker__popper.el-popper {
   margin-top: 8px;
+}
+.el-switch {
+  --el-switch-on-color: #38ACD2;
+  --el-switch-off-color: #C0CEDB;
 }
 //.el-button:hover {
 //  color: $--color-primary !important;

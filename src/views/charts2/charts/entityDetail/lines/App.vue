@@ -46,11 +46,11 @@
           <div class="line-select-metric">
             <span class="select-prefix line-margin-right">{{$t('network.metric')}}:</span>
             <el-select
-                size="mini"
+                size="small"
                 v-model="metric"
                 placeholder=" "
                 popper-class="common-select"
-                :popper-append-to-body="false"
+                :teleported="false"
                 @change="metricChange"
             >
               <el-option v-for="item in metricOptions" :key="item.value" :label="$t(item.label)" :value="item.value"></el-option>

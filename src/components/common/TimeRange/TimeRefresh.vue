@@ -1,9 +1,9 @@
 <template>
     <div class="cn-refresh-box" v-ele-click-outside="dropdownShowFalse">
         <span>
-            <el-button-group size="mini">
-              <el-button size="mini" @click="$emit('change')"><i class="cn-icon cn-icon-refresh1"></i></el-button>
-              <el-button class="cn-button" size="mini" @click="showRefreshList">
+            <el-button-group size="small">
+              <el-button size="small" @click="$emit('change')"><i class="cn-icon cn-icon-refresh1"></i></el-button>
+              <el-button class="cn-button" size="small" @click="showRefreshList">
                   <span class="cn-button-label" v-if="interLabel">{{interLabel}}</span>
                   <i class="cn-icon cn-icon-dropdown" :class="dropdownShow?'active' : ''"></i>
               </el-button>

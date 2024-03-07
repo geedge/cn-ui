@@ -199,7 +199,7 @@
     .el-table:not(.chart-table) {
       position: absolute;
       width: calc(100% - 40px);
-      border: 1px solid $--right-box-border-color;
+      // border: 1px solid $--right-box-border-color;
       //border-bottom: none;
       border-radius:4px;
 
@@ -211,6 +211,11 @@
         .sort-caret.descending {
           bottom: 0;
         }
+      }
+      .el-switch {
+        height: auto;
+        --el-switch-on-color: #699DC9;
+        --el-switch-off-color: #C0CEDB;
       }
 
       .el-table-column--selection {
@@ -338,7 +343,17 @@
       }
     }*/
     .el-table--border:not(.chart-table)::after, .el-table--group:not(.chart-table)::after {
-      width: 0;
+      // width: 0;
+    }
+    .el-table--border {
+      border-bottom: 1px solid #E7EAED;
+
+      .el-table__inner-wrapper {
+        height: 100% !important;
+      }
+      .el-table__inner-wrapper::before {
+        height: 0;
+      }
     }
   }
   /* end--覆盖el-table边框、gutter等样式 */

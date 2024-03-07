@@ -3,8 +3,8 @@
     id="roleTable"
     ref="dataTable"
     :data="tableData"
-    :height="height"
     tooltip-effect="light"
+    :height="height"
     border
     empty-text=" "
     class="no-operation"

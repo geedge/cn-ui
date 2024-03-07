@@ -20,7 +20,7 @@
           </div>
           <div class="top-tool-right">
 <!--           <el-input v-model="keyWord" value="keyWord"></el-input>
-            <el-button @click="onSearch" icon="el-icon-search" type="info" size="mini" style="margin-right: 10px"></el-button>-->
+            <el-button @click="onSearch" icon="el-icon-search" type="info" size="small" style="margin-right: 10px"></el-button>-->
 
             <slot name="top-tool-right"></slot>
             <div  v-if="showLayout.indexOf('elementSet') > -1" class="btn-customize"  @click="tools.showCustomTableTitle = true">

@@ -68,6 +68,7 @@
   }
   .app-table.el-table {
     border: 1px solid #E2E5EC;
+    border-bottom: none;
     .el-table__header-wrapper {
       tr th {
         padding: 5px 0;
