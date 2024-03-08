@@ -1114,6 +1114,9 @@ export default {
       overwriteUrl(newUrl)
     },
     timelineMouseEnter (subscriber, record) {
+      this.trackingPolygonSourceData.features.forEach(f => {
+        this.hoverTrigger('trackingHexGrid', f.id, false)
+      })
       if (this.currentShowSubscriber.subscriberId === subscriber.subscriberId) {
         const find = this.trackingPolygonSourceData.features.find(d => d.properties.hexId === record.hexId)
         if (find) {
