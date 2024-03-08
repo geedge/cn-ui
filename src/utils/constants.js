@@ -92,7 +92,7 @@ export const operationLogStateMapping = {
 
 export const position = {
   tableHeight: {
-    normal: 'calc(100% - 48px)' // 常规高度，特例在下方定义
+    normal: 'calc(100% - 58px)' // 常规高度，特例在下方定义
   }
 }
 

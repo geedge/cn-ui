@@ -73,6 +73,34 @@
       background: #fff;
     }
   }
+  .HintInfo {
+    height: 280px;
+    overflow: auto;
+    background: #fff;
+
+    ul {
+      min-width: 300px;
+      height:auto;
+      width: fit-content;
+      box-sizing: border-box;
+      padding-bottom: 10px;
+    }
+    .relative-item {
+      text-indent: 1em;
+      font-size: 14px !important;
+      color: #575757;
+      height: 24px;
+      line-height: 24px !important;
+
+      &:hover {
+        background-color: #f0f5fa;
+        color: #046ECA;
+      }
+    }
+    .hint-clear {
+      text-indent: 1em;
+    }
+  }
 }
 .detections {
   .tag-search, .CodeMirror {

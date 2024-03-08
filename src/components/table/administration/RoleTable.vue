@@ -3,8 +3,7 @@
     id="roleTable"
     ref="dataTable"
     :data="tableData"
-    :height="height"
-    border
+    tooltip-effect="light"
     empty-text=" "
     @header-dragend="dragend"
     @sort-change="tableDataSort"

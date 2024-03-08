@@ -3,8 +3,6 @@
         id="knowledgeBaseTable"
         ref="dataTable"
         :data="tableData"
-        :height="height"
-        border
         empty-text=" "
         @header-dragend="dragend"
         @sort-change="tableDataSort"

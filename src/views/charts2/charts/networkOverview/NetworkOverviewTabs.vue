@@ -21,7 +21,6 @@
                   :id="`tabTable_${tabIndex}`"
                   :ref="`dataTable_${tab.prop}`"
                   :data="tableData.slice(0,showRecordNum)"
-                  border
                   :cell-style="tableCellStyle"
                   :header-cell-style="tableHeaderCellStyle"
                   :row-class-name="rowClassName"
@@ -249,7 +248,7 @@
                  type="card"
         >
           <el-tab-pane :label="$t('network.tabs')" name="tabs" width="50%"  v-if="showCustomizeTabs" >
-            <transition-group name="dragTabs" class="list" tag="ul" ref="tabs">
+            <transition-group name="dragTabs" class="drag-list" tag="ul" ref="tabs">
               <li v-for="(item, index) in list"
                   :key="item.label"
                   class="list-item"
@@ -265,7 +264,7 @@
             </transition-group>
           </el-tab-pane>
           <el-tab-pane :label="tableType==='networkOverview'?$t('network.direction'):$t('network.metrics')" name="metrics" width="50%" >
-            <transition-group name="dragMetric" class="list" tag="ul" ref="metric">
+            <transition-group name="dragMetric" class="drag-list" tag="ul" ref="metric">
               <template v-for="(item, index) in customTableTitles"  :key="item.label">
                 <li v-if="index>0"
                     class="list-item"

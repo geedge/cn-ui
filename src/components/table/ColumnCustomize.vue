@@ -1,6 +1,6 @@
 <template>
   <div class="pop-custom" v-ele-click-outside="esc">
-    <transition-group name="dragTabs" class="list" tag="ul" ref="tabs">
+    <transition-group name="dragTabs" class="drag-list" tag="ul" ref="tabs">
       <li v-for="(item, index) in custom"
           :key="item.label"
           class="list-item"

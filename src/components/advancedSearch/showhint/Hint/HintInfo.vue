@@ -100,28 +100,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-  .HintInfo {
-    height: 280px;
-    overflow: auto;
-    background: #fff;
-  }
-  ul {
-    min-width: 300px;
-    height:auto;
-    width: fit-content;
-    box-sizing: border-box;
-    padding-bottom: 10px;
-  }
-  .el-dropdown-menu__item{
-    text-indent: 1em;
-    font-size: 12px !important;
-    font-family: NotoSansSChineseRegular;
-    color: #575757;
-    font-weight: 400;
-  }
-  .hint-clear{
-    text-indent: 1em;
-  }
-</style>

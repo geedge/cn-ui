@@ -3,7 +3,7 @@
       id="i18nTable"
       ref="dataTable"
       :data="tableData"
-      border
+      tooltip-effect="light"
       empty-text=" "
       @header-dragend="dragend"
       @sort-change="tableDataSort"

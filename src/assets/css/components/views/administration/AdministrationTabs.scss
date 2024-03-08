@@ -3,11 +3,13 @@
     height: 18px;
   }
   .administration-container {
-    height: calc(100% - 26px);
+    height: calc(100% - 86px);
     flex-direction: column;
+    overflow: hidden;
+
     .list-page {
       .main-container {
-        padding: 0px;
+        padding: 0;
         .cn-pagination {
           height: 34px;
         }

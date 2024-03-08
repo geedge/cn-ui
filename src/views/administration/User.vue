@@ -36,7 +36,6 @@
           :api="url"
           :isNoData="isNoData"
           :custom-table-title="tools.customTableTitle"
-          :height="mainTableHeight"
           :table-data="tableData"
           @delete="del"
           @edit="edit"

@@ -3,9 +3,7 @@
     id="pluginTable"
     ref="dataTable"
     :data="tableData"
-    :height="height"
     empty-text=" "
-    border
     class="plugin"
     @header-dragend="dragend"
     @sort-change="tableDataSort"

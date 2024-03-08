@@ -4,10 +4,7 @@
     ref="dataTable"
     :data="tableData"
     tooltip-effect="light"
-    :height="height"
-    border
     empty-text=" "
-    class="no-operation"
     @header-dragend="dragend"
     @sort-change="tableDataSort"
     @selection-change="selectionChange"

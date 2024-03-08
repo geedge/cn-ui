@@ -44,7 +44,6 @@
           <loading :loading="loading"></loading>
           <knowledge-base-table-for-row
                   ref="dataTable"
-                  height="100%"
                   :api="url"
                   :isNoData="isNoData"
                   :custom-table-title="tools.customTableTitle"
