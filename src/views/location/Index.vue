@@ -227,16 +227,21 @@
                           </div>
                         </div>
                       </div>
-                      <el-timeline :id="subscriber.subscriberId" v-show="subscriber.show" :class="subscriber.show ? '' : 'el-timeline--hide'">
-                        <template v-for="(record, index) in trackingSubscriberRecordMap[subscriber.subscriberId].slice(0, subscriber.scrollNum)">
-                          <el-timeline-item
-                              :key="index"
-                              v-if="index > 0"
-                              color="#de3434"
-                              @mouseenter="timelineMouseEnter(subscriber, record)"
-                              @mouseleave="timelineMouseLeave(subscriber, record)"
-                          >
-                            <div class="timeline__item">
+
+                      <div class="scroll-view" @scroll="onScroll" :id="subscriber.subscriberId" v-show="subscriber.show">
+                        <!-- 虚拟列表 -->
+                        <div class="virtual-scroller" :style="`height: ${subscriber.listHeight}px`"></div>
+                        <div class="scroll-list" :style="`transform: translateY(${subscriber.startOffset}px)`">
+                          <div class="scroll__item"
+                               v-for="(record, index) in trackingSubscriberRecordMap[subscriber.subscriberId].slice(subscriber.scrollStartIndex, subscriber.scrollEndIndex)"
+                               :key="index"
+                               @mouseenter="timelineMouseEnter(subscriber, record)"
+                               @mouseleave="timelineMouseLeave(subscriber, record)">
+                            <div class="item-circle">
+                              <div class="circle-circle"></div>
+                              <div class="circle-line"></div>
+                            </div>
+                            <div class="item-content">
                               <div>
                                 <span>{{$t('overall.location')}}: </span><span class="item__value">{{record.subscriberLongitude}},&nbsp;{{record.subscriberLatitude}}</span>
                               </div>
@@ -247,9 +252,9 @@
                                 <span>{{ $t('location.residenceTime') }}: </span><span class="item__value">{{record.stayTime}}</span>
                               </div>
                             </div>
-                          </el-timeline-item>
-                        </template>
-                      </el-timeline>
+                          </div>
+                        </div>
+                      </div>
 
                       <div :class="trackingSubscriberRecordMap[subscriber.subscriberId].length === 1 ? 'item-record__btn-disabled' : 'item-record__btn'" @click.stop="clickTrackBlock(index)">
                         <span v-if="!subscriber.show"><i class="cn-icon cn-icon-down2" :style="trackingSubscriberRecordMap[subscriber.subscriberId].length === 1 ? 'color: #C0C4CC' : ''"></i></span>
@@ -409,7 +414,11 @@ export default {
       activeNames: '',
       initFlag: true,
       emptyTip: '',
-      opacity: 1
+      opacity: 1,
+      scrollInfo: {
+        itemSize: 50, // 一个滚动item高度
+        containerHeight: 300 // 滚动列表
+      }
     }
   },
   components: {
@@ -700,12 +709,15 @@ export default {
             })
           }
           // 计算停留时间
-          this.trackingSubscribers.forEach(s => {
+          this.trackingSubscribers.forEach((s, index) => {
             const trackRecords = this.trackingSubscriberRecordMap[s.subscriberId]
-            if (trackRecords.length < 20) {
-              s.scrollNum = trackRecords.length
+            // 初始化时间线可视范围角标
+            if (trackRecords.length < 6) {
+              s.scrollStartIndex = 1
+              s.scrollEndIndex = trackRecords.length
             } else {
-              s.scrollNum = 20
+              s.scrollStartIndex = 1
+              s.scrollEndIndex = 6
             }
 
             if (trackRecords && trackRecords.length > 0) {
@@ -735,6 +747,11 @@ export default {
                       stayTime[0] = Number(stayTime[0]).toFixed(0)
                     }
                     trackRecords[i].stayTime = stayTime.join(' ')
+                  }
+                  if (i === trackRecords.length - 1) {
+                    // 初始化数据时，重置偏移量和列表高度
+                    s.startOffset = 0
+                    s.listHeight = i * this.scrollInfo.itemSize
                   }
                 }
               }
@@ -1143,29 +1160,21 @@ export default {
         this.trackingSubscribers[i].show = !this.trackingSubscribers[i].show
         if (this.trackingSubscribers[i].show) {
           this.trackingSubscribers[i].showLine = true
+          this.trackingSubscribers[i].scrollStartIndex = 1
+          this.trackingSubscribers[i].scrollEndIndex = 6
+          this.trackingSubscribers[i].startOffset = 0
+          this.trackingSubscribers[i].listHeight = 0
+          // 高度置为0，是为了切换时间后再打开时间线，让滚动条置顶
+          const timer = setTimeout(() => {
+            this.trackingSubscribers[i].listHeight = this.trackingSubscriberRecordMap[this.trackingSubscribers[i].subscriberId].length * this.scrollInfo.itemSize
+            clearTimeout(timer)
+          }, 100)
         } else {
           const timer = setTimeout(() => {
             this.trackingSubscribers[i].showLine = false
             clearTimeout(timer)
           }, 200)
         }
-      }
-
-      const dom = document.getElementById(this.trackingSubscribers[i].subscriberId)
-      if (dom) {
-        dom.addEventListener('scroll', (e) => {
-          const clientHeight = e.target.clientHeight
-          const scrollTop = e.target.scrollTop
-          const scrollHeight = e.target.scrollHeight
-          if (scrollTop && _.ceil(clientHeight + scrollTop) >= scrollHeight) {
-            if (this.trackingSubscribers[i].scrollNum < length) {
-              this.trackingSubscribers[i].scrollNum = this.trackingSubscribers[i].scrollNum + 20
-              if (this.trackingSubscribers[i].scrollNum > length) {
-                this.trackingSubscribers[i].scrollNum = length
-              }
-            }
-          }
-        })
       }
     },
     changeCurrentShowSubscriber (subscriber) {
@@ -1180,7 +1189,7 @@ export default {
         const index = this.trackingSubscribers.findIndex(s => s.subscriberId === subscriber.subscriberId)
         this.trackingSubscribers.splice(index, 1)
       } else {
-        this.trackingSubscribers.push({ ...subscriber, show: false, showLine: false, scrollNum: 0 })
+        this.trackingSubscribers.push({ ...subscriber, show: false, showLine: false, scrollStartIndex: 1, scrollEndIndex: 6, startOffset: 0, listHeight: 0 })
       }
       this.opacity = 0
       setInterval(() => {
@@ -1215,7 +1224,7 @@ export default {
     trackSubscriber (subscriber) {
       const find = this.trackingSubscribers.find(s => s.subscriberId === subscriber.subscriberId)
       if (!find) {
-        this.trackingSubscribers.push({ ...subscriber, show: false, showLine: false, scrollNum: 0 })
+        this.trackingSubscribers.push({ ...subscriber, show: false, showLine: false, scrollStartIndex: 1, scrollEndIndex: 6, startOffset: 0, listHeight: 0 })
       }
       this.currentShowSubscriber = subscriber
       this.activeTab = 'traceTracking'
@@ -1372,6 +1381,19 @@ export default {
       this.$nextTick(() => {
         this.mapDomHeight = document.getElementById('analysisMap').offsetHeight + 150
       })
+    },
+    onScroll (e) {
+      const find = this.trackingSubscribers.find(d => d.subscriberId === e.target.id)
+      // 当前滚动位置
+      const scrollTop = e.target.scrollTop
+      // 列表开始索引
+      const startIndex = Math.floor(scrollTop / this.scrollInfo.itemSize) || 1
+      // 列表结束索引
+      const endIndex = Math.ceil((scrollTop + this.scrollInfo.containerHeight) / this.scrollInfo.itemSize)
+      find.scrollStartIndex = startIndex
+      find.scrollEndIndex = endIndex
+      // 列表距离顶部距离
+      find.startOffset = scrollTop - (scrollTop % this.scrollInfo.itemSize)
     }
   },
   watch: {
@@ -1548,7 +1570,7 @@ export default {
 
     // 从localStorage中获取数据
     const trackingSubscribers = ref([])
-    sessionStorage.getItem(storageKey.trackingSubscribers) && (trackingSubscribers.value = JSON.parse(sessionStorage.getItem(storageKey.trackingSubscribers)).map(item => ({ ...item, show: false, showLine: false, scrollNum: 0 })))
+    sessionStorage.getItem(storageKey.trackingSubscribers) && (trackingSubscribers.value = JSON.parse(sessionStorage.getItem(storageKey.trackingSubscribers)).map(item => ({ ...item, show: false, showLine: false, scrollStartIndex: 1, scrollEndIndex: 6, startOffset: 0, listHeight: 0 })))
     /* const test = ['gary6411', 'test6431', 'test6430', 'test6422']
     test.forEach(id => {
       trackingSubscribers.value.push({ subscriberId: id, show: false, showLine: false })
@@ -2084,14 +2106,15 @@ export default {
 
                 .el-timeline {
                   padding-left: 0;
-                  max-height: 300px;
+                  //min-height: 300px;
+                  height: 300px;
                   overflow: auto;
 
                   &.el-timeline--hide {
                   }
 
                   .el-timeline-item {
-                    padding-bottom: 4px;
+                    padding-bottom: 0;
                     .el-timeline-item__tail {
                       border-left: 2px dotted #cccccc;
                       margin-left: 2px;
@@ -2108,7 +2131,7 @@ export default {
                 }
                 .timeline__info {
                   display: flex;
-                  padding-bottom: 13px;
+                  padding-bottom: 10px;
 
                   .timeline__info--circle {
                     display: flex;
@@ -2162,6 +2185,57 @@ export default {
                 }
                 .item-record__btn-disabled {
                   cursor: no-drop;
+                }
+                .scroll-view {
+                  width: 100%;
+                  height: 300px;
+                  overflow-y: scroll;
+                  position: relative;
+
+                  .scroll__item {
+                    width: 100%;
+                    height: 58px;
+                    display: flex;
+
+                    .item-circle {
+                      display: flex;
+                      flex-direction: column;
+                      .circle-circle {
+                        width: 10px;
+                        height: 10px;
+                        margin-left: 2px;
+                        border-radius: 50%;
+                        background-color: #DE3434;
+                      }
+                      .circle-line {
+                        border-left: 2px #cccccc dotted;
+                        height: 34px;
+                        margin-left: 6px;
+                        margin-top: 6px;
+                        transition: all 0.2s;
+                      }
+                    }
+
+                    .item-content {
+                      display: flex;
+                      flex-direction: column;
+                      font-size: 12px;
+                      color: #666666;
+                      padding-left: 16px;
+
+                      .item__value {
+                        color: #333;
+                        font-weight: 500;
+                        margin-left: 4px;
+                      }
+                    }
+                  }
+                  .scroll-list {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    cursor: pointer;
+                  }
                 }
               }
             }
