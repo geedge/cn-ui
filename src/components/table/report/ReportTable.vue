@@ -1,22 +1,18 @@
 <template>
-  <div>
-    <el-table
-        id="reportTable"
-        ref="dataTable"
-        :header-cell-class-name="headerCellClass"
-        :data="tableData"
-        height="100%"
-        :expand-row-keys="expandedIds"
-        border
-        empty-text=" "
-        tooltip-effect="light"
-        style="border-top: 1px solid #ebeef5; border-left: 1px solid #ebeef5;"
-        :row-key="(row) => { return row.id }"
-        :reserve-selection="true"
-        @header-dragend="dragend"
-        @sort-change="tableDataSort"
-        @expand-change="dropExpandChange"
-        @selection-change="selectionChange"
+  <el-table
+      id="reportTable"
+      ref="dataTable"
+      :header-cell-class-name="headerCellClass"
+      :data="tableData"
+      :expand-row-keys="expandedIds"
+      empty-text=" "
+      tooltip-effect="light"
+      :row-key="(row) => { return row.id }"
+      :reserve-selection="true"
+      @header-dragend="dragend"
+      @sort-change="tableDataSort"
+      @expand-change="dropExpandChange"
+      @selection-change="selectionChange"
     >
       <el-table-column type="expand" width="30">
         <template #default="props">
@@ -193,20 +189,19 @@
           <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
         </div>
       </template>
-    </el-table>
-<!--    <div class="table-operation-all">
-      <el-checkbox v-model="checkboxAll" :indeterminate="isIndeterminate" @change="selectAll(tableData)"></el-checkbox>
-      <div class="table-operation-all-span">
-        <span>{{ $t('overall.all') }}</span>
-        <div class="table-operation-back-down"
-             :class="{'table-operation-all-checkbox': batchDow, 'table-operation-all-loading': loading}"
-             @click="checkboxIds.id ? tableOperation(['delete', checkboxIds]) : ''">
-          <loading :loading="loading"></loading>
-          <span>{{ $t('report.batchDeletion') }}</span>
-        </div>
+  </el-table>
+<!-- <div class="table-operation-all">
+    <el-checkbox v-model="checkboxAll" :indeterminate="isIndeterminate" @change="selectAll(tableData)"></el-checkbox>
+    <div class="table-operation-all-span">
+      <span>{{ $t('overall.all') }}</span>
+      <div class="table-operation-back-down"
+           :class="{'table-operation-all-checkbox': batchDow, 'table-operation-all-loading': loading}"
+           @click="checkboxIds.id ? tableOperation(['delete', checkboxIds]) : ''">
+        <loading :loading="loading"></loading>
+        <span>{{ $t('report.batchDeletion') }}</span>
       </div>
-    </div>-->
-  </div>
+    </div>
+  </div>-->
 </template>
 
 <script>
@@ -786,9 +781,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.list-page .cn-table .el-table:not(.chart-table) td {
-  padding: 7.5px 0;
-}
-</style>

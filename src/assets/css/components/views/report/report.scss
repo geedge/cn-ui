@@ -206,12 +206,6 @@
             }
           }
         }
-        .el-table__border-left-patch, .el-table--border::before {
-          width: 0;
-        }
-        .el-table--border .el-table__inner-wrapper::after, .el-table__inner-wrapper::before {
-          height: 0;
-        }
       }
     }
     .table-operation-all {
