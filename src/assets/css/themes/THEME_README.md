@@ -31,3 +31,4 @@
 - drawer抽屉：在header.vue中遇到，custom-class="cn-menu"，渲染后class中没有cn-menu，也许是按需引入导致的，额外标注
 - message-box弹窗：新版在旧版的el-message-box的外层包裹了一层父div el-overlay-message-box，导致原样式会错乱
 - dialog: custom在2.4版本后被移除，使用class替代，插槽中的title也在2.4版本后移除，使用header替代
+- tabs: 点击tabs，tab-click有延迟，v-model获取的信息是上一个路由的信息，使用tab-change获取的v-model则是实时的，根据使用内容进行取舍。tab-change在2.1.8版本上线

@@ -77,8 +77,8 @@
               height="156px"
               width="100%"
               class="dialog-table"
-              cell-style="padding:4px 0px;font-size: 12px;color: #353636;font-weight: 400;"
-              header-cell-style="padding:4px 0px;background: #F5F8FA;font-size: 12px;color: #353636;font-weight: 500;">
+              :cell-style="myCellStyle"
+              :header-cell-style="myHeaderCellStyle">
       <el-table-column
               :resizable="false"
               align="center"
@@ -121,7 +121,20 @@ export default {
       keyWord: '',
       showConfirmDialog: false,
       delItemList: [],
-      secondBatchDeleteObjs: []
+      secondBatchDeleteObjs: [],
+      myCellStyle: {
+        padding: '4px 0px',
+        'font-size': '12px',
+        color: '#353636',
+        'font-weight': 400
+      },
+      myHeaderCellStyle: {
+        padding: '4px 0px',
+        background: '#F5F8FA',
+        'font-size': '12px',
+        color: '#353636',
+        'font-weight': 500
+      }
     }
   },
   watch: {

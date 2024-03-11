@@ -122,7 +122,7 @@
 
 <script>
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
-import { storageKey, unitTypes, networkTable, operationType, curTabState, metricType, metricOptions } from '@/utils/constants'
+import { storageKey, unitTypes, networkTable, operationType, curTabState, metricOptions } from '@/utils/constants'
 import * as echarts from 'echarts'
 import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
 import { shallowRef } from 'vue'
@@ -551,6 +551,7 @@ export default {
       this.showAddApp = false
     },
     appTypeTabChange (n) {
+      // 此处的tab-click有延迟，获取的是上一个路由，jest单测里获取的是click，为兼容故继续使用tab-click而非tab-change
       this.pageObj.pageNo = 1
       this.searcherApp = ''
       this.addApp('', '', '', n.index)

@@ -60,8 +60,8 @@
               height="156px"
               width="100%"
               class="dialog-table"
-              cell-style="padding:4px 0px;font-size: 12px;color: #353636;font-weight: 400;"
-              header-cell-style="padding:4px 0px;background: #F5F8FA;font-size: 12px;color: #353636;font-weight: 500;">
+              :cell-style="myCellStyle"
+              :header-cell-style="myHeaderCellStyle">
       <el-table-column :resizable="false" align="center" type="selection" width="50"></el-table-column>
       <el-table-column property="ruleId" label="ID" width="150"></el-table-column>
       <el-table-column property="name" label="Name"></el-table-column>
@@ -122,7 +122,20 @@ export default {
       filterParams: {},
       policyTotal: 0,
       policyEnabledNum: 0,
-      policyDetail: {}
+      policyDetail: {},
+      myCellStyle: {
+        padding: '4px 0px',
+        'font-size': '12px',
+        color: '#353636',
+        'font-weight': 400
+      },
+      myHeaderCellStyle: {
+        padding: '4px 0px',
+        background: '#F5F8FA',
+        'font-size': '12px',
+        color: '#353636',
+        'font-weight': 500
+      }
     }
   },
   mounted () {
