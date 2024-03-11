@@ -1398,14 +1398,12 @@ export default {
       this.initDropdownList(curVal)
     },
     mapTimeLineChange (timeFilter) {
-      console.log('时间轴改变', timeFilter)
       this.minuteTimeFilter = {
         startTime: getSecond(timeFilter.startTime),
         endTime: getSecond(timeFilter.endTime)
       }
     },
     async minuteTimeFilterChange () {
-      console.log('change点击')
       // 避免初始化时请求，造成人的图标会闪一下
       if (this.initFlag) {
         this.initFlag = false
@@ -1415,7 +1413,6 @@ export default {
         })
         this.humanMarkers = []
       }
-
       const mapFollowedSubscriberData = await this.queryMapFollowedSubscriber()
       if (mapFollowedSubscriberData.length > 0) {
         this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
@@ -1472,7 +1469,6 @@ export default {
     },
     // 时间轴改变时，重新查询人marker
     async minuteTimeFilter (n) {
-      console.log('嗯哼？', n)
       this.debounceFunc?.()
     },
     // 切换追踪的用户
