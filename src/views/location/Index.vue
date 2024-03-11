@@ -1407,12 +1407,11 @@ export default {
       // 避免初始化时请求，造成人的图标会闪一下
       if (this.initFlag) {
         this.initFlag = false
-      } else {
-        this.humanMarkers.forEach(marker => {
-          marker.remove && marker.remove()
-        })
-        this.humanMarkers = []
       }
+      this.humanMarkers.forEach(marker => {
+        marker.remove && marker.remove()
+      })
+      this.humanMarkers = []
       const mapFollowedSubscriberData = await this.queryMapFollowedSubscriber()
       if (mapFollowedSubscriberData.length > 0) {
         this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
