@@ -72,7 +72,7 @@
                     :format="dateFormat"
                     :disabled-date="startDisabledDate"
                     @change="startTimeChang"
-                    prefix-icon="cn-icon cn-icon-shijian"
+                    prefix-icon=""
                     type="datetime"
                     placeholder=" "
                 />
@@ -90,7 +90,7 @@
                     :format="dateFormat"
                     :disabled-date="endDisabledDate"
                     @change="endTimeChange"
-                    prefix-icon="cn-icon cn-icon-shijian"
+                    prefix-icon=""
                     type="datetime"
                     placeholder=" "
                 />
@@ -188,7 +188,7 @@
                     v-model="editObject.schedulerStart"
                     size="small"
                     :format="dateFormat"
-                    prefix-icon="cn-icon cn-icon-shijian"
+                    prefix-icon=""
                     type="datetime"
                     placeholder=" "
                 />
@@ -204,7 +204,7 @@
                     v-model="editObject.schedulerEnd"
                     size="small"
                     :format="dateFormat"
-                    prefix-icon="cn-icon cn-icon-shijian"
+                    prefix-icon=""
                     type="datetime"
                     placeholder=" "
                 />
@@ -414,6 +414,14 @@ export default {
     scheduleChecked (n) {
       this.editObject.config.isScheduler = n ? 1 : 0
       this.cleanScheduleConfig()
+      this.$nextTick(() => {
+        let datePrefixIcon = document.getElementsByClassName('el-input__prefix-inner')
+        if(datePrefixIcon && datePrefixIcon.length > 0) {
+          Array.prototype.forEach.call(datePrefixIcon, function (element) {
+            element.innerHTML = '<i class="el-input__icon cn-icon cn-icon-shijian"></i>'
+          })
+        }
+      })
     },
     monthScheduleType (n) {
       this.cleanScheduleConfig()
@@ -520,6 +528,16 @@ export default {
         }
       }
     }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      let datePrefixIcon = document.getElementsByClassName('el-input__prefix-inner')
+      if(datePrefixIcon && datePrefixIcon.length > 0) {
+        Array.prototype.forEach.call(datePrefixIcon, function (element) {
+          element.innerHTML = '<i class="el-input__icon cn-icon cn-icon-shijian"></i>'
+        })
+      }
+    })
   },
   methods: {
     loadParamOptions () {
