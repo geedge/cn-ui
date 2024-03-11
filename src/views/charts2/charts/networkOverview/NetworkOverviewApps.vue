@@ -464,7 +464,10 @@ export default {
         }
       }
     },
-    addApp (pageNo, val, show) {
+    addApp (pageNo, val, show, index) {
+      if (!index) {
+        index = '0'
+      }
       this.showAddApp = true
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
@@ -484,7 +487,7 @@ export default {
       } else {
         params.pageNo = 1
       }
-      if (parseFloat(this.appTypeTab) === 0) {
+      if (parseFloat(index) === 0) {
         params.type = 'overviewProvide'
         axios.get(api.dict, { params: params }).then(response => {
           const res = response.data
@@ -508,7 +511,7 @@ export default {
           this.loading = false
           this.loadingBody = false
         })
-      } else if (parseFloat(this.appTypeTab) === 1) {
+      } else if (parseFloat(index) === 1) {
         params.type = 'overviewApp'
         axios.get(api.dict, { params: params }).then(response => {
           const res = response.data
@@ -547,10 +550,10 @@ export default {
     cancelApp () {
       this.showAddApp = false
     },
-    appTypeTabChange () {
+    appTypeTabChange (n) {
       this.pageObj.pageNo = 1
       this.searcherApp = ''
-      this.addApp()
+      this.addApp('', '', '', n.index)
       this.loadingBody = true
       window.addEventListener('scroll', this.scrollChange, true)
       this.timerScroll = setTimeout(() => {
