@@ -866,18 +866,35 @@ export default {
         .addTo(this.mapChart)
     },
     updateBoundaryBox () {
-      /* const boundaryBox = this.mapChart.getBounds()
-        this.boundaryBox = {
+      const boundaryBox = this.mapChart.getBounds()
+      this.boundaryBox = {
         maxLongitude: boundaryBox.getEast(),
         maxLatitude: boundaryBox.getNorth(),
         minLongitude: boundaryBox.getWest(),
         minLatitude: boundaryBox.getSouth()
-      } */
-      this.boundaryBox = {
-        maxLongitude: 140,
-        maxLatitude: 50,
-        minLongitude: 100,
-        minLatitude: 30
+      }
+      if (Object.keys(this.boundaryBoxExtreme).length === 0) {
+        this.boundaryBoxExtreme = _.cloneDeep(this.boundaryBox)
+        return true
+      } else {
+        let needUpdateData = false
+        if (this.boundaryBox.maxLongitude > this.boundaryBoxExtreme.maxLongitude) {
+          needUpdateData = true
+          this.boundaryBoxExtreme.maxLongitude = this.boundaryBox.maxLongitude
+        }
+        if (this.boundaryBox.maxLatitude > this.boundaryBoxExtreme.maxLatitude) {
+          needUpdateData = true
+          this.boundaryBoxExtreme.maxLatitude = this.boundaryBox.maxLatitude
+        }
+        if (this.boundaryBox.minLongitude < this.boundaryBoxExtreme.minLongitude) {
+          needUpdateData = true
+          this.boundaryBoxExtreme.minLongitude = this.boundaryBox.minLongitude
+        }
+        if (this.boundaryBox.minLatitude < this.boundaryBoxExtreme.minLatitude) {
+          needUpdateData = true
+          this.boundaryBoxExtreme.minLatitude = this.boundaryBox.minLatitude
+        }
+        return needUpdateData
       }
     },
     // 先使用min=0的等宽分组法，若后续出现特大或特小的异常值导致等宽分组效果不理想，考虑用分位数分组法
@@ -989,14 +1006,19 @@ export default {
       this.mapChart.setFeatureState({ source, id }, { hover })
     },
     bindHexagonEvents () {
+      // 地图可视范围变化（move和zoom）的时候，获取新的地图边界，加载新数据
       this.mapChart.on('mouseenter', 'hexagon', this.hexagonMouseEnter)
       this.mapChart.on('mouseleave', 'hexagon', this.hexagonMouseLeave)
       this.mapChart.on('mousemove', 'hexagon', this.hexagonMouseMove)
+      this.mapChart.on('moveend', this.debounceVisualChange)
+      this.mapChart.on('zoomend', this.debounceVisualChange)
     },
     unbindHexagonEvents () {
       this.mapChart.off('mouseenter', this.hexagonMouseEnter)
       this.mapChart.off('mouseleave', this.hexagonMouseLeave)
       this.mapChart.off('mousemove', this.hexagonMouseMove)
+      this.mapChart.off('moveend', this.debounceVisualChange)
+      this.mapChart.off('zoomend', this.debounceVisualChange)
     },
     bindTrackingHexagonEvents () {
       this.mapChart.on('mouseenter', 'trackingHexagon', this.trackingHexagonMouseEnter)
@@ -1034,6 +1056,32 @@ export default {
         // 鼠标滑过高亮
         this.hoverTrigger('hexGrid', this.currentPolygon.id, true)
       }
+    },
+    async hexagonVisualRangeChange (e) {
+      if (this.updateBoundaryBox()) {
+        const oldSourceData = this.mapChart.getSource('hexGrid')._data
+        const hexagonData = await this.queryHexagon()
+        // 将查到的h3hexagon数据转为geojson
+        const polygonSourceData = this.hexagonDataConverter(hexagonData, 'locationMap')
+        // 对比新旧数据，同个hexId新数据number大于旧数据的，将旧数据覆盖；新hexId直接添加；
+        const newSourceData = this.compareSourceData(oldSourceData, polygonSourceData)
+        this.mapChart.getSource('hexGrid').setData(newSourceData)
+      }
+    },
+    compareSourceData (oldData, newData) {
+      let lastId = _.maxBy(oldData.features, d => Number(d.id))
+      newData.features.forEach(n => {
+        const find = oldData.features.find(o => o.properties.hexId === n.properties.hexId)
+        if (find) {
+          if (Number(n.properties.number) > Number(find.properties.number)) {
+            find.properties.number = n.properties.number
+            find.properties.color = n.properties.color
+          }
+        } else {
+          oldData.features.push({ ...n, id: ++lastId })
+        }
+      })
+      return oldData
     },
     trackingHexagonMouseEnter () {
       this.tooltip.mouseIsInPolygon = true
@@ -1468,7 +1516,7 @@ export default {
     },
     // 时间轴改变时，重新查询人marker
     async minuteTimeFilter (n) {
-      this.debounceFunc?.()
+      this.debounceMinuteChange?.()
     },
     // 切换追踪的用户
     currentShowSubscriber (n) {
@@ -1543,8 +1591,9 @@ export default {
   },
   async mounted () {
     await this.initMap()
-    this.debounceFunc = _.debounce(this.minuteTimeFilterChange, 500)
-    this.debounceFunc2 = _.debounce(this.onResize, 500)
+    this.debounceMinuteChange = _.debounce(this.minuteTimeFilterChange, 500)
+    this.debounceOnResize = _.debounce(this.onResize, 500)
+    this.debounceVisualChange = _.debounce(this.hexagonVisualRangeChange, 500)
     this.onResize()
   },
   setup () {
@@ -1595,6 +1644,7 @@ export default {
     const followedSubscribersList = ref([])
     const searchValueListShow = ref([])
     const boundaryBox = ref({}) // minLongitude、maxLongitude、minLatitude、maxLatitude
+    const boundaryBoxExtreme = ref({}) // minLongitude、maxLongitude、minLatitude、maxLatitude
     const mapChart = shallowRef(null)
     const currentMarkerDom = shallowRef(null)
     const humanMarkers = shallowRef([])
@@ -1648,7 +1698,8 @@ export default {
       pieColorRamp, // 六边形颜色坡度
       pieValueRamp, // 饼图数值坡度，动态获取
       followedSubscribersList, // Location关注用户列表
-      boundaryBox, // 查六边形的范围，minLongitude、maxLongitude、minLatitude、maxLatitude
+      boundaryBox, // 查六边形数据的经纬度范围，minLongitude、maxLongitude、minLatitude、maxLatitude
+      boundaryBoxExtreme, // boundaryBox的历史极值，用来判断当前boundaryBox下是否需要查数据
       mapChart, // 地图对象
       currentMarkerDom, // 记录当前鼠标悬停的marker的dom
       humanMarkers, // 储存人marker的引用
@@ -1673,9 +1724,10 @@ export default {
       mapLevel: 2, // 地图精度  1、2、3
       unitTypes,
       defaultZoom: 12, // 地图默认缩放比例
-      center: [116.38, 39.92], // 地图默认中心点。北京：[116.38, 39.9] 纽约：[-73.94539, 40.841843]
-      debounceFunc: shallowRef(null),
-      debounceFunc2: shallowRef(null),
+      center: [116.38, 39.82], // 地图默认中心点。北京：[116.38, 39.9] 纽约：[-73.94539, 40.841843]
+      debounceMinuteChange: shallowRef(null),
+      debounceOnResize: shallowRef(null),
+      debounceVisualChange: shallowRef(null),
       mapDomHeight, // 地图dom的高度，用来计算悬浮框的位置
       tooltipDomHeight // 计算悬浮框位置时默认的悬浮框高度
     }
