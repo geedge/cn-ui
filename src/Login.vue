@@ -223,6 +223,7 @@ export default {
       localStorage.setItem(storageKey.dateFormat, data.date_format)
       localStorage.setItem(storageKey.sysName, data.system_name)
       localStorage.setItem(storageKey.sysLogo, data.system_logo)
+      localStorage.setItem(storageKey.mapConfig, data.map_config)
     }
   },
   async mounted () {

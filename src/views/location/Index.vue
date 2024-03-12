@@ -391,7 +391,7 @@ import maplibregl from 'maplibre-gl'
 import mapStyle from '@/views/charts2/charts/entityDetail/mapStyle'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
-import { unitTypes, storageKey } from '@/utils/constants'
+import { unitTypes, storageKey, defaultMapConfig } from '@/utils/constants'
 import * as echarts from 'echarts'
 import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
 import { pieOption } from '@/views/location/chartOption'
@@ -1687,6 +1687,8 @@ export default {
       baseStation: 153,
       human: 167
     }
+
+    const mapConfig = localStorage.getItem(storageKey.mapConfig) ? JSON.parse(localStorage.getItem(storageKey.mapConfig)) : defaultMapConfig
     return {
       activeTab,
       dropDownValue,
@@ -1719,12 +1721,12 @@ export default {
       currentShowSubscriber, // 当前在地图上展示轨迹的Subscriber
       trackingSubscriberRecordMap: [], // record数据量大时，vue监听性能开销太大，所以单独用非监听的数组来维护subscriberId与record的关系
       loading, // 控制组件内各处loading图标
-      maxZoom: 14, // 地图最小缩放比例
-      minZoom: 3, // 地图最大缩放比例
-      mapLevel: 2, // 地图精度  1、2、3
+      maxZoom: mapConfig.maxZoom, // 地图最小缩放比例
+      minZoom: mapConfig.minZoom, // 地图最大缩放比例
+      mapLevel: mapConfig.mapLevel, // 地图精度  1、2、3
       unitTypes,
-      defaultZoom: 12, // 地图默认缩放比例
-      center: [116.38, 39.82], // 地图默认中心点。北京：[116.38, 39.9] 纽约：[-73.94539, 40.841843]
+      defaultZoom: mapConfig.defaultZoom, // 地图默认缩放比例
+      center: mapConfig.center, // 地图默认中心点。北京：[116.38, 39.9] 纽约：[-73.94539, 40.841843]
       debounceMinuteChange: shallowRef(null),
       debounceOnResize: shallowRef(null),
       debounceVisualChange: shallowRef(null),

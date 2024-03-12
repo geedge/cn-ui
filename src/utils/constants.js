@@ -47,7 +47,8 @@ export const storageKey = {
   linkInfo: 'cn-link-info',
   history: 'cn-history',
   schemaEntityExplore: 'schema_entity_explore',
-  trackingSubscribers: 'tracking-subscribers'
+  trackingSubscribers: 'cn-tracking-subscribers',
+  mapConfig: 'cn-map-config'
 }
 export const largeCountryList = ['CN', 'US', 'RU', 'AU', 'CA', 'KZ', 'IN', 'BR']
 
@@ -2529,6 +2530,14 @@ export const reg = {
   sqlColumn: /(^_([a-zA-Z0-9]_?)*$)|(^[a-zA-Z](_?[a-zA-Z0-9])*_?$)/g,
   // 含有中文
   containChinese: /[\u4E00-\u9FA5\uF900-\uFA2D]+/
+}
+
+export const defaultMapConfig = {
+  center: [116.38, 39.82], // 默认地图中心
+  maxZoom: 14, // 最大缩放等级
+  minZoom: 3, // 最小缩放等级
+  mapLevel: 2, // 数据精度 1、2、3，1最大
+  defaultZoom: 12 // 默认缩放等级
 }
 
 export const report = {
