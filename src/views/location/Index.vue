@@ -909,7 +909,7 @@ export default {
               end: i * 2,
               color: this.pieColorRamp[i - 1]
             }
-            item.count = data.filter(d => d.number >= item.start && d.number < item.end).length
+            item.count = data.filter(d => d.number >= item.start && d.number <= item.end).length
             result.push(item)
           }
         } else {
