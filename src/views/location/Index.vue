@@ -94,7 +94,7 @@
             <div class="chart__drawing" id="populationDensityChart"></div>
             <div class="chart__legend">
               <div v-for="legend in pieValueRamp" class="legend-item" :key="legend.color">
-                <div class="legend-icon" :style="`background:rgb(${legend.color});`"></div>
+                <div class="legend-icon" :style="`background:rgba(${legend.color},.9);`"></div>
                 <div class="legend-range" >{{legend.start}}~{{legend.end}}</div>
                 <div class="legend-count">{{legend.count}}</div>
               </div>
@@ -544,7 +544,7 @@ export default {
         // 按值的大小分为5组，并计算各组数量和颜色
         this.pieValueRamp = this.calculateValueRamp(densityData)
         const option = _.cloneDeep(pieOption)
-        option.color = this.pieColorRamp.map(c => `rgb(${c})`)
+        option.color = this.pieColorRamp.map(c => `rgb(${c},.9)`)
         option.series[0].name = this.$t('location.populationDensity')
         option.series[0].data = this.pieValueRamp.map((r, i) => ({
           name: `${r.start}~${r.end}`,
@@ -1639,7 +1639,7 @@ export default {
     // const pieColorRamp = ['186,224,255', '105,177,255', '22,119,255', '0,62,179', '0,29,102']
     // const pieColorRamp = ['156,174,29', '241,198,0', '89,202,242', '63,133,186', '37,55,128']
     // const pieColorRamp = ['196,214,59', '190,230,255', '135,206,250', '63,133,186', '37,55,128']
-    const pieColorRamp = ['196,214,59', '135,206,250', '63,133,186', '42,60,135', '34,7,94']
+    const pieColorRamp = ['196,214,59', '135,206,250', '63,133,186', '45,65,135', '34,7,90']
     const pieValueRamp = ref([])
     const followedSubscribersList = ref([])
     const searchValueListShow = ref([])
