@@ -21,8 +21,8 @@
       <div class="analysis-statistics" id="subscribersBlock" style="position: absolute;right: 0;top: 0;">
         <div class="analysis-statistics__subscribers">
           <div class="analysis-statistics__subscriber" style="height: 664px;">
-            <chart-no-data v-if="trackingNoData" test-id="trackingNoData" style="width: calc(100% - 30px);height: 100%;"></chart-no-data>
-            <chart-error v-if="showTrackingError" :content="trackingErrorMsg" style="width: calc(100% - 30px)" />
+            <chart-no-data v-if="trackingNoData" test-id="trackingNoData" style="width: calc(100% - 20px);height: 100%;"></chart-no-data>
+            <chart-error v-if="showTrackingError" :content="trackingErrorMsg" style="width: calc(100% - 20px);margin-left: 20px;" />
             <div v-if="!trackingNoData && !showTrackingError" class="subscriber__body">
               <div class="body-item-record">
                 <div class="item-record__header">{{ $t('location.trackRecord') }}</div>
@@ -358,15 +358,18 @@ export default {
     },
     async queryTraceTracking () {
       const params = {
-        ...this.timeFilter,
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        dateRangeValue: this.timeFilter.dateRangeValue,
         subscriberIds: `'${this.entity.entityName}'`,
         level: this.mapLevel
       }
       this.trackingSubscriber.subscriberId = this.entity.entityName
       try {
         const response = await axios.get(api.location.tracking, { params })
-
         if (response.data.data.result) {
+          this.trackingNoData = false
+          this.showTrackingError = false
           const find = response.data.data.result.find(item => item.subscriberId === this.trackingSubscriber.subscriberId)
           if (find) {
             this.trackingSubscriber.trackRecords = find.trackRecords
@@ -380,16 +383,14 @@ export default {
 
         // 计算停留时间
         if (this.trackingSubscriber.trackRecords.length > 0) {
-          this.trackingNoData = false
-          this.showTrackingError = false
           const trackRecords = this.trackingSubscriber.trackRecords
           // 初始化时间线可视范围角标
-          if (trackRecords.length < 7) {
+          if (trackRecords.length < 11) {
             this.trackingSubscriber.scrollStartIndex = 0
             this.trackingSubscriber.scrollEndIndex = trackRecords.length
           } else {
             this.trackingSubscriber.scrollStartIndex = 0
-            this.trackingSubscriber.scrollEndIndex = 7
+            this.trackingSubscriber.scrollEndIndex = 11
           }
 
           if (trackRecords && trackRecords.length > 0) {
@@ -473,7 +474,7 @@ export default {
       show: false,
       showLine: false,
       scrollStartIndex: 0,
-      scrollEndIndex: 7,
+      scrollEndIndex: 11,
       startOffset: 0,
       listHeight: 0,
       trackRecords: []
@@ -481,7 +482,7 @@ export default {
     const trackingSubscriberList = ref([])
     const scrollInfo = ref({
       itemSize: 50,
-      containerHeight: 360
+      containerHeight: 660
     })
     const trackingNoData = ref(true)
     const showTrackingError = ref(false)
