@@ -266,4 +266,99 @@
       }
     }
   }
+  .geo-analysis__hexagon-tooltip {
+    position: fixed;
+    background-color: rgba(255,255,255,0.80);
+    box-shadow: 0 1px 10px 0 rgba(0,0,0,0.5);
+    border-radius: 2px;
+    min-width: 185px;
+    z-index: 3;
+
+    /*&.geo-analysis__hexagon-tooltip--hexagon {
+    }*/
+    &.geo-analysis__hexagon-tooltip--human {
+      .icon__box {
+        background-color: #233447;
+      }
+    }
+    &.geo-analysis__hexagon-tooltip--base-station {
+      .icon__box {
+        background-color: #585B5F;
+      }
+      .hexagon-tooltip__body {
+        .body__item .item__label {
+          width: 140px;
+        }
+      }
+    }
+    .hexagon-tooltip__header {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 10px 0 10px 63px;
+      color: white;
+
+      .header__icon {
+        position: absolute;
+        left: 14px;
+        top: 16px;
+
+        .icon__box {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 32px;
+          width: 32px;
+          border-radius: 50%;
+        }
+      }
+      .header__title {
+        font-size: 16px;
+      }
+      .header__content {
+        font-size: 14px;
+      }
+    }
+    .hexagon-tooltip__body {
+      padding: 8px 18px;
+
+      .body__timeline {
+        display: flex;
+        flex-direction: row;
+        padding: 3px 0;
+
+        .timeline-symbol {
+          margin-top: 6px;
+          margin-right: 6px;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: #DE3434;
+        }
+      }
+      .body__item {
+        display: flex;
+
+        .item__label {
+          padding-right: 10px;
+          text-align: right;
+          width: 60px;
+          font-size: 12px;
+          color: #353636;
+        }
+        .item__value {
+          font-size: 12px;
+          font-weight: bold;
+          color: #233447;
+        }
+      }
+      .body__tracking {
+        padding-top: 6px;
+        font-size: 12px;
+        color: #38ACD2;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
+  }
 }
