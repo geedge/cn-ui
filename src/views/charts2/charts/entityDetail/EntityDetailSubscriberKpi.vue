@@ -8,7 +8,7 @@
               :end-time="timeFilter.endTime"
               :date-range="timeFilter.dateRangeValue"
               ref="dateTimeRange"
-              showPosition="left"
+              showPosition="right"
               @change="reload"
       />
     </div>
@@ -18,42 +18,44 @@
       <chart-error v-if="showError" :content="errorMsg" style="top:34px;" />
 
       <div class="subscriber-kpi-content" v-if="!isNoData && !showError">
-        <div class="kpi-type">
-          <div class="kpi-type-value">
-            <div class="kpi-type-value-name">{{$t('subscriber.volume')}}</div>
+        <div class="kpi-type_column">
+          <div class="kpi-type-value kpi-type_last-value ">
+            <div class="kpi-type-value-name kpi-type_first-column" >{{$t('subscriber.volume')}}</div>
             <div class="kpi-type-data" >
-              <div class="kpi-type-value-number" >{{$_.get(kpiData, 'volume') ? unitConvert($_.get(kpiData, 'volume')[0], unitTypes.byte).join(' ') : '-'}}</div>
-              <div class="data-trend" v-if="$_.get(kpiData, 'volume')">
-                <div v-if="$_.get(kpiData, 'volume')[1] === 'up'" class="data-total-trend data-total-trend-red" >
+              <div class="kpi-type-value-number" style="font-size:30px;">{{$_.get(kpiData, 'volume') ? unitConvert($_.get(kpiData, 'volume')[0], unitTypes.byte).join(' ') : '-'}}</div>
+              <div class="data-trend" v-if="$_.get(kpiData, 'volume')" style="align-items: center;">
+                <div v-if="$_.get(kpiData, 'volume')[1] === 'up'" class="data-total-trend data-total-trend-red">
                   <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'volume')[2]}}</span>
                 </div>
-                <div v-else-if=" $_.get(kpiData, 'volume')[1] === 'down'" class="data-total-trend data-total-trend-green" >
+                <div v-else-if=" $_.get(kpiData, 'volume')[1] === 'down'" class="data-total-trend data-total-trend-green">
                   <i class="cn-icon-decline cn-icon"></i><span>{{$_.get(kpiData, 'volume')[2]}}</span>
                 </div>
-                <div v-else-if=" $_.get(kpiData, 'volume')[1] === 'noChange'" class="data-total-trend data-total-trend-black" >
+                <div v-else-if=" $_.get(kpiData, 'volume')[1] === 'noChange'" class="data-total-trend data-total-trend-black">
                   <i class="cn-icon-constant cn-icon"></i>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+        <div class="kpi-type_column">
           <div class="kpi-type-value">
             <div class="kpi-type-value-name">{{$t('subscriber.throughput')}}</div>
             <div class="kpi-type-data" >
               <div class="kpi-type-value-number" >{{$_.get(kpiData, 'throughput') ? valueToRangeValue($_.get(kpiData, 'throughput')[0], unitTypes.bps).join(' ') : '-'}}</div>
               <div class="data-trend" v-if="$_.get(kpiData, 'throughput')">
-                  <div v-if="$_.get(kpiData, 'throughput')[1] === 'up'" class="data-total-trend data-total-trend-red" >
-                    <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'throughput')[2]}}</span>
-                  </div>
-                  <div v-else-if=" $_.get(kpiData, 'throughput')[1] === 'down'" class="data-total-trend data-total-trend-green" >
-                    <i class="cn-icon-decline cn-icon"></i><span>{{$_.get(kpiData, 'throughput')[2]}}</span>
-                  </div>
-                  <div v-else-if=" $_.get(kpiData, 'throughput')[1] === 'noChange'" class="data-total-trend data-total-trend-black" >
-                    <i class="cn-icon-constant cn-icon"></i>
-                  </div>
+                <div v-if="$_.get(kpiData, 'throughput')[1] === 'up'" class="data-total-trend data-total-trend-red" >
+                  <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'throughput')[2]}}</span>
+                </div>
+                <div v-else-if=" $_.get(kpiData, 'throughput')[1] === 'down'" class="data-total-trend data-total-trend-green" >
+                  <i class="cn-icon-decline cn-icon"></i><span>{{$_.get(kpiData, 'throughput')[2]}}</span>
+                </div>
+                <div v-else-if=" $_.get(kpiData, 'throughput')[1] === 'noChange'" class="data-total-trend data-total-trend-black" >
+                  <i class="cn-icon-constant cn-icon"></i>
+                </div>
               </div>
             </div>
           </div>
-          <div class="kpi-type-value">
+          <div class="kpi-type-value kpi-type_last-value">
             <div class="kpi-type-value-name">{{$t('subscriber.httpLatency')}}</div>
             <div class="kpi-type-data" >
               <div class="kpi-type-value-number" >{{$_.get(kpiData, 'httpLatency') ? valueToRangeValue($_.get(kpiData, 'httpLatency')[0], unitTypes.time).join(' ') : '-'}}</div>
@@ -70,6 +72,8 @@
               </div>
             </div>
           </div>
+        </div>
+        <div class="kpi-type_column">
           <div class="kpi-type-value">
             <div class="kpi-type-value-name">{{$t('subscriber.sslLatency')}}</div>
             <div class="kpi-type-data" >
@@ -87,7 +91,7 @@
               </div>
             </div>
           </div>
-          <div class="kpi-type-value">
+          <div class="kpi-type-value kpi-type_last-value">
             <div class="kpi-type-value-name">{{$t('subscriber.packetLoss')}}</div>
             <div class="kpi-type-data" >
               <div class="kpi-type-value-number" >{{$_.get(kpiData, 'packetLoss') ? valueToRangeValue($_.get(kpiData, 'packetLoss')[0], unitTypes.percent).join(' ') : '-'}}</div>
