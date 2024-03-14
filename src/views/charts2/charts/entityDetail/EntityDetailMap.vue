@@ -21,8 +21,8 @@
       <div class="analysis-statistics" id="subscribersBlock" style="position: absolute;right: 0;top: 0;">
         <div class="analysis-statistics__subscribers">
           <div class="analysis-statistics__subscriber" style="height: 664px;">
-            <chart-no-data v-if="trackingNoData" test-id="trackingNoData" style="width: calc(100% - 20px);height: 100%;"></chart-no-data>
-            <chart-error v-if="showTrackingError" :content="trackingErrorMsg" style="width: calc(100% - 20px);margin-left: 20px;" />
+            <chart-no-data v-if="trackingNoData" test-id="trackingNoData" style="width: 100%;height: 100%;"></chart-no-data>
+            <chart-error v-if="showTrackingError" :content="trackingErrorMsg" style="width: 100%;margin-left: 20px;" />
             <div v-if="!trackingNoData && !showTrackingError" class="subscriber__body">
               <div class="body-item-record">
                 <div class="item-record__header">{{ $t('location.trackRecord') }}</div>
