@@ -31,6 +31,92 @@
       .maplibregl-canvas:focus-visible {
         outline: none;
       }
+      .map-marker {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        cursor: default;
+        padding: 0;
+        transition: height .1s linear, width .1s linear;
+
+        svg {
+          transition: height .1s linear, width .1s linear;
+          fill: #fff;
+        }
+
+        &.map-marker--human {
+          background-color: #233447;
+          cursor: pointer;
+
+          svg {
+            width: 14px;
+            height: 14px;
+          }
+        }
+        &.map-marker--base-station {
+          background-color: #585B5F;
+
+          svg {
+            width: 12px;
+            height: 12px;
+          }
+        }
+        &.map-marker--hover {
+          width: 30px;
+          height: 30px;
+          border: 2px solid rgba(255,255,255,1);
+          z-index: 2;
+
+          &.map-marker--human svg {
+            width: 21px;
+            height: 21px;
+          }
+          &.map-marker--base-station svg {
+            width: 18px;
+            height: 18px;
+          }
+        }
+        &.map-marker--highlight {
+          width: 30px;
+          height: 30px;
+          border: 2px solid #fff;
+          background-color: rgb(204,68,68);
+          z-index: 3;
+
+          svg {
+            width: 21px;
+            height: 21px;
+          }
+        }
+      }
+      .map-tracking-marker {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: pulse 2s infinite;
+        background-color: rgba(204,68,68,0.50);
+        border-radius: 50%;
+
+        .tracking-marker__inner-circle {
+          width: 25px;
+          height: 25px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: rgba(204,68,68,0.80);
+          border-radius: 50%;
+
+          svg {
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
     }
     .panel-chart__no-data {
       height: calc(100% - 46px);
@@ -356,5 +442,17 @@
         cursor: pointer;
       }
     }
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
   }
 }

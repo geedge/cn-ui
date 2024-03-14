@@ -13,8 +13,7 @@
     </div>
 
     <div class="subscriber-map-body">
-      <chart-no-data v-if="isNoData" test-id="noData" style="width: calc(100% - 312px)"></chart-no-data>
-      <chart-error v-if="showError" :content="errorMsg" style="width: calc(100% - 312px)" />
+      <simple-loading size="small" placement="top-end" :loading="trackingMapLoading" style="margin-right: 290px;"></simple-loading>
       <div id="subscriberMap" class="subscriber-map"></div>
 
       <!-- 右侧数据栏-trace -->
@@ -22,7 +21,7 @@
         <div class="analysis-statistics__subscribers">
           <div class="analysis-statistics__subscriber" style="height: 664px;">
             <chart-no-data v-if="trackingNoData" test-id="trackingNoData" style="width: 100%;height: 100%;"></chart-no-data>
-            <chart-error v-if="showTrackingError" :content="trackingErrorMsg" style="width: 100%;margin-left: 20px;" />
+            <chart-error v-if="showTrackingError" :content="trackingErrorMsg" style="width: 100%;" />
             <div v-if="!trackingNoData && !showTrackingError" class="subscriber__body">
               <div class="body-item-record">
                 <div class="item-record__header">{{ $t('location.trackRecord') }}</div>
@@ -66,21 +65,6 @@
         </div>
       </div>
     </div>
-
-    <!-- 地图point悬浮框 -->
-<!--    <div class="subscriber-map-point-tooltip" v-if="tooltip.showTooltip" :style="{'left': `${tooltip.x}px`, 'top': `${tooltip.y}px`}">-->
-<!--      <div class="subscriber-map-point-tooltip__time">{{dateFormatByAppearance(currentPoint.stat_time)}}</div>-->
-<!--      <div class="subscriber-map-point-tooltip__coordinates">-->
-<!--        <div class="subscriber-map-point-tooltip__coordinate">-->
-<!--          <div class="coordinate__label">{{$t('overall.longitude')}}</div>-->
-<!--          <div class="coordinate__value">{{currentPoint.longitude}}</div>-->
-<!--        </div>-->
-<!--        <div class="subscriber-map-point-tooltip__coordinate">-->
-<!--          <div class="coordinate__label">{{$t('overall.latitude')}}</div>-->
-<!--          <div class="coordinate__value">{{currentPoint.latitude}}</div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
 
     <div class="geo-analysis__hexagon-tooltip" id="tooltip" :class="`geo-analysis__hexagon-tooltip--${tooltip.type}`" v-if="tooltip.showMarkerTooltip || tooltip.showPolygonTooltip" :style="{'left': `${tooltip.x}px`, 'top': `${tooltip.y}px`}" @mouseenter="tooltipMouseEnter" @mouseleave="tooltipMouseLeave">
       <div class="hexagon-tooltip__header" :style="`background-color: ${tooltipHeaderColor}`">
@@ -205,6 +189,7 @@ import unitConvert from '@/utils/unit-convert'
 import { defaultMapConfig, storageKey, unitTypes } from '@/utils/constants'
 import { h3ToGeo, h3ToGeoBoundary } from 'h3-js'
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import SimpleLoading from '@/components/common/SimpleLoading'
 const humanSvg = '<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M366.689524 690.468571l87.283809 83.821715-75.434666 195.486476c-10.971429 27.794286-43.105524 42.081524-72.265143 32.036571-29.159619-10.24-44.080762-41.252571-33.450667-69.241904L366.689524 690.468571zM203.824762 476.306286l51.785143-95.183238a162.279619 162.279619 0 0 1 59.245714-59.977143c119.710476-68.266667 134.777905-67.291429 149.942857-66.218667l80.798476 5.168762c24.868571 0.975238 42.081524 7.314286 125.025524 124.14781a21.26019 21.26019 0 0 0 14.092191 8.289523l99.132952 14.482286c12.873143 1.852952 24.478476 8.582095 32.182857 18.67581a45.494857 45.494857 0 0 1 8.825905 35.108571 46.665143 46.665143 0 0 1-19.504762 30.866286 50.468571 50.468571 0 0 1-36.571429 8.435809l-99.181714-14.433524a119.954286 119.954286 0 0 1-79.774476-47.640381c-4.388571-6.241524-7.558095-11.361524-11.849143-16.579047l-63.634286 193.487238 88.405334 84.845714c12.970667 12.385524 23.698286 29.013333 30.232381 45.494857l67.876571 190.366477c5.022476 13.409524 4.193524 28.233143-2.291809 41.057523a54.613333 54.613333 0 0 1-32.182858 27.160381c-5.851429 2.048-12.092952 3.120762-18.383238 3.169524a58.075429 58.075429 0 0 1-53.930666-36.181333l-67.876572-190.366476c-1.024-2.096762-2.096762-3.120762-3.218285-5.168762L365.616762 623.177143a84.894476 84.894476 0 0 1-24.868572-80.700953l34.523429-146.919619c-3.413333 2.340571-7.070476 4.388571-10.776381 6.290286a58.806857 58.806857 0 0 0-22.674286 22.723048L290.133333 519.801905a49.834667 49.834667 0 0 1-43.105523 24.819809 59.977143 59.977143 0 0 1-22.674286-5.12 46.518857 46.518857 0 0 1-20.48-63.146666z m209.67619-360.448C420.08381 58.465524 473.86819 17.066667 533.650286 23.30819 593.383619 29.549714 636.537905 81.13981 630.00381 138.48381c-6.534095 57.392762-60.269714 98.840381-120.05181 92.550095-59.782095-6.241524-102.985143-57.782857-96.451048-115.175619z"></path></svg>'
 const baseStationSvg = '<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M164.901926 519.585185a391.35763 391.35763 0 0 1-30.151111-152.38637c0-52.527407 10.05037-105.054815 30.151111-152.348445 15.094519-47.29363 45.283556-89.353481 80.516741-126.103703L174.990222 15.17037C129.706667 62.464 94.511407 114.991407 69.328593 178.062222 44.183704 241.095111 34.133333 304.165926 34.133333 367.198815c0 63.070815 10.05037 131.375407 35.19526 189.174518 25.182815 57.799111 60.378074 115.598222 105.661629 162.891852l70.428445-73.576296c-35.233185-36.788148-65.422222-78.810074-80.516741-126.103704z" p-id="8786"></path><path d="M255.469037 477.563259c15.094519 36.788148 35.195259 68.266667 60.340148 94.549334l70.428445-73.576297a233.168593 233.168593 0 0 1-40.201482-57.761185c-5.044148-26.282667-10.088296-47.29363-10.088296-73.576296 0-26.244741 5.044148-47.29363 15.094518-68.266667 5.006222-26.282667 20.100741-42.097778 35.19526-63.070815l-70.428445-73.576296c-25.144889 26.282667-45.24563 57.799111-60.340148 94.587259-15.094519 36.788148-20.100741 73.576296-20.100741 110.364445 0 36.788148 5.006222 73.53837 20.100741 110.326518zM436.527407 367.198815c0 43.538963 33.792 78.810074 75.472593 78.810074s75.472593-35.271111 75.472593-78.810074c0-43.501037-33.792-78.810074-75.472593-78.810074s-75.472593 35.271111-75.472593 78.810074zM637.76237 498.574222l70.428445 73.576297c25.144889-26.282667 45.24563-57.837037 60.340148-94.58726 15.094519-36.788148 20.100741-73.576296 20.100741-110.364444 0-36.788148-5.006222-73.576296-20.100741-110.364445-15.094519-36.750222-35.195259-68.266667-60.340148-94.549333l-70.428445 73.576296c15.094519 15.739259 30.189037 36.788148 40.201482 57.799111 10.088296 21.010963 15.132444 47.29363 15.132444 68.266667 0 26.282667-5.044148 47.331556-15.094518 68.342519-10.05037 31.516444-25.144889 47.29363-40.239408 68.266666z" p-id="8787"></path><path d="M954.671407 178.062222C929.488593 114.991407 894.293333 62.464 849.009778 15.17037L778.619259 88.746667c35.233185 36.788148 60.378074 78.810074 80.516741 126.103703 20.100741 47.255704 30.151111 99.821037 30.151111 152.348445 0 52.565333-10.05037 105.092741-30.151111 152.38637-20.100741 47.29363-45.283556 89.315556-80.516741 126.103704l70.428445 73.576296c45.283556-47.29363 80.478815-99.858963 105.661629-162.891852 25.144889-63.070815 35.195259-126.103704 35.19526-189.174518 0-63.032889-10.05037-131.337481-35.19526-189.136593zM210.185481 1024h603.629038L512 551.10163 210.185481 1024z m186.102519-105.054815L512 740.238222l115.674074 178.631111h-231.348148z"></path></svg>'
 
@@ -213,7 +198,8 @@ export default {
   mixins: [chartMixin],
   components: {
     ChartError,
-    ChartNoData
+    ChartNoData,
+    SimpleLoading
   },
   data () {
     return {
@@ -542,6 +528,7 @@ export default {
       this.trackingSubscriber.subscriberId = this.entity.entityName
       try {
         const response = await axios.get(api.location.tracking, { params })
+        this.trackingMapLoading = false
         if (response.data.data.result) {
           this.trackingNoData = false
           this.showTrackingError = false
@@ -612,10 +599,11 @@ export default {
         }
       } catch (e) {
         this.showTrackingError = true
+        this.trackingNoData = false
         this.trackingErrorMsg = this.errorMsgHandler(e)
         console.error(e)
       } finally {
-        // this.loading.trackingMapLoading = false
+        this.trackingMapLoading = false
       }
     },
     onScroll (e) {
@@ -894,11 +882,6 @@ export default {
       this.trackingSubscriber.scrollEndIndex = 11
       this.trackingSubscriber.startOffset = 0
       this.trackingSubscriber.listHeight = 0
-      // 高度置为0，是为了切换时间后再打开时间线，让滚动条置顶
-      // const timer = setTimeout(() => {
-      //   this.trackingSubscriber.listHeight = this.trackingSubscriber.trackRecords.length * this.scrollInfo.itemSize
-      //   clearTimeout(timer)
-      // }, 100)
     }
   },
   setup () {
@@ -944,6 +927,7 @@ export default {
     const baseStationMarkers = shallowRef([])
 
     const mapConfig = localStorage.getItem(storageKey.mapConfig) ? JSON.parse(localStorage.getItem(storageKey.mapConfig)) : defaultMapConfig
+    const trackingMapLoading = ref(true)
     return {
       timeFilter,
       currentPoint,
@@ -966,108 +950,9 @@ export default {
       trackingHumanMarker,
       trackingPolygonSourceData: shallowRef({}),
       mapChart,
-      baseStationMarkers
+      baseStationMarkers,
+      trackingMapLoading
     }
   }
 }
 </script>
-
-<style lang="scss">
-.map-marker {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  cursor: default;
-  padding: 0;
-  transition: height .1s linear, width .1s linear;
-
-  svg {
-    transition: height .1s linear, width .1s linear;
-    fill: #fff;
-  }
-
-  &.map-marker--human {
-    background-color: #233447;
-    cursor: pointer;
-
-    svg {
-      width: 14px;
-      height: 14px;
-    }
-  }
-  &.map-marker--base-station {
-    background-color: #585B5F;
-
-    svg {
-      width: 12px;
-      height: 12px;
-    }
-  }
-  &.map-marker--hover {
-    width: 30px;
-    height: 30px;
-    border: 2px solid rgba(255,255,255,1);
-    z-index: 2;
-
-    &.map-marker--human svg {
-      width: 21px;
-      height: 21px;
-    }
-    &.map-marker--base-station svg {
-      width: 18px;
-      height: 18px;
-    }
-  }
-  &.map-marker--highlight {
-    width: 30px;
-    height: 30px;
-    border: 2px solid #fff;
-    background-color: rgb(204,68,68);
-    z-index: 3;
-
-    svg {
-      width: 21px;
-      height: 21px;
-    }
-  }
-}
-.map-tracking-marker {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: pulse 2s infinite;
-  background-color: rgba(204,68,68,0.50);
-  border-radius: 50%;
-
-  .tracking-marker__inner-circle {
-    width: 25px;
-    height: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(204,68,68,0.80);
-    border-radius: 50%;
-
-    svg {
-      width: 20px;
-      height: 20px;
-    }
-  }
-}
-@keyframes pulse {
-  0% {
-    opacity: 1;
-  }
-  70% {
-    opacity: 0.6;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-</style>
