@@ -15,7 +15,7 @@
     <div class="subscriber-map-body">
       <chart-no-data v-if="isNoData" test-id="noData" style="width: calc(100% - 312px)"></chart-no-data>
       <chart-error v-if="showError" :content="errorMsg" style="width: calc(100% - 312px)" />
-      <div id="subscriberMap" class="subscriber-map" style="width: calc(100% - 310px)"></div>
+      <div id="subscriberMap" class="subscriber-map"></div>
 
       <!-- 右侧数据栏-trace -->
       <div class="analysis-statistics" id="subscribersBlock" style="position: absolute;right: 0;top: 0;">
@@ -1057,6 +1057,17 @@ export default {
       width: 20px;
       height: 20px;
     }
+  }
+}
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
   }
 }
 </style>
