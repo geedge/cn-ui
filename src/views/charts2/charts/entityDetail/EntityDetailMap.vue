@@ -622,7 +622,7 @@ export default {
       // 当前滚动位置
       const scrollTop = e.target.scrollTop
       // 列表开始索引
-      const startIndex = Math.floor(scrollTop / this.scrollInfo.itemSize) || 1
+      const startIndex = Math.floor(scrollTop / this.scrollInfo.itemSize) || 0
       // 列表结束索引
       const endIndex = Math.ceil((scrollTop + this.scrollInfo.containerHeight) / this.scrollInfo.itemSize)
       this.trackingSubscriber.scrollStartIndex = startIndex
@@ -718,7 +718,7 @@ export default {
     trackSubscriber (subscriber) {
       const find = this.trackingSubscribers.find(s => s.subscriberId === subscriber.subscriberId)
       if (!find) {
-        this.trackingSubscribers.push({ ...subscriber, show: false, showLine: false, scrollStartIndex: 1, scrollEndIndex: 6, startOffset: 0, listHeight: 0 })
+        this.trackingSubscribers.push({ ...subscriber, show: false, showLine: false, scrollStartIndex: 0, scrollEndIndex: 11, startOffset: 0, listHeight: 0 })
       }
       this.currentShowSubscriber = subscriber
       this.activeTab = 'traceTracking'
