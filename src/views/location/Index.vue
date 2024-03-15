@@ -1104,15 +1104,15 @@ export default {
         this.currentPolygon = features[0].properties
         this.currentPolygon.id = features[0].id
         this.currentPolygon.location = `${h3ToGeo(this.currentPolygon.hexId)[1]}, ${h3ToGeo(this.currentPolygon.hexId)[0]}`
-        this.tooltip.x = originalEvent.clientX + 15
-        this.tooltip.y = originalEvent.clientY + 5
-        /* this.$nextTick(() => {
+        // this.tooltip.x = originalEvent.clientX + 15
+        // this.tooltip.y = originalEvent.clientY + 5
+        this.$nextTick(() => {
           const tooltipDom = document.getElementById('tooltip')
           const tooltipDomHeight = tooltipDom.offsetHeight
           this.tooltip.x = originalEvent.clientX + 15
           this.tooltip.y = originalEvent.clientY + 5
           this.tooltip.y = (originalEvent.clientY + 5 + tooltipDomHeight) > this.mapDomHeight ? (this.mapDomHeight - tooltipDomHeight) : (originalEvent.clientY + 5)
-        }) */
+        })
 
         // 鼠标滑过高亮
         this.hoverTrigger('trackingHexGrid', this.currentPolygon.id, true)
