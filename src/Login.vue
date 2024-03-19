@@ -190,7 +190,7 @@ export default {
     checkLicenseStatus () {
       axios.get(api.licenseStatus).then(res => {
         if (res.status === 200) {
-          this.licenseStatus = res.data.status
+          this.licenseStatus = res.data.data.status
         }
       }).catch(e => {
         this.licenseStatusErrMsg = this.errorMsgHandler(e)
