@@ -22,18 +22,18 @@
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button :disabled="licenseStatus === 0"
+          <el-button :disabled="licenseStatus !== 0"
               v-loading="loading"
               type="primary"
               class="login--input login--button"
-              :class="{'login-btn__license-error':licenseStatus === 0}"
+              :class="{'login-btn__license-error':licenseStatus !== 0}"
               @click="login"
               @keyup.enter="login"
               style="font-size: 16px;"
             >Login</el-button
           >
         </el-form-item>
-        <el-form-item v-if="licenseStatus === 0">
+        <el-form-item v-if="licenseStatus !== 0">
           <div class="license-error-msg">{{licenseStatusErrMsg}}</div>
           <div class="license-file">
             <button style="position: relative;" class="license__btn margin-r-20" @click.prevent="downloadFile">
