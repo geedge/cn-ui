@@ -138,7 +138,8 @@ export default {
     },
     downloadFile () {
       axios.get(this.downloadC2vUrl, { responseType: 'blob' }).then(res => {
-        const fileName = 'CN-' + this.supportID + '-license-apply.xml'
+        const disposition = res.headers['content-disposition']
+        const fileName = decodeURI(disposition.split('filename=')[1])
         if (window.navigator.msSaveOrOpenBlob) {
           // 兼容ie11
           const blobObject = new Blob([res.data])
@@ -229,13 +230,6 @@ export default {
   async mounted () {
     this.queryAppearance()
     this.checkLicenseStatus()
-    await axios.get(api.license).then(res => {
-      if (res.status === 200) {
-        this.supportID = res.data.data.license.supportID
-      }
-    }).catch(e => {
-      console.log(e)
-    })
   },
   setup (props) {
     const { currentRoute } = useRouter()
