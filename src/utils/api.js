@@ -15,6 +15,8 @@ export const api = {
   logout: '/logout',
   pin: 'sys/user/pin',
   appearance: '/sys/appearance',
+  license: '/sys/license',
+  downloadLicenseC2v: '/sys/license/download',
   permissions: '/sys/user/permissions',
   operationLog: '/sys/log',
   login: '/sys/login',
