@@ -30,13 +30,13 @@
               @click="login"
               @keyup.enter="login"
               style="font-size: 16px;"
-            >Login</el-button
-          >
+          >Login
+          </el-button>
         </el-form-item>
         <el-form-item v-if="licenseStatus !== 0">
           <div class="license-error-msg">{{licenseStatusErrMsg}}</div>
           <div class="license-file">
-            <button style="position: relative;" class="license__btn margin-r-20" @click.prevent="downloadFile">
+            <button style="position: relative;" class="license__btn margin-r-20" @click.prevent="downloadFile" @keyup.enter="login">
               <i class="cn-icon-download1 cn-icon margin-r-6"></i><span>Download c2v file</span>
             </button>
             <el-upload :action="`${baseUrl}sys/license/upload`"
@@ -96,6 +96,9 @@ export default {
       if (!this.blockOperation.query) {
         this.blockOperation.query = true
       } else {
+        return
+      }
+      if (this.licenseStatus !== 0) {
         return
       }
       this.loading = true
