@@ -408,7 +408,18 @@
     width: calc(100% - 20px);
   }
 }
-.operation-dropdown-text {
+
+.el-table {
+  // 令no data垂直居中
+  .el-scrollbar__view {
+    height: 100%;
+  }
+  // 令no data出现时table底部不出现滚动条
+  .el-table__empty-block {
+    width: calc(100% - 8px) !important;
+  }
+}
+/*.operation-dropdown-text {
   display: inline-block;
   font-size: 13px;
 }
@@ -441,7 +452,7 @@
   top: -1px;
   height: 1px;
   background-color: white;
-}
+}*/
 .col-resize-area {
   position: absolute;
   top: 0;
