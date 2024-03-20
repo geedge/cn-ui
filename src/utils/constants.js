@@ -1886,7 +1886,7 @@ export const pluginBasicInfo = [
     id: 109,
     name: 'Psiphon3 VPN',
     type: ['IP'],
-    schedule: 'plugin.always',
+    schedule: 'plugin.hourly',
     desc: 'knowledgeBase.desc.psiphon3',
     iconUrl: 'images/knowledge-base-logo/psiphon3-vpn.png'
   },
@@ -1894,14 +1894,14 @@ export const pluginBasicInfo = [
     id: 111,
     name: 'HotSpot VPN',
     type: ['IP'],
-    schedule: 'plugin.daily',
+    schedule: 'plugin.hourly',
     desc: 'knowledgeBase.desc.hotSpot',
     iconUrl: 'images/knowledge-base-logo/hotspot-vpn.png'
   },
   {
     id: 112,
     name: 'IpVanish VPN',
-    type: ['IP','Domain'],
+    type: ['IP', 'Domain'],
     schedule: 'plugin.hourly',
     desc: 'knowledgeBase.desc.ipVanishDomain',
     iconUrl: 'images/knowledge-base-logo/ip-vanish.png'
@@ -1909,8 +1909,8 @@ export const pluginBasicInfo = [
   {
     id: 113,
     name: 'Ivacy VPN',
-    type: ['IP','Domain'],
-    schedule: 'plugin.hourly',
+    type: ['IP', 'Domain'],
+    schedule: 'plugin.daily',
     desc: 'knowledgeBase.desc.ivacyDomain',
     iconUrl: 'images/knowledge-base-logo/ivacy.png'
   },
@@ -1925,15 +1925,15 @@ export const pluginBasicInfo = [
   {
     id: 115,
     name: 'CyberGhost VPN',
-    type: ['IP','Domain'],
-    schedule: 'plugin.hourly',
+    type: ['IP', 'Domain'],
+    schedule: 'plugin.daily',
     desc: 'knowledgeBase.desc.cyberGhostDomain',
     iconUrl: 'images/knowledge-base-logo/cyber-ghost.png'
   },
   {
     id: 116,
     name: 'Windscribe VPN',
-    type: ['IP','Domain'],
+    type: ['IP', 'Domain'],
     schedule: 'plugin.hourly',
     desc: 'knowledgeBase.desc.windscribeDomain',
     iconUrl: 'images/knowledge-base-logo/windscribe.png'
@@ -1961,7 +1961,7 @@ export const pluginBasicInfo = [
     schedule: 'plugin.hourly',
     desc: 'knowledgeBase.desc.vpnunlimited',
     iconUrl: 'images/knowledge-base-logo/vpnunlimited.png'
-  },
+  }
 ]
 
 export const builtInKnowledgeBaseBasicInfo = [
