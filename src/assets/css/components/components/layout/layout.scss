@@ -202,10 +202,10 @@
 }
 
 .vue-grid-layout{
-  transition: none;
+  transition: none !important;
 }
 .vue-grid-item{
-  transition: none;
+  transition: none !important;
 }
 #breadcrumbSelectDropdown::-webkit-scrollbar {
   width:10px;
