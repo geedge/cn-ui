@@ -108,7 +108,11 @@ export default {
     },
     downloadFile () {
       axios.get(this.downloadC2vUrl, { responseType: 'blob' }).then(res => {
-        const fileName = 'CN-' + this.licenseObject.supportID + '-license-apply.xml'
+        let fileName = ''
+        if(res.headers['content-disposition']) {
+          fileName = res.headers['content-disposition'].split(';')[1].split('filename=')[1]
+        }
+
         if (window.navigator.msSaveOrOpenBlob) {
           // 兼容ie11
           const blobObject = new Blob([res.data])
