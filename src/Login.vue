@@ -327,11 +327,11 @@ export default {
     align-items: flex-start;
     justify-content: center;
     height:40px;
+    width: 100%;
   }
   .license-file {
     display: flex;
     flex-direction: row;
-    height: 100%;
     align-items: center;
     justify-content: space-between;
     .license__btn {
@@ -352,7 +352,6 @@ export default {
 }
 :deep .el-form-item {
   width: 334px;
-  margin-bottom: 25px;
 }
 :deep .el-input__prefix {
   color: #6DBBFF;
