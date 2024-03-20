@@ -11,7 +11,7 @@
         <el-popover
             popper-class="my-popper-class"
             placement="top"
-            trigger="click"
+            trigger="hover"
             :content="$t('overall.switchToTag')"
         >
           <template #reference>
