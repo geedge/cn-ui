@@ -632,7 +632,7 @@
       uploadRecord () {
         this.showAddUpdateDialog = true
         this.updateObject.name = this.updateKnowledge.name
-        this.updateObject.label = this.updateKnowledge.label
+        this.updateObject.label = this.$t(this.updateKnowledge.label)
         this.updateObject.description = ''
       },
       getCurTabData () { // showEnable:true 为psiphon3的知识库，false为其它知识库
