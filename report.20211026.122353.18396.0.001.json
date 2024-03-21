@@ -1,0 +1,477 @@
+
+{
+  "header": {
+    "reportVersion": 1,
+    "event": "Allocation failed - JavaScript heap out of memory",
+    "trigger": "FatalError",
+    "filename": "report.20211026.122353.18396.0.001.json",
+    "dumpEventTime": "2021-10-26T12:23:53Z",
+    "dumpEventTimeStamp": "1635222233600",
+    "processId": 18396,
+    "cwd": "D:\\work\\git\\cn-ui",
+    "commandLine": [
+      "node",
+      "D:\\work\\git\\cn-ui\\node_modules\\.bin\\\\..\\@vue\\cli-service\\bin\\vue-cli-service.js",
+      "serve"
+    ],
+    "nodejsVersion": "v12.16.1",
+    "wordSize": 64,
+    "arch": "x64",
+    "platform": "win32",
+    "componentVersions": {
+      "node": "12.16.1",
+      "v8": "7.8.279.23-node.31",
+      "uv": "1.34.0",
+      "zlib": "1.2.11",
+      "brotli": "1.0.7",
+      "ares": "1.15.0",
+      "modules": "72",
+      "nghttp2": "1.40.0",
+      "napi": "5",
+      "llhttp": "2.0.4",
+      "http_parser": "2.9.3",
+      "openssl": "1.1.1d",
+      "cldr": "35.1",
+      "icu": "64.2",
+      "tz": "2019c",
+      "unicode": "12.1"
+    },
+    "release": {
+      "name": "node",
+      "lts": "Erbium",
+      "headersUrl": "https://nodejs.org/download/release/v12.16.1/node-v12.16.1-headers.tar.gz",
+      "sourceUrl": "https://nodejs.org/download/release/v12.16.1/node-v12.16.1.tar.gz",
+      "libUrl": "https://nodejs.org/download/release/v12.16.1/win-x64/node.lib"
+    },
+    "osName": "Windows_NT",
+    "osRelease": "10.0.19042",
+    "osVersion": "Windows 10 Home China",
+    "osMachine": "x86_64",
+    "cpus": [
+      {
+        "model": "AMD Ryzen 7 3750H with Radeon Vega Mobile Gfx  ",
+        "speed": 2296,
+        "user": 3533781,
+        "nice": 0,
+        "sys": 1982312,
+        "idle": 25793796,
+        "irq": 122203
+      },
+      {
+        "model": "AMD Ryzen 7 3750H with Radeon Vega Mobile Gfx  ",
+        "speed": 2296,
+        "user": 3821968,
+        "nice": 0,
+        "sys": 1195359,
+        "idle": 26292328,
+        "irq": 11265
+      },
+      {
+        "model": "AMD Ryzen 7 3750H with Radeon Vega Mobile Gfx  ",
+        "speed": 2296,
+        "user": 5263125,
+        "nice": 0,
+        "sys": 1957140,
+        "idle": 24089390,
+        "irq": 12046
+      },
+      {
+        "model": "AMD Ryzen 7 3750H with Radeon Vega Mobile Gfx  ",
+        "speed": 2296,
+        "user": 3243156,
+        "nice": 0,
+        "sys": 1116500,
+        "idle": 26950000,
+        "irq": 6640
+      },
+      {
+        "model": "AMD Ryzen 7 3750H with Radeon Vega Mobile Gfx  ",
+        "speed": 2296,
+        "user": 3271937,
+        "nice": 0,
+        "sys": 1309484,
+        "idle": 26728234,
+        "irq": 9687
+      },
+      {
+        "model": "AMD Ryzen 7 3750H with Radeon Vega Mobile Gfx  ",
+        "speed": 2296,
+        "user": 3237031,
+        "nice": 0,
+        "sys": 1125125,
+        "idle": 26947500,
+        "irq": 6296
+      },
+      {
+        "model": "AMD Ryzen 7 3750H with Radeon Vega Mobile Gfx  ",
+        "speed": 2296,
+        "user": 3508328,
+        "nice": 0,
+        "sys": 1125625,
+        "idle": 26675703,
+        "irq": 10140
+      },
+      {
+        "model": "AMD Ryzen 7 3750H with Radeon Vega Mobile Gfx  ",
+        "speed": 2296,
+        "user": 3204343,
+        "nice": 0,
+        "sys": 1134718,
+        "idle": 26970593,
+        "irq": 48890
+      }
+    ],
+    "networkInterfaces": [
+      {
+        "name": "以太网 3",
+        "internal": false,
+        "mac": "00:ff:4d:96:c8:e6",
+        "address": "fe80::e05a:ec05:1c7b:77c4",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 9
+      },
+      {
+        "name": "以太网 3",
+        "internal": false,
+        "mac": "00:ff:4d:96:c8:e6",
+        "address": "10.211.0.237",
+        "netmask": "255.255.255.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "WLAN",
+        "internal": false,
+        "mac": "4c:eb:bd:1a:11:95",
+        "address": "2409:8a00:8561:8eef:ad62:7169:a308:f88b",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "WLAN",
+        "internal": false,
+        "mac": "4c:eb:bd:1a:11:95",
+        "address": "2409:8a00:8561:8eef:51a6:977e:2a79:26ac",
+        "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "WLAN",
+        "internal": false,
+        "mac": "4c:eb:bd:1a:11:95",
+        "address": "fe80::ad62:7169:a308:f88b",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 10
+      },
+      {
+        "name": "WLAN",
+        "internal": false,
+        "mac": "4c:eb:bd:1a:11:95",
+        "address": "192.168.1.7",
+        "netmask": "255.255.255.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "Loopback Pseudo-Interface 1",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "::1",
+        "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "Loopback Pseudo-Interface 1",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "127.0.0.1",
+        "netmask": "255.0.0.0",
+        "family": "IPv4"
+      }
+    ],
+    "host": "LAPTOP-147PLTGT"
+  },
+  "javascriptStack": {
+    "message": "No stack.",
+    "stack": [
+      "Unavailable."
+    ]
+  },
+  "nativeStack": [
+    {
+      "pc": "0x00007ff67a0519f9",
+      "symbol": "std::basic_ostream<char,std::char_traits<char> >::operator<<+10873"
+    },
+    {
+      "pc": "0x00007ff67a055e1c",
+      "symbol": "std::basic_ostream<char,std::char_traits<char> >::operator<<+28316"
+    },
+    {
+      "pc": "0x00007ff67a054dd8",
+      "symbol": "std::basic_ostream<char,std::char_traits<char> >::operator<<+24152"
+    },
+    {
+      "pc": "0x00007ff67a1534cb",
+      "symbol": "v8::base::CPU::has_sse+38363"
+    },
+    {
+      "pc": "0x00007ff67a969f4e",
+      "symbol": "v8::Isolate::ReportExternalAllocationLimitReached+94"
+    },
+    {
+      "pc": "0x00007ff67a952021",
+      "symbol": "v8::SharedArrayBuffer::Externalize+833"
+    },
+    {
+      "pc": "0x00007ff67a81e57c",
+      "symbol": "v8::internal::Heap::EphemeronKeyWriteBarrierFromCode+1436"
+    },
+    {
+      "pc": "0x00007ff67a8297d0",
+      "symbol": "v8::internal::Heap::ProtectUnprotectedMemoryChunks+1312"
+    },
+    {
+      "pc": "0x00007ff67a8262f4",
+      "symbol": "v8::internal::Heap::PageFlagsAreConsistent+3204"
+    },
+    {
+      "pc": "0x00007ff67a81bb13",
+      "symbol": "v8::internal::Heap::CollectGarbage+1283"
+    },
+    {
+      "pc": "0x00007ff67a81a184",
+      "symbol": "v8::internal::Heap::AddRetainedMap+2452"
+    },
+    {
+      "pc": "0x00007ff67a83b36d",
+      "symbol": "v8::internal::Factory::NewFillerObject+61"
+    },
+    {
+      "pc": "0x00007ff67a5a0c51",
+      "symbol": "v8::internal::interpreter::JumpTableTargetOffsets::iterator::operator=+1665"
+    },
+    {
+      "pc": "0x00007ff67adb4ddd",
+      "symbol": "v8::internal::SetupIsolateDelegate::SetupHeap+546637"
+    },
+    {
+      "pc": "0x00000390bd8a6e47",
+      "symbol": ""
+    }
+  ],
+  "javascriptHeap": {
+    "totalMemory": 2163195904,
+    "totalCommittedMemory": 2163195904,
+    "usedMemory": 2143554816,
+    "availableMemory": 48335400,
+    "memoryLimit": 2197815296,
+    "heapSpaces": {
+      "read_only_space": {
+        "memorySize": 262144,
+        "committedMemory": 262144,
+        "capacity": 32808,
+        "used": 32808,
+        "available": 0
+      },
+      "new_space": {
+        "memorySize": 12582912,
+        "committedMemory": 12582912,
+        "capacity": 6284736,
+        "used": 833072,
+        "available": 5451664
+      },
+      "old_space": {
+        "memorySize": 1130250240,
+        "committedMemory": 1130250240,
+        "capacity": 1127363408,
+        "used": 1125383800,
+        "available": 1979608
+      },
+      "code_space": {
+        "memorySize": 2265088,
+        "committedMemory": 2265088,
+        "capacity": 1962976,
+        "used": 1962976,
+        "available": 0
+      },
+      "map_space": {
+        "memorySize": 8654848,
+        "committedMemory": 8654848,
+        "capacity": 6630240,
+        "used": 6630240,
+        "available": 0
+      },
+      "large_object_space": {
+        "memorySize": 1008558080,
+        "committedMemory": 1008558080,
+        "capacity": 1008167632,
+        "used": 1008167632,
+        "available": 0
+      },
+      "code_large_object_space": {
+        "memorySize": 622592,
+        "committedMemory": 622592,
+        "capacity": 544288,
+        "used": 544288,
+        "available": 0
+      },
+      "new_large_object_space": {
+        "memorySize": 0,
+        "committedMemory": 0,
+        "capacity": 6284736,
+        "used": 0,
+        "available": 6284736
+      }
+    }
+  },
+  "resourceUsage": {
+    "userCpuSeconds": 386.437,
+    "kernelCpuSeconds": 64.734,
+    "cpuConsumptionPercent": 61.0516,
+    "maxRss": 3299991552,
+    "pageFaults": {
+      "IORequired": 3971537,
+      "IONotRequired": 0
+    },
+    "fsActivity": {
+      "reads": 71050,
+      "writes": 12
+    }
+  },
+  "libuv": [
+  ],
+  "environmentVariables": {
+    "=D:": "D:\\work\\git\\cn-ui",
+    "ALLUSERSPROFILE": "C:\\ProgramData",
+    "APPDATA": "C:\\Users\\hyx\\AppData\\Roaming",
+    "BABEL_ENV": "development",
+    "ChocolateyInstall": "C:\\ProgramData\\chocolatey",
+    "ChocolateyLastPathUpdate": "132299563139222404",
+    "CLASSPATH": ".;C:\\Program Files\\Java\\jdk1.8.0_101\\lib\\dt.jar;C:\\Program Files\\Java\\jdk1.8.0_101\\lib\\tools.jar;",
+    "COLOR": "1",
+    "CommonProgramFiles": "C:\\Program Files\\Common Files",
+    "CommonProgramFiles(x86)": "C:\\Program Files (x86)\\Common Files",
+    "CommonProgramW6432": "C:\\Program Files\\Common Files",
+    "COMPUTERNAME": "LAPTOP-147PLTGT",
+    "ComSpec": "C:\\WINDOWS\\system32\\cmd.exe",
+    "dp0": "D:\\work\\git\\cn-ui\\node_modules\\.bin\\",
+    "DriverData": "C:\\Windows\\System32\\Drivers\\DriverData",
+    "EDITOR": "notepad.exe",
+    "HOME": "C:\\Users\\hyx",
+    "HOMEDRIVE": "C:",
+    "HOMEPATH": "\\Users\\hyx",
+    "INIT_CWD": "D:\\work\\git\\cn-ui",
+    "JAVA_HOME": "C:\\Program Files\\Java\\jdk1.8.0_101",
+    "JAVA_HOME7": "C:\\Program Files\\Java\\jdk1.7.0_80",
+    "JAVA_HOME8": "C:\\Program Files\\Java\\jdk1.8.0_101",
+    "LOCALAPPDATA": "C:\\Users\\hyx\\AppData\\Local",
+    "LOGONSERVER": "\\\\LAPTOP-147PLTGT",
+    "M2_HOME": "D:\\work\\apache-maven-3.6.3",
+    "MAVEN_HOME": "D:\\work\\apache-maven-3.6.3",
+    "NODE": "C:\\Program Files\\nodejs\\node.exe",
+    "NODE_ENV": "DEV",
+    "NODE_EXE": "C:\\Program Files\\nodejs\\\\node.exe",
+    "NPM_CLI_JS": "C:\\Users\\hyx\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npm-cli.js",
+    "npm_command": "run-script",
+    "npm_config_cache": "C:\\Users\\hyx\\AppData\\Local\\npm-cache",
+    "npm_config_globalconfig": "C:\\Users\\hyx\\AppData\\Roaming\\npm\\etc\\npmrc",
+    "npm_config_global_prefix": "C:\\Users\\hyx\\AppData\\Roaming\\npm",
+    "npm_config_init_module": "C:\\Users\\hyx\\.npm-init.js",
+    "npm_config_local_prefix": "D:\\work\\git\\cn-ui",
+    "npm_config_metrics_registry": "https://registry.npmjs.org/",
+    "npm_config_node_gyp": "C:\\Users\\hyx\\AppData\\Roaming\\npm\\node_modules\\npm\\node_modules\\node-gyp\\bin\\node-gyp.js",
+    "npm_config_noproxy": "",
+    "npm_config_prefix": "C:\\Users\\hyx\\AppData\\Roaming\\npm",
+    "npm_config_userconfig": "C:\\Users\\hyx\\.npmrc",
+    "npm_config_user_agent": "npm/8.1.0 node/v12.16.1 win32 x64 workspaces/false",
+    "npm_execpath": "C:\\Users\\hyx\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npm-cli.js",
+    "npm_lifecycle_event": "serve",
+    "npm_lifecycle_script": "vue-cli-service serve ",
+    "npm_node_execpath": "C:\\Program Files\\nodejs\\node.exe",
+    "npm_package_json": "D:\\work\\git\\cn-ui\\package.json",
+    "npm_package_name": "cn",
+    "npm_package_version": "0.1.0",
+    "NPM_PREFIX_NPM_CLI_JS": "C:\\Users\\hyx\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npm-cli.js",
+    "NUMBER_OF_PROCESSORS": "8",
+    "OneDrive": "C:\\Users\\hyx\\OneDrive",
+    "OneDriveConsumer": "C:\\Users\\hyx\\OneDrive",
+    "OS": "Windows_NT",
+    "PATH": "D:\\work\\git\\cn-ui\\node_modules\\.bin;D:\\work\\git\\node_modules\\.bin;D:\\work\\node_modules\\.bin;D:\\node_modules\\.bin;C:\\Users\\hyx\\AppData\\Roaming\\npm\\node_modules\\npm\\node_modules\\@npmcli\\run-script\\lib\\node-gyp-bin;D:\\work\\git\\cn-ui\\node_modules\\.bin;C:\\Program Files (x86)\\NetSarang\\Xftp 6\\;C:\\Program Files (x86)\\NetSarang\\Xshell 6\\;C:\\Program Files (x86)\\Common Files\\NetSarang;C:\\Program Files\\Java\\jdk1.8.0_101\\bin;C:\\Program Files\\Java\\jdk1.7.0_80\\bin;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\ProgramData\\chocolatey\\bin;C:\\Program Files\\nodejs\\;C:\\Program Files\\Git\\cmd;D:\\work\\apache-maven-3.6.3\\bin;D:\\work\\apache-maven-3.6.3\\bin;D:\\work\\project\\bifang-tsg\\20210107-Apache Tika\\apache-zookeeper-3.6\\apache-zookeeper-3.6.2-bin\\bin;C:\\Python27;C:\\Users\\hyx\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\hyx\\AppData\\Roaming\\npm",
+    "PATHEXT": ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JSE;.WSF;.WSH;.MSC",
+    "PROCESSOR_ARCHITECTURE": "AMD64",
+    "PROCESSOR_IDENTIFIER": "AMD64 Family 23 Model 24 Stepping 1, AuthenticAMD",
+    "PROCESSOR_LEVEL": "23",
+    "PROCESSOR_REVISION": "1801",
+    "ProgramData": "C:\\ProgramData",
+    "ProgramFiles": "C:\\Program Files",
+    "ProgramFiles(x86)": "C:\\Program Files (x86)",
+    "ProgramW6432": "C:\\Program Files",
+    "PROMPT": "$P$G",
+    "PSModulePath": "C:\\Program Files\\WindowsPowerShell\\Modules;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules",
+    "PUBLIC": "C:\\Users\\Public",
+    "SystemDrive": "C:",
+    "SystemRoot": "C:\\WINDOWS",
+    "TEMP": "C:\\Users\\hyx\\AppData\\Local\\Temp",
+    "TERMINAL_EMULATOR": "JetBrains-JediTerm",
+    "TMP": "C:\\Users\\hyx\\AppData\\Local\\Temp",
+    "USERDOMAIN": "LAPTOP-147PLTGT",
+    "USERDOMAIN_ROAMINGPROFILE": "LAPTOP-147PLTGT",
+    "USERNAME": "hyx",
+    "USERPROFILE": "C:\\Users\\hyx",
+    "VUE_CLI_ENTRY_FILES": "[\"D:\\\\work\\\\git\\\\cn-ui\\\\src\\\\main.js\"]",
+    "VUE_CLI_TRANSPILE_BABEL_RUNTIME": "true",
+    "WEBPACK_DEV_SERVER": "true",
+    "windir": "C:\\WINDOWS",
+    "ZOOKEEPER_HOME": "D:\\work\\project\\bifang-tsg\\20210107-Apache Tika\\apache-zookeeper-3.6\\apache-zookeeper-3.6.2-bin",
+    "_prog": "node",
+    "__COMPAT_LAYER": "RunAsAdmin",
+    "__INTELLIJ_COMMAND_HISTFILE__": "C:\\Users\\hyx\\.WebStorm2019.1\\config\\terminal\\history\\history-8"
+  },
+  "sharedObjects": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "C:\\WINDOWS\\SYSTEM32\\ntdll.dll",
+    "C:\\WINDOWS\\System32\\KERNEL32.DLL",
+    "C:\\WINDOWS\\System32\\KERNELBASE.dll",
+    "C:\\WINDOWS\\SYSTEM32\\apphelp.dll",
+    "C:\\WINDOWS\\System32\\WS2_32.dll",
+    "C:\\WINDOWS\\System32\\RPCRT4.dll",
+    "C:\\WINDOWS\\System32\\PSAPI.DLL",
+    "C:\\WINDOWS\\System32\\ADVAPI32.dll",
+    "C:\\WINDOWS\\System32\\msvcrt.dll",
+    "C:\\WINDOWS\\System32\\sechost.dll",
+    "C:\\WINDOWS\\System32\\USER32.dll",
+    "C:\\WINDOWS\\System32\\win32u.dll",
+    "C:\\WINDOWS\\System32\\GDI32.dll",
+    "C:\\WINDOWS\\System32\\gdi32full.dll",
+    "C:\\WINDOWS\\System32\\msvcp_win.dll",
+    "C:\\WINDOWS\\System32\\ucrtbase.dll",
+    "C:\\WINDOWS\\System32\\CRYPT32.dll",
+    "C:\\WINDOWS\\SYSTEM32\\dbghelp.dll",
+    "C:\\WINDOWS\\System32\\bcrypt.dll",
+    "C:\\WINDOWS\\SYSTEM32\\IPHLPAPI.DLL",
+    "C:\\WINDOWS\\SYSTEM32\\USERENV.dll",
+    "C:\\WINDOWS\\SYSTEM32\\WINMM.dll",
+    "C:\\WINDOWS\\System32\\IMM32.DLL",
+    "C:\\WINDOWS\\SYSTEM32\\powrprof.dll",
+    "C:\\WINDOWS\\SYSTEM32\\UMPDC.dll",
+    "C:\\WINDOWS\\SYSTEM32\\CRYPTBASE.DLL",
+    "C:\\WINDOWS\\system32\\uxtheme.dll",
+    "C:\\WINDOWS\\System32\\combase.dll",
+    "C:\\WINDOWS\\system32\\mswsock.dll",
+    "C:\\WINDOWS\\SYSTEM32\\kernel.appcore.dll",
+    "C:\\WINDOWS\\System32\\bcryptprimitives.dll",
+    "C:\\WINDOWS\\system32\\napinsp.dll",
+    "C:\\WINDOWS\\system32\\pnrpnsp.dll",
+    "C:\\WINDOWS\\system32\\wshbth.dll",
+    "C:\\WINDOWS\\system32\\NLAapi.dll",
+    "C:\\WINDOWS\\SYSTEM32\\DNSAPI.dll",
+    "C:\\WINDOWS\\System32\\NSI.dll",
+    "C:\\WINDOWS\\System32\\winrnr.dll",
+    "C:\\WINDOWS\\SYSTEM32\\dhcpcsvc6.DLL",
+    "C:\\WINDOWS\\SYSTEM32\\dhcpcsvc.DLL",
+    "\\\\?\\D:\\work\\git\\cn-ui\\node_modules\\node-sass\\vendor\\win32-x64-72\\binding.node"
+  ]
+}
