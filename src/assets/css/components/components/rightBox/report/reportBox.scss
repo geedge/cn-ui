@@ -142,6 +142,9 @@
     //  border: 1px solid #dcdfe6;
     //  border-radius: 2px 0 0 2px;
     //}
+    .el-select__prefix {
+      line-height:30px;
+    }
     .el-select__prefix, .el-input__prefix {
       left: 0;
       background-color: #f5f7fa;
