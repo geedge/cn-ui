@@ -64,7 +64,7 @@
           <div class="header__title">{{$t('overall.add')}}</div>
           <div class="header__operations">
             <div class="header__operation header__operation--cancel" @click="cancelApp" test-id="cancel-app">{{$t('overall.cancel')}}</div>
-            <div class="header__operation header__operation--save" @click="save">{{$t('overall.save')}}</div>
+            <div class="header__operation header__operation--save" :class="{'no-records':toSaveApp.length === 0}" @click="save">{{$t('overall.save')}}</div>
           </div>
         </div>
         <div class="add-app__body">
@@ -466,7 +466,7 @@ export default {
     },
     addApp (pageNo, val, show, index) {
       if (!index) {
-        index = '0'
+        index = this.appTypeTab
       }
       this.showAddApp = true
       const params = {
