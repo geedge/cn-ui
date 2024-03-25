@@ -581,11 +581,15 @@ export default {
       let subscriberFlag = false
       subscriberList.forEach(item => {
         if (params.q.indexOf(item) > -1) {
-          this.newFilterData = []
           subscriberFlag = true
         }
       })
       if (subscriberFlag) {
+        this.newFilterData.forEach(item => {
+          item.loading = false
+          item.firstLoad = false
+          item.data = []
+        })
         return true
       }
       const queryParams = {
@@ -643,6 +647,7 @@ export default {
           }).finally(() => {
             this.newFilterData[index].loading = false
             this.newFilterData[index].firstLoad = false
+            console.log('查看loading', this.newFilterData)
           })
         }
       })

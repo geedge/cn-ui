@@ -11,9 +11,9 @@
       <div class="cn-entity__row">
         <!--标签-->
         <div class="cn-entity__header" style="display: flex;">
-          <template v-if="entityData.entityType" v-high-light="keywordList">
-            <span v-if="entityData.entityType==='subscriber_id'">{{ $_.get(entityData, 'phone_number', 'Unknown') || 'Unknown' }}</span>
-            <span v-else>{{ entityData.entityValue || 'Unknown' }}</span>
+          <template v-if="entityData.entityType">
+            <span v-if="entityData.entityType==='subscriber_id'" v-high-light="keywordList">{{ entityData.phone_number }}</span>
+            <span v-else v-high-light="keywordList">{{ entityData.entityValue || 'Unknown' }}</span>
           </template>
           <span v-show="entityData.isRelated" class="cn-entity__header-icon">
             <el-popover
