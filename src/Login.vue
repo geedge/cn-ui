@@ -84,7 +84,7 @@ export default {
       username: '',
       pin: '',
       language: '',
-      licenseStatus: 1,
+      licenseStatus: 0,
       licenseStatusErrMsg: '',
       downloadC2vUrl: api.downloadLicenseC2v,
       supportID: ''
