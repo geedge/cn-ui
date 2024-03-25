@@ -455,9 +455,10 @@ if (openMock) {
     const result = {
       pageNo: 1,
       pageSize: 10,
-      total: 3,
+      total: 4,
       list: [
-        { entityValue: '192.168.12.34', entityType: 'ip' },
+        { entityValue: 'test123987', entityType: 'subscriber_id' },
+        { entityValue: '172.217.24.66', entityType: 'ip' },
         { entityValue: 'gdbzkz.com', entityType: 'domain' },
         { entityValue: 'qqvideo', entityType: 'app' }
       ]
@@ -525,6 +526,17 @@ if (openMock) {
             appCompany: 'tencent',
             appCompanyCategory: '互联网'
           }
+        }
+        break
+      }
+      case ('subscriber_id'): {
+        result = {
+          phone_number: '1568912455',
+          imei: 'r45ty5454fh',
+          imsi: 'eere2545t',
+          apn: 'xxx站点',
+          subscriber_longitude: 116.370042,
+          subscriber_latitude: 39.944283
         }
         break
       }
@@ -719,7 +731,7 @@ if (openMock) {
     }
   })
   Mock.mock(new RegExp(`${urlAndVersion}/entity/explorer/overview/active.*`), 'get', function (requestObj) {
-    const data = { domainCount: 755, ipCount: 8373, appCount: 263 }
+    const data = { domainCount: 755, ipCount: 8373, appCount: 263, subscriberCount: 263 }
 
     return {
       msg: 'success',
@@ -737,12 +749,55 @@ if (openMock) {
     }
   })
   Mock.mock(new RegExp(`${urlAndVersion}/entity/explorer/overview/total.*`), 'get', function (requestObj) {
-    const data = { domainCount: 7686274, ipCount: 2169957, appCount: 856 }
+    const data = { domainCount: 7686274, ipCount: 2169957, appCount: 856, subscriberCount: 856 }
 
     return {
       msg: 'success',
       code: 200,
       data: data
+    }
+  })
+  Mock.mock(new RegExp(`${urlAndVersion}/entity/explorer/detail/traffic/throughput/subscriber.*`), 'get', function (requestObj) {
+    const arr = [{ legend: 'sentRate' }, { legend: 'rate' }, { legend: 'receivedRate' }]
+
+    const endTime = JSON.parse(getQuery(requestObj.url).endTime)
+    let step = 0
+    arr.forEach(item => {
+      let startTime = JSON.parse(getQuery(requestObj.url).startTime)
+      step = (endTime - startTime) / 60 // 每条数据的时间间隔
+      const max = 2975
+      const min = 0
+      const values = []
+      for (let i = 0; i < step; i++) {
+        const random = Math.floor(Math.random() * (max - min) + min)
+        values.push([startTime, random])
+        startTime += step
+      }
+      item.values = values
+      item.aggregation = { first: 0, last: 0, avg: '602.64', p50: '0.0', p90: '1852.0', max: '5256.0' }
+    })
+
+    const data = {
+      result: arr,
+      resultType: 'matrix'
+    }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: data
+    }
+  })
+  Mock.mock(new RegExp(`${urlAndVersion}/entity/explorer/detail/subscriber/relate.*`), 'get', function (requestObj) {
+    const result = {
+      total: 5,
+      result: ['appName1', 'appName2', 'appName3', 'appName4', 'appName5', 'appName6', 'appName7', 'appName1', 'appName2', 'appName3', 'appName4', 'appName5', 'appName6', 'appName7']
+    }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: result
     }
   })
 }
@@ -773,6 +828,9 @@ const getEntityType = (url) => {
   if (url.indexOf('/app?') > -1) {
     entityType = 'app'
   }
+  if (url.indexOf('/subscriber_id?') > -1) {
+    entityType = 'subscriber_id'
+  }
   return entityType
 }
 
@@ -786,6 +844,9 @@ const getRelateType = (url) => {
   }
   if (url.indexOf('/apps?') > -1) {
     entityType = 'app'
+  }
+  if (url.indexOf('/subscriber_id?') > -1) {
+    entityType = 'subscriber_id'
   }
   return entityType
 }

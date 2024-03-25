@@ -51,6 +51,10 @@ export default {
           className = 'cn-icon cn-icon-app2'
           break
         }
+        case ('subscriber_id'): {
+          className = 'cn-icon cn-icon-pedestrian'
+          break
+        }
         default: break
       }
       return className
@@ -264,6 +268,10 @@ export default {
             this.performanceEventUrl = api.entity.entityList.appEventPerformance
             break
           }
+          case 'subscriber_id': {
+            this.trafficUrl = api.entity.entityList.subscriberThroughput
+            break
+          }
           default:
             break
         }
@@ -348,8 +356,10 @@ export default {
     this.initUrl()
     setTimeout(() => {
       this.queryEntityDetailTraffic()
-      this.queryNetworkQuantity()
-      this.queryEventNum()
+      if (this.entity.entityType !== 'subscriber_id') {
+        this.queryNetworkQuantity()
+        this.queryEventNum()
+      }
     })
   },
   beforeUnmount () {

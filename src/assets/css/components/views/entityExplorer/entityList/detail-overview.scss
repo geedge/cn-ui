@@ -166,8 +166,11 @@
               min-width: 90px !important;
             }
           }
+          .row__content-sent {
+            margin-right: 39px;
+          }
           .row__content-accept {
-            margin-left: 39px;
+            //margin-left: 39px;
           }
           .row__charts-msg {
             width: auto;
@@ -182,6 +185,11 @@
             width: 60px;
             //padding-left: 5px;
           }
+        }
+        .row__contents-subscriber {
+          display: flex;
+          width: calc(100% - 688px); // 分辨率过小时换行
+          flex-wrap: wrap;
         }
         .row__charts {
           width:80px;

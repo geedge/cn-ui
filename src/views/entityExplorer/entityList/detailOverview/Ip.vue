@@ -87,7 +87,7 @@
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.throughput')}}</div>
         <div class="row__contents">
-          <div class="row__content">
+          <div class="row__content row__content-sent">
             <div class="row__charts-msg">{{$t('overall.sent')}}:
               {{valueToRangeValue(entityData.bytesSentRate, unitTypes.bps).join(' ') !== '- ' ? valueToRangeValue(entityData.bytesSentRate, unitTypes.bps).join(' ') : '-'}}
             </div>

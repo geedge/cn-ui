@@ -313,15 +313,18 @@ export const api = {
       domainBasicInfo: apiVersion + '/entity/explorer/detail/basic/domain', // Domain实体响应结果
       ipBasicInfo: apiVersion + '/entity/explorer/detail/basic/ip', // ip实体响应
       appBasicInfo: apiVersion + '/entity/explorer/detail/basic/app', // app实体响应
+      subscriberBasicInfo: apiVersion + '/entity/explorer/detail/basic/subscriber', // subscriber实体响应
       domainTags: apiVersion + '/entity/explorer/detail/kb/intelligence/tag/domain', // Domain实体标签响应结果
       ipTags: apiVersion + '/entity/explorer/detail/kb/intelligence/tag/ip', // ip实体标签响应结果
       appTags: apiVersion + '/entity/explorer/detail/kb/intelligence/tag/app', // app实体标签响应结果
       domainThroughput: apiVersion + '/entity/explorer/detail/traffic/throughput/domain', // 实体流量信息
       ipThroughput: apiVersion + '/entity/explorer/detail/traffic/throughput/ip', // 实体流量信息
       appThroughput: apiVersion + '/entity/explorer/detail/traffic/throughput/app', // 实体流量信息
+      subscriberThroughput: apiVersion + '/entity/explorer/detail/traffic/throughput/subscriber', // 实体流量信息
       domainPerformance: apiVersion + '/entity/explorer/detail/traffic/performance/domain', // domain网络质量
       ipPerformance: apiVersion + '/entity/explorer/detail/traffic/performance/ip', // ip网络质量
       appPerformance: apiVersion + '/entity/explorer/detail/traffic/performance/app', // app网络质量
+      subscriberPerformance: apiVersion + '/entity/explorer/detail/traffic/performance/subscriber', // subscriber网络质量
       domainRelatedApp: apiVersion + '/entity/explorer/detail/domain/relate/apps', // 域名相关app
       domainRelatedIp: apiVersion + '/entity/explorer/detail/domain/relate/ips', // 域名相关ip
       appRelatedDomain: apiVersion + '/entity/explorer/detail/app/relate/domains', // app相关域名
@@ -349,7 +352,8 @@ export const api = {
       appEventPerformance: apiVersion + '/entity/explorer/detail/event/performance/app', // app服务质量详情
       entityActive: apiVersion + '/entity/explorer/overview/active', // entity首页active数据概览
       entityNew: apiVersion + '/entity/explorer/overview/new', // entity首页new数据概览
-      entityTotal: apiVersion + '/entity/explorer/overview/total' // entity首页total数据概览
+      entityTotal: apiVersion + '/entity/explorer/overview/total', // entity首页total数据概览
+      subscriberRelatedApp: apiVersion + '/entity/explorer/detail/subscriber/relate/apps' // subscriber相关app
     }
   },
   location: {
