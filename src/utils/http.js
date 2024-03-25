@@ -31,7 +31,7 @@ axios.interceptors.request.use(config => {
 err => Promise.reject(err)
 )
 const accountErrorCode = [518003, 518004, 518005, 518006, 518007, 518008] // 账号锁定等
-const licenceErrorCode = [711001]
+const licenceErrorCode = [715001]
 
 // 若get请求的url中带问号，则将url上的参数截取，改为对象形式传参
 axios.interceptors.request.use(
