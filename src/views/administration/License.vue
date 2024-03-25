@@ -95,6 +95,7 @@ export default {
       }
     },
     uploadSuccess (response) {
+      this.initData()
       this.$message.success(this.$t('tip.success'))
     },
     uploadError (error) {
