@@ -124,10 +124,14 @@ export default {
   },
   methods: {
     showDetail () {
+      let entityType = _.cloneDeep(this.entityData.entityType)
+      if (entityType === 'subscriber_id') {
+        entityType = entityType.slice(0, -3)
+      }
       const { href } = this.$router.resolve({
         path: '/entity/detail',
         query: {
-          entityType: this.entityData.entityType,
+          entityType: entityType,
           entityName: this.entityData.entityValue,
           range: this.timeFilter.dateRangeValue
         }
