@@ -13,11 +13,10 @@
             <span @click="drillDownData(app.type, app.name)" :test-id="`name${index}`">{{app.name}}</span>
           </div>
           <div class="app-card-title-more">
-            <span v-show="app.showMore"><i class="cn-icon cn-icon-more-dark" @mouseenter="mouseenterMore(app)" test-id="mouseenter-dark"></i></span>
-            <span class="app-card-title-more-delete" @click="del(app, index)" v-show="app.moreOptions" @mouseleave="mouseleaveMore(app)" test-id="mouseleave-more"><i class="cn-icon cn-icon-delete"></i>{{$t('overall.delete')}}</span>
+            <span v-show="app.showMore" @click="del(app, index)"><i class="cn-icon cn-icon-delete" test-id="mouseenter-dark"></i></span>
           </div>
         </div>
-        <div class="app-card__bodys">
+        <div class="app-card__bodies">
           <div class="app-card__body">
             <div class="app-card__body-content">
               <div class="app-card__body-content-value">
@@ -697,20 +696,6 @@ export default {
     resize () {
       this.myChart.forEach(t => {
         t.resize()
-      })
-    },
-    mouseenterMore (app) {
-      this.appData.forEach(t => {
-        if (t.name === app.name && t.type === app.type) {
-          t.moreOptions = true
-        }
-      })
-    },
-    mouseleaveMore (app) {
-      this.appData.forEach(t => {
-        if (t.name === app.name && t.type === app.type) {
-          t.moreOptions = false
-        }
       })
     },
     mouseenter (app) {
