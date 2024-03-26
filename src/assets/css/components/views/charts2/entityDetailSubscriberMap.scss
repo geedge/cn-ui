@@ -120,6 +120,15 @@
     }
     .entity-subscriber-map {
       width: 100%;
+      .maplibregl-ctrl-attrib-button {
+        opacity: 0.3;
+      }
+      .maplibregl-ctrl-attrib-button:focus, .maplibregl-ctrl-group button:focus {
+        box-shadow: 0 0 2px 2px #A9CAE1;
+      }
+      .maplibregl-ctrl-attrib a {
+        color: #ababab;
+      }
     }
     .panel-chart__no-data {
       height: calc(100% - 46px);
