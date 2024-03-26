@@ -647,7 +647,6 @@ export default {
           }).finally(() => {
             this.newFilterData[index].loading = false
             this.newFilterData[index].firstLoad = false
-            console.log('查看loading', this.newFilterData)
           })
         }
       })
@@ -675,7 +674,7 @@ export default {
         } else {
           this.$message.error(response.data.message)
         }
-      }).catch((e) => {
+      }).catch(() => {
         this.listData = []
       }).finally(() => {
         this.listLoading = false

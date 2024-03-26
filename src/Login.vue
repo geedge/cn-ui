@@ -176,7 +176,7 @@ export default {
       if (file.status !== 'ready') return
       if (!_.endsWith(file.name, '.xml')) {
         this.fileList = []
-        this.$message.error('Only support '+ this.fileTypeLimit + ' files')
+        this.$message.error('Only support ' + this.fileTypeLimit + ' files')
       } else {
         this.fileList = fileList.slice(-1)
         this.$refs.licenseUpload.submit()

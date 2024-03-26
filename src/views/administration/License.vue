@@ -51,6 +51,7 @@ import { storageKey } from '@/utils/constants'
 import axios from 'axios'
 import { ref } from 'vue'
 import { dateFormat } from '@/utils/date-util'
+import _ from 'lodash'
 
 export default {
   name: 'License',
@@ -110,7 +111,7 @@ export default {
     downloadFile () {
       axios.get(this.downloadC2vUrl, { responseType: 'blob' }).then(res => {
         let fileName = ''
-        if(res.headers['content-disposition']) {
+        if (res.headers['content-disposition']) {
           fileName = res.headers['content-disposition'].split(';')[1].split('filename=')[1]
         }
 
