@@ -87,7 +87,7 @@
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.throughput')}}</div>
         <div class="row__contents">
-          <div class="row__content">
+          <div class="row__content row__content-sent">
             <div class="row__charts-msg">{{$t('overall.sent')}}:
               {{valueToRangeValue(entityData.bytesSentRate, unitTypes.bps).join(' ') !== '- ' ? valueToRangeValue(entityData.bytesSentRate, unitTypes.bps).join(' ') : '-'}}
             </div>
@@ -409,7 +409,7 @@ export default {
     getMillisecond,
     dateFormatByAppearance,
     getQueryParams (dateRangeValue) {
-      if (dateRangeValue && (!this.timeFilter.startTime || !this.timeFilter.endTime)) {
+      if (dateRangeValue) {
         // range取 config.js 中配置的值
         const { startTime, endTime } = getNowTime(dateRangeValue)
         return {

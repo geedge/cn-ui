@@ -84,7 +84,7 @@ export default {
       username: '',
       pin: '',
       language: '',
-      licenseStatus: 1,
+      licenseStatus: 0,
       licenseStatusErrMsg: '',
       downloadC2vUrl: api.downloadLicenseC2v,
       supportID: ''
@@ -184,7 +184,7 @@ export default {
     },
     uploadSuccess (response) {
       this.$message.success('Success')
-      this.licenseStatus = 1
+      this.licenseStatus = 0
     },
     uploadError (error) {
       let errorMsg
@@ -193,6 +193,7 @@ export default {
       } else {
         errorMsg = 'error'
       }
+      this.licenseStatus = 1
       this.$message.error('Upload failed: ' + errorMsg)
     },
     checkLicenseStatus () {

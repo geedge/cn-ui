@@ -9,6 +9,9 @@
     <template v-else-if="entity.entityType === 'app'">
       <app-overview :entity="entity" :time-filter="timeFilter" :keywordList="keywordList" @reloadEntity="getEntity" @eventNum="getEventNum"></app-overview>
     </template>
+    <template v-else-if="entity.entityType === 'subscriber_id'">
+      <subscriber-overview :entity="entity" :time-filter="timeFilter" :keywordList="keywordList" @reloadEntity="getEntity" @eventNum="getEventNum"></subscriber-overview>
+    </template>
   </div>
 </template>
 
@@ -16,6 +19,7 @@
 import App from './App'
 import Domain from './Domain'
 import Ip from './Ip'
+import Subscriber from './Subscriber'
 
 export default {
   /* 详情概览 */
@@ -28,7 +32,8 @@ export default {
   components: {
     'domain-overview': Domain,
     'app-overview': App,
-    'ip-overview': Ip
+    'ip-overview': Ip,
+    'subscriber-overview': Subscriber
   },
   methods: {
     getEntity (data) {

@@ -76,8 +76,8 @@
         font-size: 16px;
         padding-bottom: 3px;
         color: #333333;
-        .cn-entity__header-title {
-          margin-right: 10px;
+        .cn-entity__header-icon {
+          margin-left: 10px;
         }
         .entity-related-entity {
           font-size: 12px;
@@ -222,7 +222,12 @@
       }
     }
 
+    .show-detail__block {
+      display: flex;
+      align-items: center;
+    }
     .new-show-detail {
+      height: 52px;
       flex-shrink: 0;
       padding: 0 30px;
       font-size: 12px;

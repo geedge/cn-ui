@@ -20,7 +20,7 @@ export default {
       axios.get(relationshipUrlOne, { params: this.getQueryParams(DEFAULT_TIME_FILTER_RANGE.entity.relatedEntity) }).then(response => {
         if (response.status === 200) {
           const relationshipDataOne = []
-          if (response.data.data.result.length > 0) {
+          if (response.data.data.result && response.data.data.result.length > 0) {
             response.data.data.result.forEach(item => {
               relationshipDataOne.push({ value: item, show: true })
             })
@@ -36,7 +36,7 @@ export default {
       axios.get(relationshipUrlTow, { params: this.getQueryParams(DEFAULT_TIME_FILTER_RANGE.entity.relatedEntity) }).then(response => {
         if (response.status === 200) {
           const relationshipDataTwo = []
-          if (response.data.data.result.length > 0) {
+          if (response.data.data.result && response.data.data.result.length > 0) {
             response.data.data.result.forEach(item => {
               relationshipDataTwo.push({ value: item, show: true })
             })

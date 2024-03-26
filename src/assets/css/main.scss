@@ -36,11 +36,11 @@ $--border-color: #E2E5EC;
 @import "common/cover-element-plus"; // 覆盖新版elemen-plus样式
 
 .dark {
-  $--theme: dark;
-  @import './themes/theme-dark.scss'; // 加载主题变量
-  @import './components/index'; // 加载cn组件样式
-  @import './common/index.scss'; // 加载通用样式
-  .fixed-button:hover {
-    background: #40474b !important;
-  }
+  //$--theme: dark;
+  //@import './themes/theme-dark.scss'; // 加载主题变量
+  //@import './components/index'; // 加载cn组件样式
+  //@import './common/index.scss'; // 加载通用样式
+  //.fixed-button:hover {
+  //  background: #40474b !important;
+  //}
 }

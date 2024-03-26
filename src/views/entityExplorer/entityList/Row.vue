@@ -11,8 +11,11 @@
       <div class="cn-entity__row">
         <!--标签-->
         <div class="cn-entity__header" style="display: flex;">
-          <span class="cn-entity__header-title" v-high-light="keywordList">{{ entityData.entityValue || 'Unknown' }}</span>
-          <span v-show="entityData.isRelated">
+          <template v-if="entityData.entityType">
+            <span v-if="entityData.entityType==='subscriber_id'" v-high-light="keywordList">{{ entityData.phone_number }}</span>
+            <span v-else v-high-light="keywordList">{{ entityData.entityValue || 'Unknown' }}</span>
+          </template>
+          <span v-show="entityData.isRelated" class="cn-entity__header-icon">
             <el-popover
                 popper-class="my-popper-class"
                 placement="right"
@@ -89,6 +92,18 @@
                   <span class="row-item-value">{{ entityData.category ? appRisk(entityData.category.appRisk) : '-' }}</span>
                 </div>
               </template>
+              <template v-else-if="entityData.entityType === 'subscriber_id'">
+                <div class="basic-info__item">
+                  <i class="cn-icon cn-icon-account-info"></i>
+                  <span class="row-item-label">{{ $t('entity.subscriberId') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value" v-high-light="keywordList">{{ $_.get(entityData, 'entityValue', '-') || '-' }}</span>
+                </div>
+                <div class="basic-info__item">
+                  <i class="cn-icon cn-icon-location"></i>
+                  <span class="row-item-label">{{ $t('overall.location') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value">{{$_.get(entityData, 'subscriber_longitude', '-') || '-'}},&nbsp;{{$_.get(entityData, 'subscriber_latitude', '-') || '-'}}</span>
+                </div>
+              </template>
               <!-- 通用字段 -->
               <div class="basic-info__item">
                 <div class="item__box">
@@ -102,21 +117,7 @@
                   <!-- 曲线-->
                   <div class="item-box-loading">
                     <loading :loading="loading" size="small"></loading>
-                    <div
-                        class="row__charts"
-                        :id="`entityDetailSend${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'domain'">
-                    </div>
-                    <div
-                        class="row__charts"
-                        :id="`entityDetailSend${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'app'">
-                    </div>
-                    <div
-                        class="row__charts"
-                        :id="`entityDetailSend${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'ip'">
-                    </div>
+                    <div class="row__charts" :id="`entityDetailSend${entityType}${listMode}`"></div>
                   </div>
                 </div>
               </div>
@@ -130,27 +131,13 @@
                   </span>
                   <div class="item-box-loading">
                     <loading :loading="loading" size="small"></loading>
-                    <div
-                        class="row__charts"
-                        :id="`entityDetailReceived${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'domain'">
-                    </div>
-                    <div
-                        class="row__charts"
-                        :id="`entityDetailReceived${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'app'">
-                    </div>
-                    <div
-                        class="row__charts"
-                        :id="`entityDetailReceived${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'ip'">
-                    </div>
+                    <div class="row__charts" :id="`entityDetailReceived${entityType}${listMode}`"></div>
                   </div>
                 </div>
               </div>
 
               <!--score分数-->
-              <div class="basic-info__item" style="display: flex;align-items: center;">
+              <div class="basic-info__item" style="display: flex;align-items: center;" v-if="entityData.entityType !== 'subscriber_id'">
                 <i class="cn-icon cn-icon-Score"></i>
                 <div class="row-item-label">
                   <span class="row-item-label">{{ $t('network.score') }}&nbsp;:&nbsp;&nbsp;</span>
@@ -181,9 +168,11 @@
           </div>
         </div>
       </div>
-      <div class="new-show-detail">
-        <div @click="showDetail"><i class="cn-icon cn-icon-detail"></i>{{ $t('overall.detail') }} ></div>
-        <div @click="showGraph"><i class="cn-icon cn-icon-graph"></i>{{ $t('entities.graph') }} ></div>
+      <div class="show-detail__block">
+        <div class="new-show-detail">
+          <div @click="showDetail"><i class="cn-icon cn-icon-detail"></i>{{ $t('overall.detail') }} ></div>
+          <div @click="showGraph" v-if="entity.entityType !== 'subscriber_id'"><i class="cn-icon cn-icon-graph"></i>{{ $t('entities.graph') }} ></div>
+        </div>
       </div>
       <el-collapse-transition>
         <div class="cn-entity__detail-overview" v-if="!isCollapse">
@@ -275,6 +264,10 @@ export default {
         }
         case ('app'): {
           url = api.entity.entityList.appBasicInfo
+          break
+        }
+        case ('subscriber_id'): {
+          url = api.entity.entityList.subscriberBasicInfo
           break
         }
       }

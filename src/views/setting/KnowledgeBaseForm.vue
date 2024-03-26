@@ -81,7 +81,7 @@
           >
             <i class="cn-icon cn-icon-upload2"></i>
             <div class="el-upload__text">
-              <div>{{ $t('knowledgeBase.dropFileHereOr') }}<em>{{ $t('knowledgeBase.clickToUpload') }}</em></div>
+              <div ref="uploadButton">{{ $t('knowledgeBase.dropFileHereOr') }}<em>{{ $t('knowledgeBase.clickToUpload') }}</em></div>
               <div class="upload-tip">{{ $t('knowledgeBase.supportCsv') }}<span @click.stop="downloadTemplate">{{$t('knowledgeBase.downloadTemplate')}}</span></div>
             </div>
           </el-upload>
@@ -664,15 +664,10 @@ export default {
             customClass: 'del-model'
           }).then(() => {
             this.isClick = true
-            self.$refs.upload.$refs.uploadRef.handleClick()
+            document.getElementsByName('file')[0].click()
           }).catch(() => {}).finally(() => {
             this.isShowUploadTips = false
           })
-        } else {
-          this.isClick = true
-          this.isShowUploadTips = false
-          self.$refs.upload.submit()
-          self.$refs.upload.$refs.uploadRef.handleClick()
         }
       }
     },
@@ -1196,10 +1191,15 @@ export default {
     const div = document.getElementsByClassName('el-upload-dragger')[0]
     const self = this
     div.addEventListener('click', function (event) {
-      this.isClick = true
-      event.stopPropagation()
-      event.preventDefault()
-      self.uploadTip(event)
+      self.isClick = true
+      if (!self.isShowUploadTips && self.importedData.length === 0) {
+        self.isClick = true
+        self.isShowUploadTips = false
+      } else {
+        event.stopPropagation()
+        event.preventDefault()
+        self.uploadTip(event)
+      }
     })
     if (this.knowledgeBaseId) {
       this.stepHeights[2] = itemListHeight.hasData// 修改的时候一直是478

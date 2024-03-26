@@ -46,7 +46,8 @@
             <span>{{ summaryCount.totalCount }}&nbsp;</span>{{$t('overall.results')}}，IP<span class="margin-r-3"></span>
             <span>{{ summaryCount.ipCount }}</span>，{{$t('overall.domain')}}<span class="margin-r-3"></span>
             <span>{{ summaryCount.domainCount }}</span>，APP<span class="margin-r-3"></span>
-            <span>{{ summaryCount.appCount }}</span>
+            <span>{{ summaryCount.appCount }}</span>，{{$t('overall.subscriber')}}<span class="margin-r-3"></span>
+            <span>{{ summaryCount.subscriberCount }}</span>
 
             <span class="entity-hide-entity" v-if="q">
 <!--              <span v-if="listData.length !== 0">-->
@@ -172,6 +173,36 @@
           </div>
         </div>
         <el-divider direction="vertical"></el-divider>
+        <div class="entity-overview">
+          <div class="overview-left">
+            <span class="overview-left-loading">
+              <span class="overview-left-loading-span">{{ $t('overall.subscriber') }}</span>
+            </span>
+          </div>
+          <div class="overview-right">
+            <div class="right-row margin-b-6">
+              <i class="cn-icon cn-icon-proportion entity-explorer-total__icon"></i>
+              <div class="right-label">{{ $t('network.total') }}</div>
+              <div class="right-label-loading">
+                <loading :loading="loadingIp" size="small"></loading>
+                <div class="right-value">{{ numberWithCommas(entitySubscriberTotal) }}</div>
+              </div>
+            </div>
+
+            <div class="right-row">
+              <i class="cn-icon cn-icon-active"></i>
+              <div class="right-label">{{ $t('entity.active') }}</div>
+              <div class="right-label-loading">
+                <loading :loading="loadingSubscriberActive" size="small"></loading>
+                <div class="right-value-block">
+                  <span class="margin-r-6">{{ numberWithCommas(entitySubscriberActive) }}</span>
+                  <span class="last-hour">{{ $t('entity.inLastHour') }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <el-divider direction="vertical"></el-divider>
       </div>
     </div>
   </div>
@@ -225,6 +256,10 @@ export default {
       entityIpTotal: '-',
       entityIpNew: '-',
       entityIpActive: '-',
+
+      entitySubscriberTotal: '-',
+      entitySubscriberNew: '-',
+      entitySubscriberActive: '-',
 
       newFilterData: [
         {
@@ -310,10 +345,12 @@ export default {
       loadingApp: false,
       loadingDomain: false,
       loadingIp: false,
+      loadingSubscriber: false,
       // Active
       loadingAppActive: false,
       loadingDomainActive: false,
       loadingIpActive: false,
+      loadingSubscriberActive: false,
 
       initFlag: true, // 初始化标志，避免初始化时pageSize和pageNo会调用搜索
       timer: null, // 初始化标志的延时器，需要销毁
@@ -321,7 +358,8 @@ export default {
         totalCount: 0,
         domainCount: 0,
         ipCount: 0,
-        appCount: 0
+        appCount: 0,
+        subscriberCount: 0
       },
       loadingCount: false, // 实体基数统计的loading
       keywordList: []
@@ -539,6 +577,21 @@ export default {
     },
     /** 新版查询filter数据 */
     queryFilterNew (params) {
+      const subscriberList = ['subscriber.phone_number', 'subscriber.imei', 'subscriber.imsi', 'subscriber.apn']
+      let subscriberFlag = false
+      subscriberList.forEach(item => {
+        if (params.q.indexOf(item) > -1) {
+          subscriberFlag = true
+        }
+      })
+      if (subscriberFlag) {
+        this.newFilterData.forEach(item => {
+          item.loading = false
+          item.firstLoad = false
+          item.data = []
+        })
+        return true
+      }
       const queryParams = {
         startTime: getSecond(params.startTime),
         endTime: getSecond(params.endTime),
@@ -594,6 +647,7 @@ export default {
           }).finally(() => {
             this.newFilterData[index].loading = false
             this.newFilterData[index].firstLoad = false
+            console.log('查看loading', this.newFilterData)
           })
         }
       })
@@ -614,13 +668,15 @@ export default {
           this.listData = []
           this.$nextTick(() => {
             this.listData = response.data.data.list
-            /*if (this.listData.length === 0) {
+            /* if (this.listData.length === 0) {
               this.isHideRelatedEntities = false
-            }*/
+            } */
           })
         } else {
           this.$message.error(response.data.message)
         }
+      }).catch((e) => {
+        this.listData = []
       }).finally(() => {
         this.listLoading = false
       })
@@ -639,11 +695,11 @@ export default {
           this.summaryCount = response.data.data
           this.pageObj.total = response.data.data.totalCount
         } else {
-          this.summaryCount = { totalCount: 0, domainCount: 0, ipCount: 0, appCount: 0 }
+          this.summaryCount = { totalCount: 0, domainCount: 0, ipCount: 0, appCount: 0, subscriberCount: 0 }
         }
       }).catch(e => {
         console.error(e)
-        this.summaryCount = { totalCount: 0, domainCount: 0, ipCount: 0, appCount: 0 }
+        this.summaryCount = { totalCount: 0, domainCount: 0, ipCount: 0, appCount: 0, subscriberCount: 0 }
       }).finally(() => {
         this.loadingCount = false
       })
@@ -672,20 +728,27 @@ export default {
       this.loadingApp = true
       this.loadingDomain = true
       this.loadingIp = true
+      this.loadingSubscriber = true
       // Active
       this.loadingAppActive = true
       this.loadingDomainActive = true
       this.loadingIpActive = true
+      this.loadingSubscriberActive = true
 
       axios.get(api.entity.entityList.entityTotal).then(response => {
         if (response.status === 200) {
           this.entityDomainTotal = response.data.data.domainCount
           this.entityIpTotal = response.data.data.ipCount
           this.entityAppTotal = response.data.data.appCount
+          this.entitySubscriberTotal = response.data.data.subscriberCount
         }
+      }).catch((e) => {
+        this.$message.error(e.response.data.message)
+      }).finally(() => {
         this.loadingDomain = false
         this.loadingIp = false
         this.loadingApp = false
+        this.loadingSubscriber = false
       })
       // Active
       axios.get(api.entity.entityList.entityActive).then(response => {
@@ -693,10 +756,15 @@ export default {
           this.entityDomainActive = response.data.data.domainCount
           this.entityIpActive = response.data.data.ipCount
           this.entityAppActive = response.data.data.appCount
+          this.entitySubscriberActive = response.data.data.subscriberCount
         }
+      }).catch((e) => {
+        this.$message.error(e.response.data.message)
+      }).finally(() => {
         this.loadingDomainActive = false
         this.loadingIpActive = false
         this.loadingAppActive = false
+        this.loadingSubscriberActive = false
       })
     },
     setListMode (mode) {
