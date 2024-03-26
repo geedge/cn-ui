@@ -1,7 +1,4 @@
 .link-blocks {
-  $blue: #046ECA;
-  $grey: #353636;
-
   display: flex;
   justify-content: space-between;
   height: 100%;
@@ -18,7 +15,7 @@
     .block-list__title {
       position: absolute;
       font-size: 14px;
-      color: #046ECA;
+      color: var(--el-color-primary);
       top: 16px;
       left: 20px;
     }
@@ -66,7 +63,7 @@
   }
 }
 /*.link-blocks {
-  $blue: #046ECA;
+  $blue: var(--el-color-primary);
   $grey: #353636;
 
   border: 1px solid #E2E5EC;

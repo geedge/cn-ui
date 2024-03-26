@@ -9,16 +9,16 @@
       <!--个人操作-->
       <div class="personal">
         <el-dropdown>
-          <div class="header-menu--item"><i class="cn-icon cn-icon-language"></i></div>
+          <div class="header-menu__item"><i class="cn-icon cn-icon-language"></i></div>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item>
-                <div id="header-to-english" :style="language === EN?'color:#0091ff':''" @click="changeLocal(EN)">
+                <div id="header-to-english" class="personal-dropdown-item" :class="language === EN ? 'is-active' : ''" @click="changeLocal(EN)">
                   English
                 </div>
               </el-dropdown-item>
               <el-dropdown-item>
-                <div id="header-to-chinese" :style="language === ZH?'color:#0091ff':''" @click="changeLocal(ZH)">
+                <div id="header-to-chinese" class="personal-dropdown-item" :class="language === ZH ? 'is-active' : ''" @click="changeLocal(ZH)">
                   中文
                 </div>
               </el-dropdown-item>
@@ -26,7 +26,7 @@
           </template>
         </el-dropdown>
         <el-dropdown>
-          <div class='login-user header-menu--item'>{{ nickName }}&nbsp;<i class="cn-icon cn-icon-arrow-down"></i></div>
+          <div class='login-user header-menu__item'>{{ nickName }}&nbsp;<i class="cn-icon cn-icon-arrow-down"></i></div>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item>
@@ -601,9 +601,9 @@ export default {
                   itemName = this.dnsRcodeMapData.get(item)
                 }
                 if (itemName === currentValue) {
-                  selectedDom.style.cssText = 'color:#0091ff;font-weight: bold;'
+                  selectedDom.classList.add('is-active')
                 } else {
-                  selectedDom.style.cssText = ''
+                  selectedDom.classList.remove('is-active')
                 }
               }
             })

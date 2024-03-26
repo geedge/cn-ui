@@ -2,24 +2,29 @@
   height: 100%;
   width: 100%;
   position: relative;
-  border: 1px solid $--border-color;
+  border: 1px solid var(--el-border-color-light);
   border-radius: 4px;
+
   .chart-drawing {
     height: 100%;
     width: 100%;
+
     .echarts-tooltip.echarts-tooltip-dark {
+
       .cn-chart-body {
         display: flex;
+
         .cn-chart-tooltip {
           display: flex;
           flex-direction: column;
           flex: 1;
+
           .cn-chart-tooltip-box {
             margin-right: 10px;
           }
           .cn-chart-tooltip-value.cn-chart-tooltip__color {
             font-size: 12px;
-            color: #353636;
+            color: var(--el-text-color-primary);
             line-height: 21px;
             font-weight: 600;
           }
@@ -31,25 +36,14 @@
     display: flex;
     justify-content: space-between;
     height: 73px;
+
     .line-select.line-header-right {
       display: flex;
-      //flex: 1;
-      .line-select__operation {
-        .el-select__wrapper {
-          height: 24px !important;
-          min-height: 24px !important;
-        }
-        .el-input__inner {
-          width: 100px;
-        }
-      }
+
       .line-select-reference-line {
         margin-right: 20px;
+
         .line-select__operation {
-          .el-select__wrapper {
-            height: 24px !important;
-            min-height: 24px !important;
-          }
           .el-input__inner {
             width: 127px;
           }
@@ -61,47 +55,22 @@
       .line-select-metric,.line-select-reference-line {
         display: flex;
         align-items: center;
+
         .line-select__operation {
           min-width: 127px;
-          height: 24px;
           margin-left: 3px;
           box-shadow: none;
           border-radius: 2px;
+
           .el-select__wrapper {
             min-height: 24px !important;
-            //padding-left: 4px;
-            line-height: 24px !important;
-            height: 24px;
             font-size: 12px;
-            color: $--text-color-6;
+            color: var(--el-color-primary);
             font-weight: 400;
             padding: 5px 6px 4px 5px !important;
+
             .el-select__placeholder {
-              color: $--text-color-6;
-            }
-            .el-select__suffix {
-              .el-icon {
-                color: #575757;
-              }
-            }
-            //.el-input__inner {
-            //  padding-left: 4px;
-            //  line-height: 24px;
-            //  height: 24px;
-            //  font-size: 12px;
-            //  color: #2C72C6;
-            //  font-weight: 400;
-            //}
-          }
-          .el-input__suffix {
-            display: flex;
-            .el-input__suffix-inner {
-              line-height: 24px;
-              .el-select__caret {
-                line-height: 24px;
-                width: 16px;
-                color: #575757;
-              }
+              color: var(--el-color-primary);
             }
           }
         }
@@ -116,43 +85,42 @@
         position: absolute;
         height: 3px;
         border-radius: 4px 0 0 0;
-        background: #046ECA;
+        background: var(--el-color-primary);
         top: 0;
         z-index: 1;
         transition: all linear .2s;
       }
       .line-value {
-        //position: absolute;
-        //top: 0;
-        //left: 0;
         display: flex;
+
         .line-value-tabs.mousemove-cursor {
-          border-top: 4px solid #D3D0D8;
+          border-top: 4px solid var(--el-border-color-dark);
           z-index: 0;
         }
         .line-value-tabs {
           cursor: pointer;
           padding: 16px 0 0 20px;
           border-top: 4px solid transparent;
+
           .line-value-unit {
             .line-value-unit-number {
               font-family: Helvetica-Bold;
               font-size: 28px;
-              color: $--text-color-1;
+              color: var(--el-text-color-primary);
               margin-right: 4px;
             }
             .line-value-unit-number2 {
               font-size: 0;
               span {
                 font-size: 12px;
-                color: $--text-color-2;
-                font-weight: 400;
+                color: var(--el-text-color-regular);
               }
             }
           }
           .line-value-tabs-name {
             position: relative;
             display: flex;
+
             .tabs-name {
               flex: 1;
               padding-left: 19px;

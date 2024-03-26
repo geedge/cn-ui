@@ -90,7 +90,7 @@
             }
             .cn-chart-tooltip-value.cn-chart-tooltip__color {
               font-size: 12px;
-              color: #353636;
+              color: var(--el-text-color-primary);
               line-height: 21px;
               font-weight: 600;
             }

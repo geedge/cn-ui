@@ -17,6 +17,7 @@ body {
   cursor: default !important;
   overflow: hidden;
 }
+// 在计算文本实际宽度的逻辑中使用到的临时dom
 .temp-dom {
   visibility: hidden;
   position: fixed;

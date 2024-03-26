@@ -58,7 +58,7 @@
                     >
                       <template #reference>
                         <div :ref="`tabSearchRef${tab.prop}`">
-                          <div class="tab-search-button" :id="`tabSearchButton${tab.prop}`" v-show="showSearchButton"
+                          <div class="tab-search-button" :id="`tabSearchButton${tab.prop}`"
                                @click="handlePopoverShow(item.prop,tab.prop)">
                             <el-icon style="color:#575757;"><Search /></el-icon>
                             <!--<i class="el-icon-search" style="color:#575757;" ></i>-->
