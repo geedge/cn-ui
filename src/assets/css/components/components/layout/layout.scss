@@ -92,12 +92,11 @@
         .left-menu {
           padding: 8px 0;
           font-size: 14px;
-          color: var(--el-text-color-regular);
-          transition: all linear var(--el-transition-duration);
+          color: var(--el-text-color-primary);
+          cursor: pointer;
 
           &:hover {
-            cursor: pointer;
-            color: var(--el-color-primary);
+            text-decoration: underline;
           }
           .cn-icon:first-of-type {
             font-size: 17px;
@@ -131,13 +130,14 @@
           .middle-menus__body {
             display: flex;
             padding-top: 8px;
+
             .middle-menu {
               padding: 5px 0;
               font-size: 14px;
               color: var(--el-text-color-primary);
+              cursor: pointer;
 
               &:hover {
-                cursor: pointer;
                 text-decoration: underline;
               }
             }

@@ -51,6 +51,7 @@
   // 为新增的业务色设置css变量
   @include var.set-css-var-value(('color', 'business'), map.get(css-var.$colors, 'business', 'base'));
   --cn-bg-color-light: #EBF1F4; // 一个用得比较多的背景色
+  --cn-bg-color-lighter: #F7F7F7; // 一个用得比较多的背景色
 }
 
 @font-face {
