@@ -25,18 +25,28 @@
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button :disabled="licenseStatus !== 0"
-              v-loading="loading"
-              type="primary"
-              class="login--input login--button"
-              :class="{'login-btn__license-error':licenseStatus !== 0}"
-              @click="login"
-              @keyup.enter="login"
-              style="font-size: 16px;"
+          <!-- disabled 状态的改变，会影响loading图标的位置，所以将2个按钮分开处理 -->
+          <el-button v-if="licenseStatus === -1"
+                     disabled
+                     v-loading="loading"
+                     type="primary"
+                     class="login--input login--button"
+                     style="font-size: 16px;"
+          >Checking License
+          </el-button>
+          <el-button v-else
+                     :disabled="licenseStatus !== 0"
+                     v-loading="loading"
+                     type="primary"
+                     class="login--input login--button"
+                     :class="{'login-btn__license-error':licenseStatus !== 0}"
+                     @click="login"
+                     @keyup.enter="login"
+                     style="font-size: 16px;"
           >Login
           </el-button>
         </el-form-item>
-        <el-form-item v-if="licenseStatus !== 0">
+        <el-form-item v-if="licenseStatus !== -1 && licenseStatus !== 0">
           <div class="license-error-msg">{{licenseStatusErrMsg}}</div>
           <div class="license-file">
             <button style="position: relative;" class="license__btn margin-r-20" @click.prevent="downloadFile" @keyup.enter="login">
@@ -80,11 +90,11 @@ export default {
   name: 'Login',
   data () {
     return {
-      loading: false,
+      loading: true,
       username: '',
       pin: '',
       language: '',
-      licenseStatus: 0,
+      licenseStatus: -1,//-1 未获取后台数据状态；0 获取后台数据且验证成功；1 获取后台数据且验证失败；
       licenseStatusErrMsg: '',
       downloadC2vUrl: api.downloadLicenseC2v,
       supportID: ''
@@ -200,8 +210,13 @@ export default {
       axios.get(api.licenseStatus).then(res => {
         if (res.status === 200) {
           this.licenseStatus = res.data.data.status
+        } else {
+          this.licenseStatus = 1
         }
+        this.loading = false
       }).catch(e => {
+        this.licenseStatus = 1
+        this.loading = false
         this.licenseStatusErrMsg = this.errorMsgHandler(e)
       })
     },
@@ -335,6 +350,7 @@ export default {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
     .license__btn {
       height: 40px;
       padding-left:10px;
