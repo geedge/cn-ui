@@ -293,16 +293,18 @@ export default {
           break
         }
       }
-      axios.get(`${url}?resource=${this.entity.entityValue}`).then(responese => {
-        const res = responese.data
-        if (responese.status === 200) {
-          formatTags(res.data, this.entity.entityType, this.levelTwoTags)
-          if (_.isArray(res.data.userDefinedTags)) {
-            this.levelTwoTags = _.concat(this.levelTwoTags, res.data.userDefinedTags.map(tag => ({ value: tag.tagValue, color: tag.knowledgeBase ? tag.knowledgeBase.color : entityDefaultColor })))
+      if (this.entity.entityType !== 'subscriber_id') {
+        axios.get(`${url}?resource=${this.entity.entityValue}`).then(responese => {
+          const res = responese.data
+          if (responese.status === 200) {
+            formatTags(res.data, this.entity.entityType, this.levelTwoTags)
+            if (_.isArray(res.data.userDefinedTags)) {
+              this.levelTwoTags = _.concat(this.levelTwoTags, res.data.userDefinedTags.map(tag => ({ value: tag.tagValue, color: tag.knowledgeBase ? tag.knowledgeBase.color : entityDefaultColor })))
+            }
+            this.hideTagArea = _.isEmpty(this.levelTwoTags)
           }
-          this.hideTagArea = _.isEmpty(this.levelTwoTags)
-        }
-      })
+        })
+      }
     },
     /* 切换折叠状态 */
     switchCollapse () {

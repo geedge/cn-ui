@@ -577,7 +577,7 @@ export default {
     },
     /** 新版查询filter数据 */
     queryFilterNew (params) {
-      const subscriberList = ['subscriber.phone_number', 'subscriber.imei', 'subscriber.imsi', 'subscriber.apn']
+      const subscriberList = ['subscriber.id', 'subscriber.phone_number', 'subscriber.imei', 'subscriber.imsi', 'subscriber.apn']
       let subscriberFlag = false
       subscriberList.forEach(item => {
         if (params.q.indexOf(item) > -1) {
