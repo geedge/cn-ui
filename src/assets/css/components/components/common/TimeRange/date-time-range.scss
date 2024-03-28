@@ -63,23 +63,21 @@
   .date-range-title {
     font-size: 14px;
     color: var(--el-text-color-regular);
-    font-weight: 600;
+    font-weight: bold;
     padding: 14px 0 7px 8px;
   }
 
-  .calendar-popover-text.calendar-popover__small {
-    i {
-      font-weight: 300;
-      color: #575757;
-    }
-  }
   .calendar-popover-text {
     white-space: nowrap;
     display: inline-block;
     margin: 0 5px;
     color: var(--el-text-color-primary);
+
     .cn-icon-Data {
       color: var(--el-text-color-regular);
+    }
+    .cn-icon-dropdown {
+      color: var(--el-text-color-placeholder);
     }
   }
 
@@ -108,7 +106,6 @@
       .content-title {
         font-size: 14px;
         color: var(--el-text-color-regular);
-        font-weight: 400;
         margin-bottom: 12px;
       }
 

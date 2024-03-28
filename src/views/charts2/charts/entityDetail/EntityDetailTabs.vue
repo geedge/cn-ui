@@ -10,9 +10,7 @@
         <template #label>
           <!--<div class="el-tabs__active-bar is-top" style="width: 80.9998px; transform: translateX(177px);"></div>-->
           <i :class="tab.icon"></i>{{$t(tab.label)}}
-          <el-tag size="small" class="margin-l-6" :color="tab.name === activeTab ? 'var(--el-color-primary-light-9)' : 'var(--el-fill-color-dark)'" round>
-            <span :style="{color: tab.name === activeTab ? 'var(--el-color-primary)' : 'var(--el-text-color-regular)'}">{{ tab.tag }}</span>
-          </el-tag>
+          <el-tag :type="tab.name === activeTab ? 'primary' : 'info'" size="small" class="margin-l-6" round>{{ tab.tag }}</el-tag>
         </template>
         <information-aggregation v-if="tab.name === entityDetailTabsName.informationAggregation && tab.name === activeTab" @toggleLoading="setLoading"  :entity="entity" @checkTag="setTag"></information-aggregation>
         <domain-name-resolution v-else-if="tab.name === entityDetailTabsName.relatedEntity && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity"  @checkTag="setTag"></domain-name-resolution>

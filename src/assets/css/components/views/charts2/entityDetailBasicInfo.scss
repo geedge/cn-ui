@@ -1,9 +1,9 @@
 .el-popper.analysis-popper {
   margin-top: -5px !important;
   padding: 0;
-  border: 1px solid var(--el-border-color-light);
+  border: 1px solid var(--el-border-color);
   border-radius: var(--el-border-radius-base); // 4px
-  box-shadow: -1px 1px 10px -1px rgba(205, 205, 205, 0.85);
+  box-shadow: var(--el-box-shadow-light);
 
   .el-popper__arrow {
     display: none;
@@ -79,7 +79,7 @@
     width: 100%;
     margin-top: 21px;
     //background-color: #EFF2F5;
-    background-color: var(--el-border-color);
+    background-color: var(--el-bg-color-page);
   }
 
   .entity-type {
@@ -111,7 +111,7 @@
         width: 28px;
         border-radius: 50%;
         //background-color: #EFF1F4;
-        background-color: var(--el-color-info-light-9);
+        background-color: var(--el-bg-color-page);
         cursor: pointer;
 
         i {

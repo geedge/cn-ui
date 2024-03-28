@@ -166,7 +166,6 @@
         align-items: center;
         margin-top: 2px;
         border-radius: 10px;
-        font-weight:500;
         padding: 0 9px;
 
         span {
@@ -174,8 +173,8 @@
         }
       }
       .data-total-trend-black {
-        background-color: rgba(113,113,113,0.12);
-        color: #717171;
+        background-color: var(--el-fill-color-dark);
+        color: var(--el-text-color-regular);
         height: 20px;
       }
       .data-total-trend-green {
@@ -220,7 +219,7 @@
         .data-score {
           border-radius: 10px;
           font-size: 12px;
-          color: #FFFFFF;
+          color: var(--el-color-white);
           height: 20px;
           width: 34px;
           line-height: 20px;
@@ -271,7 +270,8 @@
     }
     .el-tabs__content {
       height: calc(100% - 40px);
-      border:none;
+      border: none;
+
       .el-table__body-wrapper {
         height: calc(100% - 45px) !important;
       }
