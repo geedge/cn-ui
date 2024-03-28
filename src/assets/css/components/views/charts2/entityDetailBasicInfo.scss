@@ -1,13 +1,14 @@
 .el-popper.analysis-popper {
   margin-top: -5px !important;
   padding: 0;
-  border: 1px solid #C5C5C5 !important;
-  border-radius: 4px;
-  box-shadow: -1px 1px 10px -1px rgba(205,205,205,0.85);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: var(--el-border-radius-base); // 4px
+  box-shadow: -1px 1px 10px -1px rgba(205, 205, 205, 0.85);
 
   .el-popper__arrow {
     display: none;
   }
+
   .analysis-entry {
     display: flex;
     flex-direction: column;
@@ -15,11 +16,12 @@
     .analysis-entry__header {
       height: 42px;
       line-height: 42px;
-      background-color: #F7F7F7;
+      background-color: var(--cn-bg-color-lighter);
       padding-left: 20px;
-      color: #353636;
-      border-radius: 4px 4px 0 0;
+      color: var(--el-text-color-primary);
+      border-radius: var(--el-border-radius-base) var(--el-border-radius-base) 0 0;
     }
+
     .analysis-entry__body {
       display: flex;
       height: 134px;
@@ -35,9 +37,10 @@
 
         &:hover {
           div i, span {
-            color: #046ECA;
+            color: var(--el-color-primary);
           }
         }
+
         div {
           display: flex;
           align-items: center;
@@ -46,37 +49,43 @@
           height: 46px;
           width: 46px;
           border-radius: 50%;
-          background-color: #F5F6F8;
+          //background-color: #F5F6F8;
+          background-color: var(--el-color-info-light-9);
 
           i {
-            color: #353636;
+            color: var(--el-text-color-primary);
             font-size: 22px;
           }
         }
+
         span {
           font-size: 12px;
-          color: #353636;
+          color: var(--el-text-color-primary);
         }
       }
     }
   }
 }
+
 .entity-detail-basic-info {
   position: relative;
   padding: 35px 30px 0 30px;
   height: 100%;
-  border: 1px solid #E2E5EC;
-  border-radius: 4px;
+  border: 1px solid var(--el-border-color-light);
+  border-radius: var(--el-border-radius-base);
 
   .dividing-line {
     height: 1px;
     width: 100%;
     margin-top: 21px;
-    background-color: #EFF2F5;
+    //background-color: #EFF2F5;
+    background-color: var(--el-border-color);
   }
+
   .entity-type {
-    color: #717171;
+    color: var(--el-text-color-regular);
   }
+
   .entity-basic-info {
     display: flex;
     align-items: center;
@@ -90,9 +99,10 @@
         padding-right: 12px;
         font-family: Helvetica-Bold;
         font-size: 32px;
-        color: #353636;
+        color: var(--el-text-color-primary);
         font-weight: bold;
       }
+
       div {
         display: flex;
         justify-content: center;
@@ -100,15 +110,17 @@
         height: 28px;
         width: 28px;
         border-radius: 50%;
-        background-color: #EFF1F4;
+        //background-color: #EFF1F4;
+        background-color: var(--el-color-info-light-9);
         cursor: pointer;
 
         i {
-          color: #717171;
+          color: var(--el-text-color-regular);
           font-size: 12px;
         }
       }
     }
+
     .analysis-btn {
       display: flex;
       align-items: center;
@@ -116,21 +128,24 @@
       height: 24px;
       padding: 0 10px;
       font-size: 12px;
-      color: #046ECA;
+      color: var(--el-color-primary);
       cursor: pointer;
-      background-color: #FFF;
-      transition: background-color linear .2s;
+      background-color: var(--el-fill-color-blank);
+      transition: background-color linear var(--el-transition-duration);
 
       &.analysis-btn--active {
-        background-color: #EBF7FA;
-        border-radius: 2px;
+        //background-color: #EBF7FA;
+        background-color: var(--el-color-primary-light-9);
+        border-radius: var(--el-border-radius-small); // 2px
       }
+
       i {
         padding-right: 4px;
         font-size: 14px;
       }
     }
   }
+
   .entity-tags {
     display: flex;
     flex-wrap: wrap;
@@ -147,6 +162,7 @@
       }
     }
   }
+
   .entity-detail-info {
     display: flex;
     flex-flow: row wrap;
@@ -162,21 +178,24 @@
 
       i {
         font-size: 22px;
-        color: #353636;
+        color: var(--el-text-color-primary);
         margin-right: 14px;
       }
+
       .detail-card__text {
         .detail-card__label {
           margin-bottom: 6px;
           font-size: 12px;
-          color: #717171;
+          color: var(--el-text-color-regular);
         }
+
         .detail-card__value {
           display: -webkit-box;
           -webkit-box-orient: vertical;
           -webkit-line-clamp: 3;
           overflow: hidden;
-          color: #222;
+          //color: #222;
+          color: var(--el-text-color-primary);
           line-height: 18px;
           font-size: 14px;
         }
