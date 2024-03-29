@@ -1,7 +1,7 @@
 <template>
   <div>
     <!--初步方案：error提示替换table。后续若改为table内error提示，记得在此修改-->
-    <chart-error v-if="showError" :content="errorMsg" class="entity-detail-event-error"></chart-error>
+    <chart-error v-if="showError" :content="errorMsg"></chart-error>
     <chart-no-data v-if="isNoData && !showError" test-id="no-data"></chart-no-data>
     <div v-if="!isNoData && !showError && !loading" class="information-aggregation__table">
       <el-table

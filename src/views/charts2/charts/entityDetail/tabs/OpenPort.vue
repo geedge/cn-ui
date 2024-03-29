@@ -1,6 +1,6 @@
 <template>
   <div>
-    <chart-error v-if="showError" :content="errorMsg" class="entity-detail-event-error"></chart-error>
+    <chart-error v-if="showError" :content="errorMsg"></chart-error>
     <chart-no-data v-if="isNoData && !showError"></chart-no-data>
 
     <div v-if="!showError && !isNoData && initFlag" class="type-data__column">
@@ -15,7 +15,12 @@
           </div>
         </div>
         <div class="more" v-if="openPortList.length > entityDetailRelatedEntitiesShowSize">
-          <span class="button" :style="{'opacity': openPortList.length > showOpenPortListInfo.num ? 1 : 0.6}"  @click="showMore(showOpenPortListInfo,openPortList)">{{ $t('overall.more') }} > </span>
+          <span
+              class="button"
+              :style="{'opacity': openPortList.length > showOpenPortListInfo.num ? 1 : 0.6}"
+              @click="showMore(showOpenPortListInfo,openPortList)">
+            {{ $t('overall.more') }} >
+          </span>
         </div>
       </div>
     </div>
@@ -33,8 +38,7 @@ import { getNowTime } from '@/utils/date-util'
 export default {
   name: 'OpenPort',
   mixins: [chartMixin],
-  props: {
-  },
+  props: {},
   data () {
     return {
       openPortList: [],
@@ -98,9 +102,12 @@ export default {
     },
     getUrlByEntityType (type) {
       switch (type) {
-        case 'ip': return api.entity.openPortOfIp
-        case 'domain': return api.entity.openPortOfDomain
-        case 'app': return api.entity.openPortOfApp
+        case 'ip':
+          return api.entity.openPortOfIp
+        case 'domain':
+          return api.entity.openPortOfDomain
+        case 'app':
+          return api.entity.openPortOfApp
       }
     }
   }
