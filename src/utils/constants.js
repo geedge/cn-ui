@@ -311,6 +311,36 @@ export const metricOptions = [
   }
 ]
 
+export const tagIntentOptions = [
+  {
+    value: 'Malicious',
+    label: 'tag.intent.malicious'
+  },
+  {
+    value: 'Benign',
+    label: 'tag.intent.benign'
+  },
+  {
+    value: 'Unknown',
+    label: 'tag.intent.unknown'
+  }
+]
+
+export const tagCategoryOptions = [
+  {
+    value: 'Malicious',
+    label: 'tag.intent.malicious'
+  },
+  {
+    value: 'Benign',
+    label: 'tag.intent.benign'
+  },
+  {
+    value: 'Unknown',
+    label: 'tag.intent.unknown'
+  }
+]
+
 export const metricType = {
   Bits: 'Bits/s',
   Packets: 'Packets/s',
