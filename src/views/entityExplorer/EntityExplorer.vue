@@ -3,9 +3,9 @@
       class="entity-explorer"
       :class="{'entity-explorer--show-list': showList}">
     <!-- 顶部工具栏，在列表页显示 -->
-    <div class="explorer-top-tools explorer-top-tools-new" style="margin: 2px 0;" v-show="showList">
+    <div class="explorer-top-tools explorer-top-tools-new" v-show="showList">
       <div class="explorer-entity-top-tools">
-        <div class="explorer-top-tools-title" style="padding: 0;margin-left: -10px;">{{$t('network.entity')}}</div>
+        <div class="explorer-top-tools-title tools-title__margin">{{$t('network.entity')}}</div>
         <date-time-range
             class="date-time-range"
             :start-time="timeFilter.startTime"
@@ -25,7 +25,7 @@
         @search="search"
     ></explorer-search>
     <!-- 内容区 -->
-    <div v-if="showList" style="display: flex;flex-direction: row;padding-bottom: 20px;">
+    <div v-if="showList" class="explorer-content">
       <entity-filter
           :filter-data="newFilterData"
           :q="q"
@@ -40,27 +40,19 @@
             @search="search"
         ></explorer-search>
 
-        <div style="display: flex;flex-direction: column;height: calc(100% - 42px);">
+        <div class="explorer-list">
           <div class="explorer-result" v-if="showList" style="position: relative;display: flex">
-            <loading :loading="loadingCount" style="width: 240px"></loading>
+            <loading :loading="loadingCount" class="explorer-result-loading"></loading>
             <span>{{ summaryCount.totalCount }}&nbsp;</span>{{$t('overall.results')}}，IP<span class="margin-r-3"></span>
             <span>{{ summaryCount.ipCount }}</span>，{{$t('overall.domain')}}<span class="margin-r-3"></span>
             <span>{{ summaryCount.domainCount }}</span>，APP<span class="margin-r-3"></span>
             <span>{{ summaryCount.appCount }}</span>
 
             <span class="entity-hide-entity" v-if="q">
-<!--              <span v-if="listData.length !== 0">-->
-<!--                <el-checkbox-->
-<!--                    v-model="isHideRelatedEntities"-->
-<!--                    :label="$t('entity.hideRelatedEntities')"-->
-<!--                    :disabled="listData.length===0"-->
-<!--                    @change="hideRelatedEntities"-->
-<!--                    size="large" />-->
-                <el-radio-group v-model="isHideRelatedEntities" @change="hideRelatedEntities" class="ml-4">
-                  <el-radio :label="true" size="large">{{ $t('entity.entityMode') }}</el-radio>
-                  <el-radio :label="false" style="margin-left: -10px;" size="large">{{ $t('entity.relatedMode') }}</el-radio>
-                </el-radio-group>
-<!--              </span>-->
+              <el-radio-group v-model="isHideRelatedEntities" @change="hideRelatedEntities" class="ml-4">
+                <el-radio :label="true" size="large">{{ $t('entity.entityMode') }}</el-radio>
+                <el-radio :label="false" class="margin-l__10" size="large">{{ $t('entity.relatedMode') }}</el-radio>
+              </el-radio-group>
             </span>
           </div>
 
@@ -614,9 +606,9 @@ export default {
           this.listData = []
           this.$nextTick(() => {
             this.listData = response.data.data.list
-            /*if (this.listData.length === 0) {
+            /* if (this.listData.length === 0) {
               this.isHideRelatedEntities = false
-            }*/
+            } */
           })
         } else {
           this.$message.error(response.data.message)

@@ -5,7 +5,7 @@
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.location')}}</div>
         <div class="row__content">
-          <div v-if="entity.location" style="display: flex">
+          <div v-if="entity.location" class="row__content-display">
             <div v-if="entity.location.country">
               <img v-if="entity.location.country===countryNameIdMapping.Unknown || !countryNameIdMapping[entity.location.country]" src="../../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
               <img v-else :src="require(`../../../../../public/images/flag/${countryNameIdMapping[entity.location.country]}.png`)" class="filter-country-flag" >
@@ -25,14 +25,14 @@
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.openPort')}}</div>
-        <div class="row__content high-location" style="word-break: break-word;" v-high-light="keywordList">{{ openPort }}</div>
+        <div class="row__content high-location row__content__word" v-high-light="keywordList">{{ openPort }}</div>
       </div>
     </div>
   </div>
   <div class="overview-item" v-if="entityData.dnsServerRole">
     <div class="overview__title">{{$t('overall.dnsServerInfo')}}</div>
     <div class="overview__content overview__content-loading">
-      <loading :loading="loadingDns" size="small" inner-style="left: 8.75rem;" style="width: 50%;"></loading>
+      <loading :loading="loadingDns" size="small" inner-style="left: 8.75rem;" class="content-loading"></loading>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.dnsServerInfo.role')}}</div>
         <div class="row__content">{{$_.get(entityData, 'dnsServerRole') || '-'}}</div>
@@ -71,7 +71,7 @@
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.traffic')}}</div>
     <div class="overview__content overview__content-loading">
-      <loading :loading="loadingTraffic" size="small" inner-style="left: 8.75rem;" style="width: 50%;"></loading>
+      <loading :loading="loadingTraffic" size="small" inner-style="left: 8.75rem;" class="content-loading"></loading>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.peak')}}</div>
         <div class="row__content">
@@ -109,13 +109,13 @@
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.networkQualityRating')}}</div>
-        <div style="position: relative;">
+        <div class="entity-score__block">
           <div class="entity-score" v-if="!loadingNetworkQuality && score !=='-'">
             <span v-for="(dot, i) in scoreDot" :key="i" :class="dot.class"></span>
-            <span style="padding-left: 4px;">{{score}}</span>
+            <span class="entity-score__padding">{{score}}</span>
           </div>
           <div class="entity-score" v-else>{{score}}</div>
-          <loading :loading="loadingNetworkQuality" size="small" style="left: 1rem;width: 50%;"></loading>
+          <loading :loading="loadingNetworkQuality" size="small" class="entity-score__loading"></loading>
         </div>
       </div>
     </div>
@@ -128,8 +128,8 @@
       <div class="overview__row overview__row-related">
         <div class="row__label row__label--width130">{{$t('entities.tab.relatedApp')}}</div>
         <div class="row__content">
-          <div v-if="loadingRelationshipOne" style="position: relative;width: 450px;">
-            <loading :loading="loadingRelationshipOne" size="small" style="left: 1rem;"></loading>
+          <div v-if="loadingRelationshipOne" class="relationship-one__loading">
+            <loading :loading="loadingRelationshipOne" size="small" class="one__loading"></loading>
           </div>
 
           <div class="data-item high-light-block" v-high-light="keywordList" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
@@ -138,7 +138,7 @@
           <div v-if="relationshipDataOne.length===0 && !loadingRelationshipOne">-</div>
 
           <div v-if="relationshipShowOne">
-            <div class="data-item show-more-related" id="related-app-more" @click.stop="showMoreApp" style="position: relative">...</div>
+            <div class="data-item show-more-related" id="related-app-more" @click.stop="showMoreApp">...</div>
             <div v-if="isShowMoreApp" class="app-popover_block" id="showRelatedApp">
               <div class="popover-content" v-for="(item, index) in relationshipDataOne" :key="index">
                 <span v-if="!item.show" class="high-light-block" v-high-light="keywordList">{{item.value}}</span>
@@ -151,8 +151,8 @@
       <div class="overview__row overview__row-related">
         <div class="row__label row__label--width130">{{$t('entities.relatedDomain')}}</div>
         <div class="row__content">
-          <div v-if="loadingRelationshipTwo" style="position: relative;width: 450px;">
-            <loading :loading="loadingRelationshipTwo" size="small" style="left: 1rem;"></loading>
+          <div v-if="loadingRelationshipTwo" class="relationship-two__loading">
+            <loading :loading="loadingRelationshipTwo" size="small" class="one__loading"></loading>
           </div>
 
           <div class="data-item high-light-block" v-high-light="keywordList" v-show="item.show" v-for="(item, index) in relationshipDataTwo" :key="index">
@@ -161,7 +161,7 @@
           <div v-if="relationshipDataTwo.length===0 && !loadingRelationshipTwo">-</div>
 
           <div v-if="relationshipShowTwo">
-            <div class="data-item show-more-related" id="related-domain-more" @click.stop="showMoreDomain" style="position: relative">...</div>
+            <div class="data-item show-more-related" id="related-domain-more" @click.stop="showMoreDomain">...</div>
             <div v-if="isShowMoreDomain" class="domain-popover_block" id="showRelatedDomain">
               <div v-for="(item, index) in relationshipDataTwo" :key="index">
                 <span v-if="!item.show" class="high-light-block" v-high-light="keywordList">{{item.value}}</span>
@@ -189,7 +189,7 @@
         <div class="row__content row__content--width90">
           <div class="alert-level-tag alert-level-tag--high" :class="iconClass(performance)">{{performance.eventSeverity}}</div>
         </div>
-        <div class="row__content-loading" style="position: relative;">
+        <div class="row__content-loading">
           <div class="performance-event-remark">{{performance.eventType}}</div>
         </div>
         <div class="row__desc"></div>
@@ -201,7 +201,7 @@
   </div>
   <div class="overview-item">
     <div class="overview__title">{{$t('entities.securityEvents')}}</div>
-    <div class="overview__content overview__content-loading">
+    <div class="overview__content overview__content-loading" style="position: relative">
       <loading :loading="loadingSecurityEvents" size="small" inner-style="left: 10rem"></loading>
       <div class="overview__row" v-if="securityData.length === 0">
         <span class="no-recent-alerts"><el-icon><SuccessFilled /></el-icon>{{$t('relationShip.noRecentAlerts')}}</span>

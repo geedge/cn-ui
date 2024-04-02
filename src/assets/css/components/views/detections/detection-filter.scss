@@ -59,7 +59,7 @@
           margin-right: 6px;
           font-family: NotoSansHans-Black;
           font-size: 9px;
-          color: #96A2B0;
+          color: var(--el-color-info);
           font-weight: 900;
           display: flex;
           align-items: center;
@@ -108,7 +108,7 @@
 }
 .filter-no-show-more {
   cursor: not-allowed;
-  color: rgba(16, 16, 16, 0.3);
+  color: var(--el-text-color-disabled);
 }
 
 .filter-hr {

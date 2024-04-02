@@ -1440,7 +1440,7 @@ export const myHighLight = {
           if (newText && newText !== '-') {
             // 此处不用el.className.indexOf('high-light-block')判断，是因为block可能会有多个，有一个满足所有的都会渲染
             if (newText.indexOf('highlight__block') > -1) {
-              el.style.cssText = el.style.cssText + 'background: #FEECC2;'
+              el.style.cssText = el.style.cssText + 'background: var(--el-color-warning-light-7);'
               // 此处是相关app、相关ip、相关domain弹窗获取不到dom的操作
               let dom
               if (document.getElementById('showRelatedApp')) {
@@ -1454,7 +1454,7 @@ export const myHighLight = {
                 if (itemDom) {
                   for (let i = 0; i < itemDom.length; i++) {
                     if (itemDom[i].innerHTML === el.innerHTML) {
-                      itemDom[i].style.cssText = itemDom[i].style.cssText + 'background: #FEECC2;'
+                      itemDom[i].style.cssText = itemDom[i].style.cssText + 'background: var(--el-color-warning-light-7);'
                     }
                   }
                 }
