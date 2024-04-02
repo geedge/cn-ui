@@ -690,8 +690,8 @@ export default {
       myChart,
       maxZoom: mapConfig.maxZoom, // 地图最小缩放比例
       minZoom: mapConfig.minZoom, // 地图最大缩放比例
-      mapLevel: 1, // 地图精度  1、2、3
-      defaultZoom: mapConfig.defaultZoom, // 地图默认缩放比例
+      mapLevel: mapConfig.mapLevel, // 地图精度  1、2、3
+      defaultZoom: 11, // 地图默认缩放比例
       center: mapConfig.center, // 地图默认中心点。北京：[116.38, 39.9] 纽约：[-73.94539, 40.841843]
       trackingSubscriber,
       trackingSubscriberList,

@@ -162,6 +162,8 @@ export function handleComponent (code) {
       return () => import('@/views/detections/detectionPolicies/PolicyForm')
     case 'report':
       return () => import('@/views/report/Report')
+    //case 'tag':
+      //return () => import('@/views/tag/Tag')
     case 'knowledgeBase':
       return () => import('@/views/setting/KnowledgeBase')
     case 'userDefinedLibrary':

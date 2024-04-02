@@ -336,7 +336,7 @@ export default {
       logo: 'images/logo-header.svg',
       ZH,
       EN,
-      isDark: useDark()
+      // isDark: useDark()
     }
   },
   computed: {

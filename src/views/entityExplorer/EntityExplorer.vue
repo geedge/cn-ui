@@ -577,7 +577,7 @@ export default {
     },
     /** 新版查询filter数据 */
     queryFilterNew (params) {
-      const subscriberList = ['subscriber.phone_number', 'subscriber.imei', 'subscriber.imsi', 'subscriber.apn']
+      const subscriberList = ['subscriber.id', 'subscriber.phone_number', 'subscriber.imei', 'subscriber.imsi', 'subscriber.apn']
       let subscriberFlag = false
       subscriberList.forEach(item => {
         if (params.q.indexOf(item) > -1) {
@@ -647,7 +647,6 @@ export default {
           }).finally(() => {
             this.newFilterData[index].loading = false
             this.newFilterData[index].firstLoad = false
-            console.log('查看loading', this.newFilterData)
           })
         }
       })
@@ -675,7 +674,7 @@ export default {
         } else {
           this.$message.error(response.data.message)
         }
-      }).catch((e) => {
+      }).catch(() => {
         this.listData = []
       }).finally(() => {
         this.listLoading = false
