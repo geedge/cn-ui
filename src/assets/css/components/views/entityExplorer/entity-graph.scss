@@ -44,7 +44,7 @@ $color-regular: var(--el-text-color-regular);
       flex-direction: column;
       align-items: center;
       background-color: transparent !important;
-      transition: linear all .2s;
+      transition: linear all var(--el-transition-duration-fast);
 
       .graph-node__text {
         width: 120px;

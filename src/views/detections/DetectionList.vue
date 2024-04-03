@@ -6,8 +6,7 @@
         <div class="no-data" v-if="myListData.length===0">{{ $t('npm.noData') }}</div>
         <div v-if="!isCollapse" @click="collapse" class="cn-detection__shadow new-cn-detection__shadow"></div>
         <detection-row
-            style="margin-bottom: 10px"
-            class="detection-border"
+            class="detection-border margin-b-10"
             v-for="(data, index) in myListData"
             :detection="data"
             :page-type="pageType"

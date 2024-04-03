@@ -135,26 +135,26 @@
             padding: 1px 4px;
             margin-right: 6px;
             border-radius: 2px;
-            color: white;
+            color: var(--el-color-white);
 
             &.alert-level-tag--high.critical {
-              background-color: #D84C4C;
+              background-color: var(--cn-color-critical);
             }
 
             &.alert-level-tag--high.high {
-              background-color: #FF9A79;
+              background-color: var(--cn-color-high);
             }
 
             &.alert-level-tag--high.info {
-              background-color: #D1BD50;
+              background-color: var(--cn-color-info);
             }
 
             &.alert-level-tag--high.medium {
-              background-color: #FFB65A;
+              background-color: var(--cn-color-medium);
             }
 
             &.alert-level-tag--high.low {
-              background-color: #FFD82D;
+              background-color: var(--cn-color-low);
             }
 
             &.alert-level-tag--middle {
@@ -485,7 +485,7 @@
 
       i {
         //color: #7b8fa2; // todo 待确定
-        color: var(--el-text-color-primary);
+        color: var(--el-color-info);
         margin-right: 5px;
         font-size: 18px;
       }

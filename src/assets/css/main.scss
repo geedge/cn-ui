@@ -52,6 +52,11 @@
   @include var.set-css-var-value(('color', 'business'), map.get(css-var.$colors, 'business', 'base'));
   --cn-bg-color-light: #EBF1F4; // 一个用得比较多的背景色
   --cn-bg-color-lighter: #F7F7F7; // 一个用得比较多的背景色
+  --cn-color-critical: #D84C4C; // critical 严重等级分布
+  --cn-color-high: #FF9A79; // high
+  --cn-color-info: #D1BD50; // info
+  --cn-color-medium: #FFB65A; // medium
+  --cn-color-low: #FFD82D; // low
 }
 
 @font-face {

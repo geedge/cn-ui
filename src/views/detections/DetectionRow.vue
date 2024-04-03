@@ -169,7 +169,7 @@ export default {
         let color = '#8FA1BE'
         if (detection.startTime && detection.endTime) {
           if (getMillisecond(detection.endTime) - getMillisecond(detection.startTime) < 5 * 60 * 1000) {
-            color = '#D84C4C'
+            color = 'var(--cn-color-critical)'
           }
         }
         return { backgroundColor: color }
