@@ -26,7 +26,7 @@
 
       <!--第二步：Rule Definition-->
       <div class="detection-form-collapse">
-        <el-collapse v-model="activeNames" style="position: relative;">
+        <el-collapse v-model="activeNames" class="rule-definition">
           <el-collapse-item name="2">
             <template #title>
               <div class="form-collapse-header">

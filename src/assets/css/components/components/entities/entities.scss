@@ -73,7 +73,7 @@
           width: 328px;
           height: 89px;
           box-sizing: border-box;
-          transition: all .2s;
+          transition: all var(--el-transition-duration-fast);
 
           .header__bottom__line {
             width:288px;

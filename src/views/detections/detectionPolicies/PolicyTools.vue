@@ -5,9 +5,8 @@
           id="knowledge-base-add"
           v-if="hasPermission('createDetectionPolicy')"
           :title="$t('knowledgeBase.createKnowledgeBase')"
-          class="top-tool-btn margin-r-10 top-tool-btn--create"
-          @click="onCreate"
-          style="width:72px;">
+          class="top-tool-btn margin-r-10 top-tool-btn--create btn__width"
+          @click="onCreate">
         <i class="cn-icon-xinjian cn-icon"></i>
         <span>{{ $t('overall.create') }}</span>
       </button>
@@ -17,9 +16,8 @@
           v-if="hasPermission('editDetectionPolicy')"
           id="knowledge-base-edit"
           :title="$t('knowledgeBase.editKnowledgeBase')"
-          class="top-tool-btn margin-r-10"
-          @click="onEdit"
-          style="width:72px;">
+          class="top-tool-btn margin-r-10 btn__width"
+          @click="onEdit">
         <i class="cn-icon-edit cn-icon" ></i>
         <span>{{$t('overall.edit')}}</span>
       </button>
@@ -29,21 +27,18 @@
           v-if="hasPermission('deleteDetectionPolicy')"
           id="knowledge-base-delete"
           :title="$t('knowledgeBase.deleteKnowledgeBase')"
-          class="top-tool-btn margin-r-10"
-          @click="onDelete"
-          style="width:72px;">
+          class="top-tool-btn margin-r-10 btn__width"
+          @click="onDelete">
         <i class="cn-icon-delete cn-icon"></i>
         <span>{{ $t('overall.delete') }}</span>
       </button>
 
       <div class="top-tool-search margin-l-10">
-        <el-input v-model="keyWord" size="small" style="height: 28px;" @keyup.enter="onSearch"></el-input>
+        <el-input v-model="keyWord" size="small" class="search__input" @keyup.enter="onSearch"></el-input>
         <button
-            class="top-tool-btn top-tool-btn--search"
-            style="border-radius: 0 2px 2px 0 !important;"
+            class="top-tool-btn top-tool-btn--search search__btn"
             @click="onSearch">
           <el-icon><Search /></el-icon>
-<!--          <i class="el-icon-search"></i>-->
         </button>
       </div>
     </div>
@@ -107,7 +102,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-
-</style>

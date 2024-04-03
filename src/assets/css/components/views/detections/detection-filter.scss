@@ -206,5 +206,10 @@ $color-light: var(--el-border-color-light);
         padding-left: 10px !important;
       }
     }
+
+    .content__display {
+      display: flex;
+      flex-direction: column;
+    }
   }
 }

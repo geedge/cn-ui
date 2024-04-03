@@ -7,7 +7,7 @@
       <div>
         <div class="new-filter-content-title">{{ $t('overall.status') }}</div>
         <div class="new-filter-content-content">
-          <el-checkbox-group v-model="checkStatus" @change="onChangeCategory" style="display: flex;flex-direction: column">
+          <el-checkbox-group v-model="checkStatus" @change="onChangeCategory" class="content__display">
             <el-checkbox v-for="item in statusList" :key="item.name" class="new-filter-content-checkbox" :label="item.status">
               <div>{{ item.name }}</div>
             </el-checkbox>
@@ -29,7 +29,7 @@
       <div>
         <div class="new-filter-content-title">{{ $t('overall.type') }}</div>
         <div class="new-filter-content-content">
-          <el-checkbox-group v-model="checkEventType" @change="onChangeCategory" style="display: flex;flex-direction: column">
+          <el-checkbox-group v-model="checkEventType" @change="onChangeCategory" class="content__display">
             <el-checkbox v-for="item in eventTypeList" :key="item.name" class="new-filter-content-checkbox" :label="item.name">
               {{ item.name }}
             </el-checkbox>

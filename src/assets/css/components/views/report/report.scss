@@ -80,7 +80,7 @@
             background: #fff; //盖住fixed产生的阴影
             :deep .is-leaf {
               color: #1b2e3b;
-              background: #ebeef5;
+              background: var(--el-border-color-lighter);
             }
             .el-range-editor--small.el-input__wrapper {
               height: 32px;

@@ -1,11 +1,14 @@
+$text-color-primary: var(--el-text-color-primary);
+
 .detection-drawer {
-  padding: 20px;
-  height: 100%;
+  height: 100vh;
   overflow: scroll;
+  padding: 20px 20px 90px;
 
   .el-drawer {
     width: 440px !important;
   }
+
   .el-collapse-item__content {
     padding-bottom: 0 !important;
   }
@@ -18,7 +21,7 @@
   .detection-drawer-title, .basic-function-value, basic-description-value, .drawer-trigger-minutes {
     font-family: NotoSansSChineseRegular;
     font-size: 14px;
-    color: #717171;
+    color: var(--el-text-color-regular);
     font-weight: 400;
     line-height: 14px;
     display: flex;
@@ -28,7 +31,7 @@
     .drawer-basic-header {
       font-family: NotoSansHans-Black;
       font-size: 16px;
-      color: #353636;
+      color: $text-color-primary;
       font-weight: 900;
       margin-bottom: 20px;
 
@@ -51,37 +54,45 @@
     margin-bottom: 20px;
   }
 
+  .padding-b-0 {
+    padding-bottom: 0;
+  }
+
   .detection-drawer-title {
     margin-bottom: 8px;
+
+    .drawer-title__equal {
+      margin: 0 6px;
+    }
   }
 
   .basic-description-value {
     font-family: NotoSansSChineseRegular;
     font-size: 14px;
-    color: #353636;
+    color: $text-color-primary;
     line-height: 18px;
     font-weight: 400;
   }
 
   .basic-function-value {
-    color: #046ECA;
+    color: var(--el-color-primary);
   }
 
   .drawer-trigger-minutes {
-    color: #353636;
+    color: $text-color-primary;
   }
 
   .detection-drawer-collapse {
-    background: #FFFFFF;
-    border: 1px solid rgba(226, 229, 236, 1);
-    border-radius: 4px;
+    background: var(--el-fill-color-blank);
+    border: 1px solid var(--el-border-color-light);
+    border-radius: var(--el-border-radius-base);
     //box-shadow: 0 1px 0 0 rgba(226, 229, 236, 1);
 
     .el-collapse-item__header {
       height: 32px !important;
-      background-color: #F7F7F7 !important;
+      background-color: var(--cn-bg-color-lighter) !important;
       padding-left: 12px !important;
-      border-radius: 4px 4px 0 0;
+      border-radius: var(--el-border-radius-base) var(--el-border-radius-base) 0 0;
     }
 
     .drawer-collapse-content {
@@ -97,11 +108,19 @@
       .drawer-collapse-trigger {
         font-family: NotoSansSChineseRegular;
         font-size: 14px;
-        color: #353636;
+        color: $text-color-primary;
         line-height: 18px;
         font-weight: 400;
         margin-bottom: 20px;
+
+        .trigger__value {
+          color: #046ECA;
+        }
       }
     }
+  }
+
+  .detection-drawer-collapse__margin {
+    margin: 20px 0;
   }
 }

@@ -21,7 +21,7 @@
             :disableEdit="disableEdit"
             :disableDelete="disableDelete"/>
 
-        <div class="detection-table" style="position: relative">
+        <div class="detection-table">
           <loading :loading="loading"></loading>
           <detection-table
               ref="dataTable"
@@ -126,14 +126,14 @@ export default {
       myCellStyle: {
         padding: '4px 0px',
         'font-size': '12px',
-        color: '#353636',
+        color: 'var(--el-text-color-primary)',
         'font-weight': 400
       },
       myHeaderCellStyle: {
         padding: '4px 0px',
-        background: '#F5F8FA',
+        background: 'var(--el-fill-color-light)',
         'font-size': '12px',
-        color: '#353636',
+        color: 'var(--el-text-color-primary)',
         'font-weight': 500
       }
     }
@@ -347,58 +347,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.detection {
-  padding: 20px;
-  height: 100%;
-  overflow: auto;
-
-  .detection-title {
-    font-family: NotoSansHans-Black;
-    line-height: 24px;
-    font-size: 24px;
-    color: #353636;
-    font-weight: 900;
-    display: flex;
-    flex-direction: column;
-
-    .detection-title-label {
-      font-family: NotoSansSChineseRegular;
-      font-size: 12px;
-      color: #717171;
-      letter-spacing: 0;
-      line-height: 18px;
-      font-weight: 400;
-      margin-top: 5px;
-    }
-  }
-
-  .detection-content {
-    margin-top: 15px;
-    width: 100%;
-    height: calc(100% - 96px);
-    display: flex;
-
-    .detection-filter {
-      width: 320px;
-      height: calc(100% + 34px);
-      background: #FFFFFF;
-      border: 1px solid rgba(226, 229, 236, 1);
-      border-radius: 4px;
-      margin-right: 20px;
-    }
-
-    .detection-block {
-      width: calc(100% - 340px);
-
-      .detection-table {
-        width: 100%;
-        height: calc(100% - 44px);
-        border-radius: 4px;
-        margin-top: 12px;
-      }
-    }
-  }
-}
-</style>
