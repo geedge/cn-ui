@@ -137,32 +137,24 @@
             border-radius: 2px;
             color: var(--el-color-white);
 
-            &.alert-level-tag--high.critical {
+            &.alert-level-tag--critical {
               background-color: var(--cn-color-critical);
             }
 
-            &.alert-level-tag--high.high {
+            &.alert-level-tag--high {
               background-color: var(--cn-color-high);
             }
 
-            &.alert-level-tag--high.info {
+            &.alert-level-tag--info {
               background-color: var(--cn-color-info);
             }
 
-            &.alert-level-tag--high.medium {
+            &.alert-level-tag--medium {
               background-color: var(--cn-color-medium);
             }
 
-            &.alert-level-tag--high.low {
-              background-color: var(--cn-color-low);
-            }
-
-            &.alert-level-tag--middle {
-              background-color: #FFAB66;
-            }
-
             &.alert-level-tag--low {
-              background-color: #F6C738;
+              background-color: var(--cn-color-low);
             }
           }
 
