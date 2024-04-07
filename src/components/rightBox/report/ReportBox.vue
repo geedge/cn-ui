@@ -42,7 +42,7 @@
                 </template>
               </el-select>
             </template>
-            <div v-else-if="editObject.config.timeConfig.type === 'last' || editObject.config.timeConfig.type === 'previous'" style="display: flex;">
+            <div v-else-if="editObject.config.timeConfig.type === 'last' || editObject.config.timeConfig.type === 'previous'" class="report__display">
               <el-input v-model.number="editObject.config.timeConfig.offset" size="small" class="el-input-single" placeholder=" ">
                 <template #prepend><i @click="timeOffsetHandle('m')" class="cn-icon cn-icon-a-"></i></template>
                 <template #append><i @click="timeOffsetHandle('p')" class="cn-icon cn-icon-a-1"></i></template>
@@ -66,7 +66,6 @@
             <div class="demo-datetime-picker">
               <div class="block">
                 <el-date-picker
-                    style="width: 100%"
                     v-model="editObject.config.startTime"
                     size="small"
                     :format="dateFormat"
@@ -84,7 +83,6 @@
             <div class="demo-datetime-picker">
               <div class="block">
                 <el-date-picker
-                    style="width: 100%"
                     v-model="editObject.config.endTime"
                     size="small"
                     :format="dateFormat"
@@ -107,7 +105,7 @@
             </div>
             <div class="enable-tabs-daily" v-if="scheduleType === scheduleTypeList[0].value">
               <div class="enable-tabs-custom">{{$t('report.customEvery')}}</div>
-              <el-input v-model.number="editObject.config.schedulerConfig.interval" size="small" placeholder=" " style="margin-top: 0.3125rem;">
+              <el-input v-model.number="editObject.config.schedulerConfig.interval" size="small" placeholder=" " class="report__margin-t">
                 <template #append>{{$t('report.day')}}</template>
               </el-input>
             </div>
@@ -117,7 +115,7 @@
               <el-input v-model="editObject.config.schedulerConfig.interval" size="small" placeholder="Please input">
                 <template #append>{{$t('report.week')}}</template>
               </el-input>-->
-              <el-checkbox-group v-model="editObject.config.schedulerConfig.weekDates" style="margin-top: 0.3125rem">
+              <el-checkbox-group v-model="editObject.config.schedulerConfig.weekDates" class="report__margin-t">
                 <el-checkbox v-for="(item, index) in weekdayList" :key="index" :label="item.value">{{$t(item.name)}}</el-checkbox>
               </el-checkbox-group>
             </div>
@@ -132,7 +130,7 @@
                 <!-- 自定义月，循环 -->
                 <template v-if="monthIsCycle">
                   <div class="enable-tabs-custom">{{$t('report.customEvery')}}</div>
-                  <el-input v-model="editObject.config.schedulerConfig.interval" size="small" placeholder=" " style="margin-top: 0.3125rem;">
+                  <el-input v-model="editObject.config.schedulerConfig.interval" size="small" placeholder=" " class="report__margin-t">
                     <template #append>{{$t('report.month')}}</template>
                   </el-input>
                 </template>
@@ -184,7 +182,6 @@
             <div class="demo-datetime-picker">
               <div class="block">
                 <el-date-picker
-                    style="width: 100%"
                     v-model="editObject.schedulerStart"
                     size="small"
                     :format="dateFormat"
@@ -200,7 +197,6 @@
             <div class="demo-datetime-picker">
               <div class="block">
                 <el-date-picker
-                    style="width: 100%"
                     v-model="editObject.schedulerEnd"
                     size="small"
                     :format="dateFormat"
@@ -233,7 +229,7 @@
               <template #prepend>{{param.key}}</template>
             </el-input>-->
             <template v-for="(param, index) in editObject.categoryParams" :key="index">
-              <el-input v-if="param.labelType === 'input'" v-model="param.value" placeholder=" " size="small" style="vertical-align: unset;" :disabled="!!editObject.id">
+              <el-input v-if="param.labelType === 'input'" v-model="param.value" placeholder=" " size="small" class="report__params-vertical" :disabled="!!editObject.id">
                 <template #prepend>{{param.key}}</template>
               </el-input>
               <el-select v-model="param.value"
@@ -332,7 +328,7 @@ export default {
     }
     const startTimeValidator = (rule, value, callback) => {
       const form = proxy.$refs.reportForm
-      if (form.model.config.endTime) {
+      if (form.model && form.model.config && form.model.config.endTime) {
         form.validateField('config.endTime', () => null)
       }
       callback()
@@ -415,8 +411,8 @@ export default {
       this.editObject.config.isScheduler = n ? 1 : 0
       this.cleanScheduleConfig()
       this.$nextTick(() => {
-        let datePrefixIcon = document.getElementsByClassName('el-input__prefix-inner')
-        if(datePrefixIcon && datePrefixIcon.length > 0) {
+        const datePrefixIcon = document.getElementsByClassName('el-input__prefix-inner')
+        if (datePrefixIcon && datePrefixIcon.length > 0) {
           Array.prototype.forEach.call(datePrefixIcon, function (element) {
             element.innerHTML = '<i class="el-input__icon cn-icon cn-icon-shijian"></i>'
           })
@@ -529,10 +525,10 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.$nextTick(() => {
-      let datePrefixIcon = document.getElementsByClassName('el-input__prefix-inner')
-      if(datePrefixIcon && datePrefixIcon.length > 0) {
+      const datePrefixIcon = document.getElementsByClassName('el-input__prefix-inner')
+      if (datePrefixIcon && datePrefixIcon.length > 0) {
         Array.prototype.forEach.call(datePrefixIcon, function (element) {
           element.innerHTML = '<i class="el-input__icon cn-icon cn-icon-shijian"></i>'
         })
