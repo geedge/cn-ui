@@ -140,84 +140,72 @@
         color: var(--el-text-color-regular);
         margin-right: 4px;
       }
-    }
-
-    .top-tool-btn:disabled {
-      cursor: not-allowed;
-      opacity: 0.66;
-
-      i {
-
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.66;
       }
-    }
-
-    .top-tool-btn.top-tool-btn--text {
-      padding: 0 8px;
-      width: unset;
-      color: var(--el-text-color-regular);
-    }
-
-    .top-tool-btn:hover:not(.cn-btn-disabled) {
-      border: 1px solid $border-color;
-      background-color: var(--cn-bg-color-light);
-    }
-
-    .top-tool-btn:focus:not(.cn-btn-disabled), .top-tool-btn.is-focus {
-      background-color: $--button-gray-active-background-color;
-      border: 1px solid $border-color;
-
-      i {
+      &.top-tool-btn--text {
+        padding: 0 8px;
+        width: unset;
         color: var(--el-text-color-regular);
       }
-    }
-
-    .top-tool-btn--create {
-      background-color: var(--el-color-business) !important;
-      border-color: #2E88A6 !important; // 涉及到表格样式，后续修改
-      color: $color-white;
-
-      i {
-        color: $color-white;
+      &:hover:not(.cn-btn-disabled) {
+        border: 1px solid $border-color;
+        background-color: var(--el-fill-color);
       }
-    }
+      &:focus:not(.cn-btn-disabled), &.is-focus {
+        background-color: var(--el-fill-color-darker);
+        border: 1px solid $border-color;
 
-    .top-tool-btn--create:hover {
-      background-color: #57B8D9 !important;
-      border-color: #2E88A6 !important;
-      color: $color-white;
-
-      i {
-        color: $color-white;
+        i {
+          color: var(--el-text-color-regular);
+        }
       }
-    }
-
-    .top-tool-btn--create:focus {
-      background-color: #31A5CD !important;
-      border-color: #2E88A6 !important;
-      color: $color-white !important;
-
-      i {
-        color: $color-white !important;
-      }
-    }
-
-    .top-tool-btn--create:disabled {
-      opacity: 0.66;
-      background-color: var(--el-color-business) !important;
-      border-color: #2E88A6 !important;
-      color: $color-white;
-
-      i {
+      &.top-tool-btn--create {
+        background-color: var(--el-color-business);
+        border-color: var(--el-color-business-dark-2); // 涉及到表格样式，后续修改
         color: $color-white;
+
+        i {
+          color: $color-white;
+        }
+        &:hover {
+          background-color: var(--el-color-business-light-2);
+          border-color: var(--el-color-business-dark-2);
+          color: $color-white;
+
+          i {
+            color: $color-white;
+          }
+        }
+        &:focus {
+          background-color: var(--el-color-business-dark-1);
+          border-color: var(--el-color-business-dark-2);
+          color: $color-white;
+
+          i {
+            color: $color-white;
+          }
+        }
+        &:disabled {
+          opacity: 0.66;
+          background-color: var(--el-color-business);
+          border-color: var(--el-color-business-dark-2);
+          color: $color-white;
+
+          i {
+            color: $color-white;
+          }
+        }
       }
     }
 
     .btn-customize {
-      color: #2E88A6;
+      color: var(--el-color-business-dark-2);
       font-size: 12px;
 
       .icon-gear {
-        color: #2E88A6;
+        color: var(--el-color-business-dark-2);
         width: 12px;
         height: 12px;
         margin-right: 2px;

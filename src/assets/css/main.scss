@@ -1,4 +1,5 @@
 @use 'sass:map';
+@use 'sass:math';
 
 @use './common.scss';
 /* 主题 */
@@ -50,6 +51,23 @@
 :root {
   // 为新增的业务色设置css变量
   @include var.set-css-var-value(('color', 'business'), map.get(css-var.$colors, 'business', 'base'));
+  // 生成 business 的 light 色值
+  @for $i from 1 through 9 {
+    @include var.set-css-var-value(('color', 'business', 'light', $i), mix(
+        css-var.$color-white,
+        map.get(css-var.$colors, 'business', 'base'),
+        math.percentage(math.div($i, 10))
+    ));
+  }
+  // 生成 business 的 dark2色值
+  @for $i from 1 through 2 {
+    @include var.set-css-var-value(('color', 'business', 'dark', $i), mix(
+        css-var.$color-black,
+        map.get(css-var.$colors, 'business', 'base'),
+        math.percentage(math.div($i, 10))
+    ));
+  }
+
   --cn-bg-color-light: #EBF1F4; // 一个用得比较多的背景色
   --cn-bg-color-lighter: #F7F7F7; // 一个用得比较多的背景色
   --cn-color-critical: #D84C4C; // critical 严重等级分布
