@@ -176,6 +176,18 @@ $bg-color-page: var(--el-bg-color-page);
               span:last-of-type {
                 color: var(--el-text-color-regular);
               }
+
+              .detection-row-active {
+                height: 20px;
+                line-height: 20px;
+                padding: 0 7px;
+                background: var(--el-color-success-light-8);
+                border-radius: 2px;
+                font-family: NotoSansHans-Medium;
+                font-size: 12px;
+                color: var(--el-color-success);
+                font-weight: 500;
+              }
             }
 
             .basic-info__item1 {

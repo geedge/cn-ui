@@ -265,10 +265,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.el-tag {
-  font-size: 12px !important;
-  border-radius: 20px !important;
-}
-</style>

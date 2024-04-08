@@ -45,6 +45,7 @@ $color-regular: var(--el-text-color-regular);
       word-break: break-all;
 
       .row__label {
+        width: 176px;
         padding-right: 20px;
         min-width: 100px;
         color: $color-regular;
@@ -105,6 +106,10 @@ $color-regular: var(--el-text-color-regular);
           font-size: 14px;
           margin-right: 7px;
         }
+      }
+      .row__content {
+        width: calc(100% - 176px);
+        padding-right: 50px;
       }
       .row__content1 {
         display: block;

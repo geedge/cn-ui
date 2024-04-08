@@ -504,9 +504,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.el-popper.search-show-hint-popover {
-  visibility: hidden !important;
-}
-</style>

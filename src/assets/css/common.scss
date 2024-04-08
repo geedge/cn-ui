@@ -70,3 +70,19 @@ body {
 .el-table .cell {
   word-break: break-word !important;
 }
+
+.el-popper.search-show-hint-popover {
+  visibility: hidden !important;
+}
+
+.list-page .cn-table .el-table:not(.chart-table) td {
+  padding: 8px 0;
+}
+
+.cn-dialog {
+  overflow: hidden;
+}
+
+.upload-body{
+  text-align: center;
+}
