@@ -210,11 +210,12 @@
     }
 
     .btn-customize {
-      color: var(--el-color-business-dark-2);
+      color: var(--el-color-primary);
       font-size: 12px;
+      padding: 2px 11px;
 
       .icon-gear {
-        color: var(--el-color-business-dark-2);
+        color: var(--el-color-primary);
         width: 12px;
         height: 12px;
         margin-right: 2px;
@@ -224,6 +225,8 @@
 
     .btn-customize:hover {
       cursor: pointer;
+      background: var(--el-color-primary-light-9);
+      border-radius: 2px;
     }
 
     .top-tool-btn--dropdown {

@@ -22,7 +22,7 @@
   }
 
   .el-pagination .btn-prev {
-    background-color: var(--el-bg-color-page) !important;
+    background-color: var(--el-fill-color-blank) !important;
   }
 
   .el-pager li:hover, .el-pagination .btn-next:hover, .el-pagination .btn-prev:hover {
@@ -32,7 +32,7 @@
   }
 
   .btn-next, .btn-prev {
-    background-color: var(--el-bg-color-page) !important;
+    background-color: var(--el-fill-color-blank) !important;
   }
 
   .el-pager li.is-active {

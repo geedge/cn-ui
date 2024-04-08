@@ -50,7 +50,7 @@
       v-model="showConfirmDialog"
       :title="$t('overall.hint')"
       width="480px"
-      custom-class="del-model-hint"
+      class="del-model-hint"
       :before-close="handleClose">
     <div class="dialog-message">{{ $t('knowledge.deleteDataHint') }}</div>
     <el-table v-model="delItemList"

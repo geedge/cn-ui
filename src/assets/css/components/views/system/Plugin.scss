@@ -1,64 +1,76 @@
-.plugin-management .list-page {
-  .cn-table {
-    height: 100%;
-    .el-table {
+.plugin-management {
+  .list-page {
+    .cn-table {
       height: 100%;
-    }
-    .el-table--group::after,.el-table--border::after, .el-table::before {
-      height: 0;
-    }
-  }
-  .cn-pagination {
-    display: none;
-  }
-}
-.plugin {
-  font-size: 12px;
-  color: #353636;
-  line-height: 14px;
-  font-weight: 400;
-  .type-tag {
-    display: inline-block;
-    padding: 0 10px;
-    background-color: #EBF7FA;
-    color: #046ECA;
-    box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
-    border-radius: 12px;
-    margin-right:10px;
-  }
-  .plugin-name {
-    display: flex;
-    flex-direction: row;
-    justify-content: left;
-    align-items: center;
-    .icon-background {
-      display:flex;
-      justify-content: center;
-      align-items: center;
-      width:32px;
-      height:32px;
-      background: #ECECEC;
-      border-radius: 4px;
-      margin-right:6px;
-      .plugin-name-icon {
-        width:25px;
-        height:25px;
-        color:red;
-        display:flex;
-        justify-content: center;
-        align-items: center;
+
+      .el-table {
+        height: 100%;
+      }
+
+      .el-table--group::after, .el-table--border::after, .el-table::before {
+        height: 0;
       }
     }
+
+    .cn-pagination {
+      display: none;
+    }
   }
-  .two-line {
-    overflow: hidden; //超出的文本隐藏
-    text-overflow: ellipsis; //溢出用省略号显示
-    display: -webkit-box;
-    line-clamp:2 ;
-    -webkit-line-clamp: 2; // 超出多少行
-    -webkit-box-orient: vertical;
-  }
-  .cn-table .el-table:not(.chart-table) td {
-    padding: 8px 0 !important;
+
+  .plugin {
+    font-size: 12px;
+    color: var(--el-text-color-primary);
+    line-height: 14px;
+    font-weight: 400;
+
+    .type-tag {
+      display: inline-block;
+      padding: 0 10px;
+      background-color: var(--el-color-primary-light-9);
+      color: var(--el-color-primary);
+      box-shadow: 0 2px 4px 0 rgba(51, 51, 51, 0.02);
+      border-radius: 12px;
+      margin-right: 10px;
+    }
+
+    .plugin-name {
+      display: flex;
+      flex-direction: row;
+      justify-content: left;
+      align-items: center;
+
+      .icon-background {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 32px;
+        height: 32px;
+        background: var(--el-color-info-light-8);
+        border-radius: 4px;
+        margin-right: 6px;
+
+        .plugin-name-icon {
+          width: 25px;
+          height: 25px;
+          color: var(--el-color-danger);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+    }
+
+    .two-line {
+      overflow: hidden; //超出的文本隐藏
+      text-overflow: ellipsis; //溢出用省略号显示
+      display: -webkit-box;
+      line-clamp: 2;
+      -webkit-line-clamp: 2; // 超出多少行
+      -webkit-box-orient: vertical;
+    }
+
+    .cn-table .el-table:not(.chart-table) td {
+      padding: 8px 0 !important;
+    }
   }
 }
