@@ -31,7 +31,6 @@ import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { parseInt } from 'lodash'
-import ElConfigProvider from 'element-plus'
 import cn from 'element-plus/lib/locale/lang/zh-cn'
 import en from 'element-plus/lib/locale/lang/en'
 

@@ -1,26 +1,26 @@
 <template>
   <div class="license" :class="from">
     <div class="license-form">
-      <el-form ref="licenseForm" :model="licenseObject"  label-position="left" label-width="134px" size="small">
-        <el-form-item  :label="`${$t('license.type')}：`" prop="type">
-          {{licenseObject.type}}
+      <el-form ref="licenseForm" :model="licenseObject" label-position="left" label-width="134px" size="small">
+        <el-form-item :label="`${$t('license.type')}：`" prop="type">
+          {{ licenseObject.type }}
         </el-form-item>
         <el-form-item :label="`${$t('license.organization')}：`" prop="organization">
-          <div class="">{{licenseObject.organization}}</div>
+          <div class="">{{ licenseObject.organization }}</div>
         </el-form-item>
         <el-form-item :label="`${$t('license.supportId')}：`" prop="supportID">
-          <div class="">{{licenseObject.supportID}}</div>
+          <div class="">{{ licenseObject.supportID }}</div>
         </el-form-item>
         <el-form-item :label="`${$t('license.dateIssued')}：`" prop="dateIssued">
-          <div class="">{{licenseObject.dateIssued}}</div>
+          <div class="">{{ licenseObject.dateIssued }}</div>
         </el-form-item>
         <el-form-item :label="`${$t('license.dateExpires')}：`" prop="dateExpires">
-          <div class="">{{licenseObject.dateExpires}}</div>
+          <div class="">{{ licenseObject.dateExpires }}</div>
         </el-form-item>
-        <el-form-item :label="`${$t('license.licenseFile')}：`" >
+        <el-form-item :label="`${$t('license.licenseFile')}：`">
           <div class="license-file">
-            <button style="position: relative;" class="license__btn margin-r-20" @click.prevent="downloadFile">
-              <i class="cn-icon-download1 cn-icon margin-r-6"></i><span>{{$t('license.download')}}</span>
+            <button class="license__btn margin-r-20" @click.prevent="downloadFile">
+              <i class="cn-icon-download1 cn-icon margin-r-6"></i><span>{{ $t('license.download') }}</span>
             </button>
             <el-upload :action="`${baseUrl}sys/license/upload`"
                        ref="licenseUpload"
@@ -34,13 +34,12 @@
                        :on-change="fileChange"
                        :on-success="uploadSuccess"
                        :on-error="uploadError">
-              <button style="position: relative;" class="license__btn" @click.prevent="">
-                <i class="cn-icon-upload1 cn-icon margin-r-6"></i><span>{{$t('license.upload')}}</span>
+              <button class="license__btn" @click.prevent="">
+                <i class="cn-icon-upload1 cn-icon margin-r-6"></i><span>{{ $t('license.upload') }}</span>
               </button>
             </el-upload>
           </div>
         </el-form-item>
-
       </el-form>
     </div>
   </div>
@@ -51,6 +50,7 @@ import { storageKey } from '@/utils/constants'
 import axios from 'axios'
 import { ref } from 'vue'
 import { dateFormat } from '@/utils/date-util'
+import _ from 'lodash'
 
 export default {
   name: 'License',
@@ -109,7 +109,7 @@ export default {
     downloadFile () {
       axios.get(this.downloadC2vUrl, { responseType: 'blob' }).then(res => {
         let fileName = ''
-        if(res.headers['content-disposition']) {
+        if (res.headers['content-disposition']) {
           fileName = res.headers['content-disposition'].split(';')[1].split('filename=')[1]
         }
 

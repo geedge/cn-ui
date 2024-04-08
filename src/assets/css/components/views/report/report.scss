@@ -35,10 +35,8 @@ $bg-color-dark: var(--el-border-color-dark);
     }
 
     .cn-report-left-menu.cn-active {
-      //background: #F4FAFF;
-      background: var(--el-color-primary-light-9);
+      background: var(--el-color-business-light-9);
       border-radius: 2px;
-      //color: #0091FF;
       color: var(--el-color-business);
     }
   }

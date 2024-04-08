@@ -1,4 +1,5 @@
 $color-white: var(--el-color-white);
+$color-create: var(el-color-business-dark-2);
 
 .top-tools__left {
   display: flex;
@@ -49,18 +50,16 @@ $color-white: var(--el-color-white);
 
   .top-tool-btn--delete.top-tool-btn:focus:not(.cn-btn-disabled) {
     background-color: var(--cn-bg-color-light);
-    //border-color: #FFC4B9;
     border-color: var(--el-color-danger-light-5);
 
     i {
-      //color: #F0745A;
       color: var(--el-color-danger);
     }
   }
 
   .top-tool-btn--create {
     background-color: var(--el-color-business) !important;
-    border-color: #2E88A6 !important;
+    border-color: $color-create !important;
     color: $color-white;
 
     i {
@@ -69,8 +68,8 @@ $color-white: var(--el-color-white);
   }
 
   .top-tool-btn--create:hover {
-    background-color: #57B8D9 !important;
-    border-color: #2E88A6 !important;
+    background-color: var(--el-color-business-light-2) !important;
+    border-color: $color-create !important;
     color: $color-white;
 
     i {
@@ -79,8 +78,8 @@ $color-white: var(--el-color-white);
   }
 
   .top-tool-btn--create:focus {
-    background-color: #31A5CD !important;
-    border-color: #2E88A6 !important;
+    background-color: var(--el-color-business) !important;
+    border-color: $color-create !important;
     color: $color-white !important;
 
     i {
@@ -91,7 +90,7 @@ $color-white: var(--el-color-white);
   .top-tool-btn--create:disabled {
     opacity: 0.66;
     background-color: var(--el-color-business) !important;
-    border-color: #2E88A6 !important;
+    border-color: $color-create !important;
     color: $color-white;
 
     i {

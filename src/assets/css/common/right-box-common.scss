@@ -73,10 +73,6 @@ $border-radius-small: 2px;
       }
     }
 
-    .container__form {
-
-    }
-
     .el-form-item__content {
       .input-box {
         .el-textarea {
@@ -369,7 +365,6 @@ $border-radius-small: 2px;
 
   .el-switch {
     --el-switch-on-color: #699DC9;
-    --el-switch-off-color: #C0CEDB;
   }
 
   .el-textarea__inner {
