@@ -17,11 +17,11 @@ router.beforeEach(async (to, from, next) => {
   loadGeoData()
   // 加载baseUrl
   if (!axios.defaults.baseURL) {
-    // eslint-disable-next-line no-undef
+  // eslint-disable-next-line no-undef
     axios.defaults.baseURL = BASE_CONFIG.baseUrl
   }
   if (localStorage.getItem(storageKey.token)) {
-    // 加载i18n
+  // 加载i18n
     await loadI18n()
     // 加载权限
     if (permissionWhiteList.indexOf(to.path) !== -1) {
@@ -162,8 +162,8 @@ export function handleComponent (code) {
       return () => import('@/views/detections/detectionPolicies/PolicyForm')
     case 'report':
       return () => import('@/views/report/Report')
-    //case 'tag':
-      //return () => import('@/views/tag/Tag')
+    case 'tag':
+      return () => import('@/views/tag/Tag')
     case 'knowledgeBase':
       return () => import('@/views/setting/KnowledgeBase')
     case 'userDefinedLibrary':

@@ -63,7 +63,8 @@ export const fromRoute = {
   galaxyProxy: 'galaxyProxy',
   chart: 'chart',
   cryptocurrency: 'cryptocurrency',
-  builtinReport: 'builtinReport'
+  builtinReport: 'builtinReport',
+  tag: 'tag'
 }
 
 /* panel类别和名称之间的映射 */
@@ -463,6 +464,25 @@ export const knowledgeBaseCategory = [
     value: 'user_defined'
   }
 ]
+
+export const tagIntentColor = [
+  {
+    label: 'tag.intent.unknown',
+    name: 'unknow',
+    intent: 'Unknow'
+  },
+  {
+    label: 'tag.intent.benign',
+    name: 'benign',
+    intent: 'Benign'
+  },
+  {
+    label: 'tag.intent.malicious',
+    name: 'malicious',
+    intent: 'Malicious'
+  }
+]
+
 export const knowledgeBaseColor = [
   {
     label: 'knowledge.info',

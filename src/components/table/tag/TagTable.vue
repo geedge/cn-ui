@@ -17,72 +17,48 @@
       <el-table-column type="expand" width="30">
         <template #default="props">
           <div class="down">
-            <div class="block drop-down-time">
-              <el-date-picker
-                  v-model="timeRange"
-                  size="small"
-                  :format="format"
-                  :clearable="false"
-                  type="datetimerange"
-                  range-separator="To"
-                  :start-placeholder="$t('detections.startTime')"
-                  :end-placeholder="$t('detections.endTime')"
-                  @change="datePickerChange(props.row)"
-              />
+            <div class="block drop-down-time" style="border:0px yellow solid;">
+              <el-popover placement="bottom-start"
+                          :ref="`tagPopover${props.row.id}`"
+                          :key="`tagPopover${props.row.id}`"
+                          :show-arrow="false"
+                          :append-to-body="true"
+                          :hide-after="0"
+                          :show-after="0"
+                          popper-class="tag__popper"
+                          trigger="click">
+                <template #reference>
+                  <div class="tag-dropdown" :id="`tagDropdown${props.row.id}`">
+                    <span>{{ curExpendDataType }}</span><i class="cn-icon-down cn-icon"></i>
+                  </div>
+                </template>
+                <el-row type="flex" justify="center" style="width: fit-content;flex-direction: column;">
+                  <ul class="select-dropdown" :id="`tagSelectDropdown${props.row.id}`" >
+                    <li key="uniqueEntityObserved" :id="`uniqueEntityObserved${props.row.id}`" class="select-dropdown__item" @click="uniqueEntityObserved(props.row)" >
+                       <span>{{ $t('tag.uniqueEntityObserved') }}</span>
+                    </li>
+                    <li key="totalIndicators" :id="`totalIndicators${props.row.id}`" class="select-dropdown__item" @click="totalIndicators(props.row)">
+                      <span>{{ $t('tag.totalIndicators') }}</span>
+                    </li>
+                  </ul>
+                </el-row>
+              </el-popover>
             </div>
             <div class="expand">
               <loading :loading="loadingDown"></loading>
-              <chart-no-data v-if="downDataList.length === 0 && !loadingDown"></chart-no-data>
-              <div class="expand-cell" v-for="(item, index) in downDataList" :key="index">
-                <div class="expand-right">
-                  <div class="demo-progress">
-                    <el-progress :stroke-width="10" type="circle" :percentage="computePercent(item)"
-                                 :color="computePercent(item) === 'Failed' ? '#D8A6A6' : (computePercent(item) === 100 ? '#21bf9a' : '#50b3ef')">
-                      <template #default="{ percentage }">
-                        <span style="font-size: 0.875rem;" v-if="percentage !== 'Failed'">{{ percentage + '%' }}</span>
-                        <span style="font-size: 0.875rem;color: #C14843" v-else>{{ percentage }}</span>
-                      </template>
-                    </el-progress>
-                  </div>
+              <chart-no-data v-if="isNoData && !loadingDown"></chart-no-data>
+              <div class="expand-cell" >
+                <div class="expand-left" style="border:0px red solid;">
+                  <div class="chart-drawing" :id="`chart${props.row.id}`"></div>
                 </div>
-                <div class="expand-left">
-                  <div class="expand-name"><i class="cn-icon cn-icon-user"></i>{{ username }}</div>
-                  <div class="expand-time">
-                    <div>{{ $t('tag.creationTime') }}</div>
-                    <div>{{ dateFormatByAppearance(item.ctime) }}</div>
-                  </div>
-                  <div class="expand-icon">
-                    <div class="table-operation-item--no-border"
-                         :class="{'table-operation-item--disabled': computePercent(item) === 'Failed' || computePercent(item) < 100}"
-                         @click="tagOperation(['download', item])">
-                      <loading :loading="loadingTableId === item.id" size="small"></loading>
-                      <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingTableId}">
-                        <use xlink:href="#cn-icon-download2"></use>
-                      </svg>
-                    </div>
-                    <div class="table-operation-item--no-border"
-                         :class="{'table-operation-item--disabled': computePercent(item) === 'Failed' || computePercent(item) < 100}"
-                         @click="tagOperation(['preview', item])">
-                      <loading :loading="loadingPreviewId === item.id" size="small"></loading>
-                      <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
-                        <use xlink:href="#cn-icon-preview"></use>
-                      </svg>
-                    </div>
-                    <div class="table-operation-item--no-border" @click="downDeleteQueryChange(item, props)">
-                      <svg class="icon" aria-hidden="true">
-                        <use xlink:href="#cn-icon-shanchu"></use>
-                      </svg>
-                    </div>
+                <div class="expand-right" style="border:0px green solid;">
+                  <div class="expand-count">{{observedCount}}</div>
+                  <div class="expand-observed-Ips"  @click="toEntityList(props.row)">
+                    <div v-if="disableToEntity" style="cursor: not-allowed;">Observed IPs -></div>
+                    <div v-else style="cursor: pointer;">Observed IPs -></div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="cn-detection__footer">
-              <chart-detection-pagination
-                  ref="pagination"
-                  :page-obj="pageObj"
-                  @pageJump="pageJump"
-              ></chart-detection-pagination>
             </div>
           </div>
         </template>
@@ -91,6 +67,7 @@
           :resizable="false"
           align="center"
           type="selection"
+          :selectable="(row) => { return row.isBuiltIn !== 1 }"
           width="30">
       </el-table-column>
       <el-table-column
@@ -111,76 +88,10 @@
           <div class="col-resize-area"></div>
         </template>
         <template #default="scope" :column="item">
-          <span v-if="item.prop === 'timeLimit'">
-            {{ handleTimeRange(scope.row) }}
+          <span v-if="item.prop === 'isBuiltIn'">
+            <span>{{ getIsBuiltIn(scope.row.isBuiltIn) }}</span>
           </span>
-          <span v-else-if="item.prop === 'categoryId'">
-            <span>{{ getCategoryName(scope.row.categoryId) }}</span>
-          </span>
-          <span v-else-if="item.prop === 'timePlan'">
-            <template v-if="scope.row.config && scope.row.config.isScheduler === 0">
-              {{ $t('tag.always') }}
-            </template>
-            <template v-else-if="scope.row.config && scope.row.config.isScheduler === 1">
-              <el-popover
-                  placement="right-start"
-                  :width="270"
-                  trigger="hover"
-                  class="my-table"
-                  @show="handleConfig(scope.row)"
-              >
-                <template #reference>
-                  <span>
-                    <template v-if="scope.row.config && scope.row.config.schedulerConfig">
-                      <template v-if="scope.row.config.schedulerConfig.type === 'day'">
-                      {{ $t('tag.daily') }}
-                      </template>
-                      <template v-else-if="scope.row.config.schedulerConfig.type === 'week'">
-                        {{ $t('tag.weekly') }}
-                      </template>
-                      <template v-else-if="scope.row.config.schedulerConfig.type === 'month'">
-                        {{ $t('tag.monthly') }}
-                      </template>
-                      <template v-else-if="scope.row.config.schedulerConfig.type === ''">
-                        {{ $t('tag.oneTime') }}
-                      </template>
-                      <template v-else>
-                        -
-                      </template>
-                    </template>
-                  </span>
-                </template>
-                <el-row class="margin-l-10 margin-t-20">
-                  <el-col :span="8" class="tooltip-column-name">{{ $t('tag.period') }}</el-col>
-                  <el-col :span="16">{{ configPeriod }}</el-col>
-                </el-row>
-                <el-row class="margin-l-10">
-                  <el-col :span="8" class="tooltip-column-name">{{ $t('tag.custom') }}</el-col>
-                  <el-col :span="16">{{ configCustom }}</el-col>
-                </el-row>
-                <el-row class="margin-l-10">
-                  <el-col :span="8" class="tooltip-column-name">{{ $t('tag.startTime') }}</el-col>
-                  <el-col :span="16">{{ dateFormatByAppearance(scope.row.schedulerStart) || '-' }}</el-col>
-                </el-row>
-                <el-row class="margin-l-10">
-                  <el-col :span="8" class="tooltip-column-name">{{ $t('tag.endTime') }}</el-col>
-                  <el-col :span="16">{{ dateFormatByAppearance(scope.row.schedulerEnd) || '-' }}</el-col>
-                </el-row>
-              </el-popover>
-            </template>
-            <template v-else>
-              -
-            </template>
-          </span>
-          <span v-else-if="item.prop === 'userName'">
-            {{ (scope.row.sysUser && scope.row.sysUser.name) || '-' }}
-          </span>
-          <span v-else-if="item.prop === 'lastTime'">
-            {{ scope.row.lastTime ? dateFormatByAppearance(scope.row.lastTime) : '-' }}
-          </span>
-          <span v-else-if="item.prop === 'total'">
-            {{ scope.row[item.prop] || 0 }}
-          </span>
+          <span v-else-if="item.prop === 'intent'" class="type-tag" :class="colorIntent(scope.row[item.prop])">{{scope.row[item.prop]}}</span>
           <span v-else>{{ scope.row[item.prop] || '-' }}</span>
         </template>
       </el-table-column>
@@ -197,14 +108,17 @@ import table from '@/mixins/table'
 import Loading from '@/components/common/Loading'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { storageKey } from '@/utils/constants'
+import { storageKey, tagIntentColor, chartColor3 } from '@/utils/constants'
 import { urlParamsHandler, overwriteUrl, headerCellClass } from '@/utils/tools'
-import { ref } from 'vue'
+import { ref, shallowRef } from 'vue'
 import { dateFormatToUTC, getNowTime } from '@/utils/date-util'
 import chartDetectionPagination from '@/views/charts/charts/chartDetectionPagination'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import { useRoute } from 'vue-router'
 import { parseInt } from 'lodash'
+import unitConvert from '@/utils/unit-convert'
+import * as echarts from 'echarts'
+import { tagLineChartOption } from '@/views/charts2/charts/options/echartOption'
 
 export default {
   name: 'tagTable',
@@ -215,9 +129,7 @@ export default {
     chartDetectionPagination
   },
   props: {
-    categoryList: Array,
     toolsLoading: Boolean,
-    categoryId: Number,
     isNoData: {
       type: Boolean,
       default: false
@@ -228,49 +140,39 @@ export default {
     return {
       format: localStorage.getItem(storageKey.dateFormat),
       username: localStorage.getItem(storageKey.username),
+      curExpendDataType: this.$t('tag.uniqueEntityObserved'),
+      curExpendDataTypeVal: 'uniqueEntityObserved',
       tableTitle: [ // 原始table列
         {
-          label: 'ID',
-          prop: 'id',
-          show: true,
-          width: 50
-        }, {
-          label: this.$t('config.user.name'),
+          label: this.$t('overall.name'),
           prop: 'name',
           show: true,
-          minWidth: 200,
+          minWidth: 50,
           sortable: 'custom'
         }, {
-          label: this.$t('tag.categoryType'),
-          prop: 'categoryId',
-          show: true,
-          minWidth: 180
-        }, {
-          label: this.$t('tag.timeLimit'),
-          prop: 'timeLimit',
-          show: true,
-          minWidth: 110
-        }, {
-          label: this.$t('tag.timePlan'),
-          prop: 'timePlan',
-          show: true,
-          minWidth: 110
-        }, {
-          label: this.$t('tag.operationUserName'),
-          prop: 'userName',
-          show: true,
-          minWidth: 70
-        }, {
-          label: this.$t('tag.resultCount'),
-          prop: 'total',
+          label: this.$t('tag.category'),
+          prop: 'category',
           show: true,
           minWidth: 50
         }, {
-          label: this.$t('tag.lastExecutionTime'),
-          prop: 'lastTime',
+          label: this.$t('tag.entityType'),
+          prop: 'indicatorType',
           show: true,
-          width: 170,
-          sortable: 'custom'
+          minWidth: 50
+        }, {
+          label: this.$t('tag.intention'),
+          prop: 'intent',
+          show: true,
+          minWidth: 30
+        }, {
+          label: this.$t('tag.source'),
+          prop: 'isBuiltIn',
+          show: true,
+          minWidth: 30
+        }, {
+          label: this.$t('overall.remark'),
+          prop: 'description',
+          show: true
         }
       ],
       checkboxAll: false,
@@ -285,54 +187,15 @@ export default {
       loadingPreviewId: '',
       downDataList: [],
       disableEdit: false, // 编辑按钮是否不可用，当选择多条记录的时候你，编辑按钮不可用
-      // pageObj: {
-      //   pageNo: 1,
-      //   pageSize: 20,
-      //   total: 0,
-      //   resetPageNo: true
-      // },
-      // expandedIds: [],
       interval: null,
-      typeMappings: [
-        {
-          key: 'day',
-          value: this.$t('tag.daily')
-        },
-        {
-          key: 'week',
-          value: this.$t('tag.weekly')
-        },
-        {
-          key: 'month',
-          value: this.$t('tag.monthly')
-        },
-        {
-          key: '',
-          value: this.$t('tag.oneTime')
-        }
-      ],
-      typeUnitMappings: [
-        {
-          key: 'day',
-          value: this.$t('tag.days')
-        },
-        {
-          key: 'week',
-          value: this.$t('tag.week')
-        },
-        {
-          key: 'month',
-          value: this.$t('tag.months')
-        }
-      ],
-      scheduleTypeList: tag.scheduleTypeList,
-      weekdayList: tag.weekdayList,
-      monthList: tag.monthList,
-      weekOptions: tag.weekOptions,
       configPeriod: '',
       configCustom: '',
       selectIds: [], // 单行选中的id列表
-      initExpandFlag: false // 初始化时单行展开标志，false是未展开，true展开
+      initExpandFlag: false, // 初始化时单行展开标志，false是未展开，true展开,
+      myChartArray: [],
+      observedCount: 0,
+      disableToEntity: false,
+      tagIntentColor
     }
   },
   /**
@@ -368,11 +231,12 @@ export default {
       pageNo = 1
     }
     const pageObj = ref(tempPageObj)
-
+    const myChart = shallowRef(null)
     return {
       timeRange,
       expandedIds,
-      pageObj
+      pageObj,
+      myChart
     }
   },
   watch: {
@@ -421,40 +285,11 @@ export default {
     }
   },
   computed: {
-    handleTimeRange () {
-      return function (row) {
-        let str = ''
-        if (row.config && row.config.timeConfig && row.config.timeConfig.type) {
-          str += row.config.timeConfig.type
-          if (['today', 'yesterday', 'this', 'customize'].indexOf(row.config.timeConfig.type) === -1 && row.config.timeConfig.offset) {
-            str += ` ${row.config.timeConfig.offset} ${row.config.timeConfig.unit}`
-          }
-        }
-        return str
-      }
-    },
-    computePercent () {
-      return function (item) {
-        if (item.state === 2) {
-          return 'Failed'
-        }
-        if (item.percent === 1) {
-          if (localStorage.getItem(storageKey.s3Enable) == 1) {
-            if (item.state === 1 && item.upload === 1) {
-              return 100
-            } else {
-              return 99.99
-            }
-          } else {
-            if (item.state === 1) {
-              return 100
-            } else {
-              return 99.99
-            }
-          }
-        } else {
-          return parseFloat(item.percent * 100).toFixed(2)
-        }
+    colorIntent () {
+      const vm = this
+      return function (intent) {
+        const t = vm.tagIntentColor.find(t => t.intent === intent)
+        return t ? t.name : vm.tagIntentColor[0].name
       }
     }
   },
@@ -462,13 +297,131 @@ export default {
     this.$nextTick(() => {
       this.expandTable()
     })
+    window.addEventListener('resize', this.resize)
   },
   methods: {
     headerCellClass,
+    toEntityList (tag) {
+      if (!this.disableToEntity) {
+        this.$router.push({
+          path: '/entity',
+          query: {
+            listMode: 'list',
+            q: 'has(tag,\'' + tag.name + '\')',
+            mode: 'text',
+            // range: this.timeFilter.dateRangeValue,
+            // pageNo: this.pageObj.pageNo,
+            // pageSize: this.pageObj.pageSize,
+            showList: true
+          }
+        })
+      }
+    },
+    echartsInit (data, item, type) {
+      const dom = document.getElementById(`chart${item.id}`)
+      if (dom) {
+        // if (!this.myChart) {
+        this.myChart = echarts.init(dom)
+        // }
+        this.chartOption = tagLineChartOption
+        this.chartOption.series = [
+          {
+            type: 'line',
+            symbol: 'circle',
+            smooth: true,
+            showSymbol: false,
+            emphasis: {
+              itemStyle: {
+                borderWidth: 2
+              }
+            },
+            name: 'IP',
+            stack: 'Total',
+            lineStyle: {
+              color: '#35ADDA',
+              width: 1
+            },
+            areaStyle: {
+              // opacity: 0.1,
+              color: '#eef8fc'
+            },
+            itemStyle: {
+              color: '#35ADDA'
+            },
+            data: data.map(t => { return [Number(t.statTime) * 1000, Number(t.ipIndicatorCount)] })
+          },
+          {
+            type: 'line',
+            symbol: 'circle',
+            smooth: true,
+            showSymbol: false,
+            emphasis: {
+              itemStyle: {
+                borderWidth: 2
+              }
+            },
+            name: 'Domain Name',
+            stack: 'Total',
+            lineStyle: {
+              color: '#E48F3E',
+              width: 1
+            },
+            areaStyle: {
+              color: '#fdf6f0'
+              // opacity: 0.1
+            },
+            itemStyle: {
+              color: '#E48F3E'
+            },
+            data: data.map(t => { return [Number(t.statTime) * 1000, Number(t.domainIndicatorCount)] })
+          }
+        ]
+
+        this.chartOption.yAxis[0].axisLabel.formatter = (value) => {
+          return unitConvert(value, 'number').join('')
+        }
+        this.myChartArray.push(this.myChart)
+        this.myChart.setOption(this.chartOption)
+        this.$nextTick(() => {
+          this.myChart.resize()
+        })
+      }
+    },
+    resize () {
+      this.myChartArray.forEach(t => {
+        t.resize()
+      })
+    },
+    uniqueEntityObserved (item) {
+      this.curExpendDataType = this.$t('tag.uniqueEntityObserved')
+      this.curExpendDataTypeVal = 'uniqueEntityObserved'
+      this.disableToEntity = false
+      this.$nextTick(() => {
+        const totalIndicatorsDom = document.getElementById('totalIndicators' + item.id)
+        const uniqueEntityObservedDom = document.getElementById('uniqueEntityObserved' + item.id)
+        uniqueEntityObservedDom.style.cssText = 'color:#0091ff;font-weight: bold;'
+        totalIndicatorsDom.style.cssText = ''
+        document.getElementById('tagDropdown' + item.id).click()
+      })
+      this.init(item, api.tagTrafficEntityTrend, api.tagTrafficEntityStatistics)
+    },
+    totalIndicators (item) {
+      this.curExpendDataType = this.$t('tag.totalIndicators')
+      this.curExpendDataTypeVal = 'totalIndicators'
+      this.disableToEntity = true
+      this.$nextTick(() => {
+        const totalIndicatorsDom = document.getElementById('totalIndicators' + item.id)
+        const uniqueEntityObservedDom = document.getElementById('uniqueEntityObserved' + item.id)
+        uniqueEntityObservedDom.style.cssText = ''
+        totalIndicatorsDom.style.cssText = 'color:#0091ff;font-weight: bold;'
+        document.getElementById('tagDropdown' + item.id).click()
+      })
+      this.init(item, api.tagIndicatorTrend, api.tagIndicatorStatistics)
+    },
     /**
-     * 进入页面判断是否需要展开表格
-     * 即展开表格后刷新界面，保持展开效果
-     */
+   * 进入页面判断是否需要展开表格
+   * 即展开表格后刷新界面，保持展开效果
+   */
     expandTable () {
       const expandInfo = this.expandedIds
 
@@ -476,7 +429,6 @@ export default {
         const obj = {
           id: expandInfo[0]
         }
-
         this.dropExpandChange(obj, expandInfo, 'init')
 
         setTimeout(() => {
@@ -505,11 +457,6 @@ export default {
         return this.$t('overall.completed')
       } else {
         return this.$t('overall.inProgress')
-      }
-    },
-    tagOperation (arr) {
-      if (arr[1].percent === 1) {
-        this.tableOperation(arr)
       }
     },
     /**
@@ -578,194 +525,99 @@ export default {
       }
       overwriteUrl(newUrl)
     },
+    initLine (item, lineUrl) {
+      const params = {
+        // startTime: getSecond(this.timeFilter.startTime),
+        // endTime: getSecond(this.timeFilter.endTime)
+      }
+      lineUrl = lineUrl || api.tagTrafficEntityTrend
+      lineUrl = lineUrl.replace('{{name}}', item.name)
+      this.loadingDown = true
+      axios.get(lineUrl, { params: params }).then(response => {
+        const res = response.data
+        if (response.status === 200) {
+          this.showError = false
+          this.isNoData = res.data.result.length === 0
+
+          if (!this.isNoData) {
+            this.echartsInit(res.data.result, item, '')
+          }
+        } else {
+          this.isNoData = false
+          this.showError = true
+          this.errorMsg = this.errorMsgHandler(res)
+        }
+      }).catch(e => {
+        console.error(e)
+        this.isNoData = false
+        this.showError = true
+        this.errorMsg = this.errorMsgHandler(e)
+      }).finally(() => {
+        this.loadingDown = false
+      })
+    },
+    initStatistics (item, statisticsUrl) {
+      const params = {
+        // startTime: getSecond(this.timeFilter.startTime),
+        // endTime: getSecond(this.timeFilter.endTime)
+      }
+      statisticsUrl = statisticsUrl || api.tagTrafficEntityStatistics
+      statisticsUrl = statisticsUrl.replace('{{name}}', item.name)
+      let observedCount = 0
+      axios.get(statisticsUrl, { params: params }).then(response => {
+        const res = response.data
+        if (response.status === 200) {
+          res.data.result.forEach(item => {
+            observedCount = observedCount + item.count
+          })
+          this.observedCount = observedCount
+        } else {
+          this.errorMsg = this.errorMsgHandler(res)
+        }
+      }).catch(e => {
+        console.error(e)
+        this.errorMsg = this.errorMsgHandler(e)
+      }).finally(() => {
+      })
+    },
+    init (item, lineUrl, statisticsUrl) {
+      this.initLine(item, lineUrl)
+      this.initStatistics(item, statisticsUrl)
+    },
     /**
      * 表格左侧点击展开收起
      */
     dropExpandChange (row, expandedRows, flag) {
+      this.curExpendDataType = this.$t('tag.uniqueEntityObserved')
+      this.curExpendDataTypeVal = 'uniqueEntityObserved'
       this.expandedIds = []
       clearInterval(this.interval)
       if (expandedRows.length > 0 && row) {
         this.expandedIds.push(row.id)
-        if (flag === undefined) {
-          this.pageObj.pageNo = 1
-        }
-
-        this.datePickerChange(row)
-      }
-    },
-    datePickerChange (row, show) {
-      if (!show) {
-        if (this.pageObj.pageNo <= 1) {
-          this.pageObj.pageNo = 1
-        }
-      }
-      const param = {
-        tempId: row.id,
-        startTime: dateFormatToUTC(this.timeRange[0]),
-        endTime: dateFormatToUTC(this.timeRange[1]),
-        ...this.pageObj
-      }
-      this.dropDownQueryChange(param)
-    },
-    dropDownQueryChange (param) {
-      this.loadingDown = true
-      this.downDataList = []
-      axios.get(api.reportJob, { params: param }).then(res => {
-        if (res.status === 200) {
-          this.downDataList = res.data.data.list
-          this.pageObj.total = res.data.data.total
-          this.$nextTick(() => {
-            this.$refs.dataTable.doLayout()
-          })
-        }
-        this.loadingDown = false
-        const showInterval = this.downDataList.find(item => item.percent !== 1 && item.state !== 2)
-        if (this.downDataList && showInterval) {
-          this.intervalChange(param)
-        }
-      })
-    },
-    dataConversionProcessing (param) {
-      axios.get(api.reportJob, { params: param }).then(res => {
-        if (res.status === 200) {
-          this.downDataList = res.data.data.list
-          this.pageObj.total = res.data.data.total
-        }
-      })
-    },
-    downDeleteQueryChange (row, props) {
-      this.$confirm(this.$t('tip.confirmDelete'), {
-        confirmButtonText: this.$t('tip.yes'),
-        cancelButtonText: this.$t('tip.no'),
-        type: 'warning'
-      }).then(() => {
-        axios.delete(api.reportJob + '?ids=' + row.id).then(response => {
-          if (response.status === 200) {
-            this.delFlag = true
-            this.$message({
-              duration: 2000,
-              type: 'success',
-              message: this.$t('tip.deleteSuccess')
-            })
-            this.dropDownQueryChange({ tempId: props.row.id })
-            this.$emit('reload')
-          } else {
-            this.$message.error(response.data.message)
+        this.init(row)
+        this.$nextTick(() => {
+          const uniqueEntityObservedDom = document.getElementById('uniqueEntityObserved' + row.id)
+          if (uniqueEntityObservedDom) {
+            uniqueEntityObservedDom.style.cssText = 'color:#0091ff;font-weight: bold;'
           }
         })
-      }).catch(() => {})
-    },
-    pageJump (val) {
-      this.pageObj.pageNo = val
-      if (this.expandedIds.length > 0) {
-        this.datePickerChange({ id: this.expandedIds[0] }, true)
       }
     },
-    intervalChange (param) {
-      clearInterval(this.interval)
-      this.interval = setInterval(() => {
-        // 通过深拷贝，触发watch监听到timeRange，也可使用$set进行触发
-        this.timeRange = JSON.parse(JSON.stringify(this.timeRange))
-        this.timeRange[1] = this.timeRange[1] + 30000
-        param.endTime = dateFormatToUTC(this.timeRange[1])
-        this.dataConversionProcessing(param)
-      }, 30000)
-    },
-    handleConfigArray (array, list) {
-      const group = []
-      array.forEach(item => {
-        const matchItem = list.find(m => m.value === item)
-        if (matchItem) {
-          group.push(this.$t(matchItem.name))
-        }
-      })
-      return group.toString()
-    },
-    handleConfig (row) {
-      this.handleConfigPeriod(row)
-      this.handleConfigCustom(row)
-    },
-    handleConfigPeriod (row) {
-      let str = ''
-      if (row.config && row.config.schedulerConfig) {
-        const type = row.config.schedulerConfig.type
-        if (type === '') {
-          str = this.$t('tag.oneTime')
-        } else { // isRepeat=1 每天，每周，每月
-          const period = this.typeMappings.find(m => m.key === type)
-          const interval = row.config.schedulerConfig.interval
-          const months = row.config.schedulerConfig.months
-          if (interval > 1) {
-            const unit = this.typeUnitMappings.find(m => m.key === type)
-            if (unit) {
-              str = this.$t('tag.every') + '   ' + interval + '   ' + unit.value
-            } else {
-              str = '-'
-            }
-          } else if (interval === 1) {
-            if (type === this.scheduleTypeList[2].value) { // 月
-              if (this.$_.isEmpty(months)) { // 空代表循环
-                str = period.value
-              } else { // 非空代表不循环
-                str = this.handleConfigArray(months, this.monthList)// X月，Y月
-              }
-            } else if (period) {
-              str = period.value
-            } else {
-              str = '-'
-            }
-          }
-        }
+    getIsBuiltIn (isBuiltIn) {
+      if (isBuiltIn === 1) {
+        return this.$t('tag.builtInTag')
+      } else {
+        return this.$t('tag.userDefined')
       }
-      this.configPeriod = str
-    },
-    handleConfigCustom (row) {
-      let str = ''
-      if (row.config && row.config.schedulerConfig) {
-        const type = row.config.schedulerConfig.type
-        if (type === '') { // 单次
-          str = '-'
-        } else { // 每日，每周，每月
-          const period = this.typeMappings.find(m => m.key === type)
-          if (type === this.scheduleTypeList[0].value) { // 日
-            str = '-'
-          } else if (type === this.scheduleTypeList[1].value) { // 周
-            const weekDates = row.config.schedulerConfig.weekDates
-            str = this.handleConfigArray(weekDates, this.weekdayList)
-          } else if (type === this.scheduleTypeList[2].value) { // 月
-            const monthDates = row.config.schedulerConfig.monthDates// 日期
-            const monthWeekDates = row.config.schedulerConfig.monthWeekDates// 哪几周
-            const weekDates = row.config.schedulerConfig.weekDates// 周几
-            if (!this.$_.isEmpty(monthDates)) {
-              str = this.$t('tag.date') + '-' + monthDates
-            } else {
-              if (!this.$_.isEmpty(monthWeekDates)) {
-                str += this.$t('tag.week') + '-' + this.handleConfigArray(monthWeekDates, this.weekOptions)
-              }
-              if (!this.$_.isEmpty(weekDates)) {
-                str += '    ' + this.handleConfigArray(weekDates, this.weekdayList)
-              }
-            }
-          } else {
-            str = '-'
-          }
-        }
-      }
-      this.configCustom = str
-    },
-    getCategoryName (id) {
-      let name = '-'
-      for (let i = 0; i < this.categoryList.length; i++) {
-        if (id === this.categoryList[i].id) {
-          name = this.categoryList[i].name
-          break
-        }
-      }
-      return name
     }
   },
   beforeUnmount () {
     clearInterval(this.interval)
+    window.removeEventListener('resize', this.resize)
+    if (this.myChart) {
+      echarts.dispose(this.myChart)
+    }
+    this.chartOption = null
   }
 }
 </script>

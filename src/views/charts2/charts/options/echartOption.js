@@ -797,3 +797,48 @@ export const entityDetailSubscriberTopApp = {
     }
   }]
 }
+
+export const tagLineChartOption = {
+  tooltip: {
+    trigger: 'axis',
+    className: 'echarts-tooltip echarts-tooltip-dark'
+  },
+  legend: {
+    show: true,
+    x: 'center',
+    y: 'bottom',
+    icon: 'circle',
+    itemGap: 50,
+    data: ['IP', 'Domain Name']
+  },
+  grid: {
+    top: '12%',
+    left: '1%',
+    right: '1%',
+    bottom: 30,
+    containLabel: true
+  },
+  xAxis: [
+    {
+      type: 'time',
+      axisLabel: {
+        formatter: xAxisTimeFormatter,
+        rich: xAxisTimeRich
+      }
+    }
+  ],
+  yAxis: [
+    {
+      type: 'value',
+      splitLine: {
+        show: false
+      },
+      axisLabel: {
+        // formatter: function (value) {
+        //   return unitConvert(value, unitTypes.number).join('')
+        // }
+      }
+    }
+  ],
+  series: []
+}

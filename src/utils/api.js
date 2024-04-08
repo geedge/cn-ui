@@ -60,6 +60,13 @@ export const api = {
   reportBatchDownloadPdf: '/report/job/batchDownloadPdf',
   reportDownloadPdf: '/report/job/downloadPdf',
   reportView: '/report/job/view',
+  // tag 相关
+  tagList: '/v1/tag/list',
+  tagDelete: '/v1/tag/',
+  tagIndicatorStatistics: '/v1/tag/{{name}}/indicator/statistics',
+  tagIndicatorTrend: '/v1/tag/{{name}}/indicator/trend',
+  tagTrafficEntityStatistics: '/v1/tag/{{name}}/trafficEntity/statistics',
+  tagTrafficEntityTrend: '/v1/tag/{{name}}/trafficEntity/trend',
   // 业务
   panel: '/visual/panel',
   chart: '/visual/chart',
