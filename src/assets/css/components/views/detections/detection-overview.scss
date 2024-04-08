@@ -1,7 +1,6 @@
 $color-primary: var(--el-color-primary);
-$color-primary1: #1890FF;
 $color-regular: var(--el-text-color-regular);
-//$color-primary: var(--el-color-primary);
+
 .detection-detail-overview {
   display: flex;
   position: relative;
@@ -78,13 +77,13 @@ $color-regular: var(--el-text-color-regular);
         &.row__content--link {
           font-style: italic;
           text-decoration: underline;
-          color: $color-primary1;
+          color: $color-primary;
           cursor: pointer;
         }
         .row__content--link{
           font-style: italic;
           text-decoration: underline;
-          color: $color-primary1;
+          color: $color-primary;
           cursor: pointer;
         }
         span{
@@ -93,13 +92,13 @@ $color-regular: var(--el-text-color-regular);
         }
         .row__content--span {
           font-style: italic;
-          color: $color-primary1;
+          color: $color-primary;
         }
 
         .row__content__icon {
           font-size: 14px;
           margin-right: 5px;
-          color: $color-primary1;
+          color: $color-primary;
         }
 
         .row__content__svg {

@@ -106,47 +106,6 @@
         border-radius: 2px;
         background-color: var(--el-fill-color-blank);
 
-        /* .history__items {
-          max-height: 300px;
-          overflow: auto;
-          .history__item {
-            height: 35px;
-            display: flex;
-            align-items: center;
-            padding-left: 30px;
-            font-weight: normal;
-            font-size: 14px;
-            flex-shrink: 0;
-
-            &.clear-all span {
-              cursor: pointer;
-            }
-            div {
-              color: #999;
-              border: 1px red solid;
-            }
-            .item-date {
-              color: #bbb;
-              padding: 0 20px 0 0;
-            }
-            .item-value {
-              flex-basis: calc(100% - 200px);
-              overflow: hidden;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-              word-break: break-all;
-              color: #444;
-            }
-          }
-          .history__item {
-            cursor: pointer;
-          }
-          .history__item:hover {
-            background-color: #ecf5ff;
-            color: #66b1ff;
-          }
-        } */
-
         .history__items-new {
           max-height: 300px;
           overflow: auto;

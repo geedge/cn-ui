@@ -114,7 +114,7 @@ $text-color-primary: var(--el-text-color-primary);
         margin-bottom: 20px;
 
         .trigger__value {
-          color: #046ECA;
+          color: var(--el-color-primary);
         }
       }
     }
