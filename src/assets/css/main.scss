@@ -71,10 +71,16 @@
   --cn-bg-color-light: #EBF1F4; // 一个用得比较多的背景色
   --cn-bg-color-lighter: #F7F7F7; // 一个用得比较多的背景色
   --cn-color-critical: #D84C4C; // critical 严重等级分布
+  --cn-color-critical-rgb: 216,76,76; // critical 严重等级分布
   --cn-color-high: #FF9A79; // high
+  --cn-color-high-rgb: 255,154,121; // high
   --cn-color-info: #D1BD50; // info
+  --cn-color-info-rgb: 209,189,80; // info
   --cn-color-medium: #FFB65A; // medium
+  --cn-color-medium-rgb: 255,182,90; // medium
   --cn-color-low: #FFD82D; // low
+  --cn-color-low-rgb: 255,216,45; // low
+  --cn-map-bg-color: #CAD2D3; // 地图底色
 }
 
 @font-face {
