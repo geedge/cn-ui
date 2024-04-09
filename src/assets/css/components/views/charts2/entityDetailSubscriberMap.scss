@@ -1,4 +1,12 @@
 $text-color-primary: var(--el-text-color-primary);
+$color-white: var(--el-color-white);
+$color-inactive: var(--el-color-info-light-5);
+$color-regular: var(--el-text-color-regular);
+$color-text-primary: var(--el-text-color-primary);
+$color-human: #233447; // 以下是颜色暂无替代的
+$color-base-station: #585B5F;
+$color-circle: #DE3434;
+$color-highlight: #CC4444;
 
 .subscriber-map {
   height: 100%;
@@ -6,6 +14,7 @@ $text-color-primary: var(--el-text-color-primary);
   svg {
     fill: var(--el-fill-color-blank);
   }
+
   .subscriber-map-header {
     height: 34px;
     padding-bottom: 10px;
@@ -20,6 +29,7 @@ $text-color-primary: var(--el-text-color-primary);
       overflow: hidden;
     }
   }
+
   .subscriber-map-body {
     position: relative;
     border: 1px solid var(--el-border-color-light);
@@ -33,6 +43,7 @@ $text-color-primary: var(--el-text-color-primary);
       .maplibregl-canvas:focus-visible {
         outline: none;
       }
+
       .map-marker {
         display: flex;
         align-items: center;
@@ -50,7 +61,7 @@ $text-color-primary: var(--el-text-color-primary);
         }
 
         &.map-marker--human {
-          background-color: #233447;
+          background-color: $color-human;
           cursor: pointer;
 
           svg {
@@ -58,34 +69,38 @@ $text-color-primary: var(--el-text-color-primary);
             height: 14px;
           }
         }
+
         &.map-marker--base-station {
-          background-color: #585B5F;
+          background-color: $color-base-station;
 
           svg {
             width: 12px;
             height: 12px;
           }
         }
+
         &.map-marker--hover {
           width: 30px;
           height: 30px;
-          border: 2px solid var(--el-color-white);
+          border: 2px solid $color-white;
           z-index: 2;
 
           &.map-marker--human svg {
             width: 21px;
             height: 21px;
           }
+
           &.map-marker--base-station svg {
             width: 18px;
             height: 18px;
           }
         }
+
         &.map-marker--highlight {
           width: 30px;
           height: 30px;
-          border: 2px solid var(--el-color-white);
-          background-color: rgb(204,68,68);
+          border: 2px solid $color-white;
+          background-color: $color-highlight;
           z-index: 3;
 
           svg {
@@ -94,6 +109,7 @@ $text-color-primary: var(--el-text-color-primary);
           }
         }
       }
+
       .map-tracking-marker {
         width: 36px;
         height: 36px;
@@ -101,7 +117,7 @@ $text-color-primary: var(--el-text-color-primary);
         align-items: center;
         justify-content: center;
         animation: pulse 2s infinite;
-        background-color: rgba(204,68,68,0.50);
+        background-color: rgba(204, 68, 68, 0.50);
         border-radius: 50%;
 
         .tracking-marker__inner-circle {
@@ -110,7 +126,7 @@ $text-color-primary: var(--el-text-color-primary);
           display: flex;
           align-items: center;
           justify-content: center;
-          background-color: rgba(204,68,68,0.80);
+          background-color: rgba(204, 68, 68, 0.80);
           border-radius: 50%;
 
           svg {
@@ -120,6 +136,7 @@ $text-color-primary: var(--el-text-color-primary);
         }
       }
     }
+
     .panel-chart__no-data {
       height: calc(100% - 46px);
     }
@@ -142,6 +159,7 @@ $text-color-primary: var(--el-text-color-primary);
           .subscriber__body {
             padding: 0 12px;
             margin-top: -10px;
+
             .body__item {
               display: flex;
 
@@ -152,10 +170,11 @@ $text-color-primary: var(--el-text-color-primary);
                 font-size: 12px;
                 color: $text-color-primary;
               }
+
               .item__value {
                 font-size: 12px;
                 font-weight: bold;
-                color: #233447;
+                color: $color-human;
               }
             }
 
@@ -170,9 +189,11 @@ $text-color-primary: var(--el-text-color-primary);
                 height: 38px;
                 line-height: 38px;
               }
+
               .item-record__info {
 
               }
+
               .item-record__timeline {
                 margin-left: 6px;
 
@@ -187,20 +208,24 @@ $text-color-primary: var(--el-text-color-primary);
 
                   .el-timeline-item {
                     padding-bottom: 0;
+
                     .el-timeline-item__tail {
-                      border-left: 2px dotted #cccccc;
+                      border-left: 2px dotted $color-inactive;
                       margin-left: 2px;
                     }
+
                     .el-timeline-item__node--normal {
-                      background-image: radial-gradient(#DE3434 20%, transparent);
-                      outline: #F7F7F7 solid 6px;
+                      background-image: radial-gradient($color-circle 20%, transparent);
+                      outline: var(--cn-bg-color-lighter) solid 6px;
                       margin-left: 2px;
                     }
                   }
+
                   .el-timeline-item:last-child {
                     padding-bottom: 0;
                   }
                 }
+
                 .timeline__info {
                   display: flex;
                   padding-bottom: 10px;
@@ -208,56 +233,63 @@ $text-color-primary: var(--el-text-color-primary);
                   .timeline__info--circle {
                     display: flex;
                     flex-direction: column;
+
                     .info__circle {
                       width: 17px;
                       height: 17px;
                       margin-left: -2px;
                       border-radius: 50%;
-                      background-image: radial-gradient(#DE3434 20%, transparent);
-                      outline: rgba(222,52,52,0.30) solid 4px;
+                      background-image: radial-gradient($color-circle 20%, transparent);
+                      outline: rgba(222, 52, 52, 0.30) solid 4px;
                       margin-top: 2px;
                     }
+
                     .info__line {
-                      border-left: 2px #cccccc dotted;
+                      border-left: 2px $color-inactive dotted;
                       height: 34px;
                       margin-left: 6px;
                       transition: all var(--el-transition-duration-fast);
                     }
                   }
+
                   .timeline__info--item {
                     padding-left: 13px;
                     display: flex;
                     flex-direction: column;
                     font-size: 12px;
-                    color: #666666;
+                    color: $color-regular;
 
                     .info--item__value {
-                      color: #333;
+                      color: $color-text-primary;
                       font-weight: 500;
                       margin-left: 4px;
                     }
                   }
                 }
+
                 .timeline__item {
                   display: flex;
                   flex-direction: column;
                   font-size: 12px;
-                  color: #666666;
+                  color: $color-regular;
 
                   .item__value {
-                    color: #333;
+                    color: $color-text-primary;
                     font-weight: 500;
                     margin-left: 4px;
                   }
                 }
+
                 .item-record__btn, .item-record__btn-disabled {
                   padding-right: 6px;
                   cursor: pointer;
                   text-align: center;
                 }
+
                 .item-record__btn-disabled {
                   cursor: no-drop;
                 }
+
                 .scroll-view {
                   width: 100%;
                   height: 604px;
@@ -272,15 +304,17 @@ $text-color-primary: var(--el-text-color-primary);
                     .item-circle {
                       display: flex;
                       flex-direction: column;
+
                       .circle-circle {
                         width: 10px;
                         height: 10px;
                         margin-left: 2px;
                         border-radius: 50%;
-                        background-color: #DE3434;
+                        background-color: $color-circle;
                       }
+
                       .circle-line {
-                        border-left: 2px #cccccc dotted;
+                        border-left: 2px $color-inactive dotted;
                         height: 34px;
                         margin-left: 6px;
                         margin-top: 6px;
@@ -292,16 +326,17 @@ $text-color-primary: var(--el-text-color-primary);
                       display: flex;
                       flex-direction: column;
                       font-size: 12px;
-                      color: #666666;
+                      color: $color-regular;
                       padding-left: 16px;
 
                       .item__value {
-                        color: #333;
+                        color: $color-text-primary;
                         font-weight: 500;
                         margin-left: 4px;
                       }
                     }
                   }
+
                   .scroll-list {
                     position: absolute;
                     top: 0;
@@ -319,10 +354,10 @@ $text-color-primary: var(--el-text-color-primary);
 
   .subscriber-map-point-tooltip {
     position: fixed;
-    background-color: white;
+    background-color: $color-white;
     width: 200px;
-    border: 1px solid #C5C5C5;
-    box-shadow: -1px 1px 10px -1px rgba(205,205,205,0.85);
+    border: 1px solid var(--el-border-color-light);
+    box-shadow: -1px 1px 10px -1px rgba(205, 205, 205, 0.85);
     border-radius: 2px;
 
     .subscriber-map-point-tooltip__time {
@@ -331,6 +366,7 @@ $text-color-primary: var(--el-text-color-primary);
       color: $text-color-primary;
       font-weight: bold;
     }
+
     .subscriber-map-point-tooltip__coordinates {
       padding: 0 10px 10px;
 
@@ -340,8 +376,9 @@ $text-color-primary: var(--el-text-color-primary);
         .coordinate__label {
           width: 115px;
           font-size: 12px;
-          color: #575757;
+          color: $color-regular;
         }
+
         .coordinate__value {
           font-size: 12px;
           color: $text-color-primary;
@@ -350,10 +387,11 @@ $text-color-primary: var(--el-text-color-primary);
       }
     }
   }
+
   .geo-analysis__hexagon-tooltip {
     position: fixed;
-    background-color: rgba(255,255,255,0.80);
-    box-shadow: 0 1px 10px 0 rgba(0,0,0,0.5);
+    background-color: rgba(255, 255, 255, 0.80);
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.5);
     border-radius: 2px;
     min-width: 185px;
     z-index: 3;
@@ -362,25 +400,28 @@ $text-color-primary: var(--el-text-color-primary);
     }*/
     &.geo-analysis__hexagon-tooltip--human {
       .icon__box {
-        background-color: #233447;
+        background-color: $color-human;
       }
     }
+
     &.geo-analysis__hexagon-tooltip--base-station {
       .icon__box {
-        background-color: #585B5F;
+        background-color: $color-base-station;
       }
+
       .hexagon-tooltip__body {
         .body__item .item__label {
           width: 140px;
         }
       }
     }
+
     .hexagon-tooltip__header {
       position: relative;
       display: flex;
       flex-direction: column;
       padding: 10px 0 10px 63px;
-      color: white;
+      color: $color-white;
 
       .header__icon {
         position: absolute;
@@ -396,13 +437,16 @@ $text-color-primary: var(--el-text-color-primary);
           border-radius: 50%;
         }
       }
+
       .header__title {
         font-size: 16px;
       }
+
       .header__content {
         font-size: 14px;
       }
     }
+
     .hexagon-tooltip__body {
       padding: 8px 18px;
 
@@ -417,9 +461,10 @@ $text-color-primary: var(--el-text-color-primary);
           width: 8px;
           height: 8px;
           border-radius: 50%;
-          background-color: #DE3434;
+          background-color: $color-circle;
         }
       }
+
       .body__item {
         display: flex;
 
@@ -430,12 +475,14 @@ $text-color-primary: var(--el-text-color-primary);
           font-size: 12px;
           color: $text-color-primary;
         }
+
         .item__value {
           font-size: 12px;
           font-weight: bold;
-          color: #233447;
+          color: $color-human;
         }
       }
+
       .body__tracking {
         padding-top: 6px;
         font-size: 12px;

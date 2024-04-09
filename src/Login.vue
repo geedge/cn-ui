@@ -2,14 +2,11 @@
   <div class="logins">
     <div class="inside">
       <div class="title">
-        <img src="../public/images/logo-title.svg" />
+        <img src="../public/images/logo-title.svg" alt=""/>
       </div>
       <el-form class="login__box">
         <el-form-item>
-          <el-input
-              class="login--input login__input"
-            v-model="username"
-          >
+          <el-input class="login--input login__input" v-model="username">
             <template #prefix>
               <i class="cn-icon cn-icon-user2"></i>
             </template>
@@ -21,7 +18,7 @@
               prefix-icon="Lock"
               type="password"
               @keyup.enter="login"
-            v-model="pin"
+              v-model="pin"
           ></el-input>
         </el-form-item>
         <el-form-item>
@@ -32,14 +29,13 @@
               :class="{'login-btn__license-error':licenseStatus !== 0}"
               @click="login"
               @keyup.enter="login"
-              style="font-size: 16px;"
           >Login
           </el-button>
         </el-form-item>
         <el-form-item v-if="licenseStatus !== 0">
-          <div class="license-error-msg">{{licenseStatusErrMsg}}</div>
+          <div class="license-error-msg">{{ licenseStatusErrMsg }}</div>
           <div class="license-file">
-            <button style="position: relative;" class="license__btn margin-r-20" @click.prevent="downloadFile" @keyup.enter="login">
+            <button class="license__btn margin-r-20" @click.prevent="downloadFile" @keyup.enter="login">
               <i class="cn-icon-download1 cn-icon margin-r-6"></i><span>Download c2v file</span>
             </button>
             <el-upload :action="`${baseUrl}sys/license/upload`"
@@ -53,7 +49,7 @@
                        :on-change="fileChange"
                        :on-success="uploadSuccess"
                        :on-error="uploadError">
-              <button style="position: relative;" class="license__btn" @click.prevent="">
+              <button class="license__btn" @click.prevent="">
                 <i class="cn-icon-upload1 cn-icon margin-r-6"></i><span>Upload license</span>
               </button>
             </el-upload>
@@ -74,6 +70,7 @@ import dayjs from 'dayjs'
 import _ from 'lodash'
 import utc from 'dayjs/plugin/utc'
 import { ref } from 'vue'
+
 dayjs.extend(utc)
 
 export default {
@@ -160,7 +157,7 @@ export default {
       }, error => {
         const $self = this
         const reader = new FileReader()
-        reader.onload = function (event) {
+        reader.onload = function () {
           const responseText = reader.result
           const exception = JSON.parse(responseText)
           if (exception.message) {
@@ -176,13 +173,13 @@ export default {
       if (file.status !== 'ready') return
       if (!_.endsWith(file.name, '.xml')) {
         this.fileList = []
-        this.$message.error('Only support '+ this.fileTypeLimit + ' files')
+        this.$message.error('Only support ' + this.fileTypeLimit + ' files')
       } else {
         this.fileList = fileList.slice(-1)
         this.$refs.licenseUpload.submit()
       }
     },
-    uploadSuccess (response) {
+    uploadSuccess () {
       this.$message.success('Success')
       this.licenseStatus = 1
     },
@@ -234,7 +231,7 @@ export default {
     this.queryAppearance()
     this.checkLicenseStatus()
   },
-  setup (props) {
+  setup () {
     const { currentRoute } = useRouter()
     return {
       loginSuccessPath: currentRoute.value.query.redirect,
@@ -246,156 +243,8 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style>
 .logins {
-  background-color: #000C18;
-  background-size: auto;
-  background-repeat: round;
   background-image: url('../public/images/bg.png');
-  display: flex;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
-}
-
-:deep .el-input__inner {
-  //background-color: #0B325C !important;
-  border: none;
-  //border-radius: 0px;
-  //border-bottom: 1px solid #295688;
-  font-size: 14px;
-  //line-height: 14px;
-}
-:deep .el-input__inner:hover {
-  border-color: #295688;
-}
-:deep .el-input__inner:focus {
-  border-color: #295688;
-}
-.el-button--primary:hover, .el-button--primary:focus, .el-button--primary:active {
-  background: #21B4ED;
-  border-color: #21B4ED;
-  color: #FFFFFF;
-}
-:deep .el-loading-mask {
-  background-color: transparent;
-}
-:deep input {
-  -webkit-text-fill-color: rgba(231,234,237, .8) !important;
-  transition: background-color 500000000000000000s ease-in-out 0s !important;
-  caret-color: #fff ;
-  font-size: 14px;
-}
-.inside {
-  width: 414px;
-  height: fit-content;/*524*/
-  background: #0B325C;
-  border: 1px solid rgba(103,179,245,0.65);
-  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.38);
-  border-radius: 4px;
-}
-.inside {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.inside > div {
-  display: block;
-}
-
-.title {
-  margin-top: 65px;
-  margin-bottom: 44px;
-  text-align: center;
-}
-.title > img {
-  height: 135px;
-}
-.login__box {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  .is-disabled {
-    background: #21B4ED;
-    color: #FFFFFF;
-    opacity: 0.6;
-  }
-  .license-error-msg {
-    color:#c73249;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    height:40px;
-    width: 100%;
-  }
-  .license-file {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    .license__btn {
-      height: 40px;
-      padding-left:10px;
-      padding-right:10px;
-      min-width: 74px;
-      color: white;
-      background-color: #21B4ED;
-      border: none;
-      border-radius: 4px;
-      outline: none;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background-color linear .2s, color linear .1s;
-    }
-  }
-}
-:deep .el-form-item {
-  width: 334px;
-}
-:deep .el-input__prefix {
-  color: #6DBBFF;
-}
-:deep .el-input__prefix i {
-  width: 17px;
-  font-size: 17px;
-}
-.login__box .el-form-item:nth-child(3){
-  margin-bottom: 0px;
-}
-.login--button {
-  background: #21B4ED;
-  border-radius: 4px;
-  border: 0;
-  font-weight: 400;
-  font-size: 16px;
-  color: #FFFFFF;
-  line-height: 22px;
-  width: 334px;
-  height: 52px;
-  margin-top: 25px;
-  margin-bottom:65px;
-}
-.login-btn__license-error {
-  margin-top: 25px;
-  margin-bottom: 10px;
-  height:40px;
-}
-.login--input {
-  :deep .el-input__wrapper {
-    background-color: rgb(11, 50, 92) !important;
-    box-shadow: none !important;
-    //border-bottom: 1px solid rgba(103,179,245,0.65);
-    border-bottom: 1px solid #295688;
-    border-radius: 0;
-    height: 40px;
-    line-height: 40px;
-    font-size: 14px;
-    padding: 1px 4px 2px 5px;
-  }
-
-  :deep .el-input__wrapper.is-focus {
-    box-shadow: none !important;
-  }
 }
 </style>

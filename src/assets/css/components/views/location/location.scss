@@ -1,0 +1,836 @@
+$color-white: var(--el-color-white);
+$color-business: var(--el-color-business);
+$color-inactive: var(--el-color-info-light-5);
+$color-regular: var(--el-text-color-regular);
+$color-text-primary: var(--el-text-color-primary);
+$color-primary: var(--el-color-primary);
+$color-human: #233447; // 以下是颜色暂无替代的
+$color-circle: #DE3434;
+$color-base-station: #585B5F;
+$color-search-follow: #6f6f6e;
+$color-highlight: #CC4444;
+
+.geo-analysis {
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px 20px;
+  position: relative;
+
+  .location-tabs {
+    .traceTracking-tabs_label {
+      display: flex;
+      flex-display: row;
+
+      .traceTracking-num {
+        margin-top: 5px;
+        border-radius: 10px;
+        font-size: 12px;
+        color: $color-white;
+        font-weight: 500;
+        height: 20px;
+        width: fit-content;
+        min-width: 20px;
+        padding: 0 5px 0 5px;
+        line-height: 20px;
+        text-align: center;
+        background: var(--el-color-danger);
+      }
+    }
+  }
+
+  svg {
+    fill: $color-white;
+  }
+
+  .maplibregl-canvas:focus-visible {
+    outline: none;
+  }
+
+  .geo-tools {
+    position: absolute;
+    display: flex;
+    top: 11px;
+    right: 20px;
+
+    .location__select {
+      width: 250px;
+      margin-right: 10px;
+
+      .location__select-empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 40px;
+        padding: 10px 0;
+        color: var(--el-color-info);
+        font-size: 12px;
+        text-align: center;
+
+        .padding-t-10 {
+          padding-top: 10px;
+        }
+      }
+    }
+
+    .el-select .el-input__inner {
+      cursor: text;
+    }
+
+    .el-select .el-input .el-select__caret {
+      cursor: text;
+    }
+
+    .panel__time {
+      display: flex;
+    }
+
+    .el-select {
+      .search-active {
+        float: left;
+        border-radius: 3px;
+        width: 6px;
+        height: 6px;
+        margin-right: 10px;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+        text-align: center;
+      }
+
+      .search-value {
+        font-size: 14px;
+        margin-right: 20px;
+      }
+
+      .search-id {
+        color: var(--el-color-info);
+      }
+
+      .search-follow__icon {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        color: $color-search-follow;
+        margin-right: 10px;
+        text-align: center;
+
+        i {
+          font-size: 12px;
+        }
+      }
+
+      .search-content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: center;
+      }
+
+      .active-icon {
+        background: $color-business;
+      }
+
+      .inactive-icon {
+        background: $color-inactive;
+      }
+
+      .search-select {
+        max-height: 250px;
+      }
+
+      .search-select .el-scrollbar__wrap {
+        max-height: 250px;
+        overflow-y: auto;
+      }
+
+      .el-select-dropdown .el-scrollbar .el-select-dropdown__wrap .el-scrollbar__view.el-select-dropdown__list .el-select-dropdown__item {
+        position: relative;
+        height: 48px;
+        line-height: 16px;
+      }
+    }
+  }
+
+  .el-tabs {
+    .el-tabs__header {
+      margin-bottom: 0;
+    }
+
+    .el-tabs__nav-wrap::after {
+      height: 0;
+    }
+
+    .el-tabs__active-bar {
+      height: 3px;
+      background-color: $color-primary;
+      bottom: 1px;
+    }
+
+    .el-tabs__item {
+      &.is-active {
+        color: $color-primary;
+      }
+
+      height: 50px;
+      line-height: 50px;
+      font-size: 20px;
+      color: $color-text-primary;
+    }
+  }
+
+  .geo-analysis__container {
+    height: calc(100% - 50px);
+    display: flex;
+    position: relative;
+
+    .analysis-map {
+      flex: 1;
+      position: relative;
+
+      #analysisMap {
+        border-radius: 2px;
+        height: 100%;
+        width: 100%;
+      }
+
+      .maplibregl-ctrl-bottom-right {
+        top: 0;
+        left: 0;
+        bottom: unset;
+        right: unset;
+      }
+
+      .map-marker {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        cursor: default;
+        padding: 0;
+        transition: height .1s linear, width .1s linear;
+
+        svg {
+          transition: height .1s linear, width .1s linear;
+          fill: $color-white;
+        }
+
+        &.map-marker--human {
+          background-color: $color-human;
+          cursor: pointer;
+
+          svg {
+            width: 14px;
+            height: 14px;
+          }
+        }
+
+        &.map-marker--base-station {
+          background-color: $color-base-station;
+
+          svg {
+            width: 12px;
+            height: 12px;
+          }
+        }
+
+        &.map-marker--hover {
+          width: 30px;
+          height: 30px;
+          border: 2px solid $color-white;
+          z-index: 2;
+
+          &.map-marker--human svg {
+            width: 21px;
+            height: 21px;
+          }
+
+          &.map-marker--base-station svg {
+            width: 18px;
+            height: 18px;
+          }
+        }
+
+        &.map-marker--highlight {
+          width: 30px;
+          height: 30px;
+          border: 2px solid $color-white;
+          background-color: $color-highlight;
+          z-index: 3;
+
+          svg {
+            width: 21px;
+            height: 21px;
+          }
+        }
+      }
+
+      .map-tracking-marker {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: pulse 2s infinite;
+        background-color: rgba(204, 68, 68, 0.50);
+        border-radius: 50%;
+
+        .tracking-marker__inner-circle {
+          width: 25px;
+          height: 25px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: rgba(204, 68, 68, 0.80);
+          border-radius: 50%;
+
+          svg {
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
+    }
+
+    .map-time-line {
+      position: absolute;
+      bottom: 0;
+      left: -6px;
+      width: calc(100% - 318px);
+    }
+
+    .analysis-statistics {
+      width: 330px;
+      overflow-y: auto;
+      padding-right: 5px;
+
+      .analysis-statistics__chart {
+        margin: 0 0 10px 20px;
+        height: 148px;
+        background: rgba(113, 113, 113, 0.06);
+        border: 1px solid var(--el-border-color-light);
+        border-radius: 4px;
+        position: relative;
+
+        .chart__header {
+          padding: 8px 0 0 10px;
+          color: $color-text-primary;
+          font-size: 16px;
+        }
+
+        .chart__body {
+          display: flex;
+          flex-direction: row;
+          width: 100%;
+          height: calc(100% - 32px);
+
+          .chart__legend {
+            width: calc(60% - 22px);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            .legend-item {
+              display: flex;
+              flex-direction: row;
+              justify-content: left;
+              align-items: center;
+              padding-top: 2px;
+              padding-bottom: 2px;
+
+              .legend-icon {
+                width: 16px;
+                height: 6px;
+                border-radius: 2px;
+                margin-right: 10px;
+              }
+
+              .legend-range {
+                margin-right: 40px;
+                width: 54px;
+                font-family: Helvetica;
+                font-size: 12px;
+                color: $color-regular;
+                line-height: 12px;
+                font-weight: 400;
+              }
+
+              .legend-count {
+                font-family: Helvetica;
+                font-size: 12px;
+                color: $color-text-primary;
+                line-height: 12px;
+                font-weight: 400;
+              }
+            }
+          }
+        }
+
+        .chart__statistics {
+          display: flex;
+          height: 20px;
+          padding-left: 10px;
+
+          .statistics-number {
+            margin-right: 8px;
+            color: $color-text-primary;
+            font-size: 16px;
+            line-height: 22px;
+          }
+
+          .statistics-trend {
+            padding: 0 10px;
+            background: var(--el-color-success);
+            border-radius: 10px;
+            text-align: center;
+            font-size: 12px;
+            color: $color-white;
+          }
+        }
+
+        .chart__drawing {
+          height: 100%;
+          width: calc(40% + 12px);
+          margin-right: 10px;
+        }
+
+        .chart-line__drawing {
+          height: calc(100% - 32px);
+        }
+
+        #activeSubscribersChart {
+          height: calc(100% - 52px);
+        }
+      }
+
+      .analysis-statistics__title {
+        position: relative;
+        margin-bottom: 10px;
+        padding-left: 20px;
+        font-size: 16px;
+        color: $color-text-primary;
+      }
+
+      .analysis-statistics__no-tracking-tip {
+        padding: 0 20px;
+        cursor: pointer;
+        color: $color-primary;
+        text-decoration: underline;
+      }
+
+      .analysis-statistics__subscribers {
+        padding-left: 20px;
+
+        .analysis-statistics__subscriber {
+          margin-bottom: 10px;
+
+          &:last-of-type {
+            margin-bottom: 0;
+          }
+
+          &.analysis-statistics__subscriber--active {
+            border: 1px solid $color-business;
+            box-shadow: 0 1px 3px 0 $color-business;
+          }
+
+          background-color: var(--cn-bg-color-lighter);
+          border: 1px solid var(--el-border-color-light);
+          border-radius: 2px;
+
+          .subscriber__header {
+            background-color: $color-business;
+
+            &.subscriber__header-inactive {
+              background-color: $color-inactive;
+            }
+          }
+
+          .subscriber__header {
+            position: relative;
+            flex-direction: column;
+            padding: 6px 0 0 70px;
+            color: $color-white;
+            height: 58px;
+
+            .header__icon {
+              position: absolute;
+              left: 20px;
+              top: 14px;
+
+              .icon__box {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 30px;
+                width: 30px;
+                background-color: $color-human;
+                border-radius: 50%;
+              }
+            }
+
+            .header__right {
+              display: flex;
+              flex-direction: row;
+              justify-content: space-between;
+
+              .header-msisdn {
+                display: flex;
+                flex-direction: column;
+
+                .header__title {
+                  font-size: 16px;
+                }
+
+                .header__content {
+                  font-size: 14px;
+                }
+              }
+
+              .header__operation {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                .trajectory-text {
+                  margin-right: 12px;
+                  font-family: Helvetica-Bold;
+                  font-size: 12px;
+                  color: $color-human;
+                  font-weight: 700;
+                  cursor: pointer;
+
+                  i {
+                    font-size: 12px !important;
+                    font-weight: bolder;
+                    margin-right: 3px;
+                    color: $color-human;
+                  }
+                }
+
+                .cancel-follow {
+                  margin-right: 14px;
+
+                  i {
+                    cursor: pointer;
+                    font-size: 8px;
+                  }
+                }
+              }
+            }
+          }
+
+          .subscriber__body {
+            padding: 10px 18px;
+
+            .body__item {
+              display: flex;
+
+              .item__label {
+                padding-right: 10px;
+                text-align: right;
+                width: 60px;
+                font-size: 12px;
+                color: $color-text-primary;
+              }
+
+              .item__value {
+                font-size: 12px;
+                font-weight: bold;
+                color: $color-human;
+              }
+            }
+
+            .body-item-record {
+              margin-top: 10px;
+
+              .item-record__header {
+                font-family: Helvetica;
+                font-size: 16px;
+                color: $color-text-primary;
+                font-weight: 400;
+                height: 38px;
+                line-height: 38px;
+              }
+
+              .item-record__info {
+
+              }
+
+              .item-record__timeline {
+                margin-left: 6px;
+
+                .el-timeline {
+                  padding-left: 0;
+                  //min-height: 300px;
+                  height: 300px;
+                  overflow: auto;
+
+                  &.el-timeline--hide {
+                  }
+
+                  .el-timeline-item {
+                    padding-bottom: 0;
+
+                    .el-timeline-item__tail {
+                      border-left: 2px dotted $color-inactive;
+                      margin-left: 2px;
+                    }
+
+                    .el-timeline-item__node--normal {
+                      background-image: radial-gradient($color-circle 20%, transparent);
+                      outline: var(--cn-bg-color-lighter) solid 6px;
+                      margin-left: 2px;
+                    }
+                  }
+
+                  .el-timeline-item:last-child {
+                    padding-bottom: 0;
+                  }
+                }
+
+                .timeline__info {
+                  display: flex;
+                  padding-bottom: 10px;
+
+                  .timeline__info--circle {
+                    display: flex;
+                    flex-direction: column;
+
+                    .info__circle {
+                      width: 17px;
+                      height: 17px;
+                      margin-left: -2px;
+                      border-radius: 50%;
+                      background-image: radial-gradient($color-circle 20%, transparent);
+                      outline: rgba(222, 52, 52, 0.30) solid 4px;
+                      margin-top: 2px;
+                    }
+
+                    .info__line {
+                      border-left: 2px $color-inactive dotted;
+                      height: 34px;
+                      margin-left: 6px;
+                      transition: all 0.2s;
+                    }
+                  }
+
+                  .timeline__info--item {
+                    padding-left: 13px;
+                    display: flex;
+                    flex-direction: column;
+                    font-size: 12px;
+                    color: $color-regular;
+
+                    .info--item__value {
+                      color: $color-text-primary;
+                      font-weight: 500;
+                      margin-left: 4px;
+                    }
+                  }
+                }
+
+                .timeline__item {
+                  display: flex;
+                  flex-direction: column;
+                  font-size: 12px;
+                  color: $color-regular;
+
+                  .item__value {
+                    color: $color-text-primary;
+                    font-weight: 500;
+                    margin-left: 4px;
+                  }
+                }
+
+                .item-record__btn, .item-record__btn-disabled {
+                  padding-right: 6px;
+                  cursor: pointer;
+                  text-align: center;
+                }
+
+                .item-record__btn-disabled {
+                  cursor: no-drop;
+                }
+
+                .scroll-view {
+                  width: 100%;
+                  height: 300px;
+                  overflow-y: scroll;
+                  position: relative;
+
+                  .scroll__item {
+                    width: 100%;
+                    height: 58px;
+                    display: flex;
+
+                    .item-circle {
+                      display: flex;
+                      flex-direction: column;
+
+                      .circle-circle {
+                        width: 10px;
+                        height: 10px;
+                        margin-left: 2px;
+                        border-radius: 50%;
+                        background-color: $color-circle;
+                      }
+
+                      .circle-line {
+                        border-left: 2px $color-inactive dotted;
+                        height: 34px;
+                        margin-left: 6px;
+                        margin-top: 6px;
+                        transition: all 0.2s;
+                      }
+                    }
+
+                    .item-content {
+                      display: flex;
+                      flex-direction: column;
+                      font-size: 12px;
+                      color: $color-regular;
+                      padding-left: 16px;
+
+                      .item__value {
+                        color: $color-text-primary;
+                        font-weight: 500;
+                        margin-left: 4px;
+                      }
+                    }
+                  }
+
+                  .scroll-list {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    cursor: pointer;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .geo-analysis__hexagon-tooltip {
+    position: fixed;
+    background-color: rgba(255, 255, 255, 0.80);
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.5);
+    border-radius: 2px;
+    min-width: 185px;
+    z-index: 3;
+
+    /*&.geo-analysis__hexagon-tooltip--hexagon {
+    }*/
+    &.geo-analysis__hexagon-tooltip--human {
+      .icon__box {
+        background-color: $color-human;
+      }
+    }
+
+    &.geo-analysis__hexagon-tooltip--base-station {
+      .icon__box {
+        background-color: $color-base-station;
+      }
+
+      .hexagon-tooltip__body {
+        .body__item .item__label {
+          width: 140px;
+        }
+      }
+    }
+
+    .hexagon-tooltip__header {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 10px 0 10px 63px;
+      color: $color-white;
+
+      .header__icon {
+        position: absolute;
+        left: 14px;
+        top: 16px;
+
+        .icon__box {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 32px;
+          width: 32px;
+          border-radius: 50%;
+        }
+      }
+
+      .header__title {
+        font-size: 16px;
+      }
+
+      .header__content {
+        font-size: 14px;
+      }
+    }
+
+    .hexagon-tooltip__body {
+      padding: 8px 18px;
+
+      .body__timeline {
+        display: flex;
+        flex-direction: row;
+        padding: 3px 0;
+
+        .timeline-symbol {
+          margin-top: 6px;
+          margin-right: 6px;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: $color-circle;
+        }
+      }
+
+      .body__item {
+        display: flex;
+
+        .item__label {
+          padding-right: 10px;
+          text-align: right;
+          width: 60px;
+          font-size: 12px;
+          color: $color-text-primary;
+        }
+
+        .item__value {
+          font-size: 12px;
+          font-weight: bold;
+          color: $color-human;
+        }
+      }
+
+      .body__tracking {
+        padding-top: 6px;
+        font-size: 12px;
+        color: $color-business;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}

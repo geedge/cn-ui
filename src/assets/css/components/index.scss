@@ -78,5 +78,12 @@
 @import "views/detections/detection-table";
 @import "views/detections/detection-create/detection-form";
 @import "views/detections/detection-create/detection-form-setting";
+@import "views/detections/detection-create/detection-history";
 
 @import "views/entityExplorer/helper-info";
+
+@import "./components/common/time-line";
+@import "./components/common/login";
+@import "./components/common/simple-loading";
+
+@import "views/location/location";

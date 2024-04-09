@@ -1,0 +1,73 @@
+.history-top-key {
+  width: 396px;
+  height: 520px;
+
+  .el-drawer__body {
+    border: 1px var(--el-border-color-light) solid;
+  }
+
+  .key-header {
+    height: 41px;
+    background: var(--cn-bg-color-lighter);
+    box-shadow: 0 1px 0 0 var(--el-border-color-light);
+    border-radius: 2px 2px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 12px;
+    font-family: NotoSansHans-Medium;
+    font-size: 14px;
+    color: var(--el-text-color-primary);
+    font-weight: 500;
+
+    i {
+      font-size: 12px;
+      color: var(--el-text-color-regular);
+      cursor: pointer;
+    }
+  }
+
+  .key-search {
+    margin-left: 12px;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .key-search-icon {
+      font-size: 13px;
+      color: var(--el-color-info);
+    }
+
+    .key-refresh {
+      margin: 0 10px;
+      color: var(--el-color-business);
+      font-size: 14px;
+      height: 28px;
+      line-height: 28px;
+      cursor: pointer;
+    }
+  }
+
+  .key-total {
+    margin: 10px 12px;
+    font-family: NotoSansSChineseRegular;
+    font-size: 14px;
+    color: var(--el-color-info);
+    line-height: 21px;
+    font-weight: 400;
+
+    .key-total-number {
+      color: var(--el-text-color-regular);
+      margin-left: 4px;
+    }
+  }
+
+  .el-table .key-click-row {
+    background: var(--el-border-color-extra-light) !important;
+  }
+
+  .chart-error__setting {
+    line-height: 0;
+  }
+}
