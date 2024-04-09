@@ -432,6 +432,19 @@ export const itemListHeight = {
   noData: 250
 }
 
+export const tagType = [
+  {
+    label: 'IP',
+    value: 'IP',
+    name: 'ip'
+  },
+  {
+    label: 'Domain',
+    value: 'Domain',
+    name: 'domain'
+  }
+]
+
 export const knowledgeBaseType = [
   {
     label: 'IP',
@@ -483,6 +496,24 @@ export const tagIntentColor = [
   }
 ]
 
+export const tagIntent = [
+  {
+    label: 'tag.intent.unknown',
+    value: 'Unknow',
+    name: 'info'
+  },
+  {
+    label: 'tag.intent.benign',
+    value: 'Benign',
+    name: 'benign'
+  },
+  {
+    label: 'tag.intent.malicious',
+    value: 'Malicious',
+    name: 'malicious'
+  }
+]
+
 export const knowledgeBaseColor = [
   {
     label: 'knowledge.info',
@@ -503,6 +534,9 @@ export const knowledgeBaseColor = [
 export const knowledgeCategoryValue = {
   webSketch: 'websketch',
   aiTagging: 'ai_tagging',
+  userDefined: 'user_defined'
+}
+export const tagCategoryValue = {
   userDefined: 'user_defined'
 }
 export const knowledgeSourceValue = {

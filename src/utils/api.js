@@ -62,7 +62,7 @@ export const api = {
   reportView: '/report/job/view',
   // tag 相关
   tagList: '/v1/tag/list',
-  tagDelete: '/v1/tag/',
+  tag: '/v1/tag',
   tagIndicatorStatistics: '/v1/tag/{{name}}/indicator/statistics',
   tagIndicatorTrend: '/v1/tag/{{name}}/indicator/trend',
   tagTrafficEntityStatistics: '/v1/tag/{{name}}/trafficEntity/statistics',

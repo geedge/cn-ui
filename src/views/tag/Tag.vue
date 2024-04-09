@@ -191,7 +191,7 @@ export default {
           type: 'warning'
         }).then(() => {
           this.toggleLoading(true)
-          axios.delete(api.tagDelete + ids).then(response => {
+          axios.delete(api.tag + ids).then(response => {
             if (response.status === 200) {
               this.delFlag = true
               this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
@@ -260,6 +260,14 @@ export default {
       }
       this.isInit = false
     },
+    add () {
+      this.$router.push({
+        path: '/tag/userDefined/create',
+        query: {
+          t: +new Date()
+        }
+      })
+    },
     edit (u) {
       this.initConfig(u)
       this.object = u
@@ -272,11 +280,19 @@ export default {
           type: 'warning'
         }).catch(() => {})
       } else {
-        const curRecord = this.batchDeleteObjs[0]
-        this.initConfig(curRecord)
-        this.object = curRecord
-        this.rightBox.show = true
+        this.jumpToEditPage(this.batchDeleteObjs[0].id)
       }
+    },
+    jumpToEditPage (id) {
+      const pageNo = this.$router.currentRoute.value.query.pageNo
+      this.$router.push({
+        path: '/tag/userDefined/edit',
+        query: {
+          t: +new Date(),
+          pageNoForTable: pageNo || 1,
+          id: id
+        }
+      })
     },
     initConfig (u) {
       if (!u.config) {

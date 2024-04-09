@@ -289,7 +289,7 @@ export default {
       const vm = this
       return function (intent) {
         const t = vm.tagIntentColor.find(t => t.intent === intent)
-        return t ? t.name : vm.tagIntentColor[0].name
+        return t ? t.name+'-list' : vm.tagIntentColor[0].name+'-list'
       }
     }
   },

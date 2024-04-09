@@ -164,13 +164,18 @@ export function handleComponent (code) {
       return () => import('@/views/report/Report')
     case 'tag':
       return () => import('@/views/tag/Tag')
+    case 'createUserDefinedLibrary':
+    case 'editUserDefinedLibrary':
+      return () => import('@/views/tag/TagForm')
     case 'knowledgeBase':
       return () => import('@/views/setting/KnowledgeBase')
     case 'userDefinedLibrary':
-      return () => import('@/views/setting/KnowledgeBaseUserDefinedList')
-    case 'createUserDefinedLibrary':
-    case 'editUserDefinedLibrary':
-      return () => import('@/views/setting/KnowledgeBaseForm')
+      return () => import('@/views/tag/Tag')
+    //case 'userDefinedLibrary':
+      //return () => import('@/views/setting/KnowledgeBaseUserDefinedList')
+    //case 'createUserDefinedLibrary':
+    //case 'editUserDefinedLibrary':
+      //return () => import('@/views/setting/KnowledgeBaseForm')
     case 'administration':
       return () => import('@/views/administration/Index')
     case 'user':
