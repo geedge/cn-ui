@@ -1,6 +1,6 @@
 .link-direction-grid {
   display: flex;
-  border: 1px solid #E2E5EC;
+  border: 1px solid var(--el-border-color-light);
   height: 100%;
   width: 100%;
   border-radius: 4px;
@@ -11,7 +11,7 @@
 
     .dimension-title {
       font-size: 14px;
-      color: #046ECA;
+      color: var(--el-color-primary);
     }
     .link-block-error {
       position: absolute;
@@ -21,6 +21,7 @@
     }
     .data-grid {
       height: 100px;
+
       .egress-row {
         padding-left: 190px;
         height: 100%;
@@ -33,7 +34,7 @@
           height: 100%;
           margin-right: 8px;
           transform: rotate(-45deg) translate(-5px,-15px);
-          color: #353636;
+          color: var(--el-text-color-primary);
           font-size: 12px;
         }
       }
@@ -48,7 +49,7 @@
           height: 50px;
           margin-bottom: 10px;
           padding-right: 12px;
-          color: #353636;
+          color: var(--el-text-color-primary);
           font-size: 12px;
         }
         .data-item, .data-item-no-data {
@@ -58,40 +59,39 @@
           height: 50px;
           width: 50px;
           margin: 0 8px 8px 0;
-          border: 1px solid #DEDEDE;
+          border: 1px solid var(--el-color-info-light-7);
           border-radius: 4px;
 
           .data-item__point, .data-item__point-red {
             height: 8px;
             width: 8px;
             border-radius: 50%;
-            background-color: #749F4D;
+            background-color: var(--el-color-success);
 
             &:first-of-type {
               margin-right: 6px;
             }
           }
           .data-item__point-red {
-            background-color: #E26154;
+            background-color: var(--el-color-error);
           }
         }
 
         .data-item-no-data {
-          background: rgb(247, 247, 247);
+          background: var(--el-color-info-light-9);
         }
       }
     }
   }
 }
 
-$blue: #046ECA;
 .item-popover-header {
   display: flex;
   align-items: center;
   padding: 10px 0;
   line-height: 14px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: bold;
 
   .item-popover-header-icon {
     font-size: 20px;
@@ -103,7 +103,7 @@ $blue: #046ECA;
   .item-popover-block-title {
     line-height: 24px;
     font-size: 13px;
-    color: $blue;
+    color: var(--el-color-primary);
     font-weight: 600;
   }
 
@@ -125,7 +125,7 @@ $blue: #046ECA;
       display: flex;
       min-width: 75px;
       width: 150px;
-      font-weight: 600;
+      font-weight: bold;
     }
   }
 }
@@ -139,14 +139,14 @@ $blue: #046ECA;
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: #749F4D;
+    background: var(--el-color-success);
   }
 
   .red-dot {
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: #E26154;
+    background: var(--el-color-error);
   }
 }
 
@@ -157,7 +157,6 @@ $blue: #046ECA;
 
 .data-item__hover:hover {
   transition: background 0.2s, box-shadow 0.2s;
-  background: #F4F9FD;
-  border: 2px $blue solid !important;
-  box-shadow: 1px 1px 5px #a1a1a1 !important;
+  background: var(--el-fill-color-light);
+  border: 1px var(--el-color-primary) solid !important;
 }

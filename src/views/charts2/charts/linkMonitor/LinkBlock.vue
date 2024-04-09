@@ -10,6 +10,7 @@
       <div class="block-list__list" v-show="!linkNoData" v-else>
         <el-popover
             placement="bottom"
+            effect="dark"
             trigger="hover"
             popper-class="link-block__popper"
             v-for="(item, index) in linkData"
@@ -122,7 +123,6 @@ import { drillDownPanelTypeMapping, storageKey, unitTypes } from '@/utils/consta
 import { getSecond } from '@/utils/date-util'
 import ChartError from '@/components/common/Error'
 import axios from 'axios'
-import { analysis, analysisOneWay, nextHopAnalysis, nextHopAnalysisOneWay} from './test-data'
 
 export default {
   name: 'LinkBlock',
