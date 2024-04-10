@@ -1,5 +1,6 @@
-@import 'right-box-common';
-@import 'table-common';
+@use 'right-box-common';
+@use 'table-common';
+@use 'button';
 
 /* 通用css */
 .panel-chart__no-data {

@@ -19,7 +19,7 @@
         </el-form-item>
         <el-form-item :label="`${$t('license.licenseFile')}：`">
           <div class="license-file">
-            <button class="license__btn margin-r-20" @click.prevent="downloadFile">
+            <button class="business-button margin-r-20" @click.prevent="downloadFile">
               <i class="cn-icon-download1 cn-icon margin-r-6"></i><span>{{ $t('license.download') }}</span>
             </button>
             <el-upload :action="`${baseUrl}sys/license/upload`"
@@ -34,7 +34,7 @@
                        :on-change="fileChange"
                        :on-success="uploadSuccess"
                        :on-error="uploadError">
-              <button class="license__btn" @click.prevent="">
+              <button class="business-button" @click.prevent="">
                 <i class="cn-icon-upload1 cn-icon margin-r-6"></i><span>{{ $t('license.upload') }}</span>
               </button>
             </el-upload>

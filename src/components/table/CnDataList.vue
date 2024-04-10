@@ -9,8 +9,8 @@
             <slot name="top-tool-left"></slot>
             <div v-if="showLayout.indexOf('search') > -1" class="top-tool-search margin-r-20">
               <div class="top-tool-search__display">
-                <el-input v-model="keyWord"  size="small" @keyup.enter="onSearch"></el-input>
-                <button class="top-tool-btn top-tool-btn--search top-tool-btn__border" @click="onSearch">
+                <el-input v-model="keyWord" @keyup.enter="onSearch"></el-input>
+                <button class="business-button business-button--light top-tool-btn--search" @click="onSearch">
                   <el-icon><Search /></el-icon>
                 </button>
               </div>

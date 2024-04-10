@@ -144,10 +144,8 @@
 
     <div class="policy-form__footer">
       <div class="policy-form__footer__btn">
-        <div class="btn1">
-          <el-button @click="cancel">{{ $t('overall.cancel') }}</el-button>
-        </div>
-        <el-button @click="createPolicy">{{ $t('overall.save') }}</el-button>
+        <button class="business-button business-button--light" @click="cancel">{{ $t('overall.cancel') }}</button>
+        <button class="business-button" @click="createPolicy">{{ $t('overall.save') }}</button>
       </div>
     </div>
   </div>

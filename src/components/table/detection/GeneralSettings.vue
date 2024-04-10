@@ -101,7 +101,7 @@
     </div>
 
     <div class="form-setting__btn">
-      <el-button @click="onContinue">{{ $t('detection.create.continue') }}</el-button>
+      <button @click="onContinue" class="business-button">{{ $t('detection.create.continue') }}</button>
     </div>
   </div>
 </template>

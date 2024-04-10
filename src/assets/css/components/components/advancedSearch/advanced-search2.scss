@@ -94,9 +94,7 @@ $color-primary: var(--el-color-primary);
       line-height: 24px !important;
 
       &:hover {
-        //background-color: #f0f5fa;
-        background-color: var(--el-color-primary-light-9);
-        color: var(--el-color-primary);
+        background-color: var(--el-fill-color-light);
       }
     }
     .hint-clear {

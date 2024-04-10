@@ -2,10 +2,10 @@
   <div>
     <div class="top-tools__left">
       <button
-          id="knowledge-base-add"
+          id="policy-base-add"
           v-if="hasPermission('createDetectionPolicy')"
           :title="$t('knowledgeBase.createKnowledgeBase')"
-          class="top-tool-btn margin-r-10 top-tool-btn--create btn__width"
+          class="business-button margin-r-10"
           @click="onCreate">
         <i class="cn-icon-xinjian cn-icon"></i>
         <span>{{ $t('overall.create') }}</span>
@@ -16,7 +16,7 @@
           v-if="hasPermission('editDetectionPolicy')"
           id="knowledge-base-edit"
           :title="$t('knowledgeBase.editKnowledgeBase')"
-          class="top-tool-btn margin-r-10 btn__width"
+          class="business-button business-button--light margin-r-10"
           @click="onEdit">
         <i class="cn-icon-edit cn-icon" ></i>
         <span>{{$t('overall.edit')}}</span>
@@ -27,7 +27,7 @@
           v-if="hasPermission('deleteDetectionPolicy')"
           id="knowledge-base-delete"
           :title="$t('knowledgeBase.deleteKnowledgeBase')"
-          class="top-tool-btn margin-r-10 btn__width"
+          class="business-button business-button--light margin-r-10"
           @click="onDelete">
         <i class="cn-icon-delete cn-icon"></i>
         <span>{{ $t('overall.delete') }}</span>
@@ -36,7 +36,7 @@
       <div class="top-tool-search margin-l-10">
         <el-input v-model="keyWord" size="small" class="search__input" @keyup.enter="onSearch"></el-input>
         <button
-            class="top-tool-btn top-tool-btn--search search__btn"
+            class="business-button business-button--light top-tool-btn--search"
             @click="onSearch">
           <el-icon><Search /></el-icon>
         </button>

@@ -154,44 +154,12 @@ $border-radius-small: 2px;
     height: 70px;
     box-shadow: -3px 0 8px -3px rgba(205, 205, 205, 0.77);
 
-    .footer__btn {
+    .business-button {
       margin: 0 15px;
       height: 30px;
       min-width: 74px;
       padding: 0 15px;
-      color: var(--el-color-white);
-      background-color: var(--el-color-business);
-      border: 1px solid var(--el-color-business-dark-2);
-      border-radius: var(--el-border-radius-base);
-      outline: none;
       font-size: 14px;
-      cursor: pointer;
-      transition: all linear .1s;
-    }
-
-    .footer__btn:hover:not(.footer__btn--disabled) {
-      background-color: var(--el-color-business-light-2);
-    }
-    .footer__btn:focus:not(.footer__btn--disabled) {
-      background-color: var(--el-color-business-dark-1);
-    }
-
-    .footer__btn.footer__btn--light {
-      background-color: var(--el-fill-color-blank);
-      border: 1px solid var(--el-color-info-light-7);
-      color: var(--el-text-color-primary);
-    }
-
-    .footer__btn.footer__btn--light:hover:not(.footer__btn--disabled) {
-      background-color: var(--el-fill-color);
-    }
-    .footer__btn.footer__btn--light:focus:not(.footer__btn--disabled) {
-      background-color: var(--el-fill-color-darker);
-    }
-
-    .footer__btn.footer__btn--disabled {
-      opacity: .6;
-      cursor: default;
     }
   }
 

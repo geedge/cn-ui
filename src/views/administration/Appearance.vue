@@ -46,9 +46,8 @@
       </el-form>
       <div class="edit-appearance-base__footer">
         <button
-            :class="{'footer__btn--disabled': blockOperation.save}"
             :disabled="blockOperation.save"
-            class="footer__btn footer__btn-position"
+            class="business-button"
             @click="save"
             v-if="hasPermission('editAppearence')"
         >

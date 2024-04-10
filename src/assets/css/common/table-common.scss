@@ -58,10 +58,6 @@
         display: flex;
       }
 
-      .top-tool-btn {
-        border-left: none;
-      }
-
       .top-tool-btn--search {
         width: 28px !important;
         height: 28px !important;
@@ -69,39 +65,21 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        border-radius: 0 var(--el-border-radius-small) var(--el-border-radius-small) 0 !important;
+        border-left: none;
 
         i {
           font-size: 14px;
-          color: var(--el-text-color-regular);
           margin-right: unset !important;
         }
       }
 
-      .top-tool-btn__border {
-        border-radius: 0 2px 2px 0 !important;
+      .el-input__wrapper, .el-input__inner {
+        border-radius: var(--el-border-radius-small) 0 0 var(--el-border-radius-small) !important;
       }
 
-      .top-tool-btn--search:hover {
-        border-left: none !important;
-      }
-
-      .top-tool-btn--search:focus {
-        border-left: none !important;
-      }
-
-      .el-input--small .el-input__wrapper {
-        height: 28px !important;
-        border-radius: 2px 0 0 2px !important;
-      }
-
-      .el-input--small {
+      .el-input {
         width: 214px !important;
-        line-height: 27px;
-      }
-
-      .el-input--small .el-input__inner {
-        height: 28px;
-        border-radius: 2px 0 0 2px;
       }
     }
 
@@ -132,80 +110,14 @@
       }
     }
 
-    .top-tool-btn {
-      cursor: pointer;
+    .business-button {
       height: 28px;
       width: 72px;
-      border: 1px solid $border-color;
-      outline: none;
-      border-radius: 2px;
-      background-color: var(--el-fill-color-lighter);
-      transition: background-color linear .1s;
       font-size: 12px;
-      font-weight: 500;
 
       i {
         font-size: 14px;
-        color: var(--el-text-color-regular);
         margin-right: 4px;
-      }
-      &:disabled {
-        cursor: not-allowed;
-        opacity: 0.66;
-      }
-      &.top-tool-btn--text {
-        padding: 0 8px;
-        width: unset;
-        color: var(--el-text-color-regular);
-      }
-      &:hover:not(.cn-btn-disabled) {
-        border: 1px solid $border-color;
-        background-color: var(--el-fill-color);
-      }
-      &:focus:not(.cn-btn-disabled), &.is-focus {
-        background-color: var(--el-fill-color-darker);
-        border: 1px solid $border-color;
-
-        i {
-          color: var(--el-text-color-regular);
-        }
-      }
-      &.top-tool-btn--create {
-        background-color: var(--el-color-business);
-        border-color: var(--el-color-business-dark-2); // 涉及到表格样式，后续修改
-        color: $color-white;
-
-        i {
-          color: $color-white;
-        }
-        &:hover {
-          background-color: var(--el-color-business-light-2);
-          border-color: var(--el-color-business-dark-2);
-          color: $color-white;
-
-          i {
-            color: $color-white;
-          }
-        }
-        &:focus {
-          background-color: var(--el-color-business-dark-1);
-          border-color: var(--el-color-business-dark-2);
-          color: $color-white;
-
-          i {
-            color: $color-white;
-          }
-        }
-        &:disabled {
-          opacity: 0.66;
-          background-color: var(--el-color-business);
-          border-color: var(--el-color-business-dark-2);
-          color: $color-white;
-
-          i {
-            color: $color-white;
-          }
-        }
       }
     }
 

@@ -10,19 +10,19 @@
         @search="search"
     >
       <template #top-tool-left>
-        <button id="account-add" class="top-tool-btn margin-r-10 top-tool-btn--create"
+        <button id="account-add" class="business-button margin-r-10"
                 v-if="hasPermission('createUser')"
                 @click="add">
           <i class="cn-icon-xinjian cn-icon"></i>
           <span>{{ $t('overall.create') }}</span>
         </button>
-        <button id="account-edit" class="top-tool-btn margin-r-10" :disabled="disableEdit"
+        <button id="account-edit" class="business-button business-button--light margin-r-10" :disabled="disableEdit"
                 v-if="hasPermission('editUser')"
                 @click="editSelectRecord">
           <i class="cn-icon-edit cn-icon"></i>
           <span>{{ $t('overall.edit') }}</span>
         </button>
-        <button id="account-delete" class="top-tool-btn margin-r-10" :disabled="disableDelete"
+        <button id="account-delete" class="business-button business-button--light margin-r-10" :disabled="disableDelete"
                 v-if="hasPermission('deleteUser')"
                 @click="delBatch">
           <i class="cn-icon-delete cn-icon"></i>
