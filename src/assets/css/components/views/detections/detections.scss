@@ -25,21 +25,18 @@
   overflow: auto;
 
   .detection-title {
-    font-family: NotoSansHans-Black;
     line-height: 24px;
     font-size: 24px;
     color: var(--el-text-color-primary);
-    font-weight: 900;
+    font-weight: bold;
     display: flex;
     flex-direction: column;
 
     .detection-title-label {
-      font-family: NotoSansSChineseRegular;
       font-size: 12px;
       color: var(--el-text-color-regular);
       letter-spacing: 0;
       line-height: 18px;
-      font-weight: 400;
       margin-top: 5px;
     }
   }

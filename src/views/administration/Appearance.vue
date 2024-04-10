@@ -7,8 +7,7 @@
               v-model="appearanceObject.date_format"
               collapse-tags
               placeholder=" "
-              popper-class="right-box-select-dropdown right-box-select-report "
-              size="small">
+          >
             <template v-for="dateFormat in dateFormatList" :key="dateFormat.id">
               <el-option :label="dateFormat.label" :value="dateFormat.value" class="appearance__option">
                 <span>{{ dateFormat.label }}</span>
@@ -22,8 +21,7 @@
                      v-model="appearanceObject.lang"
                      collapse-tags
                      placeholder=" "
-                     popper-class="right-box-select-dropdown right-box-select-report "
-                     size="small">
+          >
             <template v-for="lang in langList" :key="lang.id">
               <el-option :label="lang.label" :value="lang.value"></el-option>
             </template>
@@ -35,8 +33,7 @@
                      collapse-tags
                      filterable
                      placeholder=" "
-                     popper-class="right-box-select-dropdown right-box-select-report "
-                     size="small">
+          >
             <template v-for="timezone in timezoneList" :key="timezone.id">
               <el-option :label="timezone.name" :value="timezone.name" class="appearance__option">
                 <span>{{ timezone.name }}</span>

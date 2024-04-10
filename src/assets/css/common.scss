@@ -40,10 +40,6 @@ body {
 .fade-leave-to {
   opacity: 0;
 }
-/* 调整表单错误提示上边距 */
-.el-form-item__error {
-  padding-top: 0 !important;
-}
 
 /* 请求报错样式关于popover的修改 */
 .error-popover {

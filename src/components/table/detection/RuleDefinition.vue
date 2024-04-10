@@ -5,7 +5,7 @@
         <el-form ref="form" :model="thresholdRuleObj" label-position="top" :rules="rules">
           <!--source-->
           <el-form-item :label="$t('config.user.source')" prop="dataSource" class="form-setting__block margin-b-20">
-            <el-select v-model="thresholdRuleObj.dataSource" placeholder=" " size="small" class="form-setting__select">
+            <el-select v-model="thresholdRuleObj.dataSource" placeholder=" " class="form-setting__select">
               <el-option
                   v-for="item in sourceList"
                   :key="item.value"
@@ -38,7 +38,7 @@
           <div class="block-title1">{{ $t('detections.filters') }}</div>
           <div class="definition-filter-block" v-if="showFilter">
             <div class="definition-filter-item" v-for="(item, index) in thresholdRuleObj.filterList" :key="index">
-              <el-select class="filter-item__select margin-r-8" v-model="item.filter" placeholder=" " size="small">
+              <el-select class="filter-item__select margin-r-8" v-model="item.filter" placeholder=" ">
                 <el-option
                     v-for="item in selectList"
                     :key="item.value"
@@ -46,10 +46,10 @@
                     :value="item.value"
                 />
               </el-select>
-              <el-input class="filter-item__input margin-r-8" size="small" disabled placeholder="equal"></el-input>
+              <el-input class="filter-item__input margin-r-8" disabled placeholder="equal"></el-input>
               <el-input
                   class="filter-item__input margin-r-8"
-                  size="small"
+
                   oninput="value=value.replace(/[^\d]/g,'')"
                   v-model="item.value"></el-input>
               <i class="cn-icon cn-icon-close" @click="delFilterItem(index, item)"></i>
@@ -70,7 +70,7 @@
           <el-form ref="form2" :model="thresholdRuleObj" label-position="top">
           <div class="definition-condition-block" v-for="(item, index) in thresholdRuleObj.conditionData" :key="index">
             <el-form-item :label="$t('detection.level')" :prop="`conditionData.${index}.level`" :rules="rules.level">
-              <el-select class="condition__select margin-b-20" v-model="item.level" placeholder=" " size="small">
+              <el-select class="condition__select margin-b-20" v-model="item.level" placeholder=" ">
                 <template #prefix>
                   <div
                       class="condition__select__icon"
@@ -92,7 +92,7 @@
                 <div class="metric-item1__text">
                   <span style="margin-right: 9px;">If</span>
                   <el-form-item :prop="`conditionData.${index}.list.${i}.metric`" :rules="rules.metric">
-                    <el-select v-model="data.metric" placeholder=" " size="small">
+                    <el-select v-model="data.metric" placeholder=" ">
                       <el-option
                           v-for="item in metricList"
                           :key="item.label"
@@ -116,7 +116,7 @@
               <div class="condition-metric-item2">
                 <div style="height: 24px;line-height: 24px;display: flex;">
                   <el-form-item :prop="`conditionData.${index}.list.${i}.condition`" :rules="rules.condition">
-                    <el-select class="metric-item2__select" v-model="data.condition" placeholder=" " size="small">
+                    <el-select class="metric-item2__select" v-model="data.condition" placeholder=" ">
                       <el-option
                           v-for="item in conditionList"
                           :key="item.label"
@@ -132,7 +132,7 @@
                         class="metric-item2__input"
                         v-model.number="data.value"
                         oninput="value=value.replace(/[^\d]/g,'')"
-                        size="small"></el-input>
+                       ></el-input>
                   </el-form-item>
                 </div>
 
@@ -165,7 +165,7 @@
       <el-form ref="form" :model="indicatorRuleObj" label-position="top" :rules="rules">
         <!--Source-->
         <el-form-item :label="$t('config.user.source')" prop="dataSource" class="form-setting__block margin-b-20">
-          <el-select v-model="indicatorRuleObj.dataSource" class="form-setting__select" placeholder=" " size="small" @change="handleParamsComplete">
+          <el-select v-model="indicatorRuleObj.dataSource" class="form-setting__select" placeholder=" " @change="handleParamsComplete">
             <el-option
                 v-for="item in sourceList"
                 :key="item.value"
@@ -177,7 +177,7 @@
 
         <!--Library-->
         <el-form-item :label="$t('detection.library')" prop="knowledgeId" class="form-setting__block margin-b-20">
-          <el-select v-model="indicatorRuleObj.knowledgeId" class="form-setting__select" filterable placeholder=" " size="small" @change="handleParamsComplete">
+          <el-select v-model="indicatorRuleObj.knowledgeId" class="form-setting__select" filterable placeholder=" " @change="handleParamsComplete">
             <el-option
                 v-for="item in libraryList"
                 :key="item.knowledgeId"
@@ -189,7 +189,7 @@
 
         <!--Level-->
         <el-form-item :label="$t('detection.level')" prop="level" class="form-setting__block">
-          <el-select v-model="indicatorRuleObj.level" class="condition__select form-setting__select" placeholder=" " size="small" @change="handleParamsComplete">
+          <el-select v-model="indicatorRuleObj.level" class="condition__select form-setting__select" placeholder=" " @change="handleParamsComplete">
             <template #prefix>
               <div
                   class="condition__select__icon"

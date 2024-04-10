@@ -181,6 +181,7 @@ $color-primary: var(--el-color-primary);
         color: var(--el-text-color-primary);
         font-weight: bold;
         cursor: text;
+
         .el-select {
           min-width: 210px !important;
           min-height: 20px !important;
@@ -191,9 +192,6 @@ $color-primary: var(--el-color-primary);
           height: 28px;
           margin-top: -4px;
           cursor: pointer;
-        }
-        .el-select__wrapper.is-focused {
-          box-shadow: 0 0 0 1px var(--el-color-business) inset !important;
         }
       }
       .condition__operator {
@@ -228,11 +226,4 @@ $color-primary: var(--el-color-primary);
   width: auto !important;
   min-width: 120px !important;
   padding: 8px 10px !important;
-}
-.el-input__wrapper.is-focus {
-  box-shadow: 0 0 0 1px var(--el-color-business) inset !important;
-}
-.el-select-dropdown__item.is-selected {
-  //color: #2c72c6 !important;
-  color: var(--el-color-primary-light-3) !important;
 }

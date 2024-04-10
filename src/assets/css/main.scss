@@ -39,6 +39,15 @@
     'large': 32px,
     'default': 28px,
     'small': 24px
+  ),
+  // dropdown
+  $dropdown: (
+    'menuItem-hover-fill': var(--el-fill-color-light),
+    'menuItem-hover-color': var(--el-text-color-regular)
+  ),
+  $checkbox: (
+    'checked-input-border-color': var(--el-color-business),
+    'checked-bg-color': var(--el-color-business),
   )
 );
 // 导出重写后的var.scss，暴露内部变量供别处使用

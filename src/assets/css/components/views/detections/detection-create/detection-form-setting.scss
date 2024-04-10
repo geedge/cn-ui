@@ -13,11 +13,6 @@ $color-info-light: var(--el-color-info-light-7);
     margin-top: -4px;
   }
 
-  .el-select__wrapper, .el-input__wrapper {
-    min-height: 24px !important;
-    height: 24px !important;
-  }
-
   .el-switch__label.is-active {
     color: $color-primary;
   }
@@ -27,15 +22,8 @@ $color-info-light: var(--el-color-info-light-7);
     line-height: 14px;
     padding: 0;
     margin-bottom: 12px;
-    font-family: NotoSansHans-Medium;
     font-size: 14px;
     color: $color-primary;
-    font-weight: 500;
-  }
-
-  .el-form-item__content {
-    height: 24px;
-    line-height: 24px;
   }
 
   .block-mode {
@@ -67,19 +55,15 @@ $color-info-light: var(--el-color-info-light-7);
       flex-direction: column;
 
       .block-mode-title {
-        font-family: NotoSansSChineseRegular;
         font-size: 14px;
         color: $color-primary;
-        font-weight: 400;
         line-height: 14px;
       }
 
       .block-mode-content {
-        font-family: NotoSansSChineseRegular;
         font-size: 12px;
         color: $color-regular;
         line-height: 15px;
-        font-weight: 400;
         margin: 10px 0;
       }
 
@@ -90,10 +74,8 @@ $color-info-light: var(--el-color-info-light-7);
         text-align: center;
         background: $fill-color-light;
         border-radius: 2px;
-        font-family: NotoSansHans-Medium;
         font-size: 12px;
         color: $color-primary;
-        font-weight: 500;
         cursor: pointer;
         transition: all var(--el-transition-duration-fast);
       }
@@ -106,16 +88,13 @@ $color-info-light: var(--el-color-info-light-7);
   }
 
   .block-title {
-    font-family: NotoSansHans-Medium;
     font-size: 14px;
     line-height: 14px;
     color: $color-primary;
-    font-weight: 500;
     margin-bottom: 12px;
   }
 
   .block-title1 {
-    font-family: NotoSansHans-Medium;
     font-size: 12px;
     line-height: 12px;
     color: $color-primary;
@@ -125,23 +104,6 @@ $color-info-light: var(--el-color-info-light-7);
 
   .form-setting__select {
     width: 620px !important;
-
-    .el-input--small .el-input__inner {
-      height: 24px !important;
-      line-height: 24px !important;
-    }
-  }
-
-  .form-setting__input {
-    &.el-input {
-      height: 24px !important;
-      line-height: 24px !important;
-    }
-
-    .el-input__inner {
-      height: 24px;
-      line-height: 24px;
-    }
   }
 
   .form-setting__textarea {
@@ -151,10 +113,8 @@ $color-info-light: var(--el-color-info-light-7);
   }
 
   .el-switch__label, .form-setting__block .el-switch__label {
-    font-family: NotoSansSChineseRegular;
     font-size: 14px;
     color: $color-primary;
-    font-weight: 400;
   }
 
   .block-dimension {
@@ -172,17 +132,10 @@ $color-info-light: var(--el-color-info-light-7);
       background: var(--el-fill-color-darker);
       border-radius: 2px;
       opacity: 0.6;
-      font-family: NotoSansSChineseRegular;
       font-size: 12px;
       color: $color-primary;
-      font-weight: 400;
       margin-right: 4px;
     }
-  }
-
-  .el-input--small .el-input__inner {
-    height: 24px !important;
-    line-height: 24px !important;
   }
 }
 
@@ -197,10 +150,8 @@ $color-info-light: var(--el-color-info-light-7);
     border: 1px solid $color-info-light;
     box-shadow: 0 2px 4px 0 rgba(51, 51, 51, 0.02);
     border-radius: 2px;
-    font-family: NotoSansHans-Medium;
     font-size: 12px;
     color: $color-primary;
-    font-weight: 500;
     margin-left: 12px;
     display: flex;
     align-items: center;
@@ -228,10 +179,8 @@ $color-info-light: var(--el-color-info-light-7);
     background: var(--el-color-business);
     border: 1px solid var(--el-color-business-dark-1);
     border-radius: 2px;
-    font-family: NotoSansHans-Medium;
     font-size: 12px;
     color: $fill-color-blank;
-    font-weight: 500;
     padding: 0 14px;
   }
 
@@ -291,11 +240,6 @@ $color-info-light: var(--el-color-info-light-7);
 
     .filter-item__input {
       width: 170px;
-    }
-
-    .el-input--small .el-input__inner {
-      height: 24px;
-      line-height: 24px;
     }
 
     i {
@@ -416,10 +360,8 @@ $color-info-light: var(--el-color-info-light-7);
   }
 
   .condition-metric {
-    font-family: NotoSansSChineseRegular;
     font-size: 14px;
     color: $color-primary;
-    font-weight: 400;
     display: flex;
     flex-direction: column;
 
@@ -514,10 +456,8 @@ $color-info-light: var(--el-color-info-light-7);
   border: 1px solid $color-info-light;
   box-shadow: 0 2px 4px 0 rgba(51, 51, 51, 0.02);
   border-radius: 2px;
-  font-family: NotoSansHans-Medium;
   font-size: 12px;
   color: $color-primary;
-  font-weight: 500;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -536,10 +476,8 @@ $color-info-light: var(--el-color-info-light-7);
 
   .el-divider__text {
     padding: 0 4px;
-    font-family: NotoSansSChineseRegular;
     font-size: 12px;
     color: var(--el-text-color-disabled);
-    font-weight: 400;
   }
 }
 

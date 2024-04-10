@@ -7,7 +7,7 @@ $bg-color-page: var(--el-bg-color-page);
   .detection-form-header {
     font-size: 24px;
     color: $text-color-primary;
-    font-weight: 900;
+    font-weight: bold;
     margin-top: 10px;
   }
 
@@ -59,9 +59,7 @@ $bg-color-page: var(--el-bg-color-page);
           height: 24px;
           line-height: 24px;
           text-align: center;
-          font-family: NotoSansHans-Medium;
           font-size: 16px;
-          font-weight: 500;
           border-radius: 50%;
           margin-right: 10px;
           transition: 0.5s all;
@@ -80,7 +78,6 @@ $bg-color-page: var(--el-bg-color-page);
         .form-collapse-header-title {
           font-size: 16px;
           color: $text-color-primary;
-          font-weight: 500;
         }
       }
 
@@ -89,22 +86,18 @@ $bg-color-page: var(--el-bg-color-page);
 
         .trigger-block {
           width: 620px;
-          height: 90px;
-          padding: 16px 12px;
+          padding: 16px 12px 0 12px;
           border-radius: 2px;
           border: 1px var(--el-border-color-light) solid;
           display: flex;
           flex-direction: column;
           font-size: 14px;
           color: $text-color-primary;
-          font-weight: 400;
 
           .trigger-block-item {
             display: flex;
             align-items: flex-start;
             justify-content: flex-start;
-            height: 24px;
-            line-height: 24px;
 
             .policy-form-item {
               .el-form-item__error {
@@ -113,24 +106,21 @@ $bg-color-page: var(--el-bg-color-page);
             }
           }
 
-          .el-input--small .el-input__inner {
-            width: 112px;
+          .el-form-item__content {
             margin: 0 12px;
+          }
+          .el-input--small {
+            .el-input__inner {
+              width: 112px;
+            }
           }
 
           .el-select .el-input .el-select__caret {
-            height: 24px;
-            line-height: 24px;
             margin-right: 12px;
           }
 
-          .form-trigger__select {
-            margin-left: -12px;
-          }
-
-          .el-form-item__content {
-            height: 24px;
-            line-height: 24px !important;
+          .form-trigger__select .el-form-item__content {
+            margin-left: 0;
           }
         }
       }
@@ -141,11 +131,7 @@ $bg-color-page: var(--el-bg-color-page);
         }
 
         .el-input__wrapper, .el-select__wrapper {
-          height: 24px !important;
-          line-height: 24px !important;
-          min-height: 24px !important;
           width: 112px;
-          margin: 0 12px;
         }
 
         .el-input__inner {
@@ -155,8 +141,6 @@ $bg-color-page: var(--el-bg-color-page);
     }
 
     .el-input--small, .el-input--small .el-input__inner {
-      height: 24px !important;
-      line-height: 24px !important;
       border-radius: 2px !important;
     }
   }

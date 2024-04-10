@@ -11,7 +11,7 @@
         <el-form ref="reportForm" :model="editObject" :rules="rules" label-position="top" label-width="120px">
           <!--name-->
           <el-form-item :label="$t('report.name')" prop="name">
-            <el-input id="account-input-name" v-model="editObject.name" maxlength="64" placeholder=" " show-word-limit size="small" type="text"></el-input>
+            <el-input id="account-input-name" v-model="editObject.name" maxlength="64" placeholder=" " show-word-limit type="text"></el-input>
           </el-form-item>
           <!--time limit-->
           <el-form-item :label="$t('report.timeLimit')" prop="timeLimit">
@@ -20,8 +20,6 @@
                        class="right-box__select"
                        collapse-tags
                        placeholder=" "
-                       popper-class="right-box-select-dropdown right-box-select-report "
-                       size="small"
                        @change="timeConfigTypeChange"
             >
               <template v-for="time in timeRuleList" :key="time.value">
@@ -34,8 +32,7 @@
                          class="right-box__select"
                          collapse-tags
                          placeholder=" "
-                         popper-class="right-box-select-dropdown right-box-select-report "
-                         size="small"
+                         style="margin-top: 10px;"
                          @change="()=>{ this.$forceUpdate() }">
                 <template v-for="time in timeUnitList" :key="time.value">
                   <el-option :label="$t(time.name)" :value="time.value"></el-option>
@@ -43,7 +40,7 @@
               </el-select>
             </template>
             <div v-else-if="editObject.config.timeConfig.type === 'last' || editObject.config.timeConfig.type === 'previous'" class="report__display">
-              <el-input v-model.number="editObject.config.timeConfig.offset" size="small" class="el-input-single" placeholder=" ">
+              <el-input v-model.number="editObject.config.timeConfig.offset" class="el-input-single" placeholder=" ">
                 <template #prepend><i @click="timeOffsetHandle('m')" class="cn-icon cn-icon-a-"></i></template>
                 <template #append><i @click="timeOffsetHandle('p')" class="cn-icon cn-icon-a-1"></i></template>
               </el-input>
@@ -53,7 +50,6 @@
                          collapse-tags
                          placeholder=" "
                          popper-class="right-box-select-dropdown  el-select-last"
-                         size="small"
                          @change="()=>{ this.$forceUpdate() }">
                 <template v-for="time in timeUnitList" :key="time.value">
                   <el-option :label="$t(time.name)" :value="time.value"></el-option>
@@ -67,7 +63,6 @@
               <div class="block">
                 <el-date-picker
                     v-model="editObject.config.startTime"
-                    size="small"
                     :format="dateFormat"
                     :disabled-date="startDisabledDate"
                     @change="startTimeChang"
@@ -84,7 +79,6 @@
               <div class="block">
                 <el-date-picker
                     v-model="editObject.config.endTime"
-                    size="small"
                     :format="dateFormat"
                     :disabled-date="endDisabledDate"
                     @change="endTimeChange"
@@ -105,17 +99,17 @@
             </div>
             <div class="enable-tabs-daily" v-if="scheduleType === scheduleTypeList[0].value">
               <div class="enable-tabs-custom">{{$t('report.customEvery')}}</div>
-              <el-input v-model.number="editObject.config.schedulerConfig.interval" size="small" placeholder=" " class="report__margin-t">
+              <el-input v-model.number="editObject.config.schedulerConfig.interval" placeholder=" ">
                 <template #append>{{$t('report.day')}}</template>
               </el-input>
             </div>
             <div class="enable-tabs-weekly" v-else-if="scheduleType === scheduleTypeList[1].value">
               <!-- 每隔几周暂时隐藏 -->
               <!-- <div class="enable-tabs-custom">{{$t('report.customEvery')}}</div>
-              <el-input v-model="editObject.config.schedulerConfig.interval" size="small" placeholder="Please input">
+              <el-input v-model="editObject.config.schedulerConfig.interval" placeholder="Please input">
                 <template #append>{{$t('report.week')}}</template>
               </el-input>-->
-              <el-checkbox-group v-model="editObject.config.schedulerConfig.weekDates" class="report__margin-t">
+              <el-checkbox-group v-model="editObject.config.schedulerConfig.weekDates">
                 <el-checkbox v-for="(item, index) in weekdayList" :key="index" :label="item.value">{{$t(item.name)}}</el-checkbox>
               </el-checkbox-group>
             </div>
@@ -130,7 +124,7 @@
                 <!-- 自定义月，循环 -->
                 <template v-if="monthIsCycle">
                   <div class="enable-tabs-custom">{{$t('report.customEvery')}}</div>
-                  <el-input v-model="editObject.config.schedulerConfig.interval" size="small" placeholder=" " class="report__margin-t">
+                  <el-input v-model="editObject.config.schedulerConfig.interval" placeholder=" ">
                     <template #append>{{$t('report.month')}}</template>
                   </el-input>
                 </template>
@@ -158,10 +152,9 @@
                   <el-select id="account-input-roleIds"
                              v-model="editObject.config.schedulerConfig.monthWeekDates"
                              class="right-box__select"
+                             style="margin-top: 10px;"
                              multiple
                              placeholder=" "
-                             popper-class="right-box-select-dropdown right-box-select-report"
-                             size="small"
                              @change="()=>{ this.$forceUpdate() }">
                     <template v-for="time in weekOptions" :key="time.value">
                       <el-option :label="$t(time.name)" :value="time.value"></el-option>
@@ -183,7 +176,6 @@
               <div class="block">
                 <el-date-picker
                     v-model="editObject.schedulerStart"
-                    size="small"
                     :format="dateFormat"
                     prefix-icon=""
                     type="datetime"
@@ -198,7 +190,6 @@
               <div class="block">
                 <el-date-picker
                     v-model="editObject.schedulerEnd"
-                    size="small"
                     :format="dateFormat"
                     prefix-icon=""
                     type="datetime"
@@ -215,8 +206,6 @@
                        collapse-tags
                        placeholder=" "
                        :disabled="!!editObject.id"
-                       popper-class="right-box-select-dropdown right-box-select-report"
-                       size="small"
             >
               <template v-for="category in categoryList" :key="category.id">
                 <el-option :label="category.name" :value="category.id"></el-option>
@@ -225,11 +214,11 @@
           </el-form-item>
           <!-- 参数 -->
           <el-form-item :label="$t('config.operationlog.params')" prop="categoryParams" v-if="editObject.categoryParams && editObject.categoryParams.length > 0">
-<!--            <el-input v-model="param.value" placeholder=" " v-for="(param, index) in editObject.categoryParams" :key="index" size="small" style="vertical-align: unset;" :disabled="!!editObject.id">
+<!--            <el-input v-model="param.value" placeholder=" " v-for="(param, index) in editObject.categoryParams" :key="index" style="vertical-align: unset;" :disabled="!!editObject.id">
               <template #prepend>{{param.key}}</template>
             </el-input>-->
             <template v-for="(param, index) in editObject.categoryParams" :key="index">
-              <el-input v-if="param.labelType === 'input'" v-model="param.value" placeholder=" " size="small" class="report__params-vertical" :disabled="!!editObject.id">
+              <el-input v-if="param.labelType === 'input'" v-model="param.value" placeholder=" " class="report__params-vertical" :disabled="!!editObject.id">
                 <template #prepend>{{param.key}}</template>
               </el-input>
               <el-select v-model="param.value"
@@ -238,8 +227,6 @@
                          placeholder=" "
                          filterable
                          :disabled="!!editObject.id"
-                         popper-class="right-box-select-dropdown right-box-select-report "
-                         size="small"
               >
                 <template #prefix>
                   {{$t(param.i18n)}}

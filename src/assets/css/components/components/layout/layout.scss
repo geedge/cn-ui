@@ -1,8 +1,8 @@
 .cn-container {
   height: calc(100% - 100px);
-  //background-color: $--content-right-background-color;
-  background-color: var(--bg-color);
+  background-color: var(--el-fill-color-blank);
   width: 100%;
+
   &>div {
     height: 100%;
   }
@@ -17,7 +17,7 @@
   .cn-header__banner {
     display: flex;
     height: 60px;
-    background-color: #233447;
+    background-color: #233447; // TODO 暂无变量
 
     .banner__left {
       display: flex;
@@ -34,13 +34,13 @@
         border-radius: 4px;
         margin-left: 14px;
         margin-right: 10px;
-        color: #F7F7F7;
+        color: var(--el-fill-color-lighter);
         cursor: pointer;
         background-color: transparent;
         transition: all linear var(--el-transition-duration);
 
         &.shrink-button--collapse {
-          background-color: #334355;
+          background-color: var(--el-text-color-primary);
         }
       }
     }
@@ -125,7 +125,7 @@
             font-size: 14px;
             font-weight: bolder;
             color: var(--el-text-color-primary);
-            border-bottom: 1px dashed #D8D8D8;
+            border-bottom: 1px dashed var(--el-border-color);
           }
           .middle-menus__body {
             display: flex;
@@ -158,16 +158,17 @@
     display: flex;
 
     .el-dropdown {
-      color: #fff;
+      color: var(--el-fill-color-blank);
       height: 40px;
       line-height: 60px;
       text-align: center;
       margin: 0 20px 0 10px;
     }
     .login-user {
-      color: #fff;
+      color: var(--el-color-white);
+
       i {
-        color: #fff;
+        color: var(--el-color-white);
         font-size: 12px;
       }
     }
@@ -256,6 +257,7 @@
 .search-input{
   width: 100%;
   padding: 4px 4px 0 4px;
+
   .el-input__inner{
     border-radius: 2px;
     font-size: 12px;

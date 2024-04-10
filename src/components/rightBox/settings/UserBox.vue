@@ -13,31 +13,31 @@
           <el-form-item :label="$t('config.user.name')" prop="name">
             <el-input id="account-input-name" v-model="editObject.name"
                       :disabled="editObject.username==='admin' && editObject.id === 1"
-                      minlength="2" maxlength="64" placeholder="" show-word-limit size="small" type="text"></el-input>
+                      minlength="2" maxlength="64" placeholder="" show-word-limit type="text"></el-input>
           </el-form-item>
           <!--username-->
           <el-form-item :label="$t('config.user.username')" prop="username">
             <el-input id="account-input-username" v-model="editObject.username"
                       :disabled="editObject.username==='admin' && editObject.id === 1"
-                      minlength="2" maxlength="64" placeholder="" show-word-limit size="small" type="text"></el-input>
+                      minlength="2" maxlength="64" placeholder="" show-word-limit type="text"></el-input>
           </el-form-item>
           <!--password-->
           <el-form-item :label="$t('config.user.pin')" prop="pin">
             <el-input id="account-input-password" v-model="editObject.pin" minlength="5" maxlength="64" placeholder=""
-                      show-word-limit size="small" type="password" @blur="pinBlur" autocomplete="new-password"></el-input>
+                      show-word-limit type="password" @blur="pinBlur" autocomplete="new-password"></el-input>
           </el-form-item>
           <!--pinChange-->
           <el-form-item :label="$t('config.user.confirmPin')" label-width="200px" prop="pinChange">
             <el-input id="account-input-pinChange" v-model="editObject.pinChange" minlength="5" maxlength="64" placeholder=""
-                      show-word-limit size="small" type="password"></el-input>
+                      show-word-limit type="password"></el-input>
           </el-form-item>
           <!--email-->
           <el-form-item label="E-mail" prop="email">
-            <el-input id="account-input-email" v-model="editObject.email" maxlength="35" show-word-limit placeholder="" size="small" type="text"></el-input>
+            <el-input id="account-input-email" v-model="editObject.email" maxlength="35" show-word-limit placeholder="" type="text"></el-input>
           </el-form-item>
           <!--mobile-->
           <el-form-item :label="$t('config.user.mobile')" prop="mobile">
-            <el-input id="account-input-mobile" v-model.number="editObject.mobile" maxlength="11" show-word-limit placeholder="" size="small" type="text"></el-input>
+            <el-input id="account-input-mobile" v-model.number="editObject.mobile" maxlength="11" show-word-limit placeholder="" type="text"></el-input>
           </el-form-item>
           <!--roles-->
           <el-form-item :label="$t('config.user.roles')" prop="roleIds">
@@ -49,7 +49,7 @@
                        collapse-tags
                        placeholder=" "
                        popper-class="right-box-select-dropdown prevent-clickoutside"
-                       size="small"
+
                        @change="()=>{ this.$forceUpdate() }">
               <template v-for="role in roleData" :key="role.id">
                 <el-option :label="role.name" :value="role.id"></el-option>
@@ -65,7 +65,7 @@
                        collapse-tags
                        placeholder=" "
                        popper-class="right-box-select-dropdown prevent-clickoutside"
-                       size="small">
+            >
               <template v-for="lang in langData" :key="lang.value">
                 <el-option :label="lang.label" :value="lang.value"></el-option>
               </template>
