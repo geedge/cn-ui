@@ -73,3 +73,12 @@
     }
   }
 }
+
+.line__block {
+  position: relative;
+  height: calc(100% - 74px);
+}
+
+.line-metric__select {
+  width: 127px;
+}
