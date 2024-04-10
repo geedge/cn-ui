@@ -70,6 +70,10 @@
       transition: background-color linear var(--el-transition-duration-fast), color linear .1s;
     }
 
+    .footer__btn-position {
+      position: relative;
+    }
+
     .footer__btn:hover:not(.footer__btn--disabled) {
       background-color: lighten(#38ACD2, 10%);
     }

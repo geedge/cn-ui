@@ -38,9 +38,9 @@
                      popper-class="right-box-select-dropdown right-box-select-report "
                      size="small">
             <template v-for="timezone in timezoneList" :key="timezone.id">
-              <el-option :label="timezone.name" :value="timezone.name">
-                <span style="float: left">{{ timezone.name }}</span>
-                <span style="float: right;">{{ timezone.offset }}</span>
+              <el-option :label="timezone.name" :value="timezone.name" class="appearance__option">
+                <span>{{ timezone.name }}</span>
+                <span>{{ timezone.offset }}</span>
               </el-option>
             </template>
           </el-select>
@@ -49,14 +49,13 @@
       </el-form>
       <div class="edit-appearance-base__footer">
         <button
-            style="position: relative;"
             :class="{'footer__btn--disabled': blockOperation.save}"
             :disabled="blockOperation.save"
-            class="footer__btn"
+            class="footer__btn footer__btn-position"
             @click="save"
             v-if="hasPermission('editAppearence')"
         >
-          <el-loading size="small" :loading="blockOperation.save"></el-loading>
+          <simple-loading size="small" :loading="blockOperation.save"></simple-loading>
           <span>{{ $t('overall.save') }}</span>
         </button>
       </div>
@@ -68,9 +67,11 @@ import { api } from '@/utils/api'
 import { storageKey, ZH, EN } from '@/utils/constants'
 import axios from 'axios'
 import dayjs from 'dayjs'
+import SimpleLoading from '@/components/common/SimpleLoading'
 
 export default {
   name: 'Appearance',
+  components: { SimpleLoading },
   data () {
     return {
       url: api.appearance,
