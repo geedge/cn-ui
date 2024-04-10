@@ -62,8 +62,8 @@
         <div class="add-app__header">
           <div class="header__title">{{$t('overall.add')}}</div>
           <div class="header__operations">
-            <div class="header__operation header__operation--cancel" @click="cancelApp" test-id="cancel-app">{{$t('overall.cancel')}}</div>
-            <div class="header__operation header__operation--save" @click="save">{{$t('overall.save')}}</div>
+            <button class="business-button business-button--light" @click="cancelApp" test-id="cancel-app">{{$t('overall.cancel')}}</button>
+            <button class="business-button" @click="save">{{$t('overall.save')}}</button>
           </div>
         </div>
         <div class="add-app__body">

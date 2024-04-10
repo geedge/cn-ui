@@ -170,23 +170,11 @@
           display: flex;
           align-items: center;
 
-          .header__operation {
-            width: 80px;
+          .business-button {
+            min-width: 72px;
             height: 30px;
             margin-right: 20px;
-            line-height: 30px;
-            border-radius: 4px;
             text-align: center;
-            cursor: pointer;
-
-            &.header__operation--cancel {
-              border: 1px solid var(--el-border-color);
-              color: var(--el-text-color-primary);
-            }
-            &.header__operation--save {
-              background-color: var(--el-color-business);
-              color: white;
-            }
           }
         }
       }
