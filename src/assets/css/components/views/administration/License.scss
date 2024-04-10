@@ -21,28 +21,19 @@
         min-width: 74px;
         color: var(--el-color-white);
         background-color: var(--el-color-business);
-        border: none;
+        border: 1px solid var(--el-color-business-dark-2);
         border-radius: var(--el-border-radius-base);
         outline: none;
         font-size: 14px;
         cursor: pointer;
-        transition: background-color linear var(--el-transition-duration-fast), color linear .1s;
+        transition: all linear .1s;
       }
 
-      .license__btn:hover:not(.footer__btn--disabled) {
-        background-color: lighten(#38ACD2, 10%);
+      .license__btn:hover:not(.license__btn--disabled) {
+        background-color: var(--el-color-business-light-2);
       }
-
-      .license__btn--light {
-        background-color: var(--el-fill-color-light);
-        border: 1px solid var(--el-color-info-light-7);
-        color: var(--el-text-color-primary);
-      }
-
-      .license__btn.license__btn--light:hover:not(.license__btn--disabled) {
-        background-color: var(--el-fill-color-blank);
-        border-color: lighten(#38ACD2, 40%);
-        color: var(--el-color-business);
+      .license__btn:focus:not(.license__btn--disabled) {
+        background-color: var(--el-color-business-dark-1);
       }
 
       .license__btn--disabled {
