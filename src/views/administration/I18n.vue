@@ -10,15 +10,15 @@
         @search="search"
     >
       <template #top-tool-left>
-        <button id="i18n-add" class="top-tool-btn margin-r-10 top-tool-btn--create" @click="add">
+        <button id="i18n-add" class="business-button margin-r-10" @click="add">
           <i class="cn-icon-xinjian cn-icon"></i>
           <span>{{ $t('overall.create') }}</span>
         </button>
-        <button id="i18n-edit" class="top-tool-btn margin-r-10" :disabled="disableEdit" @click="editSelectRecord">
+        <button id="i18n-edit" class="business-button business-button--light margin-r-10" :disabled="disableEdit" @click="editSelectRecord">
           <i class="cn-icon-edit cn-icon"></i>
           <span>{{ $t('overall.edit') }}</span>
         </button>
-        <button id="i18n-delete" class="top-tool-btn margin-r-10" :disabled="disableDelete" @click="delBatch">
+        <button id="i18n-delete" class="business-button business-button--light margin-r-10" :disabled="disableDelete" @click="delBatch">
           <i class="cn-icon-delete cn-icon"></i>
           <span>{{ $t('overall.delete') }}</span>
         </button>
