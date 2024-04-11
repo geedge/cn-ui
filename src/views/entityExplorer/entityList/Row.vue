@@ -10,7 +10,7 @@
       <div class="cn-entity__icon"><i :class="iconClass"></i></div>
       <div class="cn-entity__row">
         <!--标签-->
-        <div class="cn-entity__header" style="display: flex;">
+        <div class="cn-entity__header my__display1">
           <template v-if="entityData.entityType">
             <span v-if="entityData.entityType==='subscriber_id'" v-high-light="keywordList">{{ entityData.phone_number }}</span>
             <span v-else v-high-light="keywordList">{{ entityData.entityValue || 'Unknown' }}</span>
@@ -137,7 +137,7 @@
               </div>
 
               <!--score分数-->
-              <div class="basic-info__item" style="display: flex;align-items: center;" v-if="entityData.entityType !== 'subscriber_id'">
+              <div class="basic-info__item my__display">
                 <i class="cn-icon cn-icon-Score"></i>
                 <div class="row-item-label">
                   <span class="row-item-label">{{ $t('network.score') }}&nbsp;:&nbsp;&nbsp;</span>
@@ -145,7 +145,7 @@
                     <template v-if="!loadingNetworkQuality && score !=='-'">
                       <span v-for="(dot, i) in scoreDot" :key="i" :class="dot.class"></span>
                     </template>
-                    <span style="padding-left: 4px;">{{score}}</span>
+                    <span class="padding-l-4">{{score}}</span>
                     <loading :loading="loadingNetworkQuality" size="small"></loading>
                   </span>
                 </div>
@@ -153,17 +153,14 @@
 
               <!--事件数量，即Performance和security事件总和-->
               <div class="basic-info__item" style="position: relative">
-                <div v-if="eventNum>0 && !loadingEvent" style="display: flex;align-items: center;">
+                <div v-if="eventNum>0 && !loadingEvent" class="my__display">
                   <i class="cn-icon cn-icon-Event1"></i>
                   <div class="row-item-label">
                     <span class="row-item-label">{{ $t('dnsInsight.event') }}&nbsp;:&nbsp;&nbsp;</span>
                     <span class="row-item-value">{{ eventNum }}</span>
                   </div>
                 </div>
-
-<!--                <loading :loading="loadingEvent" size="small" style="width: 90px"></loading>-->
               </div>
-
             </div>
           </div>
         </div>
@@ -313,7 +310,7 @@ export default {
       if (this.isCollapse) {
         this.$refs.rowBlock.style.cssText = 'background-color: none'
       } else {
-        this.$refs.rowBlock.style.cssText = 'background-color: #fff'
+        this.$refs.rowBlock.style.cssText = 'background-color: var(--el-fill-color-blank)'
       }
       this.$emit('switchCollapse', this.isCollapse, this.index)
     },

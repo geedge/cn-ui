@@ -7,8 +7,6 @@
         <div class="filter__header">{{filter.title}}</div>
 
         <div class="filter__body" style="position: relative">
-<!--          <loading :loading="false" style="top: -5px;"></loading>-->
-
           <div class="filter__body-item"
                v-for="(data, i) in filter.data.slice(0, filter.showIndex)"
                :key="i"

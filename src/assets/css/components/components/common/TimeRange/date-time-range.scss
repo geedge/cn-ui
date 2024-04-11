@@ -1,9 +1,10 @@
+@use 'element-plus/theme-chalk/src/select.scss' as *;
 .date-range-box {
   font-size: 14px;
-  border-radius: 2px;
-  //margin-right: 10px;
+  border-radius: var(--el-border-radius-base);
   display: flex;
   cursor: pointer;
+  transition: var(--el-transition-duration);
 
   .date-range-refresh {
     margin-left: 10px;
@@ -32,15 +33,18 @@
     padding: 0 10px;
     display: flex;
     justify-content: space-around;
-    //background: #FFFFFF;
-    background: var(--el-fill-color-blank);
-    //border: 1px solid #DEDEDE;
-    border: 1px solid var(--el-border-color);
-    box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
-    border-radius: 2px;
+    @include mixed-input-border(var(--el-border-color));
+    border-radius: var(--el-border-radius-base);
     height: 28px;
     line-height: 28px;
-    transition: width .3s;
+    transition: all var(--el-transition-duration);
+
+    &:hover {
+      @include mixed-input-border(var(--el-border-color-hover));
+    }
+    &:focus {
+      @include mixed-input-border(var(--el-color-primary));
+    }
 
     .cn-icon {
       font-size: 14px;
@@ -58,26 +62,22 @@
 
   .date-range-title {
     font-size: 14px;
-    //color: #666666;
-    color: $--text-color-4;
-    font-weight: 600;
+    color: var(--el-text-color-regular);
+    font-weight: bold;
     padding: 14px 0 7px 8px;
   }
 
-  .calendar-popover-text.calendar-popover__small {
-    i {
-      font-weight: 300;
-      color: #575757;
-    }
-  }
   .calendar-popover-text {
     white-space: nowrap;
     display: inline-block;
     margin: 0 5px;
-    //color: #353636;
-    color: $--text-color-1;
+    color: var(--el-text-color-primary);
+
     .cn-icon-Data {
-      color: #575757;
+      color: var(--el-text-color-regular);
+    }
+    .cn-icon-dropdown {
+      color: var(--el-text-color-placeholder);
     }
   }
 
@@ -92,9 +92,8 @@
   .date-range-panel {
     height: 426px;
     width: 500px;
-    //background: #FFFFFF;
-    background: $--select-bg-color-1;
-    box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+    background-color: var(--el-fill-color-blank);
+    box-shadow: var(--el-box-shadow-light);
     position: absolute;
     right: 10px !important;
     z-index: 2;
@@ -106,25 +105,23 @@
 
       .content-title {
         font-size: 14px;
-        //color: #666666;
-        color: var(--el-text-color-primary);
-        font-weight: 400;
+        color: var(--el-text-color-regular);
         margin-bottom: 12px;
       }
 
       .content-input {
-        border: 1px solid #E7EAED;
-        border-radius: 2px;
+        border: 1px solid var(--el-border-color);
+        color: var(--el-text-color-primary);
+        border-radius: var(--el-border-radius-base);
         width: 230px;
         padding: 0 8px;
         height: 30px;
         line-height: 30px;
         margin-bottom: 12px;
-        outline: #169AFF;
       }
 
       .content-input:focus {
-        border: 1px solid #169AFF;
+        border: 1px solid var(--el-border-color-hover);
       }
 
       .date-range-history {
@@ -133,14 +130,13 @@
         overflow-y: auto;
 
         .date-range-history-item {
+          color: var(--el-text-color-regular);
           padding: 5px 0;
           cursor: pointer;
         }
 
         .date-range-history-item:hover {
-          /*font-weight: 600;*/
-          //background: #f9f9f9;
-          background: $--select-bg-color-hover-1;
+          background-color: var(--el-fill-color-light);
         }
       }
       .el-range-editor.el-input__wrapper{
@@ -151,6 +147,7 @@
     .date-range-panel-content-right {
       display: flex;
       flex-direction: column;
+      border-left: 1px solid var(--el-border-color-light);
 
       ul {
         flex: 1;
@@ -165,32 +162,25 @@
           display: flex;
           flex-direction: column;
           justify-content: center;
-          //color: #333333;
-          color: var(--el-text-color-primary);
-          font-weight: 400;
+          color: var(--el-text-color-regular);
           padding: 0 10px;
           cursor: pointer;
         }
 
+        li:hover {
+          background-color: var(--el-fill-color-light);
+          color: var(--el-text-color-regular);
+        }
+
         li.active {
-          //background: #F2F9FF;
-          //color: #0091FF;
-          background: $--select-bg-color-1;
           color: var(--el-color-primary);
-          font-weight: 400;
+          font-weight: bold;
 
           .cn-icon-check {
-            color: #0091FF;
+            color: var(--el-color-primary);
             position: absolute;
             right: 7px;
           }
-        }
-
-        li:hover {
-          //background: #F2F9FF;
-          background: var(--el-color-primary-light-9);
-          //color: #0091FF;
-          color: var(--el-color-primary);
         }
       }
     }
@@ -203,7 +193,7 @@
   .date-range-panel-bottom {
     height: 44px;
     line-height: 44px;
-    border-top: 1px solid rgba(0, 0, 0, 0.09);
+    border-top: 1px solid var(--el-border-color-light);
     padding: 0 10px;
     display: flex;
     justify-content: space-between;
@@ -234,6 +224,6 @@
     left: -6px !important;
   }
   .el-popper__arrow::before {
-    border: 1px solid #E7EAED !important;
+    border: 1px solid var(--el-border-color-light) !important;
   }
 }

@@ -1,13 +1,14 @@
 .entity-explorer {
   display: flex;
   flex-direction: column;
-  background-color: white;
+  background-color: var(--el-fill-color-blank);
   margin: 20px;
   height: calc(100% - 40px) !important;
   justify-content: center;
-  transition: all linear .2s;
+  transition: all linear var(--el-transition-duration-fast);
+  $text-color-primary: var(--el-text-color-primary);
 
-  .entity__loading {
+  /* .entity__loading {
     position: absolute;
     height: 100%;
     width: 100%;
@@ -20,7 +21,7 @@
       font-size: 30px;
       color: #aaa;
     }
-  }
+  } */
   &.entity-explorer--show-list {
     background-color: unset;
     justify-content: flex-start;
@@ -32,103 +33,146 @@
     align-items: center;
     padding-bottom: 18px;
 
-    &>div {
+    & > div {
       padding: 0 0 0 10px;
     }
-    .el-button--small{
+
+    .el-button--small {
       padding: 4px 6px !important;
       min-height: 28px !important;
+
       &.active i {
-        color: $--color-primary;
+        color: var(--el-color-primary);
       }
+
       i {
         font-size: 14px;
       }
     }
   }
+
   .explorer-entity-top-tools {
     width: 100%;
   }
+
   .explorer-detection-top-tools, .explorer-entity-top-tools {
     display: flex;
     justify-content: space-between;
   }
+
   .explorer-top-tools-new {
     display: flex;
     justify-content: space-between;
+    margin: 2px 0;
   }
+
   .explorer-top-tools-title {
     font-size: 24px;
     line-height: 24px;
     font-weight: 900;
-    color: #353636;
+    color: $text-color-primary;
   }
+
+  .tools-title__margin {
+    padding: 0;
+    margin-left: -10px;
+  }
+
   .explorer-top-tools-block {
     height: 28px;
     line-height: 28px;
-    background: #F5F8FA;
+    background: var(--el-fill-color-light);
     font-size: 14px;
-    color: #353636;
+    color: $text-color-primary;
     font-weight: 500;
     padding: 0 10px;
     margin-right: 20px;
-    border: 1px solid #E2E5EC;
+    border: 1px solid var(--el-border-color-light);
     border-radius: 2px;
     cursor: pointer;
   }
+
   .detection-icon-setting {
     margin-right: 10px;
     font-size: 14px;
   }
+
   .detection-border {
-    border: 1px solid #E2E5EC;
-    border-radius: 4px;
+    border: 1px solid var(--el-border-color-light);
+    border-radius: var(--el-border-radius-base);
   }
+
   .explorer-result {
     margin-top: 10px;
     margin-bottom: 18px;
     font-size: 14px;
-    color: #353636;
+    color: $text-color-primary;
     font-weight: 400;
     height: 20.8px;
     line-height: 20.8px;
 
     .entity-hide-entity {
       margin-left: 20px;
+
       .el-checkbox__label {
         padding-left: 6px;
       }
+
+      .margin-l__10 {
+        margin-left: -10px;
+      }
+    }
+
+    .explorer-result-loading {
+      width: 240px;
     }
   }
+
+  .explorer-content {
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 20px;
+  }
+
   .explorer-container, .explorer-container-new {
     display: flex;
     overflow: visible; /*overflow: hidden;*/
     height: calc(100% - 120px);
     position: relative;
   }
+
   .explorer-container-new {
+    width: calc(100% - 340px);
     height: calc(100% - 62px);
     flex-direction: column;
-    width: calc(100% - 340px);
+
+    .explorer-list {
+      display: flex;
+      flex-direction: column;
+      height: calc(100% - 42px);
+    }
   }
+
   .explorer-foot {
     display: flex;
     justify-content: center;
     align-items: flex-start;
     height: 17vh;
 
-    &>div {
+    & > div {
       width: 100%;
       max-width: 1200px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
+
     .el-divider {
       width: 2px;
       height: 40px;
-      background-color: #cecece;
+      background-color: var(--el-color-info-light-5);
     }
+
     .entity-overview {
       display: flex;
 
@@ -140,22 +184,26 @@
 
         .overview-left-span {
           font-size: 16px;
-          color: #666666;
+          color: var(--el-text-color-regular);
         }
+
         .overview-left-loading {
           display: inline-block;
           position: relative;
+
           .overview-left-loading-span {
             font-family: NotoSansHans-Medium;
             font-size: 18px;
-            color: #575757;
+            color: var(--el-text-color-regular);
             font-weight: 500;
           }
+
           .chart__loading i.el-icon-loading {
             top: calc(50% - 12px);
           }
         }
       }
+
       .overview-right {
         display: flex;
         flex-direction: column;
@@ -167,13 +215,15 @@
           height: 18px;
           line-height: 18px;
           align-items: center;
-          color: #666666;
+          color: var(--el-text-color-regular);
 
           .right-label-loading {
             position: relative;
+
             .chart__loading {
               width: auto;
             }
+
             .chart__loading i.el-icon-loading {
               padding: 0;
               top: calc(50% - 8px);
@@ -184,46 +234,51 @@
           .right-label {
             width: 55px;
             font-size: 14px;
-            color: #666666;
+            color: var(--el-text-color-regular);
           }
+
           .right-value {
             font-size: 14px;
-            color: #333333;
+            color: var(--el-text-color-primary);
             font-weight: bold;
           }
+
           .right-value-block {
             font-family: NotoSansHans-Medium;
             font-size: 14px;
-            color: #353636;
+            color: $text-color-primary;
             font-weight: 600;
 
             .last-hour {
               font-family: NotoSansSChineseRegular;
               font-size: 12px;
-              color: #717171;
+              color: var(--el-text-color-regular);
               font-weight: 400;
             }
           }
+
           i {
             padding-right: 4px;
             font-size: 19px;
           }
-          .cn-icon-increase {
+
+          /* .cn-icon-increase {
             color: #23BF9A;
-          }
+          } */
           .cn-icon-active {
-            color: #35ADDA;
+            color: var(--el-color-business);
           }
+
           .entity-explorer-total__icon {
             width: 18px;
             height: 18px;
             line-height: 18px;
             padding-left: 3px;
-            background-color: #04A6AB;
-            color: #fff;
+            background-color: #04A6AB; // todo 保留原颜色
+            color: var(--el-color-white);
             border-radius: 50%;
             font-size: 12px;
-            font-weight: 500;
+            //font-weight: 500;
             margin-right: 4px;
             margin-left: 1px;
           }

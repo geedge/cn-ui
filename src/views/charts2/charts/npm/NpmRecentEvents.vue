@@ -11,7 +11,6 @@
         class="npm-recent-table"
         :class="{'npm-recent-table-ten': tableData.length === 10}"
         empty-text=""
-        height="100%"
     >
       <template v-for="(item, index) in customTableTitles" :key="index">
         <el-table-column class="data-column">

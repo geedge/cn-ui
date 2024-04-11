@@ -15,7 +15,6 @@ import 'highlight.js/styles/color-brewer.css'
 import '@/assets/css/main.scss' // 样式入口
 import VueGridLayout from 'vue-grid-layout'
 import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
 import bus from 'tiny-emitter'
 
 import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
@@ -24,7 +23,6 @@ import PanelChartList from '@/views/charts/PanelChartList'
 import Error from '@/components/common/Error'
 import Renderer from '@/components/advancedSearch/showhint/Hint/Renderer'
 import 'lib-flexible'
-import 'element-plus/theme-chalk/dark/css-vars.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 const emitter = new bus()

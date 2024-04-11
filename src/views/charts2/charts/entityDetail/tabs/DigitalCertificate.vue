@@ -1,6 +1,6 @@
 <template>
   <div>
-    <chart-error v-if="showError" :content="errorMsg" class="entity-detail-event-error"></chart-error>
+    <chart-error v-if="showError" :content="errorMsg"></chart-error>
     <chart-no-data v-if="isNoData && !showError"></chart-no-data>
 
     <div v-if="!isNoData && !showError && !loading" class="digital-certificate" :style="{width: moreCertificatesWidth}">
@@ -12,7 +12,7 @@
         </div>
       </div>
 
-      <div v-for="(item, index) in infoList" :key="index" style="margin-top: 20px">
+      <div v-for="(item, index) in infoList" :key="index" class="margin-t-20">
         <div class="digital-certificate-body">
           <div class="digital-certificate-body-tags">
             <div :class="item.flag === '0' ? 'entity-tag entity-tag--level-two-negative-no-background' : 'entity-tag entity-tag--level-two-positive-no-background'">{{ this.$t(getTrusted(item.flag)) }}</div>

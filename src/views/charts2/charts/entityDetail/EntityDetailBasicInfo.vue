@@ -50,7 +50,7 @@
           <div v-if="card.name==='reputationLevel'"
                class="detail-card__value row__tag row__tag__level"
                :title="card.value"
-               :style="`background-color:${riskLevelColor1[card.level]};text-align: center;color: ${card.value !== '-' ? '#fff' : ''}`">
+               :style="`background-color:${riskLevelColor1[card.level]};text-align: center;color: ${card.value !== '-' ? 'var(--el-color-white)' : ''}`">
             {{card.value || '-'}}
           </div>
           <div v-else class="detail-card__value" :title="card.value">{{card.value || '-'}}</div>

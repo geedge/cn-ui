@@ -1,6 +1,6 @@
 <template>
   <div v-ele-click-outside="changeDropdown" style="position: relative;" class="date-range-box">
-    <div @click="showDropdown" class="date-range-text" :class="myClass" :style="style">
+    <div @click="showDropdown" tabindex="1" class="date-range-text" :class="myClass" :style="style">
       <div class="calendar-popover-text"><i class="cn-icon cn-icon-Data"></i></div>
       <div class="calendar-popover-text" style="display: flex" v-if="isCustom" :title="`${dateFormatByAppearance(getMillisecond(startTime))} -${dateFormatByAppearance(getMillisecond(endTime))}`">
         <div class="calendar-popover-text" :style="showPosition === 'left' ? 'width: 90px;text-overflow: ellipsis;overflow: hidden;' : ''" >{{ dateFormatByAppearance(getMillisecond(startTime)) }}</div>
@@ -56,7 +56,7 @@
           <el-col
               :span="8"
               class="date-range-panel-content date-range-panel-content-right"
-              style="border-left: 1px solid rgba(0,0,0,0.09);">
+          >
             <div class="date-range-title">{{$t('dateTime.relativeTimeRanges')}}</div>
             <ul class="date-range-item">
               <li v-for="item in dateRangeArr"

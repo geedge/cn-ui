@@ -5,23 +5,18 @@
       <div class="main-container">
         <!-- 顶部工具栏 -->
         <div class="top-tools">
-          <div class="top-tool-left" style="min-width: 300px">
+          <div class="top-tool-left">
             <slot name="top-tool-left"></slot>
             <div v-if="showLayout.indexOf('search') > -1" class="top-tool-search margin-r-20">
-              <div style="display: flex">
-                <el-input v-model="keyWord"  size="small" @keyup.enter="onSearch"></el-input>
-                <!--                <el-button icon="el-icon-search" @click="onSearch" size="small"></el-button>-->
-                <button class="top-tool-btn top-tool-btn--search" style="border-radius: 0 2px 2px 0 !important;" @click="onSearch">
+              <div class="top-tool-search__display">
+                <el-input v-model="keyWord" @keyup.enter="onSearch"></el-input>
+                <button class="business-button business-button--light top-tool-btn--search" @click="onSearch">
                   <el-icon><Search /></el-icon>
-                  <!--<i class="el-icon-search"></i>-->
                 </button>
               </div>
             </div>
           </div>
           <div class="top-tool-right">
-<!--           <el-input v-model="keyWord" value="keyWord"></el-input>
-            <el-button @click="onSearch" icon="el-icon-search" type="info" size="small" style="margin-right: 10px"></el-button>-->
-
             <slot name="top-tool-right"></slot>
             <div  v-if="showLayout.indexOf('elementSet') > -1" class="btn-customize"  @click="tools.showCustomTableTitle = true">
               <i class="cn-icon-gear cn-icon icon-gear"></i> <span> {{$t('network.customize')}}</span>

@@ -26,7 +26,7 @@
 
       <!--第二步：Rule Definition-->
       <div class="detection-form-collapse">
-        <el-collapse v-model="activeNames" style="position: relative;">
+        <el-collapse v-model="activeNames" class="rule-definition">
           <el-collapse-item name="2">
             <template #title>
               <div class="form-collapse-header">
@@ -57,16 +57,16 @@
                 <div class="trigger-block-item margin-b-10">
                   <div>At least</div>
                   <el-form-item prop="atLeast">
-                    <el-input size="small" maxlength="5" v-model="triggerObj.atLeast" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
+                    <el-input maxlength="5" size="small" v-model="triggerObj.atLeast" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
                   </el-form-item>
                   <div>times within</div>
 
                   <el-form-item prop="interval" class="policy-form-item">
-                    <el-input size="small" maxlength="5" v-model="triggerObj.interval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
+                    <el-input maxlength="5" size="small" v-model="triggerObj.interval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
                   </el-form-item>
 
-                  <el-form-item prop="intervalVal">
-                    <el-select v-model="triggerObj.intervalVal" class="form-trigger__select" placeholder=" " size="small" @change="resetEditFlag">
+                  <el-form-item prop="intervalVal" class="form-trigger__select">
+                    <el-select v-model="triggerObj.intervalVal" placeholder=" " size="small" @change="resetEditFlag">
                       <el-option
                           v-for="item in intervalList"
                           :key="item.value"
@@ -80,10 +80,10 @@
                 <div class="trigger-block-item">
                   <div>With the counter resetting after no activity for</div>
                   <el-form-item prop="resetInterval" class="policy-form-item">
-                    <el-input size="small" maxlength="5" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
+                    <el-input maxlength="5" size="small" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
                   </el-form-item>
-                  <el-form-item prop="resetIntervalVal">
-                    <el-select v-model="triggerObj.resetIntervalVal" class="form-trigger__select" placeholder=" " size="small"  @change="resetEditFlag">
+                  <el-form-item prop="resetIntervalVal" class="form-trigger__select">
+                    <el-select v-model="triggerObj.resetIntervalVal" placeholder=" " size="small" @change="resetEditFlag">
                       <el-option
                           v-for="item in intervalList"
                           :key="item.value"
@@ -101,8 +101,8 @@
                     <el-input size="small" maxlength="5" v-model="triggerObj.interval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
                   </el-form-item>
 
-                  <el-form-item prop="intervalVal">
-                    <el-select v-model="triggerObj.intervalVal" class="form-trigger__select" placeholder=" " size="small" @change="resetEditFlag">
+                  <el-form-item prop="intervalVal" class="form-trigger__select">
+                    <el-select size="small" v-model="triggerObj.intervalVal" placeholder=" " @change="resetEditFlag">
                       <el-option
                           v-for="item in intervalList"
                           :key="item.value"
@@ -123,8 +123,8 @@
                   <el-form-item prop="resetInterval">
                     <el-input size="small" maxlength="5" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
                   </el-form-item>
-                  <el-form-item prop="resetIntervalVal">
-                    <el-select v-model="triggerObj.resetIntervalVal" class="form-trigger__select" placeholder=" " size="small" @change="resetEditFlag">
+                  <el-form-item prop="resetIntervalVal" class="form-trigger__select">
+                    <el-select size="small" v-model="triggerObj.resetIntervalVal" placeholder=" " @change="resetEditFlag">
                       <el-option
                           v-for="item in intervalList"
                           :key="item.value"
@@ -144,10 +144,8 @@
 
     <div class="policy-form__footer">
       <div class="policy-form__footer__btn">
-        <div class="btn1">
-          <el-button @click="cancel">{{ $t('overall.cancel') }}</el-button>
-        </div>
-        <el-button @click="createPolicy">{{ $t('overall.save') }}</el-button>
+        <button class="business-button business-button--light" @click="cancel">{{ $t('overall.cancel') }}</button>
+        <button class="business-button" @click="createPolicy">{{ $t('overall.save') }}</button>
       </div>
     </div>
   </div>

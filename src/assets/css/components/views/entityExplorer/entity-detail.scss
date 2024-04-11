@@ -15,158 +15,59 @@
       padding: 0 6px;
       font-size: 12px;
     }
-    $normal-color: #778391;
-    $normal-light-color: #F7F8F9;
-    $negative-color: #E26154;
+
+    $normal-color: #778391; // 颜色暂时保留
+    $normal-light-color: var(--el-fill-color-light);
+    $negative-color: var(--el-color-danger);
     $negative-light-color: #FEF6F5;
-    $positive-color: #749F4D;
+    $positive-color: var(--el-color-success);
     $positive-light-color: #F7FAF5;
+    $color-white: var(--el-color-white);
+
     &.entity-tag--level-one-normal {
       border-color: $normal-color;
-      color: white;
+      color: $color-white;
       background-color: $normal-color;
     }
+
     &.entity-tag--level-one-negative {
       border-color: $negative-color;
-      color: white;
+      color: $color-white;
       background-color: $negative-color;
     }
+
     &.entity-tag--level-one-positive {
       border-color: $positive-color;
-      color: white;
+      color: $color-white;
       background-color: $positive-color;
     }
+
     &.entity-tag--level-two-normal {
       border-color: $normal-color;
       color: $normal-color;
       background-color: $normal-light-color;
     }
+
     &.entity-tag--level-two-negative {
       border-color: $negative-color;
       color: $negative-color;
       background-color: $negative-light-color;
     }
+
     &.entity-tag--level-two-positive {
       border-color: $positive-color;
       color: $positive-color;
       background-color: $positive-light-color;
     }
+
     &.entity-tag--level-two-negative-no-background {
       border-color: $negative-color;
       color: $negative-color;
     }
+
     &.entity-tag--level-two-positive-no-background {
       border-color: $positive-color;
       color: $positive-color;
     }
   }
 }
-/*
-.entity-detail.cn-home {
-  .panel-chart {
-    width: 100%;
-  }
-
-  flex-direction: column;
-
-  .entity-detail__header {
-    flex: 0 0 80px;
-    display: flex;
-    align-items: center;
-
-    .cn-entity__name {
-      font-size: 20px;
-      color: #333333;
-      font-weight: bold;
-    }
-    .cn-entity__icon {
-      margin-left: 26px;
-      margin-right: 10px;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      justify-items: center;
-      align-items: center;
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background-color: #F3F7FA;
-
-      i {
-        font-size: 26px;
-        color: #4E84B4;
-      }
-    }
-  }
-  &>.entity-detail__body {
-    width: 100%;
-    height: calc(100% - 52px);
-    display: flex;
-    flex-direction: row;
-
-    .cn-panel2 .chart-list {
-      .vue-grid-layout .vue-grid-item {
-        .panel-chart-group.panel-chart {
-          .panel-chart {
-            border: none;
-            box-shadow: none;
-            .chart-header {
-              border: none;
-            }
-          }
-        }
-      }
-    }
-
-    .entity-detail__menu {
-      flex: 0 0 240px;
-      display: flex;
-      flex-direction: column;
-      padding-top: 23px;
-      border-top: 1px solid $--content-right-background-color;
-
-      .menu-item {
-        display: flex;
-        align-items: center;
-        padding: 7px 0 7px 30px;
-        font-size: 14px;
-        color: #666666;
-
-        span {
-          padding-left: 10px;
-          cursor: pointer;
-        }
-
-        &.menu-item--active {
-          color: #1890FF;
-
-          span {
-            border-left: 2px solid #1890FF;
-          }
-        }
-      }
-    }
-    .entity-detail__content {
-      height: calc(100% - 28px);
-      flex: 1;
-      padding: 10px;
-      overflow: auto;
-      //background-color: $--content-right-background-color;
-      background-color: rgb(239, 242, 245);
-
-      &>.cn-entity-detail .entity-detail__body>.cn-panel2 {
-        .panel-chart {
-          .chart-header.panel-chart-block {
-            border: none;
-          }
-        }
-        .panel-chart-table.panel-chart {
-          .cn-chart {
-            height: calc(100% - 47px) !important;
-          }
-        }
-      }
-    }
-  }
-}
-*/

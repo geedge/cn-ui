@@ -16,7 +16,7 @@
                  :test-id="`tab${index}`"
             >
               <div class="line-value-tabs-name">
-                <div class="tabs-name" :test-id="`tabTitle${index}`" style="padding-left: 0;">{{ $t(item.name) }}</div>
+                <div class="tabs-name tabs-name1" :test-id="`tabTitle${index}`">{{ $t(item.name) }}</div>
               </div>
               <div class="line-value-unit" :test-id="`tabContent${index}`">
             <span class="line-value-unit-number">
@@ -45,21 +45,22 @@
           </div>
           <div class="line-select-metric">
             <span class="select-prefix line-margin-right">{{$t('network.metric')}}:</span>
-            <el-select
-                size="small"
-                v-model="metric"
-                placeholder=" "
-                popper-class="common-select"
-                :teleported="false"
-                @change="metricChange"
-            >
-              <el-option v-for="item in metricOptions" :key="item.value" :label="$t(item.label)" :value="item.value"></el-option>
-            </el-select>
+            <div class="line-metric__select">
+              <el-select
+                  v-model="metric"
+                  placeholder=" "
+                  popper-class="common-select"
+                  :teleported="false"
+                  @change="metricChange"
+              >
+                <el-option v-for="item in metricOptions" :key="item.value" :label="$t(item.label)" :value="item.value"></el-option>
+              </el-select>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div style="height: calc(100% - 74px); position: relative">
+    <div class="line__block">
       <chart-no-data v-if="isNoData && !showError"></chart-no-data>
       <div class="chart-drawing" v-show="!isNoData && !showError" ref="overviewLineChart"></div>
     </div>

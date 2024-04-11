@@ -1,125 +1,56 @@
-//.pagination {
-//  padding-top: 8px;
-//  text-align: center;
-//  max-height: 42px;
-//
-//  .el-pagination {
-//    max-height: 42px;
-//    padding-right: 0;
-//  }
-//  .pagination-size-select .el-input--small .el-input__inner{
-//    height: 20px;
-//    line-height: 20px;
-//    margin: 5px 0 5px 5px;
-//  }
-//  .el-pager li, .el-pagination .btn-next, .el-pagination .btn-prev {
-//    margin:5px 5px 0 5px;
-//    padding: 0 4px;
-//    font-size: 13px;
-//    min-width: 20px;
-//    height: 20px;
-//    line-height: 20px;
-//    text-align: center;
-//    border: 1px solid rgba(154,154,154,0.20);
-//    border-radius: 2px;
-//  }
-//  .el-pagination .el-pager li.btn-quicknext, .el-pager li.btn-quickprev {
-//    line-height: 20px;
-//  }
-//  .el-pagination .el-pager .more::before {
-//    line-height: 20px;
-//  }
-//  .el-pagination .el-pager .more {
-//    background-color: $--content-right-background-color;
-//  }
-//  .btn-next, .btn-prev {
-//    background-color: $--content-right-background-color !important;
-//  }
-//  input {
-//    background-color: $--content-right-background-color !important;
-//  }
-//  .el-pager li.number {
-//    color: #666666;
-//    letter-spacing: 0;
-//    font-weight:normal;
-//    background-color: $--content-right-background-color;
-//  }
-//  .el-pager li.number.active {
-//    color: #FFFFFF;
-//    letter-spacing: 0;
-//  }
-//
-//  .el-pagination .el-pager li.active {
-//    background-color: $--color-primary;
-//    border-radius: 2px;
-//  }
-//  .el-pager li:hover, .el-pagination .btn-next:hover, .el-pagination .btn-prev:hover {
-//    color: #666666;
-//    letter-spacing: 0;
-//    font-weight:normal;
-//  }
-//  .el-pagination__sizes .el-input .el-input__inner, .el-pagination__editor.el-input .el-input__inner {
-//    height: 20px;
-//    border-color: rgba(154,154,154,0.20);
-//  }
-//  .el-pagination__sizes .el-input .el-input__inner:hover {
-//    border-color: rgba(154,154,154,0.20);
-//  }
-//}
-//.entity__pagination .pagination {
-//  .el-pager li.more + li {
-//    display: none;
-//  }
-//  .el-pager li.number:not(:last-of-type) {
-//    display: inline-block !important;
-//  }
-//}
-
 .pagination {
-  //max-height: 42px;
   padding-top: 8px;
   display: flex;
   justify-content: center;
   align-items: center;
+
   .el-pagination__total {
     margin-right: 10px;
     font-size: 13px;
   }
+
   .el-pager li, .el-pagination .btn-next, .el-pagination .btn-prev {
-    margin:5px 5px 0 5px;
+    margin: 5px 5px 0 5px;
     padding: 0 4px;
     font-size: 13px;
     min-width: 20px;
     height: 20px;
     line-height: 20px;
     text-align: center;
-    border: 1px solid rgba(154,154,154,0.20);
+    border: 1px solid rgba(154, 154, 154, 0.20);
     border-radius: 2px;
   }
+
   .el-pagination .btn-prev {
-    background-color: $--content-right-background-color !important;
+    background-color: var(--el-fill-color-blank) !important;
   }
+
   .el-pager li:hover, .el-pagination .btn-next:hover, .el-pagination .btn-prev:hover {
-    color: #666666;
+    color: var(--el-text-color-regular);
     letter-spacing: 0;
-    font-weight:normal;
+    font-weight: normal;
   }
+
   .btn-next, .btn-prev {
-    background-color: $--content-right-background-color !important;
+    background-color: var(--el-fill-color-blank) !important;
   }
+
   .el-pager li.is-active {
-    background-color: #699dc9;
-    color: #fff;
+    background-color: var(--el-color-business);
+    color: var(--el-color-white);
     font-weight: 500;
   }
+
   .el-pager li, .el-pagination .btn-next, .el-pagination .btn-prev {
     margin-top: 0;
   }
+
   .el-select {
     width: 100px !important;
     margin-left: 3px;
   }
-  .pagination-size-select .el-select__wrapper{
+
+  .pagination-size-select .el-select__wrapper {
     width: 100px;
     height: 20px;
     line-height: 20px;
@@ -129,11 +60,11 @@
     font-size: 12px;
     border-radius: 2px;
   }
+
   .el-select__suffix {
     svg {
       width: 12px;
       height: 12px;
     }
   }
-  //el-icon el-select__caret el-select__icon
 }

@@ -136,24 +136,6 @@
         :chart="chart"
         @toggleLoading="toggleLoading"
     ></link-direction-grid>
-    <dns-active-malicious-domain
-        v-else-if="chart.type === typeMapping.dnsInsight.dnsActiveMaliciousDomain"
-        :time-filter="timeFilter"
-        :chart="chart"
-        @toggleLoading="toggleLoading"
-    ></dns-active-malicious-domain>
-    <dns-event-chart
-        v-else-if="chart.type === typeMapping.dnsInsight.dnsEventChart"
-        :time-filter="timeFilter"
-        :chart="chart"
-        @toggleLoading="toggleLoading"
-    ></dns-event-chart>
-    <dns-recent-events
-        v-else-if="chart.type === typeMapping.dnsInsight.dnsRecentEvents"
-        :time-filter="timeFilter"
-        :chart="chart"
-        @toggleLoading="toggleLoading"
-    ></dns-recent-events>
     <dns-traffic-line
         v-else-if="chart.type === typeMapping.dnsInsight.dnsTrafficLine"
         :time-filter="timeFilter"
@@ -228,9 +210,6 @@ import NpmTrafficLine from '@/views/charts2/charts/npm/NpmTrafficLine'
 import LinkBlock from '@/views/charts2/charts/linkMonitor/LinkBlock'
 import LinkTrafficSankey from '@/views/charts2/charts/linkMonitor/LinkTrafficSankey'
 import LinkTrafficLine from '@/views/charts2/charts/linkMonitor/LinkTrafficLine'
-import DnsActiveMaliciousDomain from '@/views/charts2/charts/dnsInsight/DnsActiveMaliciousDomain'
-import DnsEventChart from '@/views/charts2/charts/dnsInsight/DnsEventChart'
-import DnsRecentEvents from '@/views/charts2/charts/dnsInsight/DnsRecentEvents'
 import DnsTrafficLine from '@/views/charts2/charts/dnsInsight/DnsTrafficLine'
 import EntityDetailBasicInfo from '@/views/charts2/charts/entityDetail/EntityDetailBasicInfo'
 import EntityDetailLine from '@/views/charts2/charts/entityDetail/EntityDetailLine'
@@ -268,9 +247,6 @@ export default {
     LinkBlock,
     LinkTrafficSankey,
     LinkTrafficLine,
-    DnsActiveMaliciousDomain,
-    DnsEventChart,
-    DnsRecentEvents,
     DnsTrafficLine,
     EntityDetailBasicInfo,
     EntityDetailSubscriberKpi,

@@ -232,32 +232,32 @@ export const eventSeverity = {
   info: 'info'
 }
 export const eventSeverityColor = {
-  critical: '#D84C4C',
-  high: '#FE845D',
-  medium: '#FFB65A',
-  low: '#FFD82D',
-  info: '#D1BD50'
+  critical: 'var(--cn-color-critical)',
+  high: 'var(--cn-color-high)',
+  medium: 'var(--cn-color-medium)',
+  low: 'var(--cn-color-low)',
+  info: 'var(--cn-color-info)'
 }
 export const riskLevelColor = {
-  5: '#D84C4C',
-  4: '#FE845D',
-  3: '#FFB65A',
-  2: '#FFD82D',
-  1: '#D1BD50'
+  5: 'var(--cn-color-critical)',
+  4: 'var(--cn-color-high)',
+  3: 'var(--cn-color-medium)',
+  2: 'var(--cn-color-low)',
+  1: 'var(--cn-color-info)'
 }
 export const riskLevelColor1 = {
-  'High Risk': '#D84C4C',
-  Suspicious: '#FE845D',
-  'Moderate Risk': '#FFB65A',
-  'Low Risk': '#FFD82D',
-  Trustworthy: '#D1BD50'
+  'High Risk': 'var(--cn-color-critical)',
+  Suspicious: 'var(--cn-color-high)',
+  'Moderate Risk': 'var(--cn-color-medium)',
+  'Low Risk': 'var(--cn-color-low)',
+  Trustworthy: 'var(--cn-color-info)'
 }
 export const eventSeverityColor1 = {
-  Critical: '#D84C4C',
-  High: '#FE845D',
-  Medium: '#FFB65A',
-  Low: '#FFD82D',
-  Info: '#D1BD50'
+  Critical: 'var(--cn-color-critical)',
+  High: 'var(--cn-color-high)',
+  Medium: 'var(--cn-color-medium)',
+  Low: 'var(--cn-color-low)',
+  Info: 'var(--cn-color-info)'
 }
 export const securityType = {
   commandAndControl: 'common and control',
@@ -2797,27 +2797,27 @@ export const securityLevel = [
   {
     value: 'critical',
     label: 'overall.critical',
-    color: '#D84C4C'
+    color: 'var(--cn-color-critical)'
   },
   {
     value: 'high',
     label: 'overall.high',
-    color: '#FE845D'
+    color: 'var(--cn-color-high)'
   },
   {
     value: 'medium',
     label: 'overall.medium',
-    color: '#FFB65A'
+    color: 'var(--cn-color-medium)'
   },
   {
     value: 'low',
     label: 'overall.low',
-    color: '#FFD82D'
+    color: 'var(--cn-color-low)'
   },
   {
     value: 'info',
     label: 'overall.info',
-    color: '#D1BD50'
+    color: 'var(--cn-color-info)'
   }
 ]
 

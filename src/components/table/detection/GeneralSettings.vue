@@ -43,7 +43,7 @@
     <!--category-->
     <el-form ref="form" :model="settingObj" label-position="top" :rules="rules">
       <el-form-item :label="$t('overall.category')" prop="category" class="form-setting__block margin-b-20">
-        <el-select :disabled="settingObj.ruleId" v-model="settingObj.category" class="form-setting__select" placeholder=" " size="small" @change="changeEditFlag">
+        <el-select :disabled="settingObj.ruleId" v-model="settingObj.category" class="form-setting__select" placeholder=" " @change="changeEditFlag">
           <el-option
               v-for="item in categoryList"
               :key="item.value"
@@ -55,7 +55,7 @@
 
       <!--type-->
       <el-form-item :label="$t('overall.type')" prop="eventType" class="form-setting__block margin-b-20">
-        <el-select v-model="settingObj.eventType" placeholder=" " size="small" class="form-setting__select" @change="changeEditFlag">
+        <el-select v-model="settingObj.eventType" placeholder=" " class="form-setting__select" @change="changeEditFlag">
           <el-option
               v-for="item in eventTypeList"
               :key="item.value"
@@ -101,7 +101,7 @@
     </div>
 
     <div class="form-setting__btn">
-      <el-button @click="onContinue">{{ $t('detection.create.continue') }}</el-button>
+      <button @click="onContinue" class="business-button">{{ $t('detection.create.continue') }}</button>
     </div>
   </div>
 </template>

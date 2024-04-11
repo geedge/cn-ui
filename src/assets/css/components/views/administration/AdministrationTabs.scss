@@ -2,6 +2,12 @@
   .administration-tabs {
     height: 18px;
   }
+
+  .administration__tabs {
+    width: 100%;
+    padding-bottom: 26px;
+  }
+
   .administration-container {
     height: calc(100% - 86px);
     flex-direction: column;
@@ -10,10 +16,15 @@
     .list-page {
       .main-container {
         padding: 0;
+
         .cn-pagination {
           height: 34px;
         }
       }
+    }
+
+    .administration-container__body {
+      height: 100%;
     }
   }
 }

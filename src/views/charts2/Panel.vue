@@ -22,7 +22,6 @@
       </div>
       <div class="panel__tools">
         <el-select
-            size="small"
             v-model="metric"
             placeholder=" "
             v-if="showMetric"

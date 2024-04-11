@@ -1,3 +1,6 @@
+$color-business: var(--el-color-business);
+$color-primary: var(--el-text-color-primary);
+$color-regular: var(--el-text-color-regular);
 .graph-toolbar {
   position: fixed;
   top: 100px;
@@ -15,12 +18,13 @@
       cursor: pointer;
 
       i {
-        color: #575757;
+        color: $color-regular;
         font-size: 18px;
       }
 
       &.toolbar--unactivated {
         cursor: default;
+
         i {
           opacity: .4;
         }
@@ -28,6 +32,7 @@
     }
   }
 }
+
 .entity-graph {
   display: flex;
 
@@ -39,12 +44,12 @@
       flex-direction: column;
       align-items: center;
       background-color: transparent !important;
-      transition: linear all .2s;
+      transition: linear all var(--el-transition-duration-fast);
 
       .graph-node__text {
         width: 120px;
         font-size: 12px;
-        color: #353636;
+        color: $color-primary;
       }
 
       &.graph-node--root {
@@ -57,30 +62,38 @@
           box-shadow: none;
           animation: none;
         }
+
         &.graph-node--ip {
-          border-color: #CBD9BB !important;
-          box-shadow: 0 0 0 8px rgba(126,159,84,0.14);
+          border-color: var(--el-color-success-light-5) !important;
+          box-shadow: 0 0 0 8px rgba(126, 159, 84, 0.14);
+
           i {
-            color: #7E9F54;
+            color: var(--el-color-success);
           }
         }
+
         &.graph-node--domain {
-          border-color: #AFDEED !important;
-          box-shadow: 0 0 0 8px rgba(56,172,210,0.14);
+          border-color: var(--el-color-primary-light-7) !important;
+          box-shadow: 0 0 0 8px rgba(56, 172, 210, 0.14);
+
           i {
-            color: #38ACD2;
+            color: $color-business;
           }
         }
+
         &.graph-node--app {
-          border-color: #F5DAA3 !important;
-          box-shadow: 0 0 0 8px rgba(229,162,25,0.14);
+          border-color: var(--el-color-warning-light-5) !important;
+          box-shadow: 0 0 0 8px rgba(229, 162, 25, 0.14);
+
           i {
-            color: #E5A219;
+            color: var(--el-color-warning);
           }
         }
+
         i {
           font-size: 36px;
         }
+
         .graph-node__text {
           padding-top: 30px;
         }
@@ -90,19 +103,21 @@
         padding-top: 20px;
         width: 66px;
         height: 66px;
-        border: 1px solid #A7B0B9 !important;
+        border: 1px solid #A7B0B9 !important; // 该class并未使用到
         box-shadow: none;
 
         // 覆盖自带的node点击效果
         &.rel-node-checked {
-          box-shadow: 0 0 0 5px rgba(151,151,151,0.21);
+          box-shadow: 0 0 0 5px rgba(151, 151, 151, 0.21);
           animation: none;
-          border-color: #778391 !important;
+          border-color: $color-regular !important;
         }
+
         i {
           font-size: 24px;
-          color: #778391;
+          color: $color-regular;
         }
+
         .graph-node__text {
           padding-top: 24px;
         }
@@ -116,19 +131,22 @@
 
         &.graph-node--ip {
           i {
-            color: #7E9F54;
+            color: var(--el-color-success);
           }
         }
+
         &.graph-node--domain {
           i {
-            color: #38ACD2;
+            color: $color-business;
           }
         }
+
         &.graph-node--app {
           i {
-            color: #E5A219;
+            color: var(--el-color-warning);
           }
         }
+
         i {
           font-size: 21px;
         }
@@ -141,6 +159,7 @@
       left: unset !important;
       right: 0 !important;
     }
+
     .entity-graph__detail {
       height: calc(100% - 100px) !important;
       top: 100px !important;
@@ -151,7 +170,7 @@
   }
 
   .g6-component-tooltip {
-    box-shadow: -1px 1px 10px -1px rgba(205,205,205,0.85);
+    box-shadow: -1px 1px 10px -1px rgba(205, 205, 205, 0.85);
 
     .primary-node-tooltip {
       padding: 5px;
@@ -161,19 +180,21 @@
         align-items: center;
 
         i {
-          color: #717171;
+          color: $color-regular;
           font-size: 14px;
         }
+
         .tooltip__title {
           padding-left: 6px;
           font-size: 15px;
           line-height: 15px;
-          color: #111;
+          color: $color-primary;
         }
       }
+
       .tooltip__content {
         padding-top: 10px;
-        color: #222;
+        color: $color-primary;
         font-size: 12px;
 
         span:first-of-type {
@@ -181,6 +202,7 @@
         }
       }
     }
+
     .entity-node-tooltip {
       width: 300px;
       padding: 5px;
@@ -193,7 +215,7 @@
         .tooltip__title {
           font-size: 15px;
           line-height: 15px;
-          color: #111;
+          color: $color-primary;
         }
       }
 
@@ -208,11 +230,12 @@
           .header-icon {
             width: 3px !important;
             height: 12px !important;
-            background: #38ACD2;
+            background: $color-business;
             border-radius: 1px;
             margin-right: 6px;
           }
         }
+
         .content-tag-list {
           display: flex;
           align-items: flex-start;
@@ -226,22 +249,25 @@
             border: 1px solid;
             border-radius: 2px;
 
-            $normal-color: #778391;
-            $normal-light-color: #F7F8F9;
-            $negative-color: #E26154;
-            $negative-light-color: #FEF6F5;
-            $positive-color: #749F4D;
-            $positive-light-color: #F7FAF5;
+            $normal-color: $color-regular;
+            $normal-light-color: var(--el-fill-color-light);
+            $negative-color: var(--el-color-danger);
+            $negative-light-color: var(--el-color-danger-light-9);
+            $positive-color: var(--el-color-success);
+            $positive-light-color: var(--el-color-success-light-9);
+
             &.entity-tag--level-two-normal {
               border-color: $normal-color;
               color: $normal-color;
               background-color: $normal-light-color;
             }
+
             &.entity-tag--level-two-negative {
               border-color: $negative-color;
               color: $negative-color;
               background-color: $negative-light-color;
             }
+
             &.entity-tag--level-two-positive {
               border-color: $positive-color;
               color: $positive-color;

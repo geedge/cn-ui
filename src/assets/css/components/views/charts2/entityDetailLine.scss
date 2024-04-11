@@ -13,13 +13,13 @@
 
         .select-prefix {
           font-size: 14px;
-          color: #999;
+          color: var(--el-text-color-secondary);
           padding: 0 6px 0 3px;
         }
 
         .el-input__inner {
           font-size: 14px;
-          color: #353636;
+          color: var(--el-text-color-regular);
         }
 
         .common-select {
@@ -41,10 +41,9 @@
         min-height: 24px !important;
         padding-left: 4px;
         font-size: 12px;
-        font-weight: 400;
-        border-radius: 2px;
+        border-radius: var(--el-border-radius-base);
         .el-select__placeholder {
-          color: #2C72C6 !important;
+          color: var(--el-color-primary) !important;
           margin-left: 1px;
         }
         .el-select__suffix {
@@ -71,7 +70,15 @@
       margin-right: 10px;
       height: 24px;
       line-height: 24px;
-      border: 1px solid #DCDFE6;
     }
   }
+}
+
+.line__block {
+  position: relative;
+  height: calc(100% - 74px);
+}
+
+.line-metric__select {
+  width: 127px;
 }

@@ -11,7 +11,7 @@
           </div>
 
           <div class="filter__body" style="position: relative">
-            <loading :loading="item.loading" style="top: -5px;"></loading>
+            <loading :loading="item.loading" class="filter__body-loading"></loading>
 
             <div class="filter__body-item"
                  v-for="(data, i) in item.data.slice(0, item.showNum)"
@@ -46,8 +46,7 @@
       </div>
     </div>
     <loading v-else-if="isFirstLoad" :loading="isFirstLoad"></loading>
-    <chart-no-data v-else style="padding-top: 40px"></chart-no-data>
-
+    <chart-no-data v-else class="padding-t-40"></chart-no-data>
   </div>
 </template>
 

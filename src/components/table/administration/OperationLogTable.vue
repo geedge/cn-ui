@@ -154,9 +154,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.list-page .cn-table .el-table:not(.chart-table) td {
-  padding: 8px 0;
-}
-</style>

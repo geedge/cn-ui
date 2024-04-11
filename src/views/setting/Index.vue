@@ -4,7 +4,7 @@
     <div class="explorer-top-tools explorer-detection-top-tools">
       <div class="explorer-top-tools-title">{{$t('overall.knowledgeBase')}}</div>
     </div>
-    <div style="width: 100%;padding-bottom: 26px;">
+    <div class="administration__tabs">
       <chart-tabs :data="tabsData" router></chart-tabs>
     </div>
     <!-- 内容区 -->
@@ -35,7 +35,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

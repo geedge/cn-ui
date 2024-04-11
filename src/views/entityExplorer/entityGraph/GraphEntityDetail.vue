@@ -1,7 +1,7 @@
 <template>
   <!--title-->
   <div class="graph-detail-basic-info">
-    <div style="display: flex">
+    <div class="graph-detail-basic-info__block">
       <div class="graph-detail__icon"><i :class="iconClass"></i></div>
 
       <div class="graph-detail-header">
@@ -47,7 +47,7 @@
       </div>
     </div>
 
-    <div class="graph-basic-info__block-content" style="margin-top: -4px;">
+    <div class="graph-basic-info__block-content margin-t--4">
       <div v-for="item in relationList" :key="item.name">
         <div class="graph-content-item graph-content-relationship-item" v-if="item.value === item.total">
           <div class="graph-relationship-item-label">

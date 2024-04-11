@@ -12,7 +12,7 @@
           <!--name-->
           <el-form-item :label="$t('config.roles.name')" prop="name">
             <el-input  maxlength="64" placeholder="" id="role-box-input-name"
-                       show-word-limit size="small" type="text" v-model="editRole.name"></el-input>
+                       show-word-limit type="text" v-model="editRole.name"></el-input>
           </el-form-item>
           <el-form-item :label="$t('overall.remark')">
             <el-input maxlength="255" show-word-limit :rows="2" size='mini' type="textarea" v-model="editRole.remark" id="role-box-input-remark"/>
@@ -38,10 +38,10 @@
       </div>
     </div>
     <div class="right-box__footer">
-      <button id="asset-edit-cancel" v-cancel="{object: editRole, func: esc}" class="footer__btn footer__btn--light">
+      <button id="asset-edit-cancel" v-cancel="{object: editRole, func: esc}" class="business-button business-button--light">
         <span>{{$t('overall.cancel')}}</span>
       </button>
-      <button id="asset-edit-save" :class="{'footer__btn--disabled': blockOperation.save}" :disabled="blockOperation.save" class="footer__btn" @click="save">
+      <button id="asset-edit-save" :disabled="blockOperation.save" class="business-button" @click="save">
         <span>{{$t('overall.save')}}</span>
       </button>
     </div>

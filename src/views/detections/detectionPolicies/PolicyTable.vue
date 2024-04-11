@@ -59,7 +59,7 @@
           {{ changeCategory(scope.row[item.prop]) }}
         </template>
         <template v-else-if="item.prop === 'description'">
-          <div style="padding-right: 20px">{{ scope.row[item.prop] }}</div>
+          <div class="padding-r-20">{{ scope.row[item.prop] }}</div>
         </template>
         <template v-else-if="item.prop === 'dimensions' && scope.row[item.prop]">
           <span class="detection-tag-blue">{{ scope.row[item.prop] }}</span>
@@ -83,7 +83,7 @@
                   <div
                       class="tip__tag"
                       v-if="$_.get(scope.row.ruleConfigObj, 'knowledgeBase.color')"
-                      :style="{backgroundColor: $_.get(scope.row.ruleConfigObj, 'knowledgeBase.color'), color: 'white'}"
+                      :style="{backgroundColor: $_.get(scope.row.ruleConfigObj, 'knowledgeBase.color'), color: 'var(--el-color-white)'}"
                   >{{colorText($_.get(scope.row.ruleConfigObj, 'knowledgeBase.color'))}}</div>
                 </div>
                 <div class="tip__description" :class="{ 'tip__description--non': !($_.get(scope.row.ruleConfigObj, 'knowledgeBase.description')) }">
@@ -239,7 +239,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-
-</style>

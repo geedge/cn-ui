@@ -13,11 +13,10 @@
             <span @click="drillDownData(app.type, app.name)" :test-id="`name${index}`">{{app.name}}</span>
           </div>
           <div class="app-card-title-more">
-            <span v-show="app.showMore"><i class="cn-icon cn-icon-more-dark" @mouseenter="mouseenterMore(app)" test-id="mouseenter-dark"></i></span>
-            <span class="app-card-title-more-delete" @click="del(app, index)" v-show="app.moreOptions" @mouseleave="mouseleaveMore(app)" test-id="mouseleave-more"><i class="cn-icon cn-icon-delete"></i>{{$t('overall.delete')}}</span>
+            <span v-show="app.showMore" @click="del(app, index)"><i class="cn-icon cn-icon-delete" test-id="mouseenter-dark"></i></span>
           </div>
         </div>
-        <div class="app-card__bodys">
+        <div class="app-card__bodies">
           <div class="app-card__body">
             <div class="app-card__body-content">
               <div class="app-card__body-content-value">
@@ -63,8 +62,8 @@
         <div class="add-app__header">
           <div class="header__title">{{$t('overall.add')}}</div>
           <div class="header__operations">
-            <div class="header__operation header__operation--cancel" @click="cancelApp" test-id="cancel-app">{{$t('overall.cancel')}}</div>
-            <div class="header__operation header__operation--save" :class="{'no-records':toSaveApp.length === 0}" @click="save">{{$t('overall.save')}}</div>
+            <button class="business-button business-button--light" @click="cancelApp" test-id="cancel-app">{{$t('overall.cancel')}}</button>
+            <button class="business-button" :class="{'no-records':toSaveApp.length === 0}" @click="save">{{$t('overall.save')}}</button>
           </div>
         </div>
         <div class="add-app__body">
@@ -697,20 +696,6 @@ export default {
     resize () {
       this.myChart.forEach(t => {
         t.resize()
-      })
-    },
-    mouseenterMore (app) {
-      this.appData.forEach(t => {
-        if (t.name === app.name && t.type === app.type) {
-          t.moreOptions = true
-        }
-      })
-    },
-    mouseleaveMore (app) {
-      this.appData.forEach(t => {
-        if (t.name === app.name && t.type === app.type) {
-          t.moreOptions = false
-        }
       })
     },
     mouseenter (app) {

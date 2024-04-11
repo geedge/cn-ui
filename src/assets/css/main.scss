@@ -1,12 +1,96 @@
-/*@font-face { // 由于主题嵌套原因，原ele的icon图标字体加载会出错，需重写
-  font-family: 'element-icons';
-  src: url('~@/assets/css/themes/src/fonts/element-icons.woff') format('woff'), !* chrome, firefox *!
-  url('~@/assets/css/themes/src/fonts/element-icons.ttf') format('truetype'); !* chrome, firefox, opera, Safari, Android, iOS 4.2+*!
-  font-weight: normal;
-  font-display: auto;
-  font-style: normal;
+@use 'sass:map';
+@use 'sass:math';
+
+@use './common.scss';
+/* 主题 */
+// 按需重写、新增element变量值
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  /* 颜色 */
+  $colors: (
+    'primary': (
+      'base': #046ECA
+    ),
+    // 新增一个业务色，暂命名为business
+    'business': (
+      'base': #38ACD2
+    ),
+    'success': (
+      'base': #7E9F54,
+    ),
+    'danger': (
+      'base': #E26154,
+    ),
+    'error': (
+      'base': #E26154,
+    )
+  ),
+  /* select相关 */
+  // select input中的边距，控制select框的大小
+  $select-wrapper-padding: (
+    'large': 8px 16px,
+    'default': 2px 12px,
+    'small': 2px 8px,
+  ),
+  $select-option: (
+    'height': 28px
+  ),
+  // 通用尺寸
+  $common-component-size: (
+    'large': 32px,
+    'default': 28px,
+    'small': 24px
+  ),
+  // dropdown
+  $dropdown: (
+    'menuItem-hover-fill': var(--el-fill-color-light),
+    'menuItem-hover-color': var(--el-text-color-regular)
+  ),
+  $checkbox: (
+    'checked-input-border-color': var(--el-color-business),
+    'checked-bg-color': var(--el-color-business),
+  )
+);
+// 导出重写后的var.scss，暴露内部变量供别处使用
+@use 'element-plus/theme-chalk/src/common/var.scss' as css-var;
+// 引入element样式
+@use 'element-plus/theme-chalk/src/index.scss' as *;
+// 引入element定义的sass函数
+@use 'element-plus/theme-chalk/src/mixins/_var' as var;
+
+:root {
+  // 为新增的业务色设置css变量
+  @include var.set-css-var-value(('color', 'business'), map.get(css-var.$colors, 'business', 'base'));
+  // 生成 business 的 light 色值
+  @for $i from 1 through 9 {
+    @include var.set-css-var-value(('color', 'business', 'light', $i), mix(
+        css-var.$color-white,
+        map.get(css-var.$colors, 'business', 'base'),
+        math.percentage(math.div($i, 10))
+    ));
+  }
+  // 生成 business 的 dark2色值
+  @for $i from 1 through 2 {
+    @include var.set-css-var-value(('color', 'business', 'dark', $i), mix(
+        css-var.$color-black,
+        map.get(css-var.$colors, 'business', 'base'),
+        math.percentage(math.div($i, 10))
+    ));
+  }
+
+  --cn-bg-color-light: #EBF1F4; // 一个用得比较多的背景色
+  --cn-bg-color-lighter: #F7F7F7; // 一个用得比较多的背景色
+  --cn-color-critical: #D84C4C; // critical 严重等级分布
+  --cn-color-critical-rgb: 216,76,76; // critical 严重等级分布
+  --cn-color-high: #FF9A79; // high
+  --cn-color-high-rgb: 255,154,121; // high
+  --cn-color-info: #D1BD50; // info
+  --cn-color-info-rgb: 209,189,80; // info
+  --cn-color-medium: #FFB65A; // medium
+  --cn-color-medium-rgb: 255,182,90; // medium
+  --cn-color-low: #FFD82D; // low
+  --cn-color-low-rgb: 255,216,45; // low
+  --cn-map-bg-color: #CAD2D3; // 地图底色
 }
-$--font-path: '~@/assets/css/themes/src/fonts'; // 避免ele原字体加载语句出错*/
 
 @font-face {
   font-family: 'NotoSansSChineseRegular';
@@ -23,9 +107,6 @@ $--font-path: '~@/assets/css/themes/src/fonts'; // 避免ele原字体加载语�
   font-style: normal;
 }
 
-@import './common.scss';
-
-/* 主题 */
 
 $--color-text-primary: #303133 !default;
 $--border-color: #E2E5EC;

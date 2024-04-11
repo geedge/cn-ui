@@ -17,6 +17,7 @@ body {
   cursor: default !important;
   overflow: hidden;
 }
+// 在计算文本实际宽度的逻辑中使用到的临时dom
 .temp-dom {
   visibility: hidden;
   position: fixed;
@@ -38,10 +39,6 @@ body {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-}
-/* 调整表单错误提示上边距 */
-.el-form-item__error {
-  padding-top: 0 !important;
 }
 
 /* 请求报错样式关于popover的修改 */
@@ -68,4 +65,20 @@ body {
 // 表格内容换行，不对中文生效，避免中文出现省略号
 .el-table .cell {
   word-break: break-word !important;
+}
+
+.el-popper.search-show-hint-popover {
+  visibility: hidden !important;
+}
+
+.list-page .cn-table .el-table:not(.chart-table) td {
+  padding: 8px 0;
+}
+
+.cn-dialog {
+  overflow: hidden;
+}
+
+.upload-body{
+  text-align: center;
 }

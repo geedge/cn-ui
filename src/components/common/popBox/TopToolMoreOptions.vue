@@ -232,12 +232,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-  .cn-dialog {
-    overflow: hidden;
-  }
-  .upload-body{
-    text-align: center;
-  }
-</style>

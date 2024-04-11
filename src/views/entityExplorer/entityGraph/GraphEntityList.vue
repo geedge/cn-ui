@@ -16,7 +16,7 @@
     </div>
 
     <div class="graph-list-expand-btn-block">
-      <div class="graph-list-expand-btn" :class="{ 'graph-list-expand-btn--disabled': expandBtnDisable }" style="display: inline-flex;" @click="expandList">
+      <div class="graph-list-expand-btn graph-list-expand-btn__display" :class="{ 'graph-list-expand-btn--disabled': expandBtnDisable }" @click="expandList">
           <i class="cn-icon cn-icon-expand-continue graph-expand-continue"></i>
         {{ $t('entity.graph.continueToExpand') }}
       </div>
@@ -39,8 +39,8 @@
               <div class="graph-list-item-block">
                 <div class="graph-list-item padding-b-4">
                   <div class="graph-list-item-label">{{ $t('overall.location') }}:</div>
-                  <div class="graph-list-item-value graph-list-item-value1" style="display: flex;align-items: center;line-height: 14px;">
-                    <div style="line-height: 10px">
+                  <div class="graph-list-item-value graph-list-item-value1">
+                    <div>
                       <img v-if="getCountry(item.detail)===countryNameIdMapping.Unknown || !countryNameIdMapping[getCountry(item.detail)]" src="../../../../public/images/flag/Unknown.svg" class="graph-list-country-flag">
                       <img v-else :src="require(`../../../../public/images/flag/${countryNameIdMapping[getCountry(item.detail)]}.png`)" class="graph-list-country-flag" >
                     </div>

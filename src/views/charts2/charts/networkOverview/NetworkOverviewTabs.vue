@@ -58,10 +58,9 @@
                     >
                       <template #reference>
                         <div :ref="`tabSearchRef${tab.prop}`">
-                          <div class="tab-search-button" :id="`tabSearchButton${tab.prop}`" v-show="showSearchButton"
+                          <div class="tab-search-button" :id="`tabSearchButton${tab.prop}`"
                                @click="handlePopoverShow(item.prop,tab.prop)">
-                            <el-icon style="color:#575757;"><Search /></el-icon>
-                            <!--<i class="el-icon-search" style="color:#575757;" ></i>-->
+                            <el-icon style="color: var(--el-text-color-regular);"><Search/></el-icon>
                           </div>
                           <div class="tab-search-input"  v-show="showSearchInput">
                             <el-input :id="`tabSearchValue${tab.prop}`"
@@ -592,7 +591,7 @@ export default {
                   itemName = this.dnsRcodeMapData.get(item)
                 }
                 if (itemName === currentValue) {
-                  selectedDom.style.cssText = 'color:#0091ff;font-weight: bold;'
+                  selectedDom.style.cssText = 'color: var(--el-color-primary); font-weight: bold;'
                 } else {
                   selectedDom.style.cssText = ''
                 }
@@ -1856,7 +1855,7 @@ export default {
       // element-plus 2.5以上版本表头样式支持对象而不是字符串
       let style = { 'border-right': '0px', 'font-size': '12px', padding: '7px 0 7px 1px !important', 'border-bottom': '1px solid var(--el-table-border-color)', height: '39.54px !important' }
       if (columnIndex === 0) {
-        style = { ...style, color: '#046ECA', 'text-align': 'left' }
+        style = { ...style, color: 'var(--el-color-primary)', 'text-align': 'left' }
       }
       return style
     },

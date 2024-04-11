@@ -169,7 +169,7 @@ export default {
         let color = '#8FA1BE'
         if (detection.startTime && detection.endTime) {
           if (getMillisecond(detection.endTime) - getMillisecond(detection.startTime) < 5 * 60 * 1000) {
-            color = '#D84C4C'
+            color = 'var(--cn-color-critical)'
           }
         }
         return { backgroundColor: color }
@@ -248,17 +248,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.detection-row-active {
-  height: 20px;
-  line-height: 20px;
-  padding: 0 7px;
-  background: #E9EFE1;
-  border-radius: 2px;
-  font-family: NotoSansHans-Medium;
-  font-size: 12px;
-  color: #7E9F54;
-  font-weight: 500;
-}
-</style>

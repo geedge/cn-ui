@@ -2,14 +2,11 @@
   <div class="logins">
     <div class="inside">
       <div class="title">
-        <img src="../public/images/logo-title.svg" />
+        <img src="../public/images/logo-title.svg" alt=""/>
       </div>
       <el-form class="login__box">
         <el-form-item>
-          <el-input
-              class="login--input login__input"
-            v-model="username"
-          >
+          <el-input class="login--input login__input" v-model="username">
             <template #prefix>
               <i class="cn-icon cn-icon-user2"></i>
             </template>
@@ -21,7 +18,7 @@
               prefix-icon="Lock"
               type="password"
               @keyup.enter="login"
-            v-model="pin"
+              v-model="pin"
           ></el-input>
         </el-form-item>
         <el-form-item>
@@ -49,7 +46,7 @@
         <el-form-item v-if="licenseStatus !== -1 && licenseStatus !== 0">
           <div class="license-error-msg">{{licenseStatusErrMsg}}</div>
           <div class="license-file">
-            <button style="position: relative;" class="license__btn margin-r-20" @click.prevent="downloadFile" @keyup.enter="login">
+            <button class="license__btn margin-r-20" @click.prevent="downloadFile" @keyup.enter="login">
               <i class="cn-icon-download1 cn-icon margin-r-6"></i><span>Download c2v file</span>
             </button>
             <el-upload :action="`${baseUrl}sys/license/upload`"
@@ -63,7 +60,7 @@
                        :on-change="fileChange"
                        :on-success="uploadSuccess"
                        :on-error="uploadError">
-              <button style="position: relative;" class="license__btn" @click.prevent="">
+              <button class="license__btn" @click.prevent="">
                 <i class="cn-icon-upload1 cn-icon margin-r-6"></i><span>Upload license</span>
               </button>
             </el-upload>
@@ -84,6 +81,7 @@ import dayjs from 'dayjs'
 import _ from 'lodash'
 import utc from 'dayjs/plugin/utc'
 import { ref } from 'vue'
+
 dayjs.extend(utc)
 
 export default {
@@ -170,7 +168,7 @@ export default {
       }, error => {
         const $self = this
         const reader = new FileReader()
-        reader.onload = function (event) {
+        reader.onload = function () {
           const responseText = reader.result
           const exception = JSON.parse(responseText)
           if (exception.message) {
@@ -192,7 +190,7 @@ export default {
         this.$refs.licenseUpload.submit()
       }
     },
-    uploadSuccess (response) {
+    uploadSuccess () {
       this.$message.success('Success')
       this.licenseStatus = 0
     },
@@ -250,7 +248,7 @@ export default {
     this.queryAppearance()
     this.checkLicenseStatus()
   },
-  setup (props) {
+  setup () {
     const { currentRoute } = useRouter()
     return {
       loginSuccessPath: currentRoute.value.query.redirect,
@@ -262,11 +260,8 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style>
 .logins {
-  background-color: #000C18;
-  background-size: auto;
-  background-repeat: round;
   background-image: url('../public/images/bg.png');
   display: flex;
   height: 100%;

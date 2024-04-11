@@ -10,9 +10,7 @@
         <template #label>
           <!--<div class="el-tabs__active-bar is-top" style="width: 80.9998px; transform: translateX(177px);"></div>-->
           <i :class="tab.icon"></i>{{$t(tab.label)}}
-          <el-tag size="small" style="margin-left: 6px" :color="tab.name === activeTab ? 'rgb(223,237,248)' : 'rgb(237,237,237)'" round>
-            <span :style="{color: tab.name === activeTab ? '#046ECA' : '#717171'}">{{ tab.tag }}</span>
-          </el-tag>
+          <el-tag :type="tab.name === activeTab ? 'primary' : 'info'" size="small" class="margin-l-6" round>{{ tab.tag }}</el-tag>
         </template>
         <information-aggregation v-if="tab.name === entityDetailTabsName.informationAggregation && tab.name === activeTab" @toggleLoading="setLoading"  :entity="entity" @checkTag="setTag"></information-aggregation>
         <domain-name-resolution v-else-if="tab.name === entityDetailTabsName.relatedEntity && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity"  @checkTag="setTag"></domain-name-resolution>
@@ -267,10 +265,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.el-tag {
-  font-size: 12px !important;
-  border-radius: 20px !important;
-}
-</style>

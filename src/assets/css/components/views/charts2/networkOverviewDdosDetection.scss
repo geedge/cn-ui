@@ -1,19 +1,21 @@
 .ddos-detection {
   height: 100%;
-  border: 1px solid $--border-color;
+  border: 1px solid var(--el-border-color-light);
   border-radius: 4px;
-  background: rgba(113,113,113,0.06);
+  background-color: var(--cn-bg-color-lighter);
+
   .ddos-detection-title {
     font-size: 14px;
-    color: $--text-color-1;
-    font-weight: 600;
+    color: var(--el-text-color-primary);
+    font-weight: bold;
     margin-top: 15px;
+
     i {
       font-size: 16px;
       width: 16px;
       height: 16px;
-      color: #38ACD2;
-      margin:0 8px 0 10px;
+      color: var(--el-color-business);
+      margin: 0 8px 0 10px;
     }
   }
   .ddos-detection-value {
@@ -21,6 +23,7 @@
     padding: 0 20px;
     display: flex;
     flex-direction: column;
+
     .panel-chart__no-data {
       height: calc(100% - 46px);
     }
@@ -29,24 +32,25 @@
       justify-content: space-between;
       height: calc(100% - 65px);
       margin-top: 20px;
+
       .ddos-detection-type-value {
         display: flex;
         flex-direction: column;
+
         .ddos-detection-type-value-name {
           font-size: 12px;
-          color: $--text-color-2;
+          color: var(--el-text-color-regular);
           line-height: 12px;
-          font-weight: 400;
           margin-bottom: 12px;
         }
         .ddos-detection-type-value-number.ddos-event {
-          color: #E48F3E;
+          color: var(--el-color-warning);
         }
         .ddos-detection-type-value-number {
           font-size: 18px;
-          color: #E26154;
+          color: var(--el-color-danger);
           line-height: 12px;
-          font-weight: 700;
+          font-weight: bold;
         }
       }
     }
@@ -55,24 +59,24 @@
       width: 117px;
       height: 29.6px;
       min-height: 28px;
-      background: $--button-color-1;
-      border: 1px solid $--border-color-1;
-      box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
+      background-color: var(--el-fill-color-blank);
+      border: 1px solid var(--el-border-color-darker);
       border-radius: 4px;
       padding: 8px 5px;
+      transition: all var(--el-transition-duration-fast);
+
       span {
         font-size: 12px;
-        color: $--text-color-2;
-        font-weight: 500;
+        color: var(--el-text-color-regular);
+
         i {
-          //transform: rotate(-90deg);
-          color: $--text-color-2;
+          color: var(--el-text-color-regular);
           font-size: 12px;
           margin-left: 4px;
         }
       }
       &:hover {
-        background: $--button-bg-color-1 !important;
+        background: var(--el-fill-color) !important;
       }
     }
   }

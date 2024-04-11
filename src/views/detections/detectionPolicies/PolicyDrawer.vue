@@ -1,5 +1,5 @@
 <template>
-  <div class="detection-drawer" style="height: 100vh;overflow: scroll;padding-bottom: 90px">
+  <div class="detection-drawer">
     <div class="drawer-basic">
       <div class="drawer-basic-header">
         <div class="drawer-basic-id">
@@ -91,11 +91,10 @@
               <div class="drawer-basic-function">
                 <div class="detection-drawer-title">{{ $t('detections.filters') }}</div>
                 <span class="detection-tag-blue">Source Port</span>
-                <span style="margin: 0 6px;">{{ $t('detections.equal') }}</span><span>19890</span>
+                <span class="drawer-title__equal">{{ $t('detections.equal') }}</span><span>19890</span>
               </div>
 
-              <div class="drawer-basic-function" v-for="item in severityList" :key="item.severity"
-                   style="padding-bottom: 0">
+              <div class="drawer-basic-function padding-b-0" v-for="item in severityList" :key="item.severity">
                 <div class="detection-drawer-title">
                   <div class="detection__icon" :style="`background-color: ${eventSeverityColor[item.severity]}`"></div>
                   <div>{{ toUpperCaseByString(item.severity) }}</div>
@@ -112,16 +111,16 @@
       </el-collapse>
     </div>
 
-    <div class="detection-drawer-collapse" style="margin: 20px 0">
+    <div class="detection-drawer-collapse detection-drawer-collapse__margin">
       <el-collapse v-model="activeTrigger">
         <el-collapse-item :title="$t('detection.create.trigger')" name="trigger">
           <div class="drawer-collapse-content" v-if="language===EN">
             <div class="drawer-collapse-trigger">
               Triggered when conditions occur at least
-              <span style="color: #046ECA">
+              <span class="trigger__value">
                 {{ atLeast }} {{ times }}
               </span> in
-              <span style="color: #046ECA">
+              <span class="trigger__value">
                 {{ getNumberFromStr($_.get(detailData, 'ruleTriggerObj.interval', '0')) || '-' }}
                 {{ $_.get(detailData, 'ruleTriggerObj.intervalVal', '-') || '-' }}
               </span>
@@ -138,11 +137,11 @@
           <div class="drawer-collapse-content" v-if="language===ZH">
             <div class="drawer-collapse-trigger">
               当条件为
-              <span style="color: #046ECA">
+              <span class="trigger__value">
                 {{ getNumberFromStr($_.get(detailData, 'ruleTriggerObj.interval', '0')) || '-' }}
                 {{ changeValueToLabel(detailData.ruleTriggerObj) }}
               </span>内至少出现
-              <span style="color: #046ECA">
+              <span class="trigger__value">
                 {{ $_.get(detailData, 'ruleTriggerObj.atLeast', '-') || '-' }} 次
               </span>时触发
             </div>

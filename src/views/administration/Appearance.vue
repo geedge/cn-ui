@@ -1,18 +1,17 @@
 <template>
   <div class="appearance" :class="from">
     <div class="appearance-form">
-      <el-form ref="appearanceForm" :model="appearanceObject"  label-position="top" label-width="120px">
+      <el-form ref="appearanceForm" :model="appearanceObject" label-position="top" label-width="120px">
         <el-form-item :label="$t('config.appearance.dateFormat')" prop="date_format">
           <el-select id="appearance-dateFormat"
-                     v-model="appearanceObject.date_format"
-                     collapse-tags
-                     placeholder=" "
-                     popper-class="right-box-select-dropdown right-box-select-report "
-                     size="small">
+              v-model="appearanceObject.date_format"
+              collapse-tags
+              placeholder=" "
+          >
             <template v-for="dateFormat in dateFormatList" :key="dateFormat.id">
-              <el-option :label="dateFormat.label" :value="dateFormat.value">
-                <span style="float: left">{{ dateFormat.label }}</span>
-                <span style="float: right;">{{ dateFormat.example }}</span>
+              <el-option :label="dateFormat.label" :value="dateFormat.value" class="appearance__option">
+                <span>{{ dateFormat.label }}</span>
+                <span>{{ dateFormat.example }}</span>
               </el-option>
             </template>
           </el-select>
@@ -22,8 +21,7 @@
                      v-model="appearanceObject.lang"
                      collapse-tags
                      placeholder=" "
-                     popper-class="right-box-select-dropdown right-box-select-report "
-                     size="small">
+          >
             <template v-for="lang in langList" :key="lang.id">
               <el-option :label="lang.label" :value="lang.value"></el-option>
             </template>
@@ -35,12 +33,11 @@
                      collapse-tags
                      filterable
                      placeholder=" "
-                     popper-class="right-box-select-dropdown right-box-select-report "
-                     size="small">
+          >
             <template v-for="timezone in timezoneList" :key="timezone.id">
-              <el-option :label="timezone.name" :value="timezone.name">
-                <span style="float: left">{{ timezone.name }}</span>
-                <span style="float: right;">{{ timezone.offset}}</span>
+              <el-option :label="timezone.name" :value="timezone.name" class="appearance__option">
+                <span>{{ timezone.name }}</span>
+                <span>{{ timezone.offset }}</span>
               </el-option>
             </template>
           </el-select>
@@ -48,11 +45,14 @@
         </el-form-item>
       </el-form>
       <div class="edit-appearance-base__footer">
-        <button style="position: relative;" :class="{'footer__btn--disabled': blockOperation.save}" :disabled="blockOperation.save" class="footer__btn" @click="save"
-                v-if="hasPermission('editAppearence')"
+        <button
+            :disabled="blockOperation.save"
+            class="business-button"
+            @click="save"
+            v-if="hasPermission('editAppearence')"
         >
-          <el-loading size="small" :loading="blockOperation.save"></el-loading>
-          <span>{{$t('overall.save')}}</span>
+          <simple-loading size="small" :loading="blockOperation.save"></simple-loading>
+          <span>{{ $t('overall.save') }}</span>
         </button>
       </div>
     </div>
@@ -63,9 +63,11 @@ import { api } from '@/utils/api'
 import { storageKey, ZH, EN } from '@/utils/constants'
 import axios from 'axios'
 import dayjs from 'dayjs'
+import SimpleLoading from '@/components/common/SimpleLoading'
 
 export default {
   name: 'Appearance',
+  components: { SimpleLoading },
   data () {
     return {
       url: api.appearance,

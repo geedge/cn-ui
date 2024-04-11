@@ -1,50 +1,46 @@
 <template>
-  <div style="height: 100%;">
+  <div class="administration-container__body">
     <cn-data-list
-            ref="dataList"
-            :tableId="tableId"
-            v-model:custom-table-title="tools.customTableTitle"
-            :api="url"
-            :from="fromRoute.roles"
-            :layout="['columnCustomize','elementSet','search']"
-            @search="search"
+        ref="dataList"
+        :tableId="tableId"
+        v-model:custom-table-title="tools.customTableTitle"
+        :api="url"
+        :from="fromRoute.roles"
+        :layout="['columnCustomize','elementSet','search']"
+        @search="search"
     >
       <template v-slot:top-tool-left>
-        <button id="roles-add"  class="top-tool-btn margin-r-10 top-tool-btn--create"
+        <button id="roles-add" class="business-button margin-r-10"
                 v-if="hasPermission('createRole')"
                 @click="add">
           <i class="cn-icon-xinjian cn-icon"></i>
-          <span>{{$t('overall.create')}}</span>
+          <span>{{ $t('overall.create') }}</span>
         </button>
-        <button id="roles-edit"  class="top-tool-btn margin-r-10" :disabled="disableEdit"
+        <button id="roles-edit" class="business-button business-button--light margin-r-10" :disabled="disableEdit"
                 v-if="hasPermission('editRole')"
                 @click="edit">
           <i class="cn-icon-edit cn-icon"></i>
-          <span>{{$t('overall.edit')}}</span>
+          <span>{{ $t('overall.edit') }}</span>
         </button>
-        <button id="roles-delete"  class="top-tool-btn margin-r-10" :disabled="disableDelete"
-                v-if="hasPermission('deleteRole')"
-                @click="delBatch">
+        <button id="roles-delete" class="business-button business-button--light margin-r-10" :disabled="disableDelete" v-if="hasPermission('deleteRole')" @click="delBatch">
           <i class="cn-icon-delete cn-icon"></i>
-          <span>{{$t('overall.delete')}}</span>
+          <span>{{ $t('overall.delete') }}</span>
         </button>
-
-        <delete-button id="role-list-batch-delete" :api="url" :delete-objs="batchDeleteObjs" @after="getTableData" @before="delFlag=true"></delete-button>
       </template>
       <template v-slot:default>
         <loading :loading="loading"></loading>
         <roles-table
-          ref="dataTable"
-          :api="url"
-          :isNoData="isNoData"
-          :custom-table-title="tools.customTableTitle"
-          :height="mainTableHeight"
-          :table-data="tableData"
-          @delete="del"
-          @edit="edit"
-          @orderBy="tableDataSort"
-          @reload="getTableData"
-          @selectionChange="selectionChange"
+            ref="dataTable"
+            :api="url"
+            :isNoData="isNoData"
+            :custom-table-title="tools.customTableTitle"
+            :height="mainTableHeight"
+            :table-data="tableData"
+            @delete="del"
+            @edit="edit"
+            @orderBy="tableDataSort"
+            @reload="getTableData"
+            @selectionChange="selectionChange"
         ></roles-table>
       </template>
       <!-- 分页组件 -->
@@ -53,12 +49,12 @@
       </template>
     </cn-data-list>
     <el-drawer
-            v-model="rightBox.show"
-            direction="rtl"
-            class="common-right-box"
-            :with-header="false"
-            :size="700"
-            destroy-on-close>
+        v-model="rightBox.show"
+        direction="rtl"
+        class="common-right-box"
+        :with-header="false"
+        :size="700"
+        destroy-on-close>
       <role-box :object="object" @close="closeRightBox"></role-box>
     </el-drawer>
   </div>
@@ -101,7 +97,8 @@ export default {
         this.$alert(this.$t('tip.pleaseSelectForEdit'), {
           confirmButtonText: this.$t('tip.yes'),
           type: 'warning'
-        }).catch(() => {})
+        }).catch(() => {
+        })
       } else {
         axios.get(`${this.url}`, { params: { ids: this.batchDeleteObjs[0].id } }).then(response => {
           if (response.status === 200) {
