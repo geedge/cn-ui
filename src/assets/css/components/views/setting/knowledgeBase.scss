@@ -1705,6 +1705,41 @@ $color-mousemove-cursor: #D3D0D8;
       border-color: $color-business;
     }
   }
+
+  .el-dialog__footer {
+    height: 52px;
+    min-height: 52px;
+    padding: 11px 0 12px !important;
+    border-top: 1px solid $color-border-lighter;
+    box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.07);
+
+    .el-button {
+      line-height: 12px;
+      min-height: 28px;
+      padding: 8px 21px !important;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .el-button:nth-child(1) {
+      width: 80px;
+      height: 28px;
+      margin-right: 20px;
+      color: $color-text-primary;
+      background: $color-fill-light;
+      border: 1px solid $color-border-dark;
+      border-radius: 2px;
+    }
+
+    .el-button:nth-child(2) {
+      width: 80px;
+      height: 28px;
+      margin-right: 20px;
+      margin-left: 0 !important;
+      background-color: $color-business;
+      border-color: $color-business-border-hover;
+    }
+  }
 }
 
 .confirm-knowledge-switch {
