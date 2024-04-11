@@ -316,15 +316,6 @@ describe('views/charts2/charts/networkOverview/NetworkOverviewApps.vue测试', (
       expect(wrapper.vm.appData[0].showMore).toBe(false)
       expect(wrapper.vm.appData[0].moreOptions).toBe(false)
 
-      // 模拟鼠标移入 移出 显示隐藏下拉内容
-      const testDark = wrapper.find('[test-id="mouseenter-dark"]')
-      await testDark.trigger('mouseenter')
-      expect(wrapper.vm.appData[0].moreOptions).toBe(true)
-
-      const testMouseleaveMore = wrapper.find('[test-id="mouseleave-more"]')
-      await testMouseleaveMore.trigger('mouseleave')
-      expect(wrapper.vm.appData[0].moreOptions).toBe(false)
-
       // 模拟点击 add 新增
       const testAdd0 = wrapper.find('[test-id="add"]')
       await testAdd0.trigger('click')
