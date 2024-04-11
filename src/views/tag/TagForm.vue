@@ -1,8 +1,8 @@
 <template>
-  <div class="edit-knowledge-base">
+  <div class="edit-tag-base">
     <loading :loading="initLoading"></loading>
-    <div class="edit-knowledge-base__header">{{ editObject.id ? $t('overall.edit') : $t('overall.create') }}</div>
-    <div class="edit-knowledge-base__body">
+    <div class="edit-tag-base__header">{{ editObject.id ? $t('overall.edit') : $t('overall.create') }}</div>
+    <div class="edit-tag-base__body">
       <el-steps direction="vertical" :active="activeStep">
         <el-step v-for="(height, index) in stepHeights" :style="`flex-basis: ${height}px; flex-shrink: 0;`"
                  :key="index"></el-step>
@@ -10,13 +10,25 @@
       <el-collapse v-model="activeCollapses">
         <el-collapse-item name="0">
           <template #title>
-            <div class="form-sub-title">{{ $t('knowledgeBase.editInformation') }}</div>
+            <div class="form-sub-title">{{ $t('tag.editInformation') }}</div>
           </template>
           <el-form :model="editObject" label-position="top" ref="form" :rules="rules">
             <!--name-->
             <el-form-item :label="$t('config.roles.name')" prop="name">
               <el-input class="form-input" maxlength="64" placeholder="" :disabled="!!editObject.id" show-word-limit
-                        size="small" type="text" v-model="editObject.name" @blur="tagNameBlur"></el-input>
+                        type="text" v-model="editObject.name" @blur="tagNameBlur"></el-input>
+            </el-form-item>
+            <el-form-item :label="$t('tag.category')" prop="category">
+              <el-select v-model="editObject.category"
+                         :class="(!!editObject.id || (uploaded && !importedDataNoData)) ? 'form-select__disable' : 'form-select__enable'"
+                         placeholder=" "
+                         popper-class="form-select-popper"
+                         :disabled="!!editObject.id || (uploaded && !importedDataNoData)"
+              >
+                <template v-for="category in tagCategoryOptions" :key="category.value">
+                  <el-option :label="category.label" :value="category.value"></el-option>
+                </template>
+              </el-select>
             </el-form-item>
             <el-form-item :label="$t('overall.type')" prop="indicatorType">
               <el-select v-model="editObject.indicatorType"
@@ -25,7 +37,6 @@
                          multiple
                          popper-class="form-select-popper"
                          :disabled="!!editObject.id || (uploaded && !importedDataNoData)"
-                         size="small"
               >
                 <template v-for="type in tagType" :key="type.name">
                   <el-option :label="type.label" :value="type.value"></el-option>
@@ -37,25 +48,24 @@
                          class="form-select__enable"
                          placeholder=" "
                          popper-class="form-select-popper"
-                         size="small"
                          @change="changeIntent"
               >
                 <template #prefix>
-                  <div class="knowledge-color">
-                    <span class="knowledge-color__icon info" :class="editObject.intentName"></span>
+                  <div class="tag-color">
+                    <span class="tag-color__icon info" :class="editObject.intentName"></span>
                   </div>
                 </template>
                 <template v-for="intent in tagIntent" :key="intent.name">
                   <el-option :value="intent.label" :label="$t(intent.label)">
-                    <div class="knowledge-color">
-                      <span class="knowledge-color__icon" :class="intent.name"></span> <span>{{$t(intent.label)}}</span>
+                    <div class="tag-color">
+                      <span class="tag-color__icon" :class="intent.name"></span> <span>{{$t(intent.label)}}</span>
                     </div>
                   </el-option>
                 </template>
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('overall.remark')" prop="description">
-              <el-input maxlength="255" show-word-limit :rows="4" size='mini' type="textarea" resize='none'
+              <el-input maxlength="255" show-word-limit :rows="4" type="textarea" resize='none'
                         v-model="editObject.description" id="role-box-input-remark"/>
             </el-form-item>
           </el-form>
@@ -136,27 +146,27 @@
               <el-form ref="editForm" :model="editTagForm" :rules="editTagFormRules">
                 <table class="imported-table" v-if="!importedDataNoData">
                   <tr>
-                    <th style="width: 230px">{{ importedTableFirstColumn }}</th>
-                    <th>{{$t('overall.tag')}}</th>
+                    <th style="width: 230px">{{$t('tag.entityValue')}}</th>
+                    <th>{{$t('tag.entityType')}}</th>
                     <th style="width: 200px">{{ $t('overall.tip') }}</th>
                     <th style="width: 50px"></th>
                   </tr>
-                  <tr v-for="(d, i) in showImportedData" :key="importedType + d.tagName + d.tagValue + i">
-                    <td class="imported-data-item" :title="d.tagName">
-                      <el-form-item v-if="(editIndex === i)  || (addEditFlag && d.tagName === '' && d.tagValue === '')" prop="tagName">
+                  <tr v-for="(d, i) in showImportedData" :key="importedType + d.entityValue + d.entityType + i">
+                    <td class="imported-data-item" :title="d.entityValue">
+                      <el-form-item v-if="(editIndex === i)  || (addEditFlag && d.entityValue === '' && d.entityType === '')" prop="entityValue">
                         <span class="imported-data-item-edit__input">
-                          <el-input v-model="editTagForm.tagName" @blur="onBlurTagItem(i)"></el-input>
+                          <el-input v-model="editTagForm.entityValue" @blur="onBlurTagItem(i)" size="mini"></el-input>
                         </span>
                       </el-form-item>
-                      <span v-else>{{ d.tagName }}</span>
+                      <span v-else>{{ d.entityValue }}</span>
                     </td>
-                    <td class="imported-data-value" :title="d.tagValue">
-                      <el-form-item v-if="editIndex === i || (addEditFlag && d.tagName === '' && d.tagValue === '')" prop="tagValue">
+                    <td class="imported-data-value" :title="d.entityType">
+                      <el-form-item v-if="editIndex === i || (addEditFlag && d.entityValue === '' && d.entityType === '')" prop="entityType">
                         <span class="imported-data-item-edit__input">
-                          <el-input v-model="editTagForm.tagValue" @blur="onBlurTagItem(i)"></el-input>
+                          <el-input v-model="editTagForm.entityType" @blur="onBlurTagItem(i)" size="mini"></el-input>
                         </span>
                       </el-form-item>
-                      <span v-else>{{ d.tagValue }}</span>
+                      <span v-else>{{ d.entityType }}</span>
                     </td>
                     <td class="imported-data-msg" :title="d.msg">
                       <i :class="d.isValid === 1 ? 'el-icon-success' : (d.isValid === 0 ? 'el-icon-error' : '')"></i>&nbsp;&nbsp;{{(d.isValid === 1 && (d.msg==='' || !d.msg) )? $t('overall.success'): d.msg }}
@@ -168,7 +178,7 @@
                       <i class="cn-icon cn-icon-save imported-data-save" @click="saveImportedData(i)"></i>
                     </td>
                     <!--保存和删除按钮：新增记录-->
-                    <td v-else-if="(addEditFlag && editIndex === i) || (addEditFlag && d.tagName === '' && d.tagValue === '')" class="imported-data-btn">
+                    <td v-else-if="(addEditFlag && editIndex === i) || (addEditFlag && d.entityValue === '' && d.entityType === '')" class="imported-data-btn">
                       <i class="cn-icon cn-icon-save imported-data-save" style="margin: 0 7px"
                          @click="saveImportedData(i)"></i>
                       <el-icon @click="removeImportedData(i)"><Close /></el-icon>
@@ -207,7 +217,7 @@
         </el-collapse-item>
         <el-collapse-item name="3" class="enable-form__mt">
           <template #title>
-            <div class="form-sub-title">{{ $t('knowledge.enable') }}</div>
+            <div class="form-sub-title">{{ $t('tag.enable') }}</div>
           </template>
 
               <el-switch class="card-enable"
@@ -221,13 +231,13 @@
         </el-collapse-item>
       </el-collapse>
     </div>
-    <div class="edit-knowledge-base__footer">
-      <button class="footer__btn footer__btn--light" @click="cancel">
+    <div class="edit-tag-base__footer">
+      <button class="business-button business-button--light tag__btn" @click="cancel">
         <span>{{ $t('overall.cancel') }}</span>
       </button>
-      <button style="position: relative;" :class="{'footer__btn--disabled': blockOperation.save}"
-              :disabled="blockOperation.save" class="footer__btn" @click="save">
-        <loading size="small" :loading="blockOperation.save"></loading>
+      <button style="position: relative;" :class="{'disabled': blockOperation.save}"
+              :disabled="blockOperation.save" class="business-button tag__btn" @click="save">
+        <loading :loading="blockOperation.save"></loading>
         <span>{{ $t('overall.save') }}</span>
       </button>
     </div>
@@ -237,7 +247,7 @@
 import { useRoute } from 'vue-router'
 import { nextTick, reactive, ref } from 'vue'
 import _ from 'lodash'
-import { tagType, storageKey, unitTypes, itemListHeight, tagCategoryValue, tagIntent } from '@/utils/constants'
+import { tagType, storageKey, unitTypes, itemListHeight, tagCategoryValue, tagIntent, tagCategoryOptions } from '@/utils/constants'
 import Pagination from '@/components/common/Pagination'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import axios from 'axios'
@@ -266,7 +276,8 @@ export default {
         this.$refs.form.clearValidate('type')
         const response = await this.getTagList()
         if (response.status === 200) {
-          const find = response.data.data.list.find(d => d.name === value && d.indicatorType === this.editObject.indicatorType)
+          const self = this
+          const find = response.data.data.list.find(d => d.name === value && self.isSameArray(d.indicatorType.split(','), self.editObject.indicatorType))
           if (find) {
             validate = false
             callback(new Error())
@@ -281,7 +292,8 @@ export default {
         this.$refs.form.clearValidate('name')
         const response = await this.getTagList()
         if (response.status === 200) {
-          const find = response.data.data.list.find(d => d.name === this.editObject.name && d.indicatorType === value)
+          const self = this
+          const find = response.data.data.list.find(d => d.name === this.editObject.name && self.isSameArray(d.indicatorType.split(','), value))
           if (find) {
             validate = false
             callback(new Error())
@@ -293,10 +305,10 @@ export default {
     const nameAndLabelDuplicateValidator = (rule, value, callback) => {
       let validate = true
       let index = -1 // 当前编辑的键值index
-      // 查看是否重名前，需要对名称进行校验，分别是IP、domain、APP的校验
+      // 查看是否重名前，需要对名称进行校验，分别是IP、domain
       const findData = this.importedData.find((item, i) => {
         index = i
-        return (item.tagName === this.editTagForm.tagName && item.tagValue === this.editTagForm.tagValue)
+        return (item.entityValue === this.editTagForm.entityValue && item.entityType === this.editTagForm.entityType)
       })
       if (findData) { // 找到1条记录
         // 如果name重复的第一个键值不是当前编辑item的index，即代表后续有重名的项了，提示重名
@@ -312,7 +324,7 @@ export default {
       return validate
     }
     const requiredItemValidator = (rule, value, callback) => {
-      value = this.editTagForm.tagName
+      value = this.editTagForm.entityValue
       let validate = true
       const index = this.editIndex
       const realValue = value.replace(/\s+/g, '')// 去掉空格
@@ -326,26 +338,61 @@ export default {
       return validate
     }
     const requiredValueValidator = (rule, value, callback) => {
-      value = this.editTagForm.tagValue
+      value = this.editTagForm.entityType
       const index = this.editIndex
       let validate = true
-      const realValue = value.replace(/\s+/g, '')// 去掉空格
-      if (realValue === '') {
+      if (!value) {
         validate = false
-        this.editTagErrorTip = rule.message
-        this.showImportedData[index].msg = rule.message
-        this.showImportedData[index].isValid = 0
-        callback(new Error())
+      } else {
+        const realValue = value.replace(/\s+/g, '')// 去掉空格
+        if (realValue === '') {
+          validate = false
+          this.editTagErrorTip = rule.message
+          this.showImportedData[index].msg = rule.message
+          this.showImportedData[index].isValid = 0
+          callback(new Error())
+        }
+      }
+      return validate
+    }
+    const typeRangeValidator = (rule, value, callback) => {
+      value = this.editTagForm.entityType
+      const index = this.editIndex
+      let validate = true
+      if (!value) {
+        validate = false
+      } else {
+        const realValue = value.replace(/\s+/g, '')// 去掉空格
+        if (this.editObject.indicatorType.length === 1 &&
+            this.editObject.indicatorType[0] === 'IP' && realValue !== 'IP') {
+          validate = false
+          this.editTagErrorTip = rule.message
+          this.showImportedData[index].msg = rule.message
+          this.showImportedData[index].isValid = 0
+          callback(new Error())
+        } else if (this.editObject.indicatorType.length === 1 &&
+            this.editObject.indicatorType[0] === 'Domain' && realValue !== 'Domain') {
+          validate = false
+          this.editTagErrorTip = rule.message
+          this.showImportedData[index].msg = rule.message
+          this.showImportedData[index].isValid = 0
+          callback(new Error())
+        } else if (realValue !== 'IP' && realValue !== 'Domain') {
+          validate = false
+          this.editTagErrorTip = rule.message
+          this.showImportedData[index].msg = rule.message
+          this.showImportedData[index].isValid = 0
+          callback(new Error())
+        }
       }
       return validate
     }
     const nameFormatValidator = (rule, value, callback) => {
-      value = this.editTagForm.tagName
+      value = this.editTagForm.entityValue
       const index = this.editIndex
       let validate = true
-      //TODO 此处逻辑需要修改，因为indicatorType变为了多选，所以导入数据验证时，就不能根据indicatorType来判断了？？？？？？？？？？？？？？？？
-      const type = this.editObject.indicatorType// 当前选中的类型
-      if (type && type.indexOf('IP') > -1 && type.indexOf('Domain') === -1) {
+      const type = this.editTagForm.entityType// 当前类型
+      if (type === 'IP') {
         const formal = value.replace(/\s+/g, '')// 去掉空格
         if (formal.indexOf('/') !== -1) {
           if (!(regular.ipv4CIDR.test(formal)) && !(regular.ipv6CIDR.test(formal))) {
@@ -393,7 +440,7 @@ export default {
             callback(new Error())
           }
         }
-      } else if (type && type.indexOf('IP') === -1 && type.indexOf('Domain') > -1) { // 域名只支持 字母数字.-_
+      } else if (type === 'Domain') { // 域名只支持 字母数字.-_
         if ((value.substr(0, 1) === '*' || value.substr(0, 1) === '$') &&
             !(value.substr(-1) === '*' || value.substr(-1) === '$')) {
           if (value.substr(0, 1) === '$') { // 处理$开头的情况
@@ -436,8 +483,6 @@ export default {
           this.showImportedData[index].isValid = 0
           callback(new Error())
         }
-      } else if (type && type.indexOf('IP') > -1 && type.indexOf('Domain') > -1) {
-        //根据type来判断值是否合法？
       }
       return validate
     }
@@ -474,7 +519,17 @@ export default {
         ]
       },
       editTagFormRules: {
-        tagName: [
+        entityType: [{
+          // required: true,
+          validator: requiredValueValidator,
+          message: this.$t('validate.required'),
+          trigger: 'blur'
+        }, {
+          validator: typeRangeValidator,
+          message: this.$t('validate.wrongType'),
+          trigger: 'blur'
+        }],
+        entityValue: [
           {
             // required: true,
             validator: requiredItemValidator,
@@ -491,13 +546,7 @@ export default {
             message: this.$t('validate.duplicateName'),
             trigger: 'blur'
           }
-        ],
-        tagValue: [{
-          // required: true,
-          validator: requiredValueValidator,
-          message: this.$t('validate.required'),
-          trigger: 'blur'
-        }]
+        ]
       },
       editIndex: -1,
       backEditFlag: false,
@@ -511,10 +560,19 @@ export default {
       status: 1,
       oldItemIds: [],
       oldTagItem: {},
-      tagIntent
+      tagIntent,
+      tagCategoryOptions
     }
   },
   methods: {
+    isSameArray (arr1, arr2) {
+      // Arrary.some: 有一项不满足 返回false
+      // Arrary.indexOf: 查到返回下标，查不到返回 -1
+      if (arr1.length !== arr2.length) {
+        return false
+      }
+      return !arr1.some(item => arr2.indexOf(item) === -1)
+    },
     changeIntent (label) {
       const curColorObj = this.tagIntent.find(item => item.label === this.editObject.intentLabel)
       this.editObject.intent = curColorObj.value
@@ -547,18 +605,17 @@ export default {
     },
     handleSpeticalTypeData (originalImportedData) {
       originalImportedData.forEach(item => {
-        // const names = item.tagNames
-        if (this.editObject.indicatorType === 'IP') {
+        if (item.entityType === 'IP') {
           const format = item.addrFormat
           if (format === 'Single') {
-            item.tagName = item.ip1
+            item.entityValue = item.ip1
           } else if (format === 'CIDR') {
-            item.tagName = item.ip1 + '/' + item.ip2
+            item.entityValue = item.ip1 + '/' + item.ip2
           } else if (format === 'Range') {
-            item.tagName = item.ip1 + '-' + item.ip2
+            item.entityValue = item.ip1 + '-' + item.ip2
           }
-        } else if (this.editObject.indicatorType === 'Domain') {
-          item.tagName = item.domain
+        } else if (item.entityType === 'Domain') {
+          item.entityValue = item.entityValue
         }
       })
       return originalImportedData
@@ -570,14 +627,18 @@ export default {
         this.uploadErrorTip = ''
         this.previewErrorTip = ''
         this.importedType = this.editObject.indicatorType
-        const originalImportedData = _.cloneDeep(response.data.data)
+        const originalImportedData = _.cloneDeep(response.data.list)
         this.importedDataNoData = originalImportedData.length === 0
         if (originalImportedData.length > 0) {
           originalImportedData.forEach(data => {
             if (data.isValid === 1) {
               data.msg = this.$t('overall.success')
             } else if (data.isValid === 0) {
-              data.msg = this.$t('validate.wrongFormat')
+              if (data.errorAttribute === 'entityType') {
+                data.msg = this.$t('validate.wrongType')
+              } else if (data.errorAttribute === 'entityValue') {
+                data.msg = this.$t('validate.wrongFormat')
+              }
             }
           })
         }
@@ -754,7 +815,7 @@ export default {
           this.updateItemList.splice(delIndex, 1)
         }
       } else {
-        const delIndex = this.addItemList.findIndex(item => item.tagName === delItem.tagName && item.tagValue === delItem.tagValue)
+        const delIndex = this.addItemList.findIndex(item => item.entityValue === delItem.entityValue && item.entityType === delItem.entityType)
         if (delIndex > -1) {
           this.addItemList.splice(delIndex, 1)
         }
@@ -763,7 +824,7 @@ export default {
       // 删除内容为空的新增记录
       const lastIndex = this.importedData.length - 1
       const lastData = this.importedData[lastIndex]
-      if (lastData !== undefined && lastData.tagName === '' && lastData.tagValue === '') {
+      if (lastData !== undefined && lastData.entityValue === '' && lastData.entityType === '') {
         this.importedData.pop()
       }
       this.importedPageObj.total = this.importedData.length
@@ -840,15 +901,15 @@ export default {
               if (validImportData) {
                 // 校验通过后组织数据、请求接口
                 if (valid && !this.uploadErrorTip && !this.previewErrorTip) {
-                  if (this.importedData.length === 1 && this.importedData[0].tagName === '') {
+                  if (this.importedData.length === 1 && this.importedData[0].entityValue === '') {
                     // this.blockOperation.save = false
                   } else {
                     const userId = localStorage.getItem(storageKey.userId)
                     const postData = {
                       name: this.editObject.name,
-                      category: tagCategoryValue.userDefined,
+                      category: this.editObject.category,
                       intent: this.editObject.intent,
-                      indicatorType: this.editObject.indicatorType,
+                      indicatorType: this.editObject.indicatorType.join(','),
                       description: this.editObject.description,
                       status: this.editObject.status,
                       user: {
@@ -856,7 +917,7 @@ export default {
                       }
                     }
                     // 避免点击新增后，并没有保存新增项就点击了save，此时删除新增的空白项
-                    if (this.importedData[this.importedData.length - 1].tagName === '') {
+                    if (this.importedData[this.importedData.length - 1].entityValue === '') {
                       this.importedData.pop()
                     }
 
@@ -942,8 +1003,8 @@ export default {
     },
     editImportedData (index) {
       this.backEditData()
-      this.editTagForm.tagName = this.showImportedData[index].tagName
-      this.editTagForm.tagValue = this.showImportedData[index].tagValue
+      this.editTagForm.entityValue = this.showImportedData[index].entityValue
+      this.editTagForm.entityType = this.showImportedData[index].entityType
 
       // 点击编辑时，如正处于新增状态，则去除新增项（此时新增并未保存，不必保留）
       if (this.addEditFlag) {
@@ -958,8 +1019,8 @@ export default {
       this.oldTagItem = {
         isValid: this.showImportedData[index].isValid,
         msg: this.showImportedData[index].msg,
-        tagName: this.showImportedData[index].tagName,
-        tagValue: this.showImportedData[index].tagValue,
+        entityValue: this.showImportedData[index].entityValue,
+        entityType: this.showImportedData[index].entityType,
         index: index
       }
       this.editIndex = index
@@ -968,8 +1029,8 @@ export default {
     },
     backImportedData (index) {
       this.editTagForm = reactive({
-        tagName: '',
-        tagValue: ''
+        entityValue: '',
+        entityType: ''
       })
       this.showImportedData[index].isValid = this.oldTagItem.isValid
       this.showImportedData[index].msg = this.oldTagItem.msg
@@ -985,38 +1046,38 @@ export default {
         } else {
           let updateItemData = {
             id: data.id,
-            tagValue: data.tagValue,
-            isValid: 1
+            entityType: data.entityType,
+            entityValue: data.entityValue
           }
           if (this.editObject.indicatorType === 'IP') {
-            const sepCidrIndex = data.tagName.indexOf('/')
-            const sepRangeIndex = data.tagName.indexOf('-')
+            const sepCidrIndex = data.entityValue.indexOf('/')
+            const sepRangeIndex = data.entityValue.indexOf('-')
             if (sepCidrIndex > -1) { // CIDR
               updateItemData = {
                 ...updateItemData,
                 addrFormat: 'CIDR',
-                ip1: data.tagName.substring(0, sepCidrIndex),
-                ip2: data.tagName.substring(sepCidrIndex + 1)
+                ip1: data.entityValue.substring(0, sepCidrIndex),
+                ip2: data.entityValue.substring(sepCidrIndex + 1)
               }
             } else if (sepRangeIndex > -1) {
               updateItemData = {
                 ...updateItemData,
                 addrFormat: 'Range',
-                ip1: data.tagName.substring(0, sepRangeIndex),
-                ip2: data.tagName.substring(sepRangeIndex + 1)
+                ip1: data.entityValue.substring(0, sepRangeIndex),
+                ip2: data.entityValue.substring(sepRangeIndex + 1)
               }
             } else { // Single
               updateItemData = {
                 ...updateItemData,
                 addrFormat: 'Single',
-                ip1: data.tagName,
+                ip1: data.entityValue,
                 ip2: ''
               }
             }
           } else if (this.editObject.indicatorType === 'Domain') {
             updateItemData = {
               ...updateItemData,
-              domain: data.tagName
+              domain: data.entityValue
             }
           }
           this.updateItemList.push(updateItemData)
@@ -1027,40 +1088,40 @@ export default {
       if (data) {
         let addItemIndex = -1
         if (oldTag) {
-          addItemIndex = this.addItemList.findIndex(item => item.tagName === oldTag.tagName && item.tagValue === oldTag.tagValue)
+          addItemIndex = this.addItemList.findIndex(item => item.entityValue === oldTag.entityValue && item.entityType === oldTag.entityType)
         } else {
-          addItemIndex = this.addItemList.findIndex(item => item.tagName === data.tagName && item.tagValue === data.tagValue)
+          addItemIndex = this.addItemList.findIndex(item => item.entityValue === data.entityValue && item.entityType === data.entityType)
         }
         let addItem = data
         if (this.editObject.indicatorType === 'IP') {
-          const sepCidrIndex = data.tagName.indexOf('/')
-          const sepRangeIndex = data.tagName.indexOf('-')
+          const sepCidrIndex = data.entityValue.indexOf('/')
+          const sepRangeIndex = data.entityValue.indexOf('-')
           if (sepCidrIndex > -1) { // CIDR
             addItem = {
               ...addItem,
               addrFormat: 'CIDR',
-              ip1: data.tagName.substring(0, sepCidrIndex),
-              ip2: data.tagName.substring(sepCidrIndex + 1)
+              ip1: data.entityValue.substring(0, sepCidrIndex),
+              ip2: data.entityValue.substring(sepCidrIndex + 1)
             }
           } else if (sepRangeIndex > -1) {
             addItem = {
               ...addItem,
               addrFormat: 'Range',
-              ip1: data.tagName.substring(0, sepRangeIndex),
-              ip2: data.tagName.substring(sepRangeIndex + 1)
+              ip1: data.entityValue.substring(0, sepRangeIndex),
+              ip2: data.entityValue.substring(sepRangeIndex + 1)
             }
           } else { // Single
             addItem = {
               ...addItem,
               addrFormat: 'Single',
-              ip1: data.tagName,
+              ip1: data.entityValue,
               ip2: ''
             }
           }
         } else if (this.editObject.indicatorType === 'Domain') {
           addItem = {
             ...addItem,
-            domain: data.tagName
+            domain: data.entityValue
           }
         }
 
@@ -1076,19 +1137,19 @@ export default {
       this.$refs.editForm.validate(valid => {
         if (valid) {
           const oldTag = {
-            tagName: self.showImportedData[index].tagName,
-            tagValue: self.showImportedData[index].tagValue
+            entityValue: self.showImportedData[index].entityValue,
+            entityType: self.showImportedData[index].entityType
           }
-          self.showImportedData[index].tagName = self.editTagForm.tagName
-          self.showImportedData[index].tagValue = self.editTagForm.tagValue
+          self.showImportedData[index].entityValue = self.editTagForm.entityValue
+          self.showImportedData[index].entityType = self.editTagForm.entityType
           let num = -1
           const findData = self.importedData.find((item, i) => {
             num = i
-            return (item.tagName === self.editTagForm.tagName && item.tagValue === self.editTagForm.tagValue)
+            return (item.entityValue === self.editTagForm.entityValue && item.entityType === self.editTagForm.entityType)
           })
           if (!findData) { // 新增记录(包括新增和修改界面)
-            self.importedData[num].tagName = self.editTagForm.tagName
-            self.importedData[num].tagValue = self.editTagForm.tagValue
+            self.importedData[num].entityValue = self.editTagForm.entityValue
+            self.importedData[num].entityType = self.editTagForm.entityType
             self.importedData[num].isValid = 1
             self.addData(self.importedData[num])
           } else { // 修改记录
@@ -1122,18 +1183,18 @@ export default {
     },
     addTagAtLast () {
       this.backEditData()
-      this.editTagForm.tagName = ''
-      this.editTagForm.tagValue = ''
+      this.editTagForm.entityValue = ''
+      this.editTagForm.entityType = ''
       const total = this.importedData.length
       this.addEditFlag = true
       // 如果已经有新增空白项，则不再进行新增操作
-      if (this.importedData.length === 0 || !(this.importedData[this.importedData.length - 1].tagName === '' && this.importedData[this.importedData.length - 1].tagValue === '')) {
+      if (this.importedData.length === 0 || !(this.importedData[this.importedData.length - 1].entityValue === '' && this.importedData[this.importedData.length - 1].entityType === '')) {
         if (total >= 10) {
           const lastPageSize = Math.ceil((total + 1) / 10)
           this.pageNo(lastPageSize)
         }
-        this.importedData.push({ tagName: '', tagValue: '' })
-        this.showImportedData.push({ tagName: '', tagValue: '' })
+        this.importedData.push({ entityValue: '', entityType: '' })
+        this.showImportedData.push({ entityValue: '', entityType: '' })
         this.importedDataNoData = false
 
         this.importedPageObj.total = this.importedData.length
@@ -1150,12 +1211,8 @@ export default {
   computed: {
     uploadParams () {
       return {
-        indicatorType: this.editObject.indicatorType
+        indicatorType: this.editObject.indicatorType.join(',')
       }
-    },
-    importedTableFirstColumn () {
-      const t = this.tagType.find(t => t.value === this.importedType)
-      return t ? t.name : ''
     },
     activeStep () {
       if (this.editObject.id) {
@@ -1195,16 +1252,16 @@ export default {
           }
           this.editObject = response.data.data
           if (response.data.data.intent) {
-            const curColorObj = this.tagIntent.find(item => item.value === response.data.data.intent)
-            this.editObject.intent = curColorObj ? curColorObj.value : this.tagIntent[0].value
-            this.editObject.intentName = curColorObj ? curColorObj.name : this.tagIntent[0].name
-            this.editObject.intentLabel = curColorObj ? curColorObj.label : this.tagIntent[0].label
+            const curIntentObj = this.tagIntent.find(item => item.value === response.data.data.intent)
+            this.editObject.intent = curIntentObj ? curIntentObj.value : this.tagIntent[0].value
+            this.editObject.intentName = curIntentObj ? curIntentObj.name : this.tagIntent[0].name
+            this.editObject.intentLabel = curIntentObj ? curIntentObj.label : this.tagIntent[0].label
           } else {
             this.editObject.intent = this.tagIntent[0].value
             this.editObject.intentName = this.tagIntent[0].name
             this.editObject.intentLabel = this.tagIntent[0].label
           }
-          if(response.data.data.indicatorType) {
+          if (response.data.data.indicatorType) {
             this.editObject.indicatorType = this.editObject.indicatorType.split(',')
           }
           this.importedData = this.handleSpeticalTypeData(this.editObject.itemList)
@@ -1281,7 +1338,7 @@ export default {
       if (!n) {
         const lastIndex = this.importedData.length - 1
         const lastData = this.importedData[lastIndex]
-        if (lastData && lastData.tagName === '' && lastData.tagValue === '') {
+        if (lastData && lastData.entityValue === '' && lastData.entityType === '') {
           this.importedData.pop()
         }
       }
@@ -1302,6 +1359,7 @@ export default {
       name: '',
       buildIn: '',
       id: '',
+      category: 'VPN',
       indicatorType: ['IP'],
       description: '',
       updateTime: '',
@@ -1316,8 +1374,8 @@ export default {
       data.forEach(d => {
         d.itemList.forEach(item => {
           importedData.push({
-            tagName: item,
-            tagValue: d.tagValue,
+            entityValue: item,
+            entityType: d.entityType,
             isValid: 1
           })
         })
@@ -1363,8 +1421,8 @@ export default {
     // 步骤条控制
     const stepHeightConstant = {
       collapse: 58,
-      first: 404,
-      second: 284,
+      first: 413,
+      second: 296,
       third: itemListHeight.noData
     }
 
@@ -1376,8 +1434,8 @@ export default {
     const previewErrorTip = ref('')
     // 编辑项的form表单内容
     const editTagForm = reactive({
-      tagName: '', // 待编辑的item项，如ip、domain、app等
-      tagValue: '' // 待编辑的label
+      entityValue: '', // 待编辑的item项，如ip、domain等
+      entityType: '' // 待编辑的label
     })
 
     const isLoad = ref(false)

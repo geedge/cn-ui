@@ -2,7 +2,39 @@ import Mock from 'mockjs'
 
 const openMock = true
 if (openMock) {
-  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'v1/tag/.*'), 'delete', function (requestObj) {
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'v1/tag/parser'), 'post', function (requestObj) {
+    return {
+      code: 200,
+      msg: 'success',
+      data: {
+        list: [
+          {
+            entityType: 'I2P',
+            entityValue: '103.3.138.0',
+            isValid: 0,
+            errorAttribute: 'entityType'
+          },
+          {
+            entityType: 'IP',
+            entityValue: '103.3.136.0/25',
+            isValid: 1
+          },
+          {
+            entityType: 'IP',
+            entityValue: '192.168.1.1-192.168.1.2a',
+            isValid: 0,
+            errorAttribute: 'entityValue'
+          },
+          {
+            entityType: 'Domain',
+            entityValue: 'www.baidu.com',
+            isValid: 1
+          }
+        ]
+      }
+    }
+  })
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'v1/tag.*'), 'delete', function (requestObj) {
     return {
       code: 200,
       message: 'success',
@@ -14,21 +46,21 @@ if (openMock) {
       }
     }
   })
-  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'v1/tag/.*'), 'post', function (requestObj) {
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'v1/tag.*'), 'post', function (requestObj) {
     return {
-      "msg": "success",
-      "code": 200,
-      "data": {
-        "id": "标签UUID"
+      msg: 'success',
+      code: 200,
+      data: {
+        id: '标签UUID'
       }
     }
   })
-  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'v1/tag/.*'), 'put', function (requestObj) {
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'v1/tag.*'), 'put', function (requestObj) {
     return {
-      "msg": "success",
-      "code": 200,
-      "data": {
-        "id": "标签UUID"
+      msg: 'success',
+      code: 200,
+      data: {
+        id: '标签UUID'
       }
     }
   })
@@ -191,41 +223,41 @@ if (openMock) {
   })
   Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'v1/tag/.*'), 'get', function (requestObj) {
     return {
-      "code": 200,
-      "message": "success",
-      "data": {
-        "pageNo": 1,
-        "pageSize": 10,
-        "total": 5,
-        "id": "08b2a4cd-1c38-4be1-b641-8e5b607e2075",
-        "name": "tag？？？",
-        "category": "categoty1",
-        "indicatorType": "Domain",
-        "intent": "Benign",
-        "description": " tag1 description",
-        "isBuiltIn": 1,
-        "createdTime": 1685412014,
-        "updatedTime": 1685412014,
-        "itemList": [
+      code: 200,
+      message: 'success',
+      data: {
+        pageNo: 1,
+        pageSize: 10,
+        total: 5,
+        id: '08b2a4cd-1c38-4be1-b641-8e5b607e2075',
+        name: 'tag',
+        category: 'categoty1',
+        indicatorType: 'Domain',
+        intent: 'Benign',
+        description: ' tag1 description',
+        isBuiltIn: 1,
+        createdTime: 1685412014,
+        updatedTime: 1685412014,
+        itemList: [
           {
-            "id": 1,
-            "EntityType": "Domain",
-            "EntityValue": "www.baidu.com"
+            id: 1,
+            entityType: 'Domain',
+            entityValue: 'www.baidu.com'
           },
           {
-            "id": 1,
-            "EntityType": "IP",
-            "EntityValue": "172.0.0.0/8"
+            id: 2,
+            entityType: 'IP',
+            entityValue: '172.0.0.0/8'
           },
           {
-            "id": 1,
-            "EntityType": "IP",
-            "EntityValue": "192.168.44.12"
+            id: 3,
+            entityType: 'IP',
+            entityValue: '192.168.44.12'
           },
           {
-            "id": 1,
-            "EntityType": "IP",
-            "EntityValue": "192.168.44.13-192.168.44.14"
+            id: 4,
+            entityType: 'IP',
+            entityValue: '192.168.44.13-192.168.44.14'
           }
         ]
       }

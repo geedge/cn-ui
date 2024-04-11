@@ -1,105 +1,105 @@
 <template>
   <el-table
-      id="tagTable"
-      ref="dataTable"
-      :header-cell-class-name="headerCellClass"
-      :data="tableData"
-      :expand-row-keys="expandedIds"
-      empty-text=" "
-      tooltip-effect="light"
-      :row-key="(row) => { return row.id }"
-      :reserve-selection="true"
-      @header-dragend="dragend"
-      @sort-change="tableDataSort"
-      @expand-change="dropExpandChange"
-      @selection-change="selectionChange"
-    >
-      <el-table-column type="expand" width="30">
-        <template #default="props">
-          <div class="down">
-            <div class="block drop-down-time" style="border:0px yellow solid;">
-              <el-popover placement="bottom-start"
-                          :ref="`tagPopover${props.row.id}`"
-                          :key="`tagPopover${props.row.id}`"
-                          :show-arrow="false"
-                          :append-to-body="true"
-                          :hide-after="0"
-                          :show-after="0"
-                          popper-class="tag__popper"
-                          trigger="click">
-                <template #reference>
-                  <div class="tag-dropdown" :id="`tagDropdown${props.row.id}`">
-                    <span>{{ curExpendDataType }}</span><i class="cn-icon-down cn-icon"></i>
-                  </div>
-                </template>
-                <el-row type="flex" justify="center" style="width: fit-content;flex-direction: column;">
-                  <ul class="select-dropdown" :id="`tagSelectDropdown${props.row.id}`" >
-                    <li key="uniqueEntityObserved" :id="`uniqueEntityObserved${props.row.id}`" class="select-dropdown__item" @click="uniqueEntityObserved(props.row)" >
-                       <span>{{ $t('tag.uniqueEntityObserved') }}</span>
-                    </li>
-                    <li key="totalIndicators" :id="`totalIndicators${props.row.id}`" class="select-dropdown__item" @click="totalIndicators(props.row)">
-                      <span>{{ $t('tag.totalIndicators') }}</span>
-                    </li>
-                  </ul>
-                </el-row>
-              </el-popover>
-            </div>
-            <div class="expand">
-              <loading :loading="loadingDown"></loading>
-              <chart-no-data v-if="isNoData && !loadingDown"></chart-no-data>
-              <div class="expand-cell" >
-                <div class="expand-left" style="border:0px red solid;">
-                  <div class="chart-drawing" :id="`chart${props.row.id}`"></div>
+          id="tagTable"
+          ref="dataTable"
+          :header-cell-class-name="headerCellClass"
+          :data="tableData"
+          :expand-row-keys="expandedIds"
+          empty-text=" "
+          tooltip-effect="light"
+          :row-key="(row) => { return row.id }"
+          :reserve-selection="true"
+          @header-dragend="dragend"
+          @sort-change="tableDataSort"
+          @expand-change="dropExpandChange"
+          @selection-change="selectionChange"
+  >
+    <el-table-column type="expand" width="30">
+      <template #default="props">
+        <div class="down">
+          <div class="block drop-down-time" style="border:0px yellow solid;">
+            <el-popover placement="bottom-start"
+                        :ref="`tagPopover${props.row.id}`"
+                        :key="`tagPopover${props.row.id}`"
+                        :show-arrow="false"
+                        :append-to-body="true"
+                        :hide-after="0"
+                        :show-after="0"
+                        popper-class="tag__popper"
+                        trigger="click">
+              <template #reference>
+                <div class="tag-dropdown" :id="`tagDropdown${props.row.id}`">
+                  <span>{{ curExpendDataType }}</span><i class="cn-icon-down cn-icon"></i>
                 </div>
-                <div class="expand-right" style="border:0px green solid;">
-                  <div class="expand-count">{{observedCount}}</div>
-                  <div class="expand-observed-Ips"  @click="toEntityList(props.row)">
-                    <div v-if="disableToEntity" style="cursor: not-allowed;">Observed IPs -></div>
-                    <div v-else style="cursor: pointer;">Observed IPs -></div>
-                  </div>
+              </template>
+              <el-row type="flex" justify="center" style="width: fit-content;flex-direction: column;">
+                <ul class="select-dropdown" :id="`tagSelectDropdown${props.row.id}`" >
+                  <li key="uniqueEntityObserved" :id="`uniqueEntityObserved${props.row.id}`" class="select-dropdown__item" @click="uniqueEntityObserved(props.row)" >
+                    <span>{{ $t('tag.uniqueEntityObserved') }}</span>
+                  </li>
+                  <li key="totalIndicators" :id="`totalIndicators${props.row.id}`" class="select-dropdown__item" @click="totalIndicators(props.row)">
+                    <span>{{ $t('tag.totalIndicators') }}</span>
+                  </li>
+                </ul>
+              </el-row>
+            </el-popover>
+          </div>
+          <div class="expand">
+            <loading :loading="loadingDown"></loading>
+            <chart-no-data v-if="isNoData && !loadingDown"></chart-no-data>
+            <div class="expand-cell" >
+              <div class="expand-left" style="border:0px red solid;">
+                <div class="chart-drawing" :id="`chart${props.row.id}`"></div>
+              </div>
+              <div class="expand-right" style="border:0px green solid;">
+                <div class="expand-count">{{observedCount}}</div>
+                <div class="expand-observed-Ips"  @click="toEntityList(props.row)">
+                  <div v-if="disableToEntity" style="cursor: not-allowed;">Observed IPs -></div>
+                  <div v-else style="cursor: pointer;">Observed IPs -></div>
                 </div>
               </div>
             </div>
           </div>
-        </template>
-      </el-table-column>
-      <el-table-column
-          :resizable="false"
-          align="center"
-          type="selection"
-          :selectable="(row) => { return row.isBuiltIn !== 1 }"
-          width="30">
-      </el-table-column>
-      <el-table-column
-          v-for="item in customTableTitles"
-          :key="item.prop"
-          :fixed="item.fixed"
-          :label="item.label"
-          :min-width="`${item.minWidth}`"
-          :prop="item.prop"
-          :resizable="true"
-          :show-overflow-tooltip="item.prop === 'timePlan'"
-          :sort-orders="['ascending', 'descending']"
-          :sortable="item.sortable"
-          :width="`${item.width}`"
-      >
-        <template #header>
-          <span class="data-column__span">{{ item.label }}</span>
-          <div class="col-resize-area"></div>
-        </template>
-        <template #default="scope" :column="item">
+        </div>
+      </template>
+    </el-table-column>
+    <el-table-column
+            :resizable="false"
+            align="center"
+            type="selection"
+            :selectable="(row) => { return row.isBuiltIn !== 1 }"
+            width="30">
+    </el-table-column>
+    <el-table-column
+            v-for="item in customTableTitles"
+            :key="item.prop"
+            :fixed="item.fixed"
+            :label="item.label"
+            :min-width="`${item.minWidth}`"
+            :prop="item.prop"
+            :resizable="true"
+            :show-overflow-tooltip="item.prop === 'timePlan'"
+            :sort-orders="['ascending', 'descending']"
+            :sortable="item.sortable"
+            :width="`${item.width}`"
+    >
+      <template #header>
+        <span class="data-column__span">{{ item.label }}</span>
+        <div class="col-resize-area"></div>
+      </template>
+      <template #default="scope" :column="item">
           <span v-if="item.prop === 'isBuiltIn'">
             <span>{{ getIsBuiltIn(scope.row.isBuiltIn) }}</span>
           </span>
-          <span v-else-if="item.prop === 'intent'" class="type-tag" :class="colorIntent(scope.row[item.prop])">{{scope.row[item.prop]}}</span>
-          <span v-else>{{ scope.row[item.prop] || '-' }}</span>
-        </template>
-      </el-table-column>
-      <template v-slot:empty >
-        <div class="table-no-data" v-if="isNoData">
-          <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
-        </div>
+        <span v-else-if="item.prop === 'intent'" class="type-tag" :class="colorIntent(scope.row[item.prop])">{{scope.row[item.prop]}}</span>
+        <span v-else>{{ scope.row[item.prop] || '-' }}</span>
       </template>
+    </el-table-column>
+    <template v-slot:empty >
+      <div class="table-no-data" v-if="isNoData">
+        <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
+      </div>
+    </template>
   </el-table>
 </template>
 
@@ -199,8 +199,8 @@ export default {
     }
   },
   /**
-   * 添加vue3的setup，目的是添加/获取地址栏的参数
-   */
+     * 添加vue3的setup，目的是添加/获取地址栏的参数
+     */
   setup () {
     const { startTime, endTime } = getNowTime(60 * 24 * 30)
     const timeRange = ref([startTime, endTime])
@@ -289,7 +289,7 @@ export default {
       const vm = this
       return function (intent) {
         const t = vm.tagIntentColor.find(t => t.intent === intent)
-        return t ? t.name+'-list' : vm.tagIntentColor[0].name+'-list'
+        return t ? t.name + '-list' : vm.tagIntentColor[0].name + '-list'
       }
     }
   },
@@ -419,9 +419,9 @@ export default {
       this.init(item, api.tagIndicatorTrend, api.tagIndicatorStatistics)
     },
     /**
-   * 进入页面判断是否需要展开表格
-   * 即展开表格后刷新界面，保持展开效果
-   */
+       * 进入页面判断是否需要展开表格
+       * 即展开表格后刷新界面，保持展开效果
+       */
     expandTable () {
       const expandInfo = this.expandedIds
 
@@ -437,8 +437,8 @@ export default {
       }
     },
     /**
-     * 显示选中的行，即分页后依旧显示
-     */
+       * 显示选中的行，即分页后依旧显示
+       */
     showSelectedRow () {
       const selectIds = this.selectIds
 
@@ -460,8 +460,8 @@ export default {
       }
     },
     /**
-     * 单行选中
-     */
+       * 单行选中
+       */
     selectionChange (objs) {
       this.$emit('selectionChange', objs)
       this.checkboxIds.id = objs.map(item => {
@@ -489,8 +489,8 @@ export default {
       }
     },
     /**
-     * 全选按钮
-     */
+       * 全选按钮
+       */
     selectAll (objs) {
       const selectIds = []
       this.isIndeterminate = false
@@ -515,8 +515,8 @@ export default {
       // this.selectIds = selectIds
     },
     /**
-     * 向地址栏添加/删除参数
-     */
+       * 向地址栏添加/删除参数
+       */
     reloadUrl (newParam, clean) {
       const { query } = this.$route
       let newUrl = urlParamsHandler(window.location.href, query, newParam)
@@ -585,8 +585,8 @@ export default {
       this.initStatistics(item, statisticsUrl)
     },
     /**
-     * 表格左侧点击展开收起
-     */
+       * 表格左侧点击展开收起
+       */
     dropExpandChange (row, expandedRows, flag) {
       this.curExpendDataType = this.$t('tag.uniqueEntityObserved')
       this.curExpendDataTypeVal = 'uniqueEntityObserved'

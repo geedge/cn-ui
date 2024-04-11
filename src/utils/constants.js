@@ -329,16 +329,36 @@ export const tagIntentOptions = [
 
 export const tagCategoryOptions = [
   {
-    value: 'Malicious',
-    label: 'tag.intent.malicious'
+    value: 'VPN',
+    label: 'VPN'
   },
   {
-    value: 'Benign',
-    label: 'tag.intent.benign'
+    value: 'Anonymous Proxy',
+    label: 'Anonymous Proxy'
   },
   {
-    value: 'Unknown',
-    label: 'tag.intent.unknown'
+    value: 'C2',
+    label: 'C2'
+  },
+  {
+    value: 'Brute Force',
+    label: 'Brute Force'
+  },
+  {
+    value: 'Cryptomining',
+    label: 'Cryptomining'
+  },
+  {
+    value: 'DDoS',
+    label: 'DDoS'
+  },
+  {
+    value: 'Whitelist',
+    label: 'Whitelist'
+  },
+  {
+    value: 'Info',
+    label: 'Info'
   }
 ]
 

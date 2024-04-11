@@ -2,26 +2,26 @@
   <div class="cn-tag">
     <div class="cn-tag-right">
       <cn-data-list
-          ref="dataList"
-          :tableId="tableId"
-          v-model:custom-table-title="tools.customTableTitle"
-          :api="url"
-          :from="fromRoute.tag"
-          :layout="['search']"
-          @search="search"
+              ref="dataList"
+              :tableId="tableId"
+              v-model:custom-table-title="tools.customTableTitle"
+              :api="url"
+              :from="fromRoute.tag"
+              :layout="['search']"
+              @search="search"
       >
         <template #top-tool-left>
-          <button id="account-add"  class="business-button margin-r-10"
+          <button id="account-add"  class="business-button tag__btn margin-r-10"
                   @click="add">
             <i class="cn-icon-xinjian cn-icon"></i>
             <span>{{$t('overall.create')}}</span>
           </button>
-          <button id="tag-edit"  class="business-button business-button--light margin-r-10" :disabled="disableEdit"
+          <button id="tag-edit"  class="business-button business-button--light tag__btn margin-r-10" :disabled="disableEdit"
                   @click="editTag">
             <i class="cn-icon-edit cn-icon"></i>
             <span>{{$t('overall.edit')}}</span>
           </button>
-          <button id="tag-delete"  class="business-button business-button--light margin-r-10" :disabled="disableDelete"
+          <button id="tag-delete"  class="business-button business-button--light tag__btn margin-r-10" :disabled="disableDelete"
                   @click="delBatch">
             <i class="cn-icon-delete cn-icon"></i>
             <span>{{$t('overall.delete')}}</span>
@@ -58,18 +58,18 @@
         <template #default>
           <loading :loading="loading"></loading>
           <tag-table
-              ref="dataTable"
-              :api="url"
-              :isNoData="isNoData"
-              :custom-table-title="tools.customTableTitle"
-              :height="mainTableHeight"
-              :table-data="tableData"
-              @delete="del"
-              @edit="edit"
-              @download="download"
-              @preview="preview"
-              @reload="getTableData"
-              @selectionChange="selectionChange"
+                  ref="dataTable"
+                  :api="url"
+                  :isNoData="isNoData"
+                  :custom-table-title="tools.customTableTitle"
+                  :height="mainTableHeight"
+                  :table-data="tableData"
+                  @delete="del"
+                  @edit="edit"
+                  @download="download"
+                  @preview="preview"
+                  @reload="getTableData"
+                  @selectionChange="selectionChange"
           />
         </template>
         <template #pagination>
@@ -109,8 +109,8 @@ export default {
     }
   },
   /**
-   * 添加vue3的setup，目的是添加/获取地址栏的参数
-   */
+     * 添加vue3的setup，目的是添加/获取地址栏的参数
+     */
   setup () {
     const { query } = useRoute()
     const urlPageNo = ref(parseInt(query.pageNo) || 1)

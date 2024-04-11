@@ -2,7 +2,7 @@
  * @author 陈劲松
  * @date 2021/6/11
  * @description 1.定义api；2.定义通用查询方法，函数名应为 获取详情getItem、获取列表getItemList。例如getUser、getUserList
-*/
+ */
 import axios from 'axios'
 import { sortByOrderNum } from '@/permission'
 import { storageKey } from '@/utils/constants'
