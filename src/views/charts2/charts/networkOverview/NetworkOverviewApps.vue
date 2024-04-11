@@ -63,7 +63,7 @@
           <div class="header__title">{{$t('overall.add')}}</div>
           <div class="header__operations">
             <button class="business-button business-button--light" @click="cancelApp" test-id="cancel-app">{{$t('overall.cancel')}}</button>
-            <button class="business-button" :class="{'no-records':toSaveApp.length === 0}" @click="save">{{$t('overall.save')}}</button>
+            <button class="business-button" :disabled="toSaveApp.length === 0" @click="save">{{$t('overall.save')}}</button>
           </div>
         </div>
         <div class="add-app__body">

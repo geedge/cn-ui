@@ -14,7 +14,7 @@
             <div class="card-desc" :title="data.desc ? $t(data.desc) : '—'">{{ data.desc ? $t(data.desc) : '—' }}</div>
           </div>
           <div class="card-operate__footer">
-            <button v-if="data.showUpdate && hasPermission('editBuiltInKnowledgeBase')" :title="$t('overall.update')" class="top-tool-btn--update"
+            <button v-if="data.showUpdate && hasPermission('editBuiltInKnowledgeBase')" :title="$t('overall.update')" class="business-button"
                     @click="jumpToUpdatePage(data,false)">
               <i class="cn-icon-update-knowledge-base cn-icon"></i>
               <span>{{ $t('overall.update') }}</span>
@@ -75,7 +75,7 @@
             </el-tab-pane>
           </el-tabs>
           <div class="update-operate">
-            <button :title="$t('overall.update')" class="top-tool-btn--update"
+            <button :title="$t('overall.update')" class="business-button"
                     @click="uploadRecord"><!--:disabled="hasUpdatingRecord"-->
               <i class="cn-icon-update-knowledge-base cn-icon"></i>
               <span>{{ $t('overall.update') }}</span>
@@ -87,7 +87,7 @@
             <div class="card-title-name">{{ $t('knowledgeBase.updateRecord') }}</div>
           </div>
           <div class="update-operate">
-            <button :title="$t('overall.update')" class="top-tool-btn--update"
+            <button :title="$t('overall.update')" class="business-button"
                     @click="uploadRecord"><!--   :disabled="hasUpdatingRecord" -->
               <i class="cn-icon-update-knowledge-base cn-icon"></i>
               <span>{{ $t('overall.update') }}</span>
@@ -220,8 +220,8 @@
           </el-form>
         </div>
         <div class="dialog-footer">
-          <el-button @click="cancle">{{ $t('overall.cancel') }}</el-button>
-          <el-button type="primary" @click="submitConfirm">{{ $t('tip.confirm') }}</el-button>
+          <button @click="cancle" class="business-button business-button--light">{{ $t('overall.cancel') }}</button>
+          <button @click="submitConfirm" class="business-button">{{ $t('tip.confirm') }}</button>
         </div>
       </template>
     </el-dialog>
@@ -233,8 +233,8 @@
       <div class="dialog-message">{{ $t('knowledge.updateTips') }}</div>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="showConfirmDialog = false">{{ $t('overall.cancel') }}</el-button>
-          <el-button type="primary" @click="submit">{{ $t('tip.confirm') }}</el-button>
+          <button @click="showConfirmDialog = false" class="business-button business-button--light">{{ $t('overall.cancel') }}</button>
+          <button @click="submit" class="business-button">{{ $t('tip.confirm') }}</button>
         </span>
       </template>
     </el-dialog>

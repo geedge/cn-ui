@@ -335,39 +335,10 @@ $color-mousemove-cursor: #D3D0D8;
             flex-direction: row;
             justify-content: center;
             font-size: 14px;
-            font-weight: 400;
             align-items: center;
             padding-left: 16px;
             padding-right: 16px;
             padding-bottom: 20px;
-
-            .top-tool-btn--update {
-              background-color: $color-business !important;
-              padding-left: 7px;
-              padding-right: 7px;
-              color: $color-white;
-              font-size: 12px;
-              font-weight: 500;
-              border: 1px solid rgba(46, 136, 166, 0.85);
-              border-radius: 2px;
-              line-height: 28px;
-              height: 28px;
-              cursor: pointer;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-
-              i {
-                color: $color-white;
-                font-size: 14px !important;
-                margin-right: 5px;
-              }
-            }
-
-            .top-tool-btn--update:hover {
-              background-color: $color-business-hover !important;
-              border-color: $color-business-border-hover !important;
-            }
 
             .card-type {
               display: flex;
@@ -636,23 +607,6 @@ $color-mousemove-cursor: #D3D0D8;
 
           & > div {
             //padding: 0 0 0 10px;
-          }
-
-          .el-button {
-            color: $color-regular;
-          }
-
-          .el-button--small {
-            padding: 7px 9px !important;
-            min-height: 28px !important;
-
-            &.active i {
-              color: $color-primary;
-            }
-
-            i {
-              font-size: 12px;
-            }
           }
         }
 
@@ -1122,6 +1076,18 @@ $color-mousemove-cursor: #D3D0D8;
           bottom: 4px;
         }
       }
+    }
+  }
+
+  .business-button {
+    padding-left: 7px;
+    padding-right: 7px;
+    font-size: 12px;
+    height: 28px;
+
+    i {
+      font-size: 14px !important;
+      margin-right: 5px;
     }
   }
 }
@@ -1836,34 +1802,6 @@ $color-mousemove-cursor: #D3D0D8;
     border-top: 1px solid $color-border-lighter;
     box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.07);
     padding: 11px 0 12px !important;
-
-    .el-button {
-      padding: 8px 21px !important;
-      line-height: 12px;
-      font-size: 12px;
-      font-weight: 500;
-      min-height: 28px;
-    }
-
-    .el-button:nth-child(1) {
-      margin-right: 20px;
-      width: 80px;
-      height: 28px;
-      color: $color-text-primary;
-      background: $color-fill-light;
-      border: 1px solid $color-border-dark;
-      border-radius: 2px;
-    }
-
-    .el-button:nth-child(2) {
-      width: 80px;
-      height: 28px;
-      margin-right: 20px;
-      margin-left: 0 !important;
-      background: $color-business;
-      border: 1px solid $color-business-border-hover;
-      border-radius: 2px;
-    }
   }
 }
 
@@ -1996,43 +1934,6 @@ $color-mousemove-cursor: #D3D0D8;
       flex-direction: row;
       justify-content: center;
       font-size: 14px;
-      font-weight: 400;
-
-      .top-tool-btn--update {
-        background-color: $color-business !important;
-        padding-left: 7px;
-        padding-right: 7px;
-        color: $color-white;
-        font-size: 12px;
-        font-weight: 500;
-        border: 1px solid rgba(46, 136, 166, 0.85);
-        border-radius: 2px;
-        line-height: 28px;
-        height: 28px;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        i {
-          color: $color-white;
-          font-size: 14px !important;
-          margin-right: 5px;
-        }
-      }
-
-      .top-tool-btn--update:disabled {
-        cursor: not-allowed;
-        opacity: 0.66;
-
-        i {
-        }
-      }
-
-      .top-tool-btn--update:hover {
-        background-color: $color-business-hover !important;
-        border-color: $color-business-border-hover !important;
-      }
     }
   }
 
@@ -2057,44 +1958,7 @@ $color-mousemove-cursor: #D3D0D8;
       flex-direction: row;
       justify-content: center;
       font-size: 14px;
-      font-weight: 400;
       align-items: center;
-
-      .top-tool-btn--update {
-        background-color: $color-business !important;
-        padding-left: 7px;
-        padding-right: 7px;
-        color: $color-white;
-        font-size: 12px;
-        font-weight: 500;
-        border: 1px solid rgba(46, 136, 166, 0.85);
-        border-radius: 2px;
-        line-height: 28px;
-        height: 28px;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        i {
-          color: $color-white;
-          font-size: 14px !important;
-          margin-right: 5px;
-        }
-      }
-
-      .top-tool-btn--update:disabled {
-        cursor: not-allowed;
-        opacity: 0.66;
-
-        i {
-        }
-      }
-
-      .top-tool-btn--update:hover {
-        background-color: $color-business-hover !important;
-        border-color: $color-business-border-hover !important;
-      }
     }
   }
 
@@ -2252,30 +2116,10 @@ $color-mousemove-cursor: #D3D0D8;
       justify-content: flex-end;
       padding-top: 32px;
 
-      .el-button {
-        padding: 10px 21px !important;
-        line-height: 12px;
-        font-size: 12px;
-        font-weight: 500;
-        min-height: 32px;
-        width: 80px;
-        height: 32px;
-      }
-
-      .el-button:nth-child(1) {
-        margin-right: 20px;
-        color: $color-text-primary;
-        background: $color-fill-light;
-        border: 1px solid $color-border-dark;
-        border-radius: 2px;
-      }
-
-      .el-button:nth-child(2) {
-        color: $color-white;
-        margin-left: 0 !important;
-        background: $color-business;
-        border: 1px solid $color-business-border-hover;
-        border-radius: 2px;
+      .business-button {
+        margin-left: 15px;
+        height: 30px;
+        min-width: 72px;
       }
     }
   }
@@ -2286,12 +2130,10 @@ $color-mousemove-cursor: #D3D0D8;
     margin-top: 25px;
 
     .psiphon3-title {
-      font-family: NotoSansSC-Medium;
       font-size: 12px;
       color: $color-text-primary;
       letter-spacing: 0;
       line-height: 14px;
-      font-weight: 500;
     }
 
     .psiphon3-bar {
