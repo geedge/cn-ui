@@ -12,6 +12,7 @@
   &:hover:not(:disabled) {
     background-color: var(--el-color-business-light-2);
   }
+
   &:focus:not(:disabled) {
     background-color: var(--el-color-business-dark-1);
   }
@@ -24,6 +25,7 @@
     &:hover:not(:disabled) {
       background-color: var(--el-fill-color);
     }
+
     &:focus:not(:disabled) {
       background-color: var(--el-fill-color-darker);
     }
@@ -32,5 +34,29 @@
   &:disabled {
     cursor: not-allowed;
     opacity: 0.66;
+  }
+}
+
+//单个删除弹框messageBox的底部按钮样式。应用场景：administration下顶部工具栏的删除按钮
+.single-del-model {
+  .el-message-box__btns {
+    .el-button:nth-child(1) {
+      width: 80px;
+      height: 28px;
+      margin-right: 20px;
+      color: var(--el-text-color-primary);
+      background: var(--el-fill-color-light);
+      border: 1px solid var(--el-border-color-dark);
+      border-radius: 2px;
+    }
+
+    .el-button:nth-child(2) {
+      width: 80px;
+      height: 28px;
+      margin-right: 20px;
+      margin-left: 0 !important;
+      background-color: var(--el-color-business);
+      border-color: var(--el-color-business-dark-2);
+    }
   }
 }
