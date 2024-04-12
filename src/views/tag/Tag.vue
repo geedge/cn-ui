@@ -30,7 +30,7 @@
                   key="intentSelect"
                   v-model="intent"
                   :teleported="false"
-                  style="width:135px;margin-right:10px;"
+                  style="width: 160px; margin-right:10px;"
                   clearable
                   placeholder="All"
                   @change="intentChange"
@@ -44,7 +44,7 @@
                   key="categorySelect"
                   v-model="category"
                   :teleported="false"
-                  style="width:150px;margin-right:10px;"
+                  style="width: 190px; margin-right:10px;"
                   clearable
                   placeholder="All"
                   @change="categoryChange"
