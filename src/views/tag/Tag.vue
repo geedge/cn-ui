@@ -260,7 +260,7 @@ export default {
     },
     add () {
       this.$router.push({
-        path: '/tag/userDefined/create',
+        path: '/tag/create',
         query: {
           t: +new Date()
         }
@@ -284,7 +284,7 @@ export default {
     jumpToEditPage (id) {
       const pageNo = this.$router.currentRoute.value.query.pageNo
       this.$router.push({
-        path: '/tag/userDefined/edit',
+        path: '/tag/edit',
         query: {
           t: +new Date(),
           pageNoForTable: pageNo || 1,

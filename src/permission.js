@@ -164,8 +164,8 @@ export function handleComponent (code) {
       return () => import('@/views/report/Report')
     case 'tag':
       return () => import('@/views/tag/Tag')
-    case 'createUserDefinedLibrary':
-    case 'editUserDefinedLibrary':
+    case 'createTag':
+    case 'editTag':
       return () => import('@/views/tag/TagForm')
     case 'knowledgeBase':
       return () => import('@/views/setting/KnowledgeBase')

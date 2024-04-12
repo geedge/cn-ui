@@ -155,7 +155,7 @@
                     <td class="imported-data-item" :title="d.entityValue">
                       <el-form-item v-if="(editIndex === i)  || (addEditFlag && d.entityValue === '' && d.entityType === '')" prop="entityValue">
                         <span class="imported-data-item-edit__input">
-                          <el-input v-model="editTagForm.entityValue" @blur="onBlurTagItem(i)" size="mini"></el-input>
+                          <el-input v-model="editTagForm.entityValue" @blur="onBlurTagItem(i)" ></el-input>
                         </span>
                       </el-form-item>
                       <span v-else>{{ d.entityValue }}</span>
@@ -858,7 +858,7 @@ export default {
           customClass: 'del-model'
         }).then(() => {
           this.$router.push({
-            path: '/tag/userDefined',
+            path: '/tag',
             query: {
               pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
               t: +new Date()
@@ -867,7 +867,7 @@ export default {
         }).catch(() => {})
       } else {
         this.$router.push({
-          path: '/tag/userDefined',
+          path: '/tag',
           query: {
             pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
             t: +new Date()
@@ -932,7 +932,7 @@ export default {
                             message: this.$t('tip.saveSuccess')
                           })
                           this.$router.push({
-                            path: '/tag/userDefined',
+                            path: '/tag',
                             query: {
                               pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
                               t: +new Date()
@@ -960,7 +960,7 @@ export default {
                             message: this.$t('tip.saveSuccess')
                           })
                           this.$router.push({
-                            path: '/tag/userDefined',
+                            path: '/tag',
                             query: {
                               pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
                               t: +new Date()
@@ -1176,6 +1176,11 @@ export default {
           this.editTagErrorTip = ''
           this.showImportedData[index].isValid = 1
           this.showImportedData[index].msg = this.$t('overall.success')
+          if (this.hasErrorImportedData()) {
+            this.previewErrorTip = this.$t('validate.pleaseCheckForErrorItem')
+          } else {
+            this.previewErrorTip = ''
+          }
         } else {
           this.showImportedData[index].isValid = 0
         }
@@ -1284,7 +1289,7 @@ export default {
         console.error(e)
         this.$message.error(this.errorMsgHandler(e))
         this.$router.push({
-          path: '/tag/userDefined',
+          path: '/tag',
           query: {
             pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
             t: +new Date()
