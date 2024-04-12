@@ -37,8 +37,8 @@
   }
 }
 
-//单个删除弹框messageBox的底部按钮样式。应用场景：administration下顶部工具栏的删除按钮
-.single-del-model {
+//删除确认弹框messageBox的底部按钮样式。应用场景：administration下顶部工具栏的删除按钮
+.del-model-message-box {
   .el-message-box__btns {
     .el-button:nth-child(1) {
       width: 80px;

@@ -296,7 +296,7 @@ export default {
       this.$confirm(this.$t('tip.confirmDelete'), {
         confirmButtonText: this.$t('tip.yes'),
         cancelButtonText: this.$t('tip.no'),
-        customClass: 'single-del-model',
+        customClass: 'del-model-message-box',
         type: 'warning'
       }).then(() => {
         this.toggleLoading(true)
