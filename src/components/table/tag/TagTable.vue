@@ -48,14 +48,13 @@
             <loading :loading="loadingDown"></loading>
             <chart-no-data v-if="isNoData && !loadingDown"></chart-no-data>
             <div class="expand-cell" >
-              <div class="expand-left" style="border:0px red solid;">
+              <div class="expand-left">
                 <div class="chart-drawing" :id="`chart${props.row.id}`"></div>
               </div>
-              <div class="expand-right" style="border:0px green solid;">
+              <div class="expand-right">
                 <div class="expand-count">{{observedCount}}</div>
-                <div class="expand-observed-Ips"  @click="toEntityList(props.row)">
-                  <div v-if="disableToEntity" style="cursor: not-allowed;">Observed IPs -></div>
-                  <div v-else style="cursor: pointer;">Observed IPs -></div>
+                <div class="expand-observed-entities" :class="{'expand-observed-entities--disabled': disableToEntity}" @click="toEntityList(props.row)">
+                  Observed IPs&nbsp;<el-icon v-if="!disableToEntity"><Right /></el-icon>
                 </div>
               </div>
             </div>
@@ -399,7 +398,7 @@ export default {
       this.$nextTick(() => {
         const totalIndicatorsDom = document.getElementById('totalIndicators' + item.id)
         const uniqueEntityObservedDom = document.getElementById('uniqueEntityObserved' + item.id)
-        uniqueEntityObservedDom.style.cssText = 'color:#0091ff;font-weight: bold;'
+        uniqueEntityObservedDom.style.cssText = 'color:var(--el-color-primary);font-weight: bold;'
         totalIndicatorsDom.style.cssText = ''
         document.getElementById('tagDropdown' + item.id).click()
       })
@@ -413,7 +412,7 @@ export default {
         const totalIndicatorsDom = document.getElementById('totalIndicators' + item.id)
         const uniqueEntityObservedDom = document.getElementById('uniqueEntityObserved' + item.id)
         uniqueEntityObservedDom.style.cssText = ''
-        totalIndicatorsDom.style.cssText = 'color:#0091ff;font-weight: bold;'
+        totalIndicatorsDom.style.cssText = 'color:var(--el-color-primary);font-weight: bold;'
         document.getElementById('tagDropdown' + item.id).click()
       })
       this.init(item, api.tagIndicatorTrend, api.tagIndicatorStatistics)
@@ -598,7 +597,7 @@ export default {
         this.$nextTick(() => {
           const uniqueEntityObservedDom = document.getElementById('uniqueEntityObserved' + row.id)
           if (uniqueEntityObservedDom) {
-            uniqueEntityObservedDom.style.cssText = 'color:#0091ff;font-weight: bold;'
+            uniqueEntityObservedDom.style.cssText = 'color:var(--el-color-primary);font-weight: bold;'
           }
         })
       }

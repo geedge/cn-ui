@@ -1,8 +1,8 @@
 <template>
-  <div class="edit-tag-base">
+  <div class="edit-tag">
     <loading :loading="initLoading"></loading>
-    <div class="edit-tag-base__header">{{ editObject.id ? $t('overall.edit') : $t('overall.create') }}</div>
-    <div class="edit-tag-base__body">
+    <div class="edit-tag__header">{{ editObject.id ? $t('overall.edit') : $t('overall.create') }}</div>
+    <div class="edit-tag__body">
       <el-steps direction="vertical" :active="activeStep">
         <el-step v-for="(height, index) in stepHeights" :style="`flex-basis: ${height}px; flex-shrink: 0;`"
                  :key="index"></el-step>
@@ -231,7 +231,7 @@
         </el-collapse-item>
       </el-collapse>
     </div>
-    <div class="edit-tag-base__footer">
+    <div class="edit-tag__footer">
       <button class="business-button business-button--light tag__btn" @click="cancel">
         <span>{{ $t('overall.cancel') }}</span>
       </button>
@@ -1210,7 +1210,7 @@ export default {
       this.oldTagItem = {}
     },
     downloadTemplate () {
-      window.open('/assets/tagTemplate.zip', '_blank')
+      window.open('/assets/tagTemplate.csv', '_blank')
     }
   },
   computed: {
@@ -1426,7 +1426,7 @@ export default {
     // 步骤条控制
     const stepHeightConstant = {
       collapse: 58,
-      first: 413,
+      first: 515,
       second: 296,
       third: itemListHeight.noData
     }
