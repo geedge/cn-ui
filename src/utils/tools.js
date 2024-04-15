@@ -12,7 +12,7 @@ import {
   ZH,
   EN,
   securityLevel,
-  entityDetailTags, entityDefaultColor, tagValueLabelMapping
+  entityDetailTags, entityDefaultColor, tagValueLabelMapping, intentColor
 } from '@/utils/constants'
 import { getIso36112JsonData, getDictList } from '@/utils/api'
 import { format } from 'echarts'
@@ -1529,16 +1529,7 @@ export const changeTimestampToTime = (timestamp) => {
 export const formatTags = (data, type, list) => {
   Object.keys(data).forEach(k => {
     if (k !== 'tags' && data[k]) {
-      if (_.isArray(data[k])) {
-        data[k].forEach(k3 => {
-          const find = entityDetailTags[type].find(t => t.name === 'vpnServiceName')
-          if (find) {
-            list.push({ key: 'vpnServiceName', value: tagValueHandler(k3.vpnServiceName), type: find.type })
-          } else {
-            list.push({ key: 'vpnServiceName', value: tagValueHandler(k3.vpnServiceName), color: k3.knowledgeBase ? (k3.knowledgeBase.color || entityDefaultColor) : entityDefaultColor })
-          }
-        })
-      } else {
+      if (!_.isArray(data[k])) {
         Object.keys(data[k]).forEach(k2 => {
           const find = entityDetailTags[type].find(t => t.name === k2)
           if (find) {
@@ -1563,7 +1554,7 @@ export const formatTagsOfDetails = (data, type, list) => {
         intelligenceContent: []
       }
       if (k === 'tags') {
-        aggregation.intelligenceContent.push({ key: k, value: r[k].tagValue, type: 'normal', color: r[k].knowledgeBase ? (r[k].knowledgeBase.color || entityDefaultColor) : entityDefaultColor })
+        aggregation.intelligenceContent.push({ key: k, value: r[k].name, type: 'normal', color: intentColor[r[k].intent] || entityDefaultColor })
       } else if (!_.isArray(r[k])) {
         Object.keys(r[k]).forEach(k2 => {
           const find = entityDetailTags[type].find(t => t.name === k2)
