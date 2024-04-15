@@ -1179,6 +1179,7 @@ export default {
           self.backEditFlag = false
           self.isPreviewChange = true
           this.oldTagItem = {}
+          this.previewErrorTip = ''
         } else {
           self.showImportedData[index].isValid = 0
         }
