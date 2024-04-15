@@ -808,8 +808,7 @@ export const tagLineChartOption = {
     x: 'center',
     y: 'bottom',
     icon: 'circle',
-    itemGap: 50,
-    data: ['IP', 'Domain Name']
+    itemGap: 50
   },
   grid: {
     top: '12%',

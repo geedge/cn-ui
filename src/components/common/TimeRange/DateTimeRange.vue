@@ -1,5 +1,5 @@
 <template>
-  <div v-ele-click-outside="changeDropdown" style="position: relative;" class="date-range-box">
+  <div v-ele-click-outside="changeDropdown" class="date-range-box">
     <div @click="showDropdown" tabindex="1" class="date-range-text" :class="myClass" :style="style">
       <div class="calendar-popover-text"><i class="cn-icon cn-icon-Data"></i></div>
       <div class="calendar-popover-text" style="display: flex" v-if="isCustom" :title="`${dateFormatByAppearance(getMillisecond(startTime))} -${dateFormatByAppearance(getMillisecond(endTime))}`">
@@ -218,6 +218,9 @@ export default {
         dateRangeValue.value = -1
         returnValue()
       }
+    })
+    watch(() => props.startTime, (newVal) => {
+      console.info(newVal)
     })
 
     /**

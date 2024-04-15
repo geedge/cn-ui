@@ -17,7 +17,7 @@
     <el-table-column type="expand" width="30">
       <template #default="props">
         <div class="down">
-          <div class="block drop-down-time" style="border:0px yellow solid;">
+          <div class="block drop-down-time">
             <el-popover placement="bottom-start"
                         :ref="`tagPopover${props.row.id}`"
                         :key="`tagPopover${props.row.id}`"
@@ -43,6 +43,15 @@
                 </ul>
               </el-row>
             </el-popover>
+            <span class="expand-observed-entities" :class="{'expand-observed-entities--disabled': disableToEntity}" @click="toEntityList(props.row)">{{countDesc}}&nbsp;<el-icon v-if="!disableToEntity"><Right /></el-icon></span>
+            <date-time-range
+                class="date-time-range"
+                :start-time="timeFilter.startTime"
+                :end-time="timeFilter.endTime"
+                :date-range="timeFilter.dateRangeValue"
+                ref="dateTimeRange"
+                @change="reload"
+            />
           </div>
           <div class="expand">
             <loading :loading="loadingDown"></loading>
@@ -50,12 +59,6 @@
             <div class="expand-cell" >
               <div class="expand-left">
                 <div class="chart-drawing" :id="`chart${props.row.id}`"></div>
-              </div>
-              <div class="expand-right">
-                <div class="expand-count">{{observedCount}}</div>
-                <div class="expand-observed-entities" :class="{'expand-observed-entities--disabled': disableToEntity}" @click="toEntityList(props.row)">
-                  Observed IPs&nbsp;<el-icon v-if="!disableToEntity"><Right /></el-icon>
-                </div>
               </div>
             </div>
           </div>
@@ -146,28 +149,28 @@ export default {
           label: this.$t('overall.name'),
           prop: 'name',
           show: true,
-          minWidth: 50,
+          width: 300,
           sortable: 'custom'
         }, {
           label: this.$t('tag.category'),
           prop: 'category',
           show: true,
-          minWidth: 50
+          width: 100
         }, {
           label: this.$t('tag.entityType'),
           prop: 'indicatorType',
           show: true,
-          minWidth: 50
+          width: 120
         }, {
           label: this.$t('tag.intention'),
           prop: 'intent',
           show: true,
-          minWidth: 30
+          width: 100
         }, {
           label: this.$t('tag.source'),
           prop: 'isBuiltIn',
           show: true,
-          minWidth: 30
+          width: 120
         }, {
           label: this.$t('overall.remark'),
           prop: 'description',
@@ -192,7 +195,9 @@ export default {
       selectIds: [], // 单行选中的id列表
       initExpandFlag: false, // 初始化时单行展开标志，false是未展开，true展开,
       myChartArray: [],
-      observedCount: 0,
+      observedIpCount: 0,
+      observedDomainCount: 0,
+      countDesc: '', // tag下拉中实体数量描述信息
       disableToEntity: false,
       tagIntent
     }
@@ -201,10 +206,31 @@ export default {
      * 添加vue3的setup，目的是添加/获取地址栏的参数
      */
   setup () {
-    const { startTime, endTime } = getNowTime(60 * 24 * 30)
-    const timeRange = ref([startTime, endTime])
-
     const { query } = useRoute()
+    /*// 获取url携带的range、startTime、endTime
+    const rangeParam = query.range
+    const startTimeParam = query.startTime
+    const endTimeParam = query.endTime
+
+    const dateRangeValue = rangeParam ? parseInt(rangeParam) : (DEFAULT_TIME_FILTER_RANGE.tag.activeEntity || 60)
+    const timeFilter = ref({ dateRangeValue })
+    if (!startTimeParam || !endTimeParam) {
+      const { startTime, endTime } = getNowTime(dateRangeValue)
+      timeFilter.value.startTime = getSecond(startTime)
+      timeFilter.value.endTime = getSecond(endTime)
+      // 如果没有时间参数，就将参数写入url
+      const newUrl = urlParamsHandler(window.location.href, useRoute().query, { startTime: timeFilter.value.startTime, endTime: timeFilter.value.endTime, range: dateRangeValue })
+      overwriteUrl(newUrl)
+    } else {
+      timeFilter.value.startTime = parseInt(startTimeParam)
+      timeFilter.value.endTime = parseInt(endTimeParam)
+    }*/
+
+    const dateRangeValue = DEFAULT_TIME_FILTER_RANGE.tag.activeEntity || 60
+    const timeFilter = ref({ dateRangeValue })
+    const { startTime, endTime } = getNowTime(dateRangeValue)
+    timeFilter.value.startTime = getSecond(startTime)
+    timeFilter.value.endTime = getSecond(endTime)
 
     // 展开行的id列表，只展开一行
     const expandedId = []
@@ -232,7 +258,7 @@ export default {
     const pageObj = ref(tempPageObj)
     const myChart = shallowRef(null)
     return {
-      timeRange,
+      timeFilter,
       expandedIds,
       pageObj,
       myChart
@@ -257,12 +283,6 @@ export default {
           }
           this.reloadUrl(expandPage)
         }
-
-        const dateParam = {
-          startTime: dateFormatToUTC(this.timeRange[0]),
-          endTime: dateFormatToUTC(this.timeRange[1])
-        }
-        this.reloadUrl(dateParam)
       } else {
         // 删除地址栏参数，然后删除缓存
         const newQuery = this.$route.query // 深拷贝路由数据
@@ -273,13 +293,15 @@ export default {
         this.reloadUrl(newQuery, 'cleanOldParams')
       }
     },
-    timeRange (newVal, oldVal) {
-      if (newVal) {
-        const dateParam = {
-          startTime: dateFormatToUTC(newVal[0]),
-          endTime: dateFormatToUTC(newVal[1])
+    timeFilter (n) {
+      const id = this.expandedIds[0] || null
+      if (id) {
+        const item = this.tableData.find(item => item.id === id)
+        if (this.disableToEntity) {
+          this.init(item, api.tagIndicatorTrend, api.tagIndicatorStatistics)
+        } else {
+          this.init(item, api.tagTrafficEntityTrend, api.tagTrafficEntityStatistics)
         }
-        this.reloadUrl(dateParam)
       }
     }
   },
@@ -297,6 +319,9 @@ export default {
         const t = vm.tagIntent.find(t => t.value === intent)
         return t ? t.name + '-list' : vm.tagIntent[0].name + '-list'
       }
+    },
+    observedCount () {
+      return this.observedIpCount + this.observedDomainCount
     }
   },
   mounted () {
@@ -330,8 +355,9 @@ export default {
         this.myChart = echarts.init(dom)
         // }
         this.chartOption = tagLineChartOption
-        this.chartOption.series = [
-          {
+        const series = []
+        if (item.indicatorType && item.indicatorType.indexOf('IP') > -1) {
+          series.push({
             type: 'line',
             symbol: 'circle',
             smooth: true,
@@ -355,8 +381,10 @@ export default {
               color: '#35ADDA'
             },
             data: data.map(t => { return [Number(t.statTime) * 1000, Number(t.ipIndicatorCount)] })
-          },
-          {
+          })
+        }
+        if (item.indicatorType && item.indicatorType.indexOf('Domain') > -1) {
+          series.push({
             type: 'line',
             symbol: 'circle',
             smooth: true,
@@ -366,7 +394,7 @@ export default {
                 borderWidth: 2
               }
             },
-            name: 'Domain Name',
+            name: this.$t('overall.domain'),
             stack: 'Total',
             lineStyle: {
               color: '#E48F3E',
@@ -380,8 +408,9 @@ export default {
               color: '#E48F3E'
             },
             data: data.map(t => { return [Number(t.statTime) * 1000, Number(t.domainIndicatorCount)] })
-          }
-        ]
+          })
+        }
+        this.chartOption.series = series
 
         this.chartOption.yAxis[0].axisLabel.formatter = (value) => {
           return unitConvert(value, 'number').join('')
@@ -398,6 +427,27 @@ export default {
         t.resize()
       })
     },
+    handleCountDesc () {
+      let desc = this.observedCount
+      // 全部实体
+      if (this.disableToEntity) {
+        if (this.observedCount < 2) {
+          desc += ` ${this.$t('tag.activeEntity2')}`
+        } else {
+          desc += ` ${this.$t('tag.activeEntities2')}`
+        }
+      } else { // 活跃实体
+        if (this.observedCount < 2) {
+          desc += ` ${this.$t('overall.entity2')}`
+        } else {
+          desc += ` ${this.$t('overall.entities2')}`
+        }
+      }
+      if (this.observedCount > 0) {
+        desc += `, IP ${this.observedIpCount}, ${this.$t('overall.domain')} ${this.observedDomainCount}`
+      }
+      return desc
+    },
     uniqueEntityObserved (item) {
       this.curExpendDataType = this.$t('tag.uniqueEntityObserved')
       this.curExpendDataTypeVal = 'uniqueEntityObserved'
@@ -409,7 +459,10 @@ export default {
         totalIndicatorsDom.style.cssText = ''
         document.getElementById('tagDropdown' + item.id).click()
       })
-      this.init(item, api.tagTrafficEntityTrend, api.tagTrafficEntityStatistics)
+      // 重置时间条件
+      this.$refs.dateTimeRange.quickChange(DEFAULT_TIME_FILTER_RANGE.tag.activeEntity || 60)
+
+      // this.init(item, api.tagTrafficEntityTrend, api.tagTrafficEntityStatistics)
     },
     totalIndicators (item) {
       this.curExpendDataType = this.$t('tag.totalIndicators')
@@ -422,7 +475,12 @@ export default {
         totalIndicatorsDom.style.cssText = 'color:var(--el-color-primary);font-weight: bold;'
         document.getElementById('tagDropdown' + item.id).click()
       })
-      this.init(item, api.tagIndicatorTrend, api.tagIndicatorStatistics)
+      // 重置时间条件
+      const dateRangeValue = DEFAULT_TIME_FILTER_RANGE.tag.totalEntity || 7 * 24 * 60
+      const { startTime, endTime } = getNowTime(dateRangeValue)
+      this.$refs.dateTimeRange.timeArrChange([startTime, endTime])
+
+      // this.init(item, api.tagIndicatorTrend, api.tagIndicatorStatistics)
     },
     /**
        * 进入页面判断是否需要展开表格
@@ -531,12 +589,23 @@ export default {
       }
       overwriteUrl(newUrl)
     },
+    reload (startTime, endTime, dateRangeValue) {
+      this.timeFilter = { startTime: getSecond(startTime), endTime: getSecond(endTime), dateRangeValue: dateRangeValue }
+      const { query } = this.$route
+      this.$store.commit('setTimeRangeArray', [this.timeFilter.startTime, this.timeFilter.endTime])
+      this.$store.commit('setTimeRangeFlag', dateRangeValue.value)
+
+      const newUrl = urlParamsHandler(window.location.href, query, {
+        startTime: this.timeFilter.startTime,
+        endTime: this.timeFilter.endTime,
+        range: dateRangeValue.value
+      })
+      overwriteUrl(newUrl)
+    },
     initLine (item, lineUrl) {
-      const dateRangeValue = DEFAULT_TIME_FILTER_RANGE.dashboard || 60
-      const { startTime, endTime } = getNowTime(dateRangeValue)
       const params = {
-        startTime: getSecond(startTime),
-        endTime: getSecond(endTime)
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime)
       }
       lineUrl = lineUrl || api.tagTrafficEntityTrend
       lineUrl = lineUrl.replace('{{name}}', item.name)
@@ -562,22 +631,16 @@ export default {
       })
     },
     initStatistics (item, statisticsUrl) {
-      const dateRangeValue = DEFAULT_TIME_FILTER_RANGE.dashboard || 60
-      const { startTime, endTime } = getNowTime(dateRangeValue)
-      const params = {
-        startTime: getSecond(startTime),
-        endTime: getSecond(endTime)
-      }
       statisticsUrl = statisticsUrl || api.tagTrafficEntityStatistics
       statisticsUrl = statisticsUrl.replace('{{name}}', item.name)
-      let observedCount = 0
-      axios.get(statisticsUrl, { params: params }).then(response => {
+      axios.get(statisticsUrl, { params: { startTime: 1, endTime: 9999999999 } }).then(response => { // TODO 计数统计暂时不限制时间
         const res = response.data
         if (response.status === 200) {
-          res.data.result.forEach(item => {
-            observedCount = observedCount + item.count
-          })
-          this.observedCount = observedCount
+          const ipFind = res.data.result.find(item => item.type === 'IP')
+          this.observedIpCount = ipFind ? ipFind.count : 0
+          const domainFind = res.data.result.find(item => item.type === 'Domain')
+          this.observedDomainCount = domainFind ? domainFind.count : 0
+          this.countDesc = this.handleCountDesc()
         } else {
           this.errorMsg = this.errorMsgHandler(res)
         }

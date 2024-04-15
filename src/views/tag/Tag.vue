@@ -191,7 +191,7 @@ export default {
           type: 'warning'
         }).then(() => {
           this.toggleLoading(true)
-          axios.delete(api.tag + ids).then(response => {
+          axios.delete(api.tag + '?id=' + ids).then(response => {
             if (response.status === 200) {
               this.delFlag = true
               this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })

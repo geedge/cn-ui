@@ -1,5 +1,6 @@
 @use 'element-plus/theme-chalk/src/select.scss' as *;
 .date-range-box {
+  position: relative;
   font-size: 14px;
   border-radius: var(--el-border-radius-base);
   display: flex;

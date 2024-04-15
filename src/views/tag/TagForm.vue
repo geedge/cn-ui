@@ -229,20 +229,6 @@
             </transition>
           </template>
         </el-collapse-item>
-        <el-collapse-item name="3" class="enable-form__mt">
-          <template #title>
-            <div class="form-sub-title">{{ $t('tag.enable') }}</div>
-          </template>
-
-              <el-switch class="card-enable"
-                         v-model="editObject.status"
-                         active-color="#38ACD2"
-                         inactive-color="#C0CEDB"
-                         :active-value="1"
-                         :inactive-value="0"
-              >
-              </el-switch>
-        </el-collapse-item>
       </el-collapse>
     </div>
     <div class="edit-tag__footer">
@@ -1451,7 +1437,7 @@ export default {
       third: itemListHeight.noData
     }
 
-    const stepHeights = ref([stepHeightConstant.first, stepHeightConstant.second, stepHeightConstant.third, stepHeightConstant.collapse])
+    const stepHeights = ref([stepHeightConstant.first, stepHeightConstant.second, stepHeightConstant.third])
 
     // 没上传过文件的提示
     const uploadErrorTip = ref('')
@@ -1512,18 +1498,6 @@ export default {
 </script>
 
 <style lang="scss">
-.el-overlay-message-box, .el-message-box {
-  padding: 0 !important;
-}
-.el-overlay-message-box {
-  text-align: center !important;
-}
-.is-message-box .el-overlay-message-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .del-model {
   &.el-message-box {
     max-width: 480px !important;

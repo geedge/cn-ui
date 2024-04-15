@@ -22,5 +22,8 @@ const DEFAULT_TIME_FILTER_RANGE = {
     behaviorPattern: 60 * 24 * 7 // 实体详情--IP--行为模式
   },
   detection: 60, // 事件日志列表
-  tag:60//标签列表
+  tag: { // 标签列表
+    activeEntity: 60, // 标签table下拉--活跃实体
+    totalEntity: 7 * 24 * 60 // 标签table下拉--全部实体
+  }
 }
