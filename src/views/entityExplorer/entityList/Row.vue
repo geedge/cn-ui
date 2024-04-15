@@ -188,7 +188,7 @@ import relatedServer from '@/mixins/relatedServer'
 import Loading from '@/components/common/Loading'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { entityDefaultColor } from '@/utils/constants'
+import { entityDefaultColor, intentColor } from '@/utils/constants'
 import _ from 'lodash'
 import { getTagColor, formatTags } from '@/utils/tools'
 
@@ -285,18 +285,14 @@ export default {
           url = api.entity.entityList.ipTags
           break
         }
-        case ('app'): {
-          url = api.entity.entityList.appTags
-          break
-        }
       }
-      if (this.entity.entityType !== 'subscriber_id') {
+      if (this.entity.entityType === 'domain' || this.entity.entityType === 'ip') {
         axios.get(`${url}?resource=${this.entity.entityValue}`).then(responese => {
           const res = responese.data
           if (responese.status === 200) {
             formatTags(res.data, this.entity.entityType, this.levelTwoTags)
-            if (_.isArray(res.data.userDefinedTags)) {
-              this.levelTwoTags = _.concat(this.levelTwoTags, res.data.userDefinedTags.map(tag => ({ value: tag.tagValue, color: tag.knowledgeBase ? tag.knowledgeBase.color : entityDefaultColor })))
+            if (_.isArray(res.data.tags)) {
+              this.levelTwoTags = _.concat(this.levelTwoTags, res.data.tags.map(tag => ({ value: tag.name, color: intentColor[tag.intent] || entityDefaultColor })))
             }
             this.hideTagArea = _.isEmpty(this.levelTwoTags)
           }

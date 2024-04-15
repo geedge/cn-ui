@@ -67,7 +67,7 @@ import {
   entityType,
   riskLevelMapping,
   entityDefaultColor,
-  riskLevelColor1
+  riskLevelColor1, intentColor
 } from '@/utils/constants'
 import { selectElementText, copySelectionText, getTagColor, formatTags } from '@/utils/tools'
 import { ref } from 'vue'
@@ -146,8 +146,8 @@ export default {
           const res = tagData.data
           if (tagData.status === 200) {
             formatTags(res.data, this.entity.entityType, this.levelTwoTags)
-            if (_.isArray(res.data.userDefinedTags)) {
-              this.levelTwoTags = _.concat(this.levelTwoTags, res.data.userDefinedTags.map(tag => ({ value: tag.tagValue, color: tag.knowledgeBase ? tag.knowledgeBase.color : entityDefaultColor })))
+            if (_.isArray(res.data.tags)) {
+              this.levelTwoTags = _.concat(this.levelTwoTags, res.data.tags.map(tag => ({ value: tag.name, color: intentColor[tag.intent] || entityDefaultColor })))
             }
             this.hideTagArea = _.isEmpty(this.levelTwoTags)
           } else {

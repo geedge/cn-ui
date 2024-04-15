@@ -2,7 +2,7 @@ import _ from 'lodash'
 import i18n from '@/i18n'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { entityDefaultColor } from '@/utils/constants'
+import { entityDefaultColor, intentColor } from '@/utils/constants'
 import { formatTags } from '@/utils/tools'
 
 export default class Node {
@@ -82,8 +82,8 @@ export default class Node {
     const tags = await this.queryTags(entityType, entityName)
     let _tags = []
     formatTags(tags, entityType, _tags)
-    if (_.isArray(tags.userDefinedTags)) {
-      _tags = _.concat(_tags, tags.userDefinedTags.map(tag => ({ value: tag.tagValue, color: tag.knowledgeBase ? tag.knowledgeBase.color : entityDefaultColor })))
+    if (_.isArray(tags.tags)) {
+      _tags = _.concat(_tags, tags.tags.map(tag => ({ value: tag.name, color: intentColor[tag.intent] || entityDefaultColor })))
     }
     this.myData.tags = _tags
 

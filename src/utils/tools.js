@@ -1528,7 +1528,7 @@ export const changeTimestampToTime = (timestamp) => {
  */
 export const formatTags = (data, type, list) => {
   Object.keys(data).forEach(k => {
-    if (k !== 'userDefinedTags' && data[k]) {
+    if (k !== 'tags' && data[k]) {
       if (_.isArray(data[k])) {
         data[k].forEach(k3 => {
           const find = entityDetailTags[type].find(t => t.name === 'vpnServiceName')
@@ -1562,26 +1562,15 @@ export const formatTagsOfDetails = (data, type, list) => {
         status: r[k].isValid,
         intelligenceContent: []
       }
-      if (k === 'userDefinedTag') {
+      if (k === 'tags') {
         aggregation.intelligenceContent.push({ key: k, value: r[k].tagValue, type: 'normal', color: r[k].knowledgeBase ? (r[k].knowledgeBase.color || entityDefaultColor) : entityDefaultColor })
-      } else {
-        if (_.isArray(r[k])) {
-          r[k].forEach(k3 => {
-            const find = entityDetailTags[type].find(t => t.name === k3.vpnServiceName)
-            if (find) {
-              aggregation.intelligenceContent.push({ key: 'vpnServiceName', value: tagValueHandler(k3.vpnServiceName), type: find.type })
-            } else {
-              aggregation.intelligenceContent.push({ key: 'vpnServiceName', value: tagValueHandler(k3.vpnServiceName), color: k3.knowledgeBase ? (k3.knowledgeBase.color || entityDefaultColor) : entityDefaultColor })
-            }
-          })
-        } else {
-          Object.keys(r[k]).forEach(k2 => {
-            const find = entityDetailTags[type].find(t => t.name === k2)
-            if (find) {
-              aggregation.intelligenceContent.push({ key: k2, value: tagValueHandler(r[k][k2]), type: find.type })
-            }
-          })
-        }
+      } else if (!_.isArray(r[k])) {
+        Object.keys(r[k]).forEach(k2 => {
+          const find = entityDetailTags[type].find(t => t.name === k2)
+          if (find) {
+            aggregation.intelligenceContent.push({ key: k2, value: tagValueHandler(r[k][k2]), type: find.type })
+          }
+        })
       }
       if (aggregation.intelligenceContent.length > 0) {
         list.push(aggregation)

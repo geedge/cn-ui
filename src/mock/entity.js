@@ -271,18 +271,33 @@ if (openMock) {
       psiphon3Ip: {
         type: 1
       },
-      userDefinedTags: [
+      tags: [
         {
-          id: 1,
-          tagValue: 'userTag1'
+          id: '08b2a4cd-1c38-4be1-b641-8e5b607e2077',
+          category: 'VPN',
+          name: 'Psiphon',
+          intent: 'Malicious',
+          indicatorType: 'VPN Type',
+          description: 'descXXX',
+          isBuiltIn: 1
         },
         {
-          id: 2,
-          tagValue: 'userTag2'
+          id: '08b2a4cd-1c38-4be1-b641-8e5b607e2078',
+          category: 'VPN',
+          name: 'Psiphon2',
+          intent: 'Malicious',
+          indicatorType: 'VPN Type',
+          description: 'descXXX',
+          isBuiltIn: 1
         },
         {
-          id: 3,
-          tagValue: 'userTag3'
+          id: '08b2a4cd-1c38-4be1-b641-8e5b607e2079',
+          category: 'VPN',
+          name: 'Psiphon3',
+          intent: 'Malicious',
+          indicatorType: 'VPN Type',
+          description: 'descXXX',
+          isBuiltIn: 0
         }
       ]
     }
@@ -562,10 +577,16 @@ if (openMock) {
           darkweb: {
             nodeType: 'mtproxy'
           },
-          userDefinedTags: [
+          tags: [
             {
               id: 1,
-              tagValue: '门户网站'
+              name: '门户网站',
+              intent: 'Benign'
+            },
+            {
+              id: 2,
+              name: '门户网站2',
+              intent: 'Malicious'
             }
           ]
         }
@@ -587,10 +608,10 @@ if (openMock) {
             confidence: 88,
             confidenceLevel: 'confirmed'
           },
-          userDefinedTags: [
+          tags: [
             {
               id: 1,
-              tagValue: '门户网站'
+              name: '门户网站'
             }
           ]
         }
@@ -598,14 +619,14 @@ if (openMock) {
       }
       case ('app'): {
         result = {
-          userDefinedTags: [
+          tags: [
             {
               id: 1,
-              tagValue: '门户网站'
+              name: '门户网站'
             },
             {
               id: 2,
-              tagValue: '新闻软件'
+              name: '新闻软件'
             }
           ]
         }
