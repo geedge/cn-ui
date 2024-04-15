@@ -837,7 +837,8 @@ export const tagLineChartOption = {
         // formatter: function (value) {
         //   return unitConvert(value, unitTypes.number).join('')
         // }
-      }
+      },
+      minInterval:1
     }
   ],
   series: []
