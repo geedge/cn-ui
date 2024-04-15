@@ -160,13 +160,14 @@ export default {
       this.getTableData(params)
     },
     search (params) {
+      this.name = params.q
+      params = { name: this.name }
       if (this.intent) {
         params = { ...params, intent: this.intent }
       }
       if (this.category) {
         params = { ...params, category: this.category }
       }
-      this.name = params.q
       this.pageObj.pageNo = 1
       this.getTableData(params)
     },

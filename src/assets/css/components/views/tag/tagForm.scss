@@ -309,6 +309,9 @@ $color-mousemove-cursor: #D3D0D8;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          .el-form-item {
+            margin-bottom: 0;
+          }
         }
 
         .imported-data-item-edit__input {
@@ -1183,7 +1186,7 @@ $color-mousemove-cursor: #D3D0D8;
   }
 }
 
-.info {
+.unknow {
   background-color: rgb(119, 131, 145) // 需要与js里的knowledgeBaseColor进行匹配，故保留
 }
 

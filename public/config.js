@@ -21,5 +21,6 @@ const DEFAULT_TIME_FILTER_RANGE = {
     performanceEvent: 60 * 24 * 7, // 实体详情--通用--性能事件
     behaviorPattern: 60 * 24 * 7 // 实体详情--IP--行为模式
   },
-  detection: 60 // 事件日志列表
+  detection: 60, // 事件日志列表
+  tag:60//标签列表
 }

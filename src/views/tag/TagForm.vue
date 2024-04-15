@@ -162,14 +162,28 @@
                     </td>
                     <td class="imported-data-value" :title="d.entityType">
                       <el-form-item v-if="editIndex === i || (addEditFlag && d.entityValue === '' && d.entityType === '')" prop="entityType">
-                        <span class="imported-data-item-edit__input">
-                          <el-input v-model="editTagForm.entityType" @blur="onBlurTagItem(i)" size="mini"></el-input>
-                        </span>
+                        <el-select v-model="editTagForm.entityType"
+                                   class="form-select__enable"
+                                   placeholder=" "
+                                   popper-class="form-select-popper"
+                                   @change="onBlurTagItem(i)"
+                                   @blur="onBlurTagItem(i)"
+                        >
+                          <template v-for="type in tagType" :key="type.name">
+                            <el-option :label="type.label" :value="type.value"></el-option>
+                          </template>
+                        </el-select>
                       </el-form-item>
                       <span v-else>{{ d.entityType }}</span>
                     </td>
                     <td class="imported-data-msg" :title="d.msg">
-                      <i :class="d.isValid === 1 ? 'el-icon-success' : (d.isValid === 0 ? 'el-icon-error' : '')"></i>&nbsp;&nbsp;{{(d.isValid === 1 && (d.msg==='' || !d.msg) )? $t('overall.success'): d.msg }}
+                      <el-icon v-if="d.isValid === 0"  style="vertical-align: middle;">
+                        <CircleCloseFilled style="color:#E26154;" />
+                      </el-icon>
+                      <el-icon v-else-if="d.isValid === 1" style="vertical-align: middle;">
+                        <CircleCheckFilled style="color:#749F4D;" />
+                      </el-icon>
+                      {{(d.isValid === 1 && (d.msg==='' || !d.msg) )? $t('overall.success'): d.msg }}
                     </td>
                     <!--返回和保存按钮:修改记录-->
                     <td v-if="backEditFlag && !addEditFlag && editIndex === i" class="imported-data-btn">
@@ -1254,6 +1268,11 @@ export default {
         if (response.status === 200) {
           if (!response.data.data) {
             throw new Error('No data found, id: ' + this.id)
+          }
+          if (response.data.data.itemList) {
+            response.data.data.itemList.forEach(item => {
+              item.isValid = 1
+            })
           }
           this.editObject = response.data.data
           if (response.data.data.intent) {

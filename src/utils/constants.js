@@ -322,7 +322,7 @@ export const tagIntentOptions = [
     label: 'tag.intent.benign'
   },
   {
-    value: 'Unknown',
+    value: 'Unknow',
     label: 'tag.intent.unknown'
   }
 ]
@@ -498,29 +498,11 @@ export const knowledgeBaseCategory = [
   }
 ]
 
-export const tagIntentColor = [
-  {
-    label: 'tag.intent.unknown',
-    name: 'unknow',
-    intent: 'Unknow'
-  },
-  {
-    label: 'tag.intent.benign',
-    name: 'benign',
-    intent: 'Benign'
-  },
-  {
-    label: 'tag.intent.malicious',
-    name: 'malicious',
-    intent: 'Malicious'
-  }
-]
-
 export const tagIntent = [
   {
     label: 'tag.intent.unknown',
     value: 'Unknow',
-    name: 'info'
+    name: 'unknow'
   },
   {
     label: 'tag.intent.benign',

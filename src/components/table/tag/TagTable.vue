@@ -90,7 +90,7 @@
           <span v-if="item.prop === 'isBuiltIn'">
             <span>{{ getIsBuiltIn(scope.row.isBuiltIn) }}</span>
           </span>
-        <span v-else-if="item.prop === 'intent'" class="type-tag" :class="colorIntent(scope.row[item.prop])">{{scope.row[item.prop]}}</span>
+        <span v-else-if="item.prop === 'intent'" class="type-tag" :class="colorIntent(scope.row[item.prop])">{{intentText(scope.row[item.prop])}}</span>
         <span v-else>{{ scope.row[item.prop] || '-' }}</span>
       </template>
     </el-table-column>
@@ -107,10 +107,10 @@ import table from '@/mixins/table'
 import Loading from '@/components/common/Loading'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { storageKey, tagIntentColor, chartColor3 } from '@/utils/constants'
+import { storageKey, tagIntent, chartColor3 } from '@/utils/constants'
 import { urlParamsHandler, overwriteUrl, headerCellClass } from '@/utils/tools'
 import { ref, shallowRef } from 'vue'
-import { dateFormatToUTC, getNowTime } from '@/utils/date-util'
+import { dateFormatToUTC, getNowTime, getSecond } from '@/utils/date-util'
 import chartDetectionPagination from '@/views/charts/charts/chartDetectionPagination'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import { useRoute } from 'vue-router'
@@ -194,7 +194,7 @@ export default {
       myChartArray: [],
       observedCount: 0,
       disableToEntity: false,
-      tagIntentColor
+      tagIntent
     }
   },
   /**
@@ -284,11 +284,18 @@ export default {
     }
   },
   computed: {
+    intentText () {
+      const vm = this
+      return function (intent) {
+        const t = vm.tagIntent.find(t => t.value === intent)
+        return this.$t(t.label)
+      }
+    },
     colorIntent () {
       const vm = this
       return function (intent) {
-        const t = vm.tagIntentColor.find(t => t.intent === intent)
-        return t ? t.name + '-list' : vm.tagIntentColor[0].name + '-list'
+        const t = vm.tagIntent.find(t => t.value === intent)
+        return t ? t.name + '-list' : vm.tagIntent[0].name + '-list'
       }
     }
   },
@@ -525,9 +532,11 @@ export default {
       overwriteUrl(newUrl)
     },
     initLine (item, lineUrl) {
+      const dateRangeValue = DEFAULT_TIME_FILTER_RANGE.dashboard || 60
+      const { startTime, endTime } = getNowTime(dateRangeValue)
       const params = {
-        // startTime: getSecond(this.timeFilter.startTime),
-        // endTime: getSecond(this.timeFilter.endTime)
+        startTime: getSecond(startTime),
+        endTime: getSecond(endTime)
       }
       lineUrl = lineUrl || api.tagTrafficEntityTrend
       lineUrl = lineUrl.replace('{{name}}', item.name)
@@ -537,10 +546,7 @@ export default {
         if (response.status === 200) {
           this.showError = false
           this.isNoData = res.data.result.length === 0
-
-          if (!this.isNoData) {
-            this.echartsInit(res.data.result, item, '')
-          }
+          this.echartsInit(res.data.result, item, '')
         } else {
           this.isNoData = false
           this.showError = true
@@ -556,9 +562,11 @@ export default {
       })
     },
     initStatistics (item, statisticsUrl) {
+      const dateRangeValue = DEFAULT_TIME_FILTER_RANGE.dashboard || 60
+      const { startTime, endTime } = getNowTime(dateRangeValue)
       const params = {
-        // startTime: getSecond(this.timeFilter.startTime),
-        // endTime: getSecond(this.timeFilter.endTime)
+        startTime: getSecond(startTime),
+        endTime: getSecond(endTime)
       }
       statisticsUrl = statisticsUrl || api.tagTrafficEntityStatistics
       statisticsUrl = statisticsUrl.replace('{{name}}', item.name)
