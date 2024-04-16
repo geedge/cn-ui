@@ -660,6 +660,7 @@ export default {
     dropExpandChange (row, expandedRows, flag) {
       this.curExpendDataType = this.$t('tag.uniqueEntityObserved')
       this.curExpendDataTypeVal = 'uniqueEntityObserved'
+      this.disableToEntity = false
       this.expandedIds = []
       clearInterval(this.interval)
       if (expandedRows.length > 0 && row) {
