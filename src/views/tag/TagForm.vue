@@ -23,7 +23,7 @@
                          :class="(!!editObject.id || (uploaded && !importedDataNoData)) ? 'form-select__disable' : 'form-select__enable'"
                          placeholder=" "
                          popper-class="form-select-popper"
-                         :disabled="!!editObject.id || (uploaded && !importedDataNoData)"
+                         :disabled="!!editObject.id"
               >
                 <template v-for="category in tagCategoryOptions" :key="category.value">
                   <el-option :label="category.label" :value="category.value"></el-option>
@@ -706,7 +706,6 @@ export default {
     uploadTip () {
       if (!this.isShowUploadTips) {
         this.isShowUploadTips = true
-        const self = this
         if (this.importedData.length > 0) {
           ElMessageBox.confirm(this.$t('tip.uploadFile'), {
             confirmButtonText: this.$t('tip.confirm'),
@@ -1496,102 +1495,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.del-model {
-  &.el-message-box {
-    max-width: 480px !important;
-  }
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 0 !important;
-  width: 480px !important;
-  height: 190px;
-
-  .el-message-box__header {
-    display: flex;
-    flex-direction: row;
-    border-bottom: 1px solid #eee;
-    height: 42px;
-    background: #F7F7F7;
-    box-shadow: 0 1px 0 0 rgba(53, 54, 54, 0.08);
-    padding-left: 21px;
-    padding-top: 10px;
-    padding-bottom: 14px;
-
-    .el-message-box__headerbtn {
-      display: flex !important;
-      flex-direction: row-reverse;
-      justify-content: center;
-      align-items: center;
-      font-size: 10px;
-      line-height: 10px;
-      padding-right: 10px !important;
-
-      i {
-        width: 10px;
-        height: 10px;
-      }
-    }
-
-    .el-message-box__title {
-      font-size: 14px !important;
-      color: #353636;
-      letter-spacing: 0;
-      font-weight: 400;
-    }
-  }
-
-  .el-message-box__content {
-    height: 96px;
-    font-size: 14px;
-    color: #353636;
-    letter-spacing: 0;
-    line-height: 22px;
-    font-weight: 400;
-    padding-top: 9px;
-    padding-right: 20px;
-    padding-left: 21px;
-
-    .el-message-box__message {
-      padding-left: 0 !important;
-      padding-right: 0 !important;
-    }
-  }
-
-  .el-message-box__btns {
-    height: 52px;
-    border-top: 1px solid #eee;
-    box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.07);
-    padding: 13px 1px 12px 0;
-
-    .el-button {
-      font-size: 12px;
-    }
-    .el-button--small {
-      padding: 8px 21px !important;
-      line-height: 12px;
-      font-family: NotoSansHans-Medium !important;
-      font-size: 12px;
-      font-weight: 500;
-      min-height: 28px;
-    }
-
-    .el-button:nth-child(1) {
-      margin-right: 20px;
-      width: 80px;
-      height: 28px;
-      color: #353636;
-    }
-
-    .el-button:nth-child(2) {
-      width: 80px;
-      height: 28px;
-      margin-right: 20px;
-      margin-left: 0 !important;
-      background-color: #2d8cf0;
-      border-color: #2d8cf0;
-    }
-  }
-}
-</style>
