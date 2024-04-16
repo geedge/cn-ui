@@ -673,6 +673,10 @@ export default {
           }
         })
       }
+      this.$nextTick(() => {
+        // 重置时间条件
+        this.$refs.dateTimeRange.quickChange(DEFAULT_TIME_FILTER_RANGE.tag.activeEntity || 60)
+      })
     },
     getIsBuiltIn (isBuiltIn) {
       if (isBuiltIn === 1) {
