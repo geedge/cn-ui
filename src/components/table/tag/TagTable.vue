@@ -460,7 +460,7 @@ export default {
         document.getElementById('tagDropdown' + item.id).click()
       })
       // 重置时间条件
-      this.$refs.dateTimeRange.quickChange(DEFAULT_TIME_FILTER_RANGE.tag.activeEntity || 60)
+      this.$refs.dateTimeRange && this.$refs.dateTimeRange.quickChange(DEFAULT_TIME_FILTER_RANGE.tag.activeEntity || 60)
 
       // this.init(item, api.tagTrafficEntityTrend, api.tagTrafficEntityStatistics)
     },
@@ -679,7 +679,7 @@ export default {
       }
       this.$nextTick(() => {
         // 重置时间条件
-        this.$refs.dateTimeRange.quickChange(DEFAULT_TIME_FILTER_RANGE.tag.activeEntity || 60)
+        this.$refs.dateTimeRange && this.$refs.dateTimeRange.quickChange(DEFAULT_TIME_FILTER_RANGE.tag.activeEntity || 60)
       })
     },
     getIsBuiltIn (isBuiltIn) {

@@ -219,9 +219,6 @@ export default {
         returnValue()
       }
     })
-    watch(() => props.startTime, (newVal) => {
-      console.info(newVal)
-    })
 
     /**
      * 监测下拉框，一旦隐藏，则设置其位置靠最左边
