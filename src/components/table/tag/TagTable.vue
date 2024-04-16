@@ -631,9 +631,13 @@ export default {
       })
     },
     initStatistics (item, statisticsUrl) {
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime)
+      }
       statisticsUrl = statisticsUrl || api.tagTrafficEntityStatistics
       statisticsUrl = statisticsUrl.replace('{{name}}', item.name)
-      axios.get(statisticsUrl, { params: { startTime: 1, endTime: 9999999999 } }).then(response => { // TODO 计数统计暂时不限制时间
+      axios.get(statisticsUrl, { params }).then(response => {
         const res = response.data
         if (response.status === 200) {
           const ipFind = res.data.result.find(item => item.type === 'IP')
