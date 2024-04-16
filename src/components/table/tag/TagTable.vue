@@ -165,7 +165,7 @@ export default {
           label: this.$t('tag.intention'),
           prop: 'intent',
           show: true,
-          width: 100
+          width: 140
         }, {
           label: this.$t('tag.source'),
           prop: 'isBuiltIn',
