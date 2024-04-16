@@ -43,7 +43,7 @@
                 </ul>
               </el-row>
             </el-popover>
-            <span class="expand-observed-entities" :class="{'expand-observed-entities--disabled': disableToEntity}" @click="toEntityList(props.row)">{{countDesc}}&nbsp;<el-icon v-if="!disableToEntity"><Right /></el-icon></span>
+            <span class="expand-observed-entities" :class="{'expand-observed-entities--disabled': disableToEntity}" @click="toEntityList(props.row)">{{countDesc}}&nbsp;<el-icon v-if="!disableToEntity && !showError"><Right /></el-icon></span>
             <date-time-range
                 class="date-time-range"
                 :start-time="timeFilter.startTime"
@@ -199,6 +199,7 @@ export default {
       observedDomainCount: 0,
       countDesc: '', // tag下拉中实体数量描述信息
       disableToEntity: false,
+      showError: false,
       tagIntent
     }
   },
@@ -350,7 +351,7 @@ export default {
     },
     echartsInit (data, item, type) {
       const dom = document.getElementById(`chart${item.id}`)
-      if (dom) {
+      if (dom && item) {
         // if (!this.myChart) {
         this.myChart = echarts.init(dom)
         // }
@@ -458,10 +459,10 @@ export default {
         uniqueEntityObservedDom.style.cssText = 'color:var(--el-color-primary);font-weight: bold;'
         totalIndicatorsDom.style.cssText = ''
         document.getElementById('tagDropdown' + item.id).click()
-      })
-      // 重置时间条件
-      this.$refs.dateTimeRange && this.$refs.dateTimeRange.quickChange(DEFAULT_TIME_FILTER_RANGE.tag.activeEntity || 60)
 
+        // 重置时间条件
+        this.$refs.dateTimeRange && this.$refs.dateTimeRange.quickChange(DEFAULT_TIME_FILTER_RANGE.tag.activeEntity || 60)
+      })
       // this.init(item, api.tagTrafficEntityTrend, api.tagTrafficEntityStatistics)
     },
     totalIndicators (item) {
@@ -474,12 +475,12 @@ export default {
         uniqueEntityObservedDom.style.cssText = ''
         totalIndicatorsDom.style.cssText = 'color:var(--el-color-primary);font-weight: bold;'
         document.getElementById('tagDropdown' + item.id).click()
-      })
-      // 重置时间条件
-      const dateRangeValue = DEFAULT_TIME_FILTER_RANGE.tag.totalEntity || 7 * 24 * 60
-      const { startTime, endTime } = getNowTime(dateRangeValue)
-      this.$refs.dateTimeRange.timeArrChange([startTime, endTime])
 
+        // 重置时间条件
+        const dateRangeValue = DEFAULT_TIME_FILTER_RANGE.tag.totalEntity || 7 * 24 * 60
+        const { startTime, endTime } = getNowTime(dateRangeValue)
+        this.$refs.dateTimeRange && this.$refs.dateTimeRange.timeArrChange([startTime, endTime])
+      })
       // this.init(item, api.tagIndicatorTrend, api.tagIndicatorStatistics)
     },
     /**
@@ -619,13 +620,16 @@ export default {
         } else {
           this.isNoData = false
           this.showError = true
-          this.errorMsg = this.errorMsgHandler(res)
+          this.$message.error(this.errorMsgHandler(res))
+          this.countDesc = ''
         }
       }).catch(e => {
         console.error(e)
         this.isNoData = false
+        this.$message.error(this.errorMsgHandler(e))
         this.showError = true
-        this.errorMsg = this.errorMsgHandler(e)
+        this.myChart && this.myChart.clear()
+        this.countDesc = ''
       }).finally(() => {
         this.loadingDown = false
       })
@@ -646,11 +650,15 @@ export default {
           this.observedDomainCount = domainFind ? domainFind.count : 0
           this.countDesc = this.handleCountDesc()
         } else {
-          this.errorMsg = this.errorMsgHandler(res)
+          this.showError = true
+          this.$message.error(this.errorMsgHandler(res))
+          this.countDesc = ''
         }
       }).catch(e => {
         console.error(e)
-        this.errorMsg = this.errorMsgHandler(e)
+        this.showError = true
+        this.$message.error(this.errorMsgHandler(e))
+        this.countDesc = ''
       }).finally(() => {
       })
     },
