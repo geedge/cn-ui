@@ -322,8 +322,8 @@ export const tagIntentOptions = [
     label: 'tag.intent.benign'
   },
   {
-    value: 'Unknow',
-    label: 'tag.intent.unknown'
+    value: 'Info',
+    label: 'tag.intent.info'
   }
 ]
 
@@ -500,9 +500,9 @@ export const knowledgeBaseCategory = [
 
 export const tagIntent = [
   {
-    label: 'tag.intent.unknown',
-    value: 'Unknow',
-    name: 'unknow'
+    label: 'tag.intent.info',
+    value: 'Info',
+    name: 'info'
   },
   {
     label: 'tag.intent.benign',

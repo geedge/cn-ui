@@ -311,7 +311,7 @@ export default {
       const vm = this
       return function (intent) {
         const t = vm.tagIntent.find(t => t.value === intent)
-        return this.$t(t.label)
+        return t ? this.$t(t.label) : ''
       }
     },
     colorIntent () {

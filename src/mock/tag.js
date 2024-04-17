@@ -111,7 +111,7 @@ if (openMock) {
             name: 'tag246',
             category: 'categoty1',
             indicatorType: 'IP,Domain',
-            intent: 'Unknow',
+            intent: 'Info',
             description: ' tag1 description',
             isBuiltIn: 1,
             createdTime: 1685412014,
