@@ -428,25 +428,61 @@ export default {
         t.resize()
       })
     },
-    handleCountDesc () {
-      let desc = this.observedCount
-      // 全部实体
-      if (this.disableToEntity) {
-        if (this.observedCount < 2) {
-          desc += ` ${this.$t('tag.activeEntity2')}`
-        } else {
-          desc += ` ${this.$t('tag.activeEntities2')}`
+    handleCountDesc (item) {
+      let desc = ''
+      const hasIp = item.indicatorType && item.indicatorType.indexOf('IP') > -1
+      const hasDomain = item.indicatorType && item.indicatorType.indexOf('Domain') > -1
+      // IP、domain两种实体时，增加total描述
+      if (hasIp && hasDomain) {
+        if (this.disableToEntity) {
+          if (this.observedCount < 2) {
+            desc += `${this.observedCount} ${this.$t('overall.entity2')}`
+          } else {
+            desc += `${this.observedCount} ${this.$t('overall.entities2')}`
+          }
+        } else { // 活跃实体
+          if (this.observedCount < 2) {
+            desc += `${this.observedCount} ${this.$t('tag.activeEntity2')}`
+          } else {
+            desc += `${this.observedCount} ${this.$t('tag.observedEntities2')}`
+          }
         }
-      } else { // 活跃实体
-        if (this.observedCount < 2) {
-          desc += ` ${this.$t('overall.entity2')}`
-        } else {
-          desc += ` ${this.$t('overall.entities2')}`
+        if (this.observedCount > 0) {
+          desc += `, IP ${this.observedIpCount}, ${this.$t('overall.domain2')} ${this.observedDomainCount}`
+        }
+      } else {
+        // 只有单种实体时，单个描述
+        if (this.disableToEntity) {
+          if (hasIp) {
+            if (this.observedIpCount < 2) {
+              desc += `${this.observedIpCount} IP`
+            } else {
+              desc += `${this.observedIpCount} ${this.$t('overall.ips')}`
+            }
+          } else if (hasDomain) {
+            if (this.observedDomainCount < 2) {
+              desc += `${this.observedDomainCount} ${this.$t('overall.domain2')}`
+            } else {
+              desc += `${this.observedDomainCount} ${this.$t('overall.domains2')}`
+            }
+          }
+        } else { // 活跃实体
+          if (hasIp) {
+            if (this.observedIpCount < 2) {
+              desc += `${this.observedIpCount} ${this.$t('tag.observedIp2')}`
+            } else {
+              desc += `${this.observedIpCount} ${this.$t('tag.observedIps2')}`
+            }
+          } else if (hasDomain) {
+            if (this.observedDomainCount < 2) {
+              desc += `${this.observedDomainCount} ${this.$t('tag.observedDomain2')}`
+            } else {
+              desc += `${this.observedDomainCount} ${this.$t('tag.observedDomains2')}`
+            }
+          }
         }
       }
-      if (this.observedCount > 0) {
-        desc += `, IP ${this.observedIpCount}, ${this.$t('overall.domain')} ${this.observedDomainCount}`
-      }
+
       return desc
     },
     uniqueEntityObserved (item) {
@@ -648,7 +684,7 @@ export default {
           this.observedIpCount = ipFind ? ipFind.count : 0
           const domainFind = res.data.result.find(item => item.type === 'Domain')
           this.observedDomainCount = domainFind ? domainFind.count : 0
-          this.countDesc = this.handleCountDesc()
+          this.countDesc = this.handleCountDesc(item)
         } else {
           this.showError = true
           this.$message.error(this.errorMsgHandler(res))
