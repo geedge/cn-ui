@@ -1398,7 +1398,13 @@ export function getTagColor (color) {
   if (color) {
     let backgroundColor = ''
     if (color.indexOf('rgb(') > -1) {
-      backgroundColor = color.replace('rgb(', 'rgba(').replace(')', ',0.06)')
+      color = color.replace(/\s+/g, '')
+      if (color === 'rgb(119,131,145)') {
+        // 此为info原来的颜色，修改为统一的info颜色
+        backgroundColor = 'var(--el-fill-color-light)'
+      } else {
+        backgroundColor = color.replace('rgb(', 'rgba(').replace(')', ',0.06)')
+      }
     }
     return `color: ${color};border-color: ${color};background-color: ${backgroundColor};`
   }
