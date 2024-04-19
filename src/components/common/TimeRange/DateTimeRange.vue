@@ -58,8 +58,9 @@
               class="date-range-panel-content date-range-panel-content-right"
           >
             <div class="date-range-title">{{$t('dateTime.relativeTimeRanges')}}</div>
-            <ul class="date-range-item">
+            <ul class="date-range-item" :style="{flex: noMinutes ? 0 : 1}">
               <li v-for="item in dateRangeArr"
+                  :style="noMinutes ? 'line-height: 38px;' : ''"
                   @click="quickChange(item.value)"
                   :class="(item.value===dateRangeValue.value || item.value===dateRangeValue)?'active':''"
                   :key="item.value">
