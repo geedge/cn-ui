@@ -362,6 +362,17 @@ export const tagCategoryOptions = [
   }
 ]
 
+export const tagSourceOptions = [
+  {
+    value: 1,
+    label: 'tag.builtInTag'
+  },
+  {
+    value: 0,
+    label: 'tag.userDefined'
+  }
+]
+
 export const metricType = {
   Bits: 'Bits/s',
   Packets: 'Packets/s',

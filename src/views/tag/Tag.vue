@@ -27,24 +27,10 @@
             <span>{{$t('overall.delete')}}</span>
           </button>
           <el-select
-                  key="intentSelect"
-                  v-model="intent"
-                  :teleported="false"
-                  style="width: 160px; margin-right:10px;"
-                  clearable
-                  placeholder="All"
-                  @change="intentChange"
-          >
-            <template #prefix>
-              <span class="select-prefix">{{$t('tag.intent')}}:</span>
-            </template>
-            <el-option v-for="item in tagIntentOptions" :key="item.value" :label="$t(item.label)" :value="item.value"></el-option>
-          </el-select>
-          <el-select
                   key="categorySelect"
                   v-model="category"
                   :teleported="false"
-                  style="width: 190px; margin-right:10px;"
+                  style="width: 210px; margin-right:10px;"
                   clearable
                   placeholder="All"
                   @change="categoryChange"
@@ -53,6 +39,34 @@
               <span class="select-prefix">{{$t('tag.category')}}:</span>
             </template>
             <el-option v-for="item in tagCategoryOptions" :key="item.value" :label="$t(item.label)" :value="item.value"></el-option>
+          </el-select>
+          <el-select
+              key="intentSelect"
+              v-model="intent"
+              :teleported="false"
+              style="width: 180px; margin-right:10px;"
+              clearable
+              placeholder="All"
+              @change="intentChange"
+          >
+            <template #prefix>
+              <span class="select-prefix">{{$t('tag.intention')}}:</span>
+            </template>
+            <el-option v-for="item in tagIntentOptions" :key="item.value" :label="$t(item.label)" :value="item.value"></el-option>
+          </el-select>
+          <el-select
+                  key="sourceSelect"
+                  v-model="source"
+                  :teleported="false"
+                  style="width: 190px; margin-right:10px;"
+                  clearable
+                  placeholder="All"
+                  @change="sourceChange"
+          >
+            <template #prefix>
+              <span class="select-prefix">{{$t('tag.source')}}:</span>
+            </template>
+            <el-option v-for="item in tagSourceOptions" :key="item.value" :label="$t(item.label)" :value="item.value"></el-option>
           </el-select>
         </template>
         <template #default>
@@ -86,7 +100,7 @@ import TagTable from '@/components/table/tag/TagTable'
 import cnDataList from '@/components/table/CnDataList'
 import dataListMixin from '@/mixins/data-list'
 import { api } from '@/utils/api'
-import { tagIntentOptions, tagCategoryOptions } from '@/utils/constants'
+import { tagIntentOptions, tagCategoryOptions, tagSourceOptions } from '@/utils/constants'
 import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import Loading from '@/components/common/Loading'
 import { ref } from 'vue'
@@ -100,11 +114,13 @@ export default {
       url: api.tagList,
       tagIntentOptions,
       tagCategoryOptions,
+      tagSourceOptions,
       tableId: 'tagTable',
       builtinLeftLoading: false,
       isInit: true,
       intent: '',
       category: '',
+      source: '',
       name: ''
     }
   },
@@ -144,12 +160,34 @@ export default {
       if (this.name) {
         params = { ...params, name: this.name }
       }
+      if (this.source || this.source === 0) {
+        params = { ...params, name: this.source }
+      }
       this.getTableData(params)
     },
     categoryChange (value) {
       let params = {}
       if (value) {
         params = { category: value }
+      }
+      if (this.intent) {
+        params = { ...params, intent: this.intent }
+      }
+      if (this.name) {
+        params = { ...params, name: this.name }
+      }
+      if (this.source || this.source === 0) {
+        params = { ...params, name: this.source }
+      }
+      this.getTableData(params)
+    },
+    sourceChange (value) {
+      let params = {}
+      if (value || value === 0) {
+        params = { isBuiltIn: value }
+      }
+      if (this.category) {
+        params = { ...params, category: this.category }
       }
       if (this.intent) {
         params = { ...params, intent: this.intent }

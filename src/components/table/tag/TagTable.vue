@@ -155,7 +155,7 @@ export default {
           label: this.$t('tag.category'),
           prop: 'category',
           show: true,
-          width: 100
+          width: 150
         }, {
           label: this.$t('tag.entityType'),
           prop: 'indicatorType',
