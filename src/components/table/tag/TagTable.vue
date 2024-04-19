@@ -49,6 +49,7 @@
                 :start-time="timeFilter.startTime"
                 :end-time="timeFilter.endTime"
                 :date-range="timeFilter.dateRangeValue"
+                noMinutes
                 ref="dateTimeRange"
                 @change="reload"
             />
