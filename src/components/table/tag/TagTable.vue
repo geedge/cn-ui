@@ -149,8 +149,7 @@ export default {
           label: this.$t('overall.name'),
           prop: 'name',
           show: true,
-          width: 300,
-          sortable: 'custom'
+          width: 300
         }, {
           label: this.$t('tag.category'),
           prop: 'category',
