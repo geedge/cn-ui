@@ -721,10 +721,8 @@ export default {
       this.curExpendDataTypeVal = 'uniqueEntityObserved'
       this.noMinutes = false
       this.disableToEntity = false
-      this.expandedIds = []
       clearInterval(this.interval)
       if (expandedRows.length > 0 && row) {
-        this.expandedIds.push(row.id)
         this.init(row)
         this.$nextTick(() => {
           const uniqueEntityObservedDom = document.getElementById('uniqueEntityObserved' + row.id)
