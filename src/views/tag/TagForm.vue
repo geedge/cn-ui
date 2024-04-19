@@ -128,20 +128,17 @@
             </div>
             <div class="imported-table-box" :class="previewErrorTip ? 'imported-table-box--error' : ''">
               <div class="entity-format-tip">
-                <template v-if="editObject.indicatorType === tagType.find(t => t.name === 'ip').value">
-                  <div><span>{{$t('overall.format')}}:</span></div>
-                  <div><span>IPv4</span>  x.x.x.x</div>
-                  <div><span>IPv4 CIDR</span>   x.x.x.x/n</div>
-                  <div><span>IPv4 {{$t('overall.range')}}</span>   x.x.x.x-y.y.y.y</div>
-                  <div><span>IPv6</span>   x:x:x::x</div>
-                  <div><span>IPv6 CIDR</span>   x:x:x::x/n</div>
-                  <div><span>IPv6 {{$t('overall.range')}}</span>   x:x:x::x-y:y:y::y</div>
-                </template>
-                <template v-else-if="editObject.indicatorType === tagType.find(t => t.name === 'domain').value">
-                  <div><span>{{$t('overall.format')}}:</span></div>
-                  <div><span>{{$t('entities.format.suffix')}}</span>  *example.com</div>
-                  <div><span>{{$t('entities.format.exactly')}}</span>   $www.example.com</div>
-                </template>
+                <div><span>{{$t('overall.ipFormat')}}:</span></div>
+                <div><span>IPv4</span>  x.x.x.x</div>
+                <div><span>IPv4 CIDR</span>   x.x.x.x/n</div>
+                <div><span>IPv4 {{$t('overall.range')}}</span>   x.x.x.x-y.y.y.y</div>
+                <div><span>IPv6</span>   x:x:x::x</div>
+                <div><span>IPv6 CIDR</span>   x:x:x::x/n</div>
+                <div><span>IPv6 {{$t('overall.range')}}</span>   x:x:x::x-y:y:y::y</div>
+                <br/>
+                <div><span>{{$t('overall.domainFormat')}}:</span></div>
+                <div><span>{{$t('entities.format.suffix')}}</span>  *example.com</div>
+                <div><span>{{$t('entities.format.exactly')}}</span>   $www.example.com</div>
               </div>
               <el-form ref="editForm" :model="editTagForm" :rules="editTagFormRules">
                 <table class="imported-table" v-if="!importedDataNoData">

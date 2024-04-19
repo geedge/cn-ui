@@ -44,7 +44,7 @@
               </el-row>
             </el-popover>
             <span class="expand-observed-entities" :class="{'expand-observed-entities--disabled': disableToEntity}" @click="toEntityList(props.row)">{{countDesc}}&nbsp;<el-icon v-if="!disableToEntity && !showError"><Right /></el-icon></span>
-            <date-time-range
+            <date-time-range v-if="noMinutes"
                 class="date-time-range"
                 :start-time="timeFilter.startTime"
                 :end-time="timeFilter.endTime"
@@ -52,6 +52,14 @@
                 noMinutes
                 ref="dateTimeRange"
                 @change="reload"
+            />
+            <date-time-range v-else
+                    class="date-time-range"
+                    :start-time="timeFilter.startTime"
+                    :end-time="timeFilter.endTime"
+                    :date-range="timeFilter.dateRangeValue"
+                    ref="dateTimeRange"
+                    @change="reload"
             />
           </div>
           <div class="expand">
@@ -145,6 +153,7 @@ export default {
       username: localStorage.getItem(storageKey.username),
       curExpendDataType: this.$t('tag.uniqueEntityObserved'),
       curExpendDataTypeVal: 'uniqueEntityObserved',
+      noMinutes: false,
       tableTitle: [ // 原始table列
         {
           label: this.$t('overall.name'),
@@ -381,7 +390,7 @@ export default {
             itemStyle: {
               color: '#35ADDA'
             },
-            data: data.map(t => { return [Number(t.statTime) * 1000, Number(t.ipIndicatorCount)] })
+            data: data.map(t => { return [Number(t.statTime) * 1000, Number(t.ipCount)] })
           })
         }
         if (item.indicatorType && item.indicatorType.indexOf('Domain') > -1) {
@@ -408,7 +417,7 @@ export default {
             itemStyle: {
               color: '#E48F3E'
             },
-            data: data.map(t => { return [Number(t.statTime) * 1000, Number(t.domainIndicatorCount)] })
+            data: data.map(t => { return [Number(t.statTime) * 1000, Number(t.domainCount)] })
           })
         }
         this.chartOption.series = series
@@ -488,6 +497,7 @@ export default {
     uniqueEntityObserved (item) {
       this.curExpendDataType = this.$t('tag.uniqueEntityObserved')
       this.curExpendDataTypeVal = 'uniqueEntityObserved'
+      this.noMinutes = false
       this.disableToEntity = false
       this.$nextTick(() => {
         const totalIndicatorsDom = document.getElementById('totalIndicators' + item.id)
@@ -504,6 +514,7 @@ export default {
     totalIndicators (item) {
       this.curExpendDataType = this.$t('tag.totalIndicators')
       this.curExpendDataTypeVal = 'totalIndicators'
+      this.noMinutes = true
       this.disableToEntity = true
       this.$nextTick(() => {
         const totalIndicatorsDom = document.getElementById('totalIndicators' + item.id)
@@ -708,6 +719,7 @@ export default {
     dropExpandChange (row, expandedRows, flag) {
       this.curExpendDataType = this.$t('tag.uniqueEntityObserved')
       this.curExpendDataTypeVal = 'uniqueEntityObserved'
+      this.noMinutes = false
       this.disableToEntity = false
       this.expandedIds = []
       clearInterval(this.interval)
