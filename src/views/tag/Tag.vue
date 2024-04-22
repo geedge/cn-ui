@@ -164,6 +164,7 @@ export default {
         params = { ...params, name: this.source }
       }
       this.getTableData(params)
+      this.$refs.dataTable.expandedIds = []
     },
     categoryChange (value) {
       let params = {}
@@ -180,6 +181,7 @@ export default {
         params = { ...params, name: this.source }
       }
       this.getTableData(params)
+      this.$refs.dataTable.expandedIds = []
     },
     sourceChange (value) {
       let params = {}
@@ -196,6 +198,7 @@ export default {
         params = { ...params, name: this.name }
       }
       this.getTableData(params)
+      this.$refs.dataTable.expandedIds = []
     },
     search (params) {
       this.name = params.q
@@ -208,6 +211,7 @@ export default {
       }
       this.pageObj.pageNo = 1
       this.getTableData(params)
+      this.$refs.dataTable.expandedIds = []
     },
     delBatch () {
       const ids = []
@@ -257,6 +261,7 @@ export default {
             this.isSelectedStatus = false
             this.disableDelete = true
             this.batchDeleteObjs = []
+            this.$refs.dataTable.expandedIds = []
           }
         })
       }
@@ -294,6 +299,7 @@ export default {
           }
         }).finally(() => {
           this.toggleLoading(false)
+          this.$refs.dataTable.expandedIds = []
         })
       }
       this.isInit = false

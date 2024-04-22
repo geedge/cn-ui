@@ -722,8 +722,10 @@ export default {
       this.noMinutes = false
       this.disableToEntity = false
       clearInterval(this.interval)
+      this.expandedIds = []
       if (expandedRows.length > 0 && row) {
-        this.init(row)
+        // this.init(row)
+        this.expandedIds.push(row.id)
         this.$nextTick(() => {
           const uniqueEntityObservedDom = document.getElementById('uniqueEntityObserved' + row.id)
           if (uniqueEntityObservedDom) {
