@@ -849,7 +849,7 @@ const getEntityType = (url) => {
   if (url.indexOf('/app?') > -1) {
     entityType = 'app'
   }
-  if (url.indexOf('/subscriber_id?') > -1) {
+  if (url.indexOf('/subscriber?') > -1) {
     entityType = 'subscriber_id'
   }
   return entityType

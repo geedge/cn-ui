@@ -175,12 +175,14 @@ export default {
         }) */
         this.initSetTag(entityDetailTabsName.deviceInformation, 0)
         this.initSetTag(entityDetailTabsName.accountInformation, 0)
+        const subscriberOfApp = axios.get(api.entity.entityList.subscriberRelatedApp, { params: relatedEntityParams })
+        this.promiseData(subscriberOfApp)
       }
     },
     promiseData (data1, data2, data3) {
       Promise.all([data1, data2, data3]).then(res => {
         const res0 = res[0].data
-        const res1 = res[1].data
+        const res1 = res[1] ? res[1].data : res[1]
 
         switch (this.entity.entityType) {
           case entityType.ip: {
@@ -213,6 +215,12 @@ export default {
             const len1 = res[0].status === 200 ? res0.data.result.length : 0
             const len2 = res[1].status === 200 ? res1.data.result.length : 0
             this.initSetTag(entityDetailTabsName.relatedEntity, len1 + len2)
+            break
+          }
+          case entityType.subscriber: {
+            const len1 = res[0].status === 200 ? res0.data.result.length : 0
+            // const len2 = res[1].status === 200 ? res1.data.result.length : 0
+            this.initSetTag(entityDetailTabsName.relatedEntity, len1)
             break
           }
         }
