@@ -3,7 +3,7 @@
     <chart-no-data v-if="isNoData"></chart-no-data>
 
     <div v-if="!isNoData && initFlag" class="type-data__column">
-      <div class="type-data" v-if="entity.entityType !== 'app'">
+      <div class="type-data" v-if="entity.entityType !== entityType.app">
         <div class="type-title">
           <span class="title-mark"></span>
           {{ $t('entities.tab.relatedApp') }}&nbsp;&nbsp;({{ relatedAppList.length }})
@@ -23,7 +23,7 @@
         </div>
       </div>
 
-      <div class="type-data" v-if="entity.entityType !== 'ip'">
+      <div class="type-data" v-if="entity.entityType !== entityType.ip && entity.entityType !== entityType.subscriber">
         <div class="type-title">
           <span class="title-mark"></span>
           {{ $t('entities.tab.relatedIp') }}&nbsp;&nbsp;({{ relatedIpList.length }})
@@ -43,7 +43,7 @@
         </div>
       </div>
 
-      <div class="type-data">
+      <div class="type-data" v-if="entity.entityType !== entityType.subscriber">
         <div class="type-title">
           <span class="title-mark"></span>
           {{ $t('entities.tab.relatedDomain') }}&nbsp;&nbsp;({{ relatedDomainList.length }})
@@ -102,7 +102,8 @@ export default {
       showError1: false,
       errorMsg1: '',
       showError2: false,
-      errorMsg2: ''
+      errorMsg2: '',
+      entityType
     }
   },
   setup (props) {
