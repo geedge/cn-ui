@@ -310,18 +310,6 @@
               <div class="item__label">{{ $t('location.number') }}</div>
               <div class="item__value">{{currentPolygon.number}}</div>
             </div>
-            <div class="body__item">
-              <div class="item__label">{{ $t('location.locals') }}</div>
-              <div class="item__value">{{currentPolygon.number}}</div>
-            </div>
-            <div class="body__item">
-              <div class="item__label">{{ $t('location.visitors') }}</div>
-              <div class="item__value">{{currentPolygon.number}}</div>
-            </div>
-            <div class="body__item">
-              <div class="item__label">{{ $t('location.roamers') }}</div>
-              <div class="item__value">{{currentPolygon.number}}</div>
-            </div>
           </template>
           <template v-else>
             <template v-for="(item, i) in JSON.parse(currentPolygon.locations)" :key="item.hexId">

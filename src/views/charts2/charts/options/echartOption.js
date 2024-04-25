@@ -808,13 +808,14 @@ export const tagLineChartOption = {
     x: 'center',
     y: 'bottom',
     icon: 'circle',
-    itemGap: 50
+    itemGap: 40,
+    bottom: 0
   },
   grid: {
     top: '12%',
     left: '1%',
-    right: '1%',
-    bottom: 30,
+    right: 0,
+    bottom: 25,
     containLabel: true
   },
   xAxis: [

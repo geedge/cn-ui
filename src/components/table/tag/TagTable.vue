@@ -43,7 +43,7 @@
                 </ul>
               </el-row>
             </el-popover>
-            <span class="expand-observed-entities" :class="{'expand-observed-entities--disabled': disableToEntity}" @click="toEntityList(props.row)">{{countDesc}}&nbsp;<el-icon v-if="!disableToEntity && !showError"><Right /></el-icon></span>
+<!--            <span class="expand-observed-entities" :class="{'expand-observed-entities&#45;&#45;disabled': disableToEntity}" @click="toEntityList(props.row)">{{countDesc}}&nbsp;<el-icon v-if="!disableToEntity && !showError"><Right /></el-icon></span>-->
             <date-time-range v-if="noMinutes"
                 class="date-time-range"
                 :start-time="timeFilter.startTime"
@@ -68,6 +68,22 @@
             <div class="expand-cell" >
               <div class="expand-left">
                 <div class="chart-drawing" :id="`chart${props.row.id}`"></div>
+              </div>
+              <div class="expand-right">
+                <div class="expand-count">{{observedCount}}</div>
+                <div class="expand-observed-entities" :class="{'expand-observed-entities--disabled': disableToEntity}" @click="toEntityList(props.row)">
+                  {{countDesc}}&nbsp;<el-icon v-if="!disableToEntity"><Right /></el-icon>
+                </div>
+                <div v-if="props.row.indicatorType && props.row.indicatorType.indexOf('IP') > -1 &&
+                           props.row.indicatorType && props.row.indicatorType.indexOf('Domain') > -1"
+                     class="entity-count-detail">
+                  <div class="detail__row">
+                    <div class="detail__label">IP</div><span class="detail__value">{{observedIpCount}}</span>
+                  </div>
+                  <div class="detail__row">
+                    <div class="detail__label">{{$t('overall.domain')}}</div><span class="detail__value">{{observedDomainCount}}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -445,48 +461,48 @@ export default {
       if (hasIp && hasDomain) {
         if (this.disableToEntity) {
           if (this.observedCount < 2) {
-            desc += `${this.observedCount} ${this.$t('overall.entity2')}`
+            desc = this.$t('overall.entity2')
           } else {
-            desc += `${this.observedCount} ${this.$t('overall.entities2')}`
+            desc = this.$t('overall.entities2')
           }
         } else { // 活跃实体
           if (this.observedCount < 2) {
-            desc += `${this.observedCount} ${this.$t('tag.activeEntity2')}`
+            desc = this.$t('tag.activeEntity2')
           } else {
-            desc += `${this.observedCount} ${this.$t('tag.observedEntities2')}`
+            desc = this.$t('tag.observedEntities2')
           }
         }
-        if (this.observedCount > 0) {
+        /*if (this.observedCount > 0) {
           desc += `, IP ${this.observedIpCount}, ${this.$t('overall.domain2')} ${this.observedDomainCount}`
-        }
+        }*/
       } else {
         // 只有单种实体时，单个描述
         if (this.disableToEntity) {
           if (hasIp) {
             if (this.observedIpCount < 2) {
-              desc += `${this.observedIpCount} IP`
+              desc = 'IP'
             } else {
-              desc += `${this.observedIpCount} ${this.$t('overall.ips')}`
+              desc = this.$t('overall.ips')
             }
           } else if (hasDomain) {
             if (this.observedDomainCount < 2) {
-              desc += `${this.observedDomainCount} ${this.$t('overall.domain2')}`
+              desc = this.$t('overall.domain2')
             } else {
-              desc += `${this.observedDomainCount} ${this.$t('overall.domains2')}`
+              desc = this.$t('overall.domains2')
             }
           }
         } else { // 活跃实体
           if (hasIp) {
             if (this.observedIpCount < 2) {
-              desc += `${this.observedIpCount} ${this.$t('tag.observedIp2')}`
+              desc = this.$t('tag.observedIp2')
             } else {
-              desc += `${this.observedIpCount} ${this.$t('tag.observedIps2')}`
+              desc = this.$t('tag.observedIps2')
             }
           } else if (hasDomain) {
             if (this.observedDomainCount < 2) {
-              desc += `${this.observedDomainCount} ${this.$t('tag.observedDomain2')}`
+              desc = this.$t('tag.observedDomain2')
             } else {
-              desc += `${this.observedDomainCount} ${this.$t('tag.observedDomains2')}`
+              desc = this.$t('tag.observedDomains2')
             }
           }
         }
