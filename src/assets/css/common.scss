@@ -3,13 +3,16 @@
 [v-cloak] {
   display: none !important;
 }
+
 * {
   font-family: NotoSansSChineseRegular, serif;
   box-sizing: border-box;
 }
+
 html, body, #app {
   height: 100%;
 }
+
 body {
   min-width: 1024px;
   margin: 0 !important;
@@ -17,11 +20,13 @@ body {
   cursor: default !important;
   overflow: hidden;
 }
+
 // 在计算文本实际宽度的逻辑中使用到的临时dom
 .temp-dom {
   visibility: hidden;
   position: fixed;
 }
+
 .icon {
   width: 1em;
   height: 1em;
@@ -33,7 +38,7 @@ body {
 /* 淡入淡出动画 */
 .fade-enter-active,
 .fade-leave-active {
- transition: opacity 0.4s ease;
+  transition: opacity 0.4s ease;
 }
 
 .fade-enter-from,
@@ -46,22 +51,24 @@ body {
   //min-width: 30px !important;
   display: inline-block;
   background: #FFE7E6 !important;
-  border: 1px solid rgba(226,97,84,0.42) !important;
+  border: 1px solid rgba(226, 97, 84, 0.42) !important;
   padding: 6.6px 12px !important;
   border-radius: 4px !important;
   font-size: 14px !important;
   color: #F53A19 !important;
   font-weight: 400 !important;
   line-height: 1.2 !important;
+
   .el-popper__arrow {
     display: none !important;
   }
 }
 
 // 表头单词换行不被拆开
-.el-table th > .cell  {
+.el-table th > .cell {
   word-break: keep-all !important;
 }
+
 // 表格内容换行，不对中文生效，避免中文出现省略号
 .el-table .cell {
   word-break: break-word !important;
@@ -79,6 +86,67 @@ body {
   overflow: hidden;
 }
 
-.upload-body{
+.upload-body {
   text-align: center;
+}
+
+.change-pin-dialog {
+  .el-dialog__header {
+    padding: 20px 20px 10px 20px;
+
+    .el-dialog__headerbtn {
+      position: absolute;
+      top: 10px;
+      right: 4px;
+      padding: 0;
+      background: transparent;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  }
+
+  .el-dialog__body {
+    padding: 30px 20px;
+
+    .el-form-item {
+      display: block;
+
+      .el-input__wrapper {
+        height: 39px;
+      }
+    }
+  }
+
+  .el-dialog__footer {
+    padding: 20px;
+
+    .dialog-footer {
+      display: flex;
+      justify-content: flex-end;
+
+      .el-button {
+        border-radius: 2px;
+      }
+
+      .el-button:nth-child(1) {
+        width: 80px;
+        height: 28px;
+        margin-right: 20px;
+        color: var(--el-text-color-primary);
+        background: var(--el-fill-color-light);
+        border: 1px solid var(--el-border-color-dark);
+        border-radius: 2px;
+      }
+
+      .el-button:nth-child(2) {
+        width: 80px;
+        height: 28px;
+        margin-left: 0 !important;
+        background-color: var(--el-color-business);
+        border-color: var(--el-color-business-dark-2);
+      }
+    }
+  }
 }

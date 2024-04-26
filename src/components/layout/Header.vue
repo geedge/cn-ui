@@ -29,11 +29,11 @@
           <div class='login-user header-menu__item'>{{ nickName }}&nbsp;<i class="cn-icon cn-icon-arrow-down"></i></div>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>
-                <div id="header-to-changepin" @click="showPinDialog">{{ $t('overall.changePassword') }}</div>
+              <el-dropdown-item @click="showPinDialog">
+                <div id="header-to-changepin">{{ $t('overall.changePassword') }}</div>
               </el-dropdown-item>
-              <el-dropdown-item>
-                <div id="header-to-logout" @click="logout">{{ $t('overall.logout') }}</div>
+              <el-dropdown-item @click="logout">
+                <div id="header-to-logout">{{ $t('overall.logout') }}</div>
               </el-dropdown-item>
 <!--              <el-dropdown-item>-->
 <!--                <div id="header-to-theme" @click="switchTheme">-->
@@ -190,6 +190,7 @@
 
     <!-- 改密码 -->
     <el-dialog v-model="showChangePin"
+               class="change-pin-dialog"
                width="30%"
                :before-close="handleClose">
       <el-form :rules="changePassFormRules" :model="changePassForm" ref="changePassForm">
@@ -526,7 +527,6 @@ export default {
       this.showChangePin = true
     },
     logout () {
-      //
       sessionStorage.removeItem(storageKey.tokenExpireCurrentPath)
       localStorage.removeItem(storageKey.token)
       axios.get(api.logout)
