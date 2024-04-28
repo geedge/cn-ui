@@ -187,8 +187,13 @@ export default {
         ]
       },
       rules2: { // 表单校验规则
+        name: [
+          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
+          { validator: validateName, trigger: 'blur' }
+        ],
         username: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
+          { validator: validateUserName, trigger: 'blur' }
         ],
         pinChange: [
           { validator: validateConfirmPin, trigger: 'blur' },
