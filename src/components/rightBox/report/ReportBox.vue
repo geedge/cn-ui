@@ -226,6 +226,7 @@
                          class="right-box__select right-box__select--param"
                          placeholder=" "
                          filterable
+                         :filter-method="filterMethod"
                          :disabled="!!editObject.id"
               >
                 <template #prefix>
@@ -408,7 +409,8 @@ export default {
       monthWeekdayCheckedAll: false,
       monthWeekdayIsIndeterminate: false,
 
-      paramsOptions: []
+      paramsOptions: [],
+      newParamsOptions: []
     }
   },
   watch: {
@@ -551,6 +553,7 @@ export default {
                   key: param.key,
                   options: response.data.data.list.map(d => d.value)
                 })
+                this.newParamsOptions = this.paramsOptions
               }
             })
           }
@@ -741,6 +744,29 @@ export default {
       const checkedCount = val.length
       this.monthWeekdayCheckedAll = checkedCount === this.weekdayList.length
       this.monthWeekdayIsIndeterminate = checkedCount > 0 && checkedCount < this.weekdayList.length
+    },
+    /**
+     * params的option筛选方法，组件自带的方法在paramsOptions的options长度超过1512后会保留部分值
+     * @param filterVal
+     */
+    filterMethod (filterVal) {
+      if (filterVal) {
+        if (_.isString(filterVal)) {
+          const filterArr = _.cloneDeep(this.newParamsOptions[0].options).filter(d => d.toLowerCase().includes(filterVal.toLowerCase()))
+          this.$nextTick(() => {
+            this.paramsOptions[0].options = filterArr
+          })
+        } else if (_.isNumber(filterVal)) {
+          const filterArr = _.cloneDeep(this.newParamsOptions[0].options).filter(d => d.toLowerCase().includes(filterVal))
+          this.$nextTick(() => {
+            this.paramsOptions[0].options = filterArr
+          })
+        }
+      } else {
+        this.$nextTick(() => {
+          this.paramsOptions = _.cloneDeep(this.newParamsOptions)
+        })
+      }
     }
   }
 }
