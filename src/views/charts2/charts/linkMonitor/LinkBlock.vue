@@ -239,13 +239,7 @@ export default {
               data.forEach(item => {
                 item.totalBitsRate = item.outBitsRate + item.inBitsRate
                 linkConfig.filter(info => info.interfaceName === item.interfaceName).forEach(info => {
-                  if (info.direction === 0) {
-                    item.outLinkId = info.linkId
-                  } else if (info.direction === 1) {
-                    item.inLinkId = info.linkId
-                  } else if (info.direction === 2) {
-                    item.linkId = info.linkId
-                  }
+                  item.linkId = info.linkId
                 })
               })
 
@@ -389,7 +383,7 @@ export default {
       return width
     },
     drillLinkId (item) {
-      const queryCondition = `out_link_id = ${item.outLinkId} or in_link_id = ${item.inLinkId}`
+      const queryCondition = `out_link_id = ${item.linkId} or in_link_id = ${item.linkId}`
       beforeRouterPush()
       this.$router.push({
         query: {
