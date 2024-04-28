@@ -335,9 +335,6 @@ export default {
       categoryId: [
         { required: true, message: i18n.global.t('validate.required'), trigger: 'change' }
       ],
-      schedulerStart: [
-        { required: true, message: i18n.global.t('validate.required'), trigger: 'change' }
-      ],
       'config.startTime': [
         { required: true, message: i18n.global.t('validate.required'), trigger: 'change' },
         { validator: startTimeValidator, trigger: 'change' }
@@ -360,6 +357,31 @@ export default {
     }
   },
   data () {
+    const schedulerStartTimeValidator = (rule, value, callback) => {
+      if (this.editObject.schedulerEnd) {
+        if (this.$refs.reportForm) {
+          this.$refs.reportForm.validateField('schedulerEnd')
+        }
+        callback()
+      }
+    }
+
+    const schedulerEndTimeValidator = (rule, value, callback) => {
+      if (this.editObject.schedulerStart && (getMillisecond(this.editObject.schedulerStart) >= getMillisecond(value))) {
+        callback(new Error(this.$t('config.user.timeVerification')))
+      } else {
+        callback()
+      }
+    }
+
+    this.rules.schedulerStart = [
+      { required: true, message: i18n.global.t('validate.required'), trigger: 'change' },
+      { validator: schedulerStartTimeValidator, trigger: 'change' }
+    ]
+    this.rules.schedulerEnd = [
+      { required: true, message: i18n.global.t('validate.required'), trigger: 'change' },
+      { validator: schedulerEndTimeValidator, trigger: 'change' }
+    ]
     return {
       url: api.reportTemp,
 
@@ -505,11 +527,11 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.initDateCalendarPreIcon()
   },
   methods: {
-    initDateCalendarPreIcon() {
+    initDateCalendarPreIcon () {
       this.$nextTick(() => {
         const datePrefixIcon = document.getElementsByClassName('el-input__prefix-inner')
         if (datePrefixIcon && datePrefixIcon.length > 0) {
