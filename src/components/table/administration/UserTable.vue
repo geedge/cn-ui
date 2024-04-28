@@ -114,6 +114,11 @@ export default {
           show: true,
           minWidth: 150
         }, {
+          label: this.$t('config.user.mobile'),
+          prop: 'mobile',
+          show: true,
+          minWidth: 150
+        }, {
           label: 'E-mail',
           prop: 'email',
           show: true,
