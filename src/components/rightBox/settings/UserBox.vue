@@ -37,7 +37,7 @@
           </el-form-item>
           <!--mobile-->
           <el-form-item :label="$t('config.user.mobile')" prop="mobile">
-            <el-input id="account-input-mobile" v-model.number="editObject.mobile" maxlength="11" show-word-limit placeholder="" type="text"></el-input>
+            <el-input id="account-input-mobile" v-model.number="editObject.mobile" maxlength="20" show-word-limit placeholder="" type="text"></el-input>
           </el-form-item>
           <!--roles-->
           <el-form-item :label="$t('config.user.roles')" prop="roleIds">
@@ -183,7 +183,7 @@ export default {
         ],
         mobile: [
           { required: false, message: this.$t('validate.required') },
-          { pattern: /^(1[345678]\d{9})$/, message: this.$t('validate.mobile') }
+          { pattern: /^(\d{1,20})$/, message: this.$t('validate.mobile') }
         ]
       },
       rules2: { // 表单校验规则
@@ -207,7 +207,7 @@ export default {
         ],
         mobile: [
           { required: false, message: this.$t('validate.required') },
-          { pattern: /^(1[345678]\d{9})$/, message: this.$t('validate.mobile') }
+          { pattern: /^(\d{1,20})$/, message: this.$t('validate.mobile') }
         ]
       },
       roleData: [],
