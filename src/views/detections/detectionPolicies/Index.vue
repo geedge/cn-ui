@@ -229,12 +229,13 @@ export default {
     },
     onEdit () {
       const pageNo = this.$router.currentRoute.value.query.pageNo
+      const ruleId = this.batchDeleteObjs[0] ? this.batchDeleteObjs[0].ruleId : this.drawerInfo.ruleId
       this.$router.push({
         path: '/detection/policy/edit',
         query: {
           t: +new Date(),
           pageNoForTable: pageNo || 1,
-          id: this.batchDeleteObjs[0].ruleId,
+          id: ruleId,
           name: this.$route.query.name || ''
         }
       })
