@@ -12,13 +12,13 @@
           <div class="header-menu__item"><i class="cn-icon cn-icon-language"></i></div>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>
-                <div id="header-to-english" class="personal-dropdown-item" :class="language === EN ? 'is-active' : ''" @click="changeLocal(EN)">
+              <el-dropdown-item @click="changeLocal(EN)">
+                <div id="header-to-english" class="personal-dropdown-item" :class="language === EN ? 'is-active' : ''">
                   English
                 </div>
               </el-dropdown-item>
-              <el-dropdown-item>
-                <div id="header-to-chinese" class="personal-dropdown-item" :class="language === ZH ? 'is-active' : ''" @click="changeLocal(ZH)">
+              <el-dropdown-item @click="changeLocal(ZH)">
+                <div id="header-to-chinese" class="personal-dropdown-item" :class="language === ZH ? 'is-active' : ''">
                   中文
                 </div>
               </el-dropdown-item>
