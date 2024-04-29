@@ -156,7 +156,7 @@ $color-mousemove-cursor: #D3D0D8;
 
         .el-upload {
           margin-top: 12px;
-
+          width: fit-content;
           .upload-tip {
             font-size: 12px;
             color: $color-info;
