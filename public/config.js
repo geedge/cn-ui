@@ -1,6 +1,6 @@
 const BASE_CONFIG = {
   baseUrl: 'http://192.168.44.54:8090/',
-  version: '24.03',
+  version: '24.04',
   apiVersion: 'v1'
 }
 // 默认时间过滤条件，单位分钟. 0表示请求接口时不传时间参数

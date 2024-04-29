@@ -52,6 +52,31 @@ export const storageKey = {
 }
 export const largeCountryList = ['CN', 'US', 'RU', 'AU', 'CA', 'KZ', 'IN', 'BR']
 
+export const dbTableColumnCustomizeConfig = [
+  {
+    version: '24.04.01',
+    tableName: dbUserTableColumnCustomizeConfig
+  },{
+    version: '24.04.01',
+    tableName: dbRoleTableColumnCustomizeConfig
+  },{
+    version: '24.04.01',
+    tableName: dbOperationLogTableColumnCustomizeConfig
+  },{
+    version: '24.04.01',
+    tableName: dbChartTableColumnCustomizeConfig
+  },{
+    version: '24.04.01',
+    tableName: dbI18nTableColumnCustomizeConfig
+  },{
+    version: '24.04.01',
+    tableName: dbReportTableColumnCustomizeConfig
+  },{
+    version: '24.04.01',
+    tableName: dbGalaxySettingTableColumnCustomizeConfig
+  }
+]
+
 // 统一定义跳转来源
 export const fromRoute = {
   trafficSummary: 'trafficSummary',
