@@ -432,7 +432,9 @@ export default {
     let curTableConfig = dbTableColumnCustomizeConfig.find(item => item.tableName === tableName)
     if(localStorageTableTitle && curTableConfig &&
           localStorageTableTitle.version !== curTableConfig.version && curTableTitles) {
-      this.$emit('update', curTableTitles)
+      if(this.$refs.dataList) {
+        this.$refs.dataList.updateCustomTableTitle(curTableTitles)
+      }
       await indexedDBUtils.selectTable(tableName).put({
         id: userId,
         version: curTableConfig.version,
