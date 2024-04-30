@@ -161,7 +161,7 @@ export default {
         params = { ...params, name: this.name }
       }
       if (this.source || this.source === 0) {
-        params = { ...params, name: this.source }
+        params = { ...params, source: this.source }
       }
       this.getTableData(params)
       this.$refs.dataTable.expandedIds = []
@@ -178,7 +178,7 @@ export default {
         params = { ...params, name: this.name }
       }
       if (this.source || this.source === 0) {
-        params = { ...params, name: this.source }
+        params = { ...params, source: this.source }
       }
       this.getTableData(params)
       this.$refs.dataTable.expandedIds = []
@@ -208,6 +208,9 @@ export default {
       }
       if (this.category) {
         params = { ...params, category: this.category }
+      }
+      if (this.source) {
+        params = { ...params, source: this.source }
       }
       this.pageObj.pageNo = 1
       this.getTableData(params)
