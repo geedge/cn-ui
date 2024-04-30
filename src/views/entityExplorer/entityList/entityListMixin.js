@@ -128,13 +128,18 @@ export default {
       if (entityType === 'subscriber_id') {
         entityType = entityType.slice(0, -3)
       }
+      const queryParam = {
+        entityType: entityType,
+        entityName: this.entityData.entityValue,
+        range: this.timeFilter.dateRangeValue
+      }
+      if (queryParam.range === -1) {
+        queryParam.startTime = this.timeFilter.startTime
+        queryParam.endTime = this.timeFilter.endTime
+      }
       const { href } = this.$router.resolve({
         path: '/entity/detail',
-        query: {
-          entityType: entityType,
-          entityName: this.entityData.entityValue,
-          range: this.timeFilter.dateRangeValue
-        }
+        query: queryParam
       })
       window.open(href, '_blank')
     },
