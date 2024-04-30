@@ -168,7 +168,7 @@ export default {
       if (tab === 0) {
         result.forEach(t => {
           this.cnLinkInfo.forEach(e => {
-            if (parseInt(t.commonInLinkId) === e.linkId) {
+            if (parseInt(t.inLinkId) === e.linkId) {
               t.linkId = e.interfaceName
               t.linkDirection = e.peerCity
               t.bandwidth = e.bandwidth
@@ -182,7 +182,7 @@ export default {
       } else {
         result.forEach(t => {
           this.cnLinkInfo.forEach(e => {
-            if (parseInt(t.commonOutLinkId) === e.linkId) {
+            if (parseInt(t.outLinkId) === e.linkId) {
               t.linkId = e.interfaceName
               t.bandwidth = e.bandwidth
               t.linkDirection = e.peerCity
