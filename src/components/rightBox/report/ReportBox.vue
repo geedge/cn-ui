@@ -546,6 +546,7 @@ export default {
     loadParamOptions () {
       if (_.isArray(this.editObject.categoryParams) && !_.isEmpty(this.editObject.categoryParams)) {
         this.editObject.categoryParams.forEach(param => {
+          this.paramsOptions = _.cloneDeep(this.newParamsOptions)
           if (!this.paramsOptions.some(p => p.key === param.key)) {
             axios.get(api.dict, { params: { type: param.key, pageSize: -1 } }).then(response => {
               if (response.status === 200) {
@@ -750,22 +751,20 @@ export default {
      * @param filterVal
      */
     filterMethod (filterVal) {
+      const key = this.editObject.categoryParams[0].key
       if (filterVal) {
-        if (_.isString(filterVal)) {
-          const filterArr = _.cloneDeep(this.newParamsOptions[0].options).filter(d => d.toLowerCase().includes(filterVal.toLowerCase()))
-          this.$nextTick(() => {
-            this.paramsOptions[0].options = filterArr
-          })
-        } else if (_.isNumber(filterVal)) {
-          const filterArr = _.cloneDeep(this.newParamsOptions[0].options).filter(d => d.toLowerCase().includes(filterVal))
-          this.$nextTick(() => {
-            this.paramsOptions[0].options = filterArr
-          })
+        const obj = this.newParamsOptions.find(d => d.key === key)
+        if (_.isString(filterVal) && obj) {
+          const filterArr = _.cloneDeep(obj.options).filter(d => d.toLowerCase().includes(filterVal.toLowerCase()))
+          const paramsOptionsObj = this.paramsOptions.find(d => d.key === key)
+          paramsOptionsObj.options = filterArr
+        } else if (_.isNumber(filterVal) && obj) {
+          const filterArr = _.cloneDeep(obj.options).filter(d => d.toLowerCase().includes(filterVal))
+          const paramsOptionsObj = this.paramsOptions.find(d => d.key === key)
+          paramsOptionsObj.options = filterArr
         }
       } else {
-        this.$nextTick(() => {
-          this.paramsOptions = _.cloneDeep(this.newParamsOptions)
-        })
+        this.paramsOptions = _.cloneDeep(this.newParamsOptions)
       }
     }
   }
