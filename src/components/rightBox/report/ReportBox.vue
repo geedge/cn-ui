@@ -380,7 +380,7 @@ export default {
       { validator: schedulerStartTimeValidator, trigger: 'change' }
     ]
     this.rules.schedulerEnd = [
-      { required: true, message: i18n.global.t('validate.required'), trigger: 'change' },
+      { required: false, message: i18n.global.t('validate.required'), trigger: 'change' },
       { validator: schedulerEndTimeValidator, trigger: 'change' }
     ]
     return {
