@@ -483,7 +483,7 @@ export default {
     return {
       chart: {
         params: {
-          url: `${api.entity.entityList.ipTrafficMap}?resource={{resource}}&country={{country}}`,
+          url: `${api.entity.entityList.ipTrafficMap}?resource={{resource}}&countryRegion={{countryRegion}}&startTime={{startTime}}&endTime={{endTime}}`,
           unitType: 'number',
           valueColumn: 'sessions'
         },

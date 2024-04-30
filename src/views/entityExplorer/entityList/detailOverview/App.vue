@@ -374,7 +374,7 @@ export default {
     return {
       chart: {
         params: {
-          url: `${api.entity.entityList.appTrafficMap}?resource={{resource}}&country={{country}}`,
+          url: `${api.entity.entityList.appTrafficMap}?resource={{resource}}&countryRegion={{countryRegion}}&startTime={{startTime}}&endTime={{endTime}}`,
           unitType: 'number',
           valueColumn: 'sessions'
         },
