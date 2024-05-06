@@ -227,6 +227,9 @@
                          placeholder=" "
                          filterable
                          :filter-method="filterMethod"
+                         popper-class="search-select"
+                         v-select-load-more="loadMore"
+                         @visible-change="onVisibleChange"
                          :disabled="!!editObject.id"
               >
                 <template #prefix>
@@ -234,7 +237,7 @@
                 </template>
                 <template v-for="paramOption in paramsOptions">
                   <template v-if="paramOption.key === param.key">
-                    <el-option :key="p" :value="p" v-for="p in paramOption.options"></el-option>
+                    <el-option :key="p" :value="p" v-for="p in paramOption.options.slice(0, rangeNumber)"></el-option>
                   </template>
                 </template>
               </el-select>
@@ -410,7 +413,8 @@ export default {
       monthWeekdayIsIndeterminate: false,
 
       paramsOptions: [],
-      newParamsOptions: []
+      newParamsOptions: [],
+      rangeNumber: 10
     }
   },
   watch: {
@@ -765,6 +769,15 @@ export default {
         }
       } else {
         this.paramsOptions = _.cloneDeep(this.newParamsOptions)
+        this.rangeNumber = 10
+      }
+    },
+    loadMore () {
+      this.rangeNumber += 10
+    },
+    onVisibleChange (flag) {
+      if (!flag) {
+        this.rangeNumber = 0
       }
     }
   }
