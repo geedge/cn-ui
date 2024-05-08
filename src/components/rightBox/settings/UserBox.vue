@@ -13,22 +13,22 @@
           <el-form-item :label="$t('config.user.name')" prop="name">
             <el-input id="account-input-name" v-model="editObject.name"
                       :disabled="editObject.username==='admin' && editObject.id === 1"
-                      minlength="2" maxlength="64" placeholder="" show-word-limit type="text"></el-input>
+                      maxlength="64" placeholder="" show-word-limit type="text"></el-input>
           </el-form-item>
           <!--username-->
           <el-form-item :label="$t('config.user.username')" prop="username">
             <el-input id="account-input-username" v-model="editObject.username"
                       :disabled="editObject.username==='admin' && editObject.id === 1"
-                      minlength="2" maxlength="64" placeholder="" show-word-limit type="text"></el-input>
+                       maxlength="64" placeholder="" show-word-limit type="text"></el-input>
           </el-form-item>
           <!--password-->
           <el-form-item :label="$t('config.user.pin')" prop="pin">
-            <el-input id="account-input-password" v-model="editObject.pin" minlength="5" maxlength="64" placeholder=""
+            <el-input id="account-input-password" v-model="editObject.pin"  maxlength="64" placeholder=""
                       show-word-limit type="password" @blur="pinBlur" autocomplete="new-password"></el-input>
           </el-form-item>
           <!--pinChange-->
           <el-form-item :label="$t('config.user.confirmPin')" label-width="200px" prop="pinChange">
-            <el-input id="account-input-pinChange" v-model="editObject.pinChange" minlength="5" maxlength="64" placeholder=""
+            <el-input id="account-input-pinChange" v-model="editObject.pinChange"  maxlength="64" placeholder=""
                       show-word-limit type="password"></el-input>
           </el-form-item>
           <!--email-->
