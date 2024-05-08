@@ -38,11 +38,6 @@
       font-size: 14px;
       line-height: 16px;
     }
-
-    .appearance__option {
-      display: flex;
-      justify-content: space-between;
-    }
   }
 
   .edit-appearance-base__footer {
@@ -61,4 +56,8 @@
       font-size: 14px;
     }
   }
+}
+.appearance__option {
+  display: flex;
+  justify-content: space-between;
 }

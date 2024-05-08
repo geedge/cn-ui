@@ -10,6 +10,13 @@
     flex-direction: column;
     height: 100%;
 
+    .license__loading {
+      top: 75px;
+      left: 130px;
+      width: 304px;
+      flex: 1;
+      position: relative;
+    }
     .license-file {
       display: flex;
       flex-direction: row;

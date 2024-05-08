@@ -2,6 +2,7 @@
   <div class="license" :class="from">
     <div class="license-form">
       <el-form ref="licenseForm" :model="licenseObject" label-position="left" label-width="134px" size="small">
+        <div class="license__loading"><loading :loading="loading"></loading></div>
         <el-form-item :label="`${$t('license.type')}：`" prop="type">
           {{ licenseObject.type }}
         </el-form-item>
@@ -51,6 +52,7 @@ import axios from 'axios'
 import { ref } from 'vue'
 import { dateFormat } from '@/utils/date-util'
 import _ from 'lodash'
+import Loading from '@/components/common/Loading'
 
 export default {
   name: 'License',
@@ -64,14 +66,19 @@ export default {
         supportID: '',
         dateIssued: '',
         dateExpires: ''
-      }
+      },
+      loading:false
     }
+  },
+  components: {
+    Loading
   },
   mounted () {
     this.initData()
   },
   methods: {
     initData () {
+      this.loading = true
       axios.get(this.url, { pageSize: -1 }).then(response => {
         if (response.status === 200) {
           this.licenseObject = response.data.data.license
@@ -81,6 +88,8 @@ export default {
       }).catch(e => {
         console.error(e)
         this.$message.error(this.errorMsgHandler(e))
+      }).finally(() => {
+        this.loading = false
       })
     },
 
