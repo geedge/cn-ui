@@ -24,10 +24,10 @@
             <div class="filter__body-item-right">{{ data.count }}</div>
           </div>
         </div>
-        <div v-show="filter.showMore"  @click="showMore(filter)"
+        <span v-show="filter.showMore"  @click="showMore(filter)"
              :class="filter.showDisabled? 'filter-no-show-more' : 'filter-show-more'">
           {{ $t('overall.showMore') }}
-        </div>
+        </span>
         <div class="filter-hr"></div>
       </div>
     </template>
