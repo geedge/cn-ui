@@ -211,8 +211,7 @@
 
 .breadcrumb__popper{
   top: 96px !important;
-  width: 180px !important;
-  min-width: 180px;
+  width: fit-content !important;
   max-height: 206px;
   overflow: hidden;
   padding: 0 !important;
@@ -223,7 +222,8 @@
   }
   .select-dropdown {
     max-height: 172px;
-    width: 100%;
+    width: 200px !important;
+    min-width: 200px;
     margin: 1px 0;
     overflow: auto;
     list-style: none;
@@ -231,7 +231,6 @@
     box-sizing: border-box;
 
     .select-dropdown__item{
-      width: 100%;
       height: 30px;
       padding: 0 11px;
       line-height: 30px;

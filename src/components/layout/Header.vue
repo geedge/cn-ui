@@ -411,6 +411,7 @@ export default {
       }
     },
     async breadcrumb (n) {
+      this.breadcrumbColumnValueListShow = []
       this.curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
       if (this.$route.path.replace('/panel/', '') === fromRoute.dnsServiceInsights) {
         if (this.dnsQtypeMapData.size === 0) {
@@ -612,7 +613,6 @@ export default {
       })
     },
     showBreadcrumbPopover (valueMenuId) {
-      this.breadcrumbColumnValueListShow.splice(0, this.breadcrumbColumnValueListShow.length)
       this.curPageNum = 1
       this.showBackground = true
       this.dropDownValue = ''
@@ -630,6 +630,7 @@ export default {
       }
     },
     changeValue (value) {
+      this.breadcrumbColumnValueListShow = []
       // 设置面包屑显示的内容及hover时的title
       let valName = value
       if (this.curTabProp === 'qtype') {
