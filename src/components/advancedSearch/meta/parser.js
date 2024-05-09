@@ -1203,7 +1203,7 @@ export default class Parser {
           return { key: '[' + key + ']', isKey: false }
         }
       } else if (lowerQ.indexOf(' in ') > -1) {
-        const key = q.substring(0, q.indexOf(' in '))
+        const key = lowerQ.substring(0, lowerQ.indexOf(' in '))
         const obj = this.columnList.find(t => t.label.toLowerCase() === key.toLowerCase())
         if (obj) {
           return { key: obj.label + q.substring(lowerQ.indexOf(' in '), q.length), isKey: true }
