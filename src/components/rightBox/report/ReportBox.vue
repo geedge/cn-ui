@@ -366,12 +366,12 @@ export default {
         if (this.$refs.reportForm) {
           this.$refs.reportForm.validateField('schedulerEnd')
         }
-        callback()
       }
+      callback()
     }
 
     const schedulerEndTimeValidator = (rule, value, callback) => {
-      if (this.editObject.schedulerStart && (getMillisecond(this.editObject.schedulerStart) >= getMillisecond(value))) {
+      if (value && this.editObject.schedulerStart && (getMillisecond(this.editObject.schedulerStart) >= getMillisecond(value))) {
         callback(new Error(this.$t('config.user.timeVerification')))
       } else {
         callback()
@@ -383,7 +383,6 @@ export default {
       { validator: schedulerStartTimeValidator, trigger: 'change' }
     ]
     this.rules.schedulerEnd = [
-      { required: false, message: i18n.global.t('validate.required'), trigger: 'change' },
       { validator: schedulerEndTimeValidator, trigger: 'change' }
     ]
     return {
