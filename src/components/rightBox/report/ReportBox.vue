@@ -281,10 +281,12 @@ export default {
     const startTime = ref('')
     const endTime = ref('')
     function endTimeChange (val) {
-      endTime.value = val + millTimestampDiffFromTz()
+      // endTime.value = val + millTimestampDiffFromTz()
+      endTime.value = getMillisecond(val) + millTimestampDiffFromTz()
     }
     function startTimeChang (val) {
-      startTime.value = val + millTimestampDiffFromTz()
+      // startTime.value = val + millTimestampDiffFromTz()
+      startTime.value = getMillisecond(val) + millTimestampDiffFromTz()
     }
     const endDisabledDate = (time) => {
       if (time.getTime() > new Date()) {
@@ -368,6 +370,8 @@ export default {
       startTimeChang,
       endTimeChange,
       rules,
+      startTime,
+      endTime,
       mySchedulerStart,
       mySchedulerEnd,
       onChangeSchedulerStart,
@@ -520,6 +524,14 @@ export default {
           }
         }
 
+        if (n.config) {
+          if (n.config.startTime) {
+            this.editObject.config.startTime = getMillisecond(n.config.startTime) - millTimestampDiffFromTz()
+          }
+          if (n.config.endTime) {
+            this.editObject.config.endTime = getMillisecond(n.config.endTime) - millTimestampDiffFromTz()
+          }
+        }
         if (n.schedulerStart) {
           this.editObject.schedulerStart = dateFormat(this.editObject.schedulerStart, this.dateFormat)
         }
@@ -625,10 +637,12 @@ export default {
           let schedulerStart = ''
           let schedulerEnd = ''
           if (this.editObject.config && this.editObject.config.startTime) {
-            startTime = getMillisecond(this.editObject.config.startTime)
+            // startTime = getMillisecond(this.editObject.config.startTime)
+            startTime = this.startTime ? this.startTime : this.object.config.startTime
           }
           if (this.editObject.config && this.editObject.config.endTime) {
-            endTime = getMillisecond(this.editObject.config.endTime)
+            // endTime = getMillisecond(this.editObject.config.endTime)
+            endTime = this.endTime ? this.endTime : this.object.config.endTime
           }
           if (this.editObject.config && this.editObject.config.schedulerConfig) {
             if (['day', 'week', 'month'].indexOf(this.editObject.config.schedulerConfig.type) > -1) {
@@ -639,11 +653,11 @@ export default {
           }
           if (this.editObject.schedulerStart) {
             // schedulerStart = getMillisecond(this.editObject.schedulerStart)
-            schedulerStart = this.mySchedulerStart
+            schedulerStart = this.mySchedulerStart ? this.mySchedulerStart : this.object.schedulerStart
           }
           if (this.editObject.schedulerEnd) {
             // schedulerEnd = getMillisecond(this.editObject.schedulerEnd)
-            schedulerEnd = this.mySchedulerEnd
+            schedulerEnd = this.mySchedulerEnd ? this.mySchedulerEnd : this.object.schedulerEnd
           }
 
           const copyObject = _.cloneDeep(this.editObject)
