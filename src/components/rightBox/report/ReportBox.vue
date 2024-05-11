@@ -179,6 +179,7 @@
                     :format="dateFormat"
                     prefix-icon=""
                     type="datetime"
+                    @change="onChangeSchedulerStart"
                     placeholder=" "
                 />
               </div>
@@ -193,6 +194,7 @@
                     :format="dateFormat"
                     prefix-icon=""
                     type="datetime"
+                    @change="onChangeSchedulerEnd"
                     placeholder=" "
                 />
               </div>
@@ -263,7 +265,7 @@ import { storageKey, report } from '@/utils/constants'
 import { api } from '@/utils/api'
 import _ from 'lodash'
 import axios from 'axios'
-import { dateFormat, getMillisecond } from '@/utils/date-util'
+import { dateFormat, getMillisecond, millTimestampDiffFromTz } from '@/utils/date-util'
 import { ref, getCurrentInstance } from 'vue'
 import i18n from '@/i18n'
 export default {
@@ -279,10 +281,10 @@ export default {
     const startTime = ref('')
     const endTime = ref('')
     function endTimeChange (val) {
-      endTime.value = val
+      endTime.value = val + millTimestampDiffFromTz()
     }
     function startTimeChang (val) {
-      startTime.value = val
+      startTime.value = val + millTimestampDiffFromTz()
     }
     const endDisabledDate = (time) => {
       if (time.getTime() > new Date()) {
@@ -352,12 +354,24 @@ export default {
         { validator: paramValidator, message: i18n.global.t('validate.required'), trigger: 'blur' }
       ]
     }
+    const mySchedulerStart = ref('')
+    const mySchedulerEnd = ref('')
+    const onChangeSchedulerStart = (val) => {
+      mySchedulerStart.value = getMillisecond(val) + millTimestampDiffFromTz()
+    }
+    const onChangeSchedulerEnd = (val) => {
+      mySchedulerEnd.value = getMillisecond(val) + millTimestampDiffFromTz()
+    }
     return {
       endDisabledDate,
       startDisabledDate,
       startTimeChang,
       endTimeChange,
-      rules
+      rules,
+      mySchedulerStart,
+      mySchedulerEnd,
+      onChangeSchedulerStart,
+      onChangeSchedulerEnd
     }
   },
   data () {
@@ -624,10 +638,12 @@ export default {
             }
           }
           if (this.editObject.schedulerStart) {
-            schedulerStart = getMillisecond(this.editObject.schedulerStart)
+            // schedulerStart = getMillisecond(this.editObject.schedulerStart)
+            schedulerStart = this.mySchedulerStart
           }
           if (this.editObject.schedulerEnd) {
-            schedulerEnd = getMillisecond(this.editObject.schedulerEnd)
+            // schedulerEnd = getMillisecond(this.editObject.schedulerEnd)
+            schedulerEnd = this.mySchedulerEnd
           }
 
           const copyObject = _.cloneDeep(this.editObject)
