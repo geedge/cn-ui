@@ -190,6 +190,7 @@
                     :format="dateFormat"
                     prefix-icon="cn-icon cn-icon-shijian"
                     type="datetime"
+                    @change="onChangeSchedulerStart"
                     placeholder=" "
                 />
               </div>
@@ -206,6 +207,7 @@
                     :format="dateFormat"
                     prefix-icon="cn-icon cn-icon-shijian"
                     type="datetime"
+                    @change="onChangeSchedulerEnd"
                     placeholder=" "
                 />
               </div>
@@ -242,7 +244,7 @@
                          placeholder=" "
                          filterable
                          :disabled="!!editObject.id"
-                         popper-class="right-box-select-dropdown right-box-select-report "
+                         popper-class="search-select right-box-select-dropdown right-box-select-report "
                          size="small"
               >
                 <template #prefix>
@@ -276,7 +278,7 @@ import { storageKey, report } from '@/utils/constants'
 import { api } from '@/utils/api'
 import _ from 'lodash'
 import axios from 'axios'
-import { dateFormat, getMillisecond } from '@/utils/date-util'
+import { dateFormat, getMillisecond, millTimestampDiffFromTz } from '@/utils/date-util'
 import { ref, getCurrentInstance } from 'vue'
 import i18n from '@/i18n'
 export default {
@@ -292,10 +294,12 @@ export default {
     const startTime = ref('')
     const endTime = ref('')
     function endTimeChange (val) {
-      endTime.value = val
+      // endTime.value = val + millTimestampDiffFromTz()
+      endTime.value = getMillisecond(val) + millTimestampDiffFromTz()
     }
     function startTimeChang (val) {
-      startTime.value = val
+      // startTime.value = val + millTimestampDiffFromTz()
+      startTime.value = getMillisecond(val) + millTimestampDiffFromTz()
     }
     const endDisabledDate = (time) => {
       if (time.getTime() > new Date()) {
@@ -332,7 +336,7 @@ export default {
     }
     const startTimeValidator = (rule, value, callback) => {
       const form = proxy.$refs.reportForm
-      if (form.model.config.endTime) {
+      if (form.model && form.model.config && form.model.config.endTime) {
         form.validateField('config.endTime', () => null)
       }
       callback()
@@ -352,9 +356,6 @@ export default {
       categoryId: [
         { required: true, message: i18n.global.t('validate.required'), trigger: 'change' }
       ],
-      schedulerStart: [
-        { required: true, message: i18n.global.t('validate.required'), trigger: 'change' }
-      ],
       'config.startTime': [
         { required: true, message: i18n.global.t('validate.required'), trigger: 'change' },
         { validator: startTimeValidator, trigger: 'change' }
@@ -368,15 +369,53 @@ export default {
         { validator: paramValidator, message: i18n.global.t('validate.required'), trigger: 'blur' }
       ]
     }
+    const mySchedulerStart = ref('')
+    const mySchedulerEnd = ref('')
+    const onChangeSchedulerStart = (val) => {
+      mySchedulerStart.value = getMillisecond(val) + millTimestampDiffFromTz()
+    }
+    const onChangeSchedulerEnd = (val) => {
+      mySchedulerEnd.value = getMillisecond(val) + millTimestampDiffFromTz()
+    }
     return {
       endDisabledDate,
       startDisabledDate,
       startTimeChang,
       endTimeChange,
-      rules
+      rules,
+      startTime,
+      endTime,
+      mySchedulerStart,
+      mySchedulerEnd,
+      onChangeSchedulerStart,
+      onChangeSchedulerEnd
     }
   },
   data () {
+    const schedulerStartTimeValidator = (rule, value, callback) => {
+      if (this.editObject.schedulerEnd) {
+        if (this.$refs.reportForm) {
+          this.$refs.reportForm.validateField('schedulerEnd')
+        }
+      }
+      callback()
+    }
+
+    const schedulerEndTimeValidator = (rule, value, callback) => {
+      if (value && this.editObject.schedulerStart && (getMillisecond(this.editObject.schedulerStart) >= getMillisecond(value))) {
+        callback(new Error(this.$t('config.user.timeVerification')))
+      } else {
+        callback()
+      }
+    }
+
+    this.rules.schedulerStart = [
+      { required: true, message: i18n.global.t('validate.required'), trigger: 'change' },
+      { validator: schedulerStartTimeValidator, trigger: 'change' }
+    ]
+    this.rules.schedulerEnd = [
+      { validator: schedulerEndTimeValidator, trigger: 'change' }
+    ]
     return {
       url: api.reportTemp,
 
@@ -403,7 +442,9 @@ export default {
       monthWeekdayCheckedAll: false,
       monthWeekdayIsIndeterminate: false,
 
-      paramsOptions: []
+      paramsOptions: [],
+      newParamsOptions: [],
+      rangeNumber: 10
     }
   },
   watch: {
@@ -414,6 +455,7 @@ export default {
     scheduleChecked (n) {
       this.editObject.config.isScheduler = n ? 1 : 0
       this.cleanScheduleConfig()
+      this.initDateCalendarPreIcon()
     },
     monthScheduleType (n) {
       this.cleanScheduleConfig()
@@ -495,6 +537,14 @@ export default {
           }
         }
 
+        if (n.config) {
+          if (n.config.startTime) {
+            this.editObject.config.startTime = getMillisecond(n.config.startTime) - millTimestampDiffFromTz()
+          }
+          if (n.config.endTime) {
+            this.editObject.config.endTime = getMillisecond(n.config.endTime) - millTimestampDiffFromTz()
+          }
+        }
         if (n.schedulerStart) {
           this.editObject.schedulerStart = dateFormat(this.editObject.schedulerStart, this.dateFormat)
         }
@@ -521,10 +571,24 @@ export default {
       }
     }
   },
+  mounted () {
+    this.initDateCalendarPreIcon()
+  },
   methods: {
+    initDateCalendarPreIcon () {
+      this.$nextTick(() => {
+        const datePrefixIcon = document.getElementsByClassName('el-input__prefix-inner')
+        if (datePrefixIcon && datePrefixIcon.length > 0) {
+          Array.prototype.forEach.call(datePrefixIcon, function (element) {
+            element.innerHTML = '<i class="el-input__icon cn-icon cn-icon-shijian"></i>'
+          })
+        }
+      })
+    },
     loadParamOptions () {
       if (_.isArray(this.editObject.categoryParams) && !_.isEmpty(this.editObject.categoryParams)) {
         this.editObject.categoryParams.forEach(param => {
+          // this.paramsOptions = _.cloneDeep(this.newParamsOptions)
           if (!this.paramsOptions.some(p => p.key === param.key)) {
             axios.get(api.dict, { params: { type: param.key, pageSize: -1 } }).then(response => {
               if (response.status === 200) {
@@ -532,6 +596,7 @@ export default {
                   key: param.key,
                   options: response.data.data.list.map(d => d.value)
                 })
+                // this.newParamsOptions = this.paramsOptions
               }
             })
           }
@@ -569,6 +634,7 @@ export default {
       if (val === 'customize') {
         this.scheduleChecked = false
       }
+      this.initDateCalendarPreIcon()
     },
     scheduleTypeChange (val) {
       this.scheduleType = val
@@ -584,10 +650,12 @@ export default {
           let schedulerStart = ''
           let schedulerEnd = ''
           if (this.editObject.config && this.editObject.config.startTime) {
-            startTime = getMillisecond(this.editObject.config.startTime)
+            // startTime = getMillisecond(this.editObject.config.startTime)
+            startTime = this.startTime ? this.startTime : this.object.config.startTime
           }
           if (this.editObject.config && this.editObject.config.endTime) {
-            endTime = getMillisecond(this.editObject.config.endTime)
+            // endTime = getMillisecond(this.editObject.config.endTime)
+            endTime = this.endTime ? this.endTime : this.object.config.endTime
           }
           if (this.editObject.config && this.editObject.config.schedulerConfig) {
             if (['day', 'week', 'month'].indexOf(this.editObject.config.schedulerConfig.type) > -1) {
@@ -597,10 +665,12 @@ export default {
             }
           }
           if (this.editObject.schedulerStart) {
-            schedulerStart = getMillisecond(this.editObject.schedulerStart)
+            // schedulerStart = getMillisecond(this.editObject.schedulerStart)
+            schedulerStart = this.mySchedulerStart ? this.mySchedulerStart : this.object.schedulerStart
           }
           if (this.editObject.schedulerEnd) {
-            schedulerEnd = getMillisecond(this.editObject.schedulerEnd)
+            // schedulerEnd = getMillisecond(this.editObject.schedulerEnd)
+            schedulerEnd = this.mySchedulerEnd ? this.mySchedulerEnd : this.object.schedulerEnd
           }
 
           const copyObject = _.cloneDeep(this.editObject)
@@ -721,6 +791,36 @@ export default {
       const checkedCount = val.length
       this.monthWeekdayCheckedAll = checkedCount === this.weekdayList.length
       this.monthWeekdayIsIndeterminate = checkedCount > 0 && checkedCount < this.weekdayList.length
+    },
+    /**
+     * params的option筛选方法，组件自带的方法在paramsOptions的options长度超过1512后会保留部分值
+     * @param filterVal
+     */
+    filterMethod (filterVal) {
+      const key = this.editObject.categoryParams[0].key
+      if (filterVal) {
+        const obj = this.newParamsOptions.find(d => d.key === key)
+        if (_.isString(filterVal) && obj) {
+          const filterArr = _.cloneDeep(obj.options).filter(d => d.toLowerCase().includes(filterVal.toLowerCase()))
+          const paramsOptionsObj = this.paramsOptions.find(d => d.key === key)
+          paramsOptionsObj.options = filterArr
+        } else if (_.isNumber(filterVal) && obj) {
+          const filterArr = _.cloneDeep(obj.options).filter(d => d.toLowerCase().includes(filterVal))
+          const paramsOptionsObj = this.paramsOptions.find(d => d.key === key)
+          paramsOptionsObj.options = filterArr
+        }
+      } else {
+        this.paramsOptions = _.cloneDeep(this.newParamsOptions)
+        this.rangeNumber = 10
+      }
+    },
+    loadMore () {
+      this.rangeNumber += 10
+    },
+    onVisibleChange (flag) {
+      if (!flag) {
+        this.rangeNumber = 0
+      }
     }
   }
 }
