@@ -273,6 +273,7 @@ export default {
             for (let i = 0; i < response.data.data.list.length; i++) {
               response.data.data.list[i].status = response.data.data.list[i].status + ''
             }
+            this.tableData = []
             this.$nextTick(() => {
               this.tableData = response.data.data.list.map(item => {
                 return {
@@ -316,10 +317,17 @@ export default {
           type: 'warning'
         }).catch(() => {})
       } else {
-        const curRecord = this.batchDeleteObjs[0]
-        this.initConfig(curRecord)
-        this.object = curRecord
-        this.rightBox.show = true
+        axios.get(`${api.reportTemp}/${this.batchDeleteObjs[0].id}`).then(response => {
+          if (response.status === 200) {
+            const curRecord = response.data.data
+            if (curRecord.config) {
+              curRecord.config = JSON.parse(curRecord.config)
+            }
+            this.initConfig(curRecord)
+            this.object = curRecord
+            this.rightBox.show = true
+          }
+        })
       }
     },
     initConfig (u) {
