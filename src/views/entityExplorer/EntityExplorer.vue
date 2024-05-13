@@ -217,7 +217,7 @@ import {
   numberWithCommas
 } from '@/utils/tools'
 import Parser from '@/components/advancedSearch/meta/parser'
-import { handleErrorTip } from '@/components/advancedSearch/meta/error'
+import { handleErrorTip, invalidErrorTip } from '@/components/advancedSearch/meta/error'
 import { columnList } from '@/utils/static-data'
 import { useRoute } from 'vue-router'
 import { columnType } from '@/components/advancedSearch/meta/meta'
@@ -806,7 +806,7 @@ export default {
             this.$message.error(handleErrorTip(errorList[0]))
           }
         } else {
-          this.$message.error(this.$t('tip.invalidQueryField') + ' ' + keyInfo.key)
+          this.$message.error(invalidErrorTip(keyInfo))
         }
       } else {
         this.search({ q: '', str: '', metaList: [] })

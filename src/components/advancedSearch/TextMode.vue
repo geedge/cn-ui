@@ -58,7 +58,7 @@ import CodeMirror from 'codemirror'
 import { toRaw } from 'vue'
 import _ from 'lodash'
 import { columnType } from '@/components/advancedSearch/meta/meta'
-import { handleErrorTip } from '@/components/advancedSearch/meta/error'
+import { handleErrorTip, invalidErrorTip } from '@/components/advancedSearch/meta/error'
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import Hint from '@/components/advancedSearch/showhint/Hint/Hint'
 import { getDataset } from '@/components/advancedSearch/showhint/packages/getDataset'
@@ -178,7 +178,7 @@ export default {
       this.handleBlur()
       let str
       if (!this.isUnitTesting) {
-        str = this.codeMirror.getValue().trim()
+        str = this.codeMirror.getValue().replace(/\s+/g, ' ').trim() // 去除多余空格
       } else {
         str = this.myUnitTestStr
       }
@@ -201,7 +201,7 @@ export default {
             this.$message.error(handleErrorTip(errorList[0]))
           }
         } else {
-          this.$message.error(this.$t('tip.invalidQueryField') + ' ' + keyInfo.key)
+          this.$message.error(invalidErrorTip(keyInfo))
         }
       } else {
         this.$emit('search', { q: '', str: '', metaList: [] })

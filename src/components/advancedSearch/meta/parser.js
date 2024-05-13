@@ -1183,7 +1183,7 @@ export default class Parser {
               if (label) {
                 const obj = this.columnList.find(t => t.label.toLowerCase() === label.toLowerCase())
                 if (!obj) {
-                  return { key: '[' + key + ']', isKey: false }
+                  return { key: '[' + label + ']', isKey: false }
                 }
               } else {
                 return { key: 'in index ' + q.indexOf('has('), isKey: false }
@@ -1219,7 +1219,7 @@ export default class Parser {
             if (obj) {
               return { key: 'has(' + obj.label + q.substring(lowerQ.indexOf(','), lowerQ.length), isKey: true }
             } else {
-              return { key: '[' + key + ']', isKey: false }
+              return { key: '[' + label + ']', isKey: false }
             }
           } else {
             return { key: 'in index 5', isKey: false }
@@ -1230,7 +1230,7 @@ export default class Parser {
       }
     } else {
       return {
-        key: q,
+        key: '[' + q + ']',
         isKey: false
       }
     }
@@ -1314,7 +1314,8 @@ export default class Parser {
           if (str.toLowerCase().indexOf(item.toLowerCase()) > -1) {
             // todo 记录一下此处取消了转小写转换，后续搜索验证
             // str = str.replace(new RegExp(item, 'gi'), item)
-            if (!operatorList.some(ite => str.includes(ite)) && str.toLowerCase() !== item.toLowerCase()) {
+            const isSpace = /\s/.test(str)
+            if (!operatorList.some(ite => str.includes(ite)) && str.toLowerCase() !== item.toLowerCase() && !isSpace) {
               str = this.checkFormatByStr(str)
             }
           }
