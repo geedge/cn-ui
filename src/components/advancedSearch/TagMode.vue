@@ -350,11 +350,11 @@ export default {
         // 根据所选label在columnList中匹配label来确定操作符，一般为=,IN，tags操作符为has
         const obj = this.columnList.find(t => t.label === meta.column.label)
         this.operatorList = obj ? obj.doc.constraints.operator_functions.split(',') : ['=', 'IN']
-        if (meta.column && meta.column.type === 'fullText') {
+        if (meta.column && meta.column.type === columnType.fullText) {
           meta.operator.value = '='
-          meta.column.show = true
+          meta.column.show = false
           meta.column.isFullText = true
-          meta.operator.show = true
+          meta.operator.show = false
           const label = JSON.parse(JSON.stringify(meta.column.label))
           meta.column.label = parser.getEntityTypeByValue(meta.column.label)
           meta.value.value = label
