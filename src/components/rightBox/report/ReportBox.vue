@@ -292,15 +292,9 @@ export default {
       if (time.getTime() > new Date()) {
         return true
       }
-      if (startTime.value !== '' && startTime.value > time) {
-        return true
-      }
     }
     const startDisabledDate = (time) => {
-      if (time.getTime() > new Date()) {
-        return true
-      }
-      if (endTime.value !== '' && endTime.value < time) {
+      if (time.getTime() > (new Date()).getTime()) {
         return true
       }
     }
@@ -323,14 +317,14 @@ export default {
     }
     const startTimeValidator = (rule, value, callback) => {
       const form = proxy.$refs.reportForm
-      if (form.model && form.model.config && form.model.config.endTime) {
+      if (proxy.endTime || (proxy.editObject && proxy.editObject.config && proxy.editObject.config.endTime)) {
         form.validateField('config.endTime', () => null)
       }
       callback()
     }
     const endTimeValidator = (rule, value, callback) => {
       let validate = true
-      if (startTime.value !== '' && value <= startTime.value) {
+      if (startTime.value !== '' && endTime.value <= startTime.value) {
         validate = false
       }
       return validate
