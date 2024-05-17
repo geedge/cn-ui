@@ -82,73 +82,6 @@ $color-highlight: #CC4444;
     .panel__time {
       display: flex;
     }
-
-    .el-select {
-      .search-active {
-        float: left;
-        border-radius: 3px;
-        width: 6px;
-        height: 6px;
-        margin-right: 10px;
-        position: relative;
-        top: 50%;
-        transform: translateY(-50%);
-        text-align: center;
-      }
-
-      .search-value {
-        font-size: 14px;
-        margin-right: 20px;
-      }
-
-      .search-id {
-        color: var(--el-color-info);
-      }
-
-      .search-follow__icon {
-        position: absolute;
-        top: 50%;
-        right: 10px;
-        transform: translateY(-50%);
-        color: $color-search-follow;
-        margin-right: 10px;
-        text-align: center;
-
-        i {
-          font-size: 12px;
-        }
-      }
-
-      .search-content {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        justify-content: center;
-      }
-
-      .active-icon {
-        background: $color-business;
-      }
-
-      .inactive-icon {
-        background: $color-inactive;
-      }
-
-      .search-select {
-        max-height: 250px;
-      }
-
-      .search-select .el-scrollbar__wrap {
-        max-height: 250px;
-        overflow-y: auto;
-      }
-
-      .el-select-dropdown .el-scrollbar .el-select-dropdown__wrap .el-scrollbar__view.el-select-dropdown__list .el-select-dropdown__item {
-        position: relative;
-        height: 48px;
-        line-height: 16px;
-      }
-    }
   }
 
   .el-tabs {
@@ -302,9 +235,90 @@ $color-highlight: #CC4444;
 
     .analysis-statistics {
       width: 330px;
-      overflow-y: auto;
+      overflow-y: scroll;
       padding-right: 5px;
+      .analysis-statistics__search {
+        margin-bottom: 10px;
+        padding-left: 20px;
+        .el-select {
+          .search-active {
+            float: left;
+            border-radius: 3px;
+            width: 6px;
+            height: 6px;
+            margin-right: 10px;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            text-align: center;
+          }
 
+          .search-value {
+            font-size: 14px;
+            margin-right: 20px;
+          }
+
+          .search-id {
+            color: var(--el-color-info);
+          }
+
+          .search-follow__icon {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            color: $color-search-follow;
+            margin-right: 10px;
+            text-align: center;
+
+            i {
+              font-size: 12px;
+            }
+          }
+
+          .search-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: center;
+          }
+
+          .active-icon {
+            background: $color-business;
+          }
+
+          .inactive-icon {
+            background: $color-inactive;
+          }
+
+          .search-select {
+            max-height: 250px;
+          }
+
+          .search-select .el-scrollbar__wrap {
+            max-height: 250px;
+            overflow-y: auto;
+          }
+
+          .el-select-dropdown .el-scrollbar .el-select-dropdown__wrap .el-scrollbar__view.el-select-dropdown__list .el-select-dropdown__item {
+            position: relative;
+            height: 48px;
+            line-height: 16px;
+          }
+        }
+      }
+      .analysis-statistics__condition {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding-left: 20px;
+        font-size: 16px;
+        color: $color-text-primary;
+        .el-checkbox__label {
+          font-size: 14px;
+          color: $color-text-primary !important;
+        }
+      }
       .analysis-statistics__chart {
         margin: 0 0 10px 20px;
         height: 148px;
@@ -411,6 +425,12 @@ $color-highlight: #CC4444;
         padding-left: 20px;
         font-size: 16px;
         color: $color-text-primary;
+        display: flex;
+        justify-content: space-between;
+        .el-checkbox__label {
+          font-size: 14px;
+          color: $color-text-primary !important;
+        }
       }
 
       .analysis-statistics__no-tracking-tip {
@@ -511,10 +531,12 @@ $color-highlight: #CC4444;
 
                 .cancel-follow {
                   margin-right: 14px;
-
+                  height: 100%;
+                  display: flex;
+                  align-items: center;
                   i {
                     cursor: pointer;
-                    font-size: 8px;
+                    font-size: 12px;
                   }
                 }
               }

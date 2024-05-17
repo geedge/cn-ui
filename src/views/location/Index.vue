@@ -15,48 +15,6 @@
     </el-tabs>
     <!-- 右上角工具栏 -->
     <div class="geo-tools">
-      <el-select
-              id="searchValue"
-              ref="searchValue"
-              v-model="dropDownValue"
-              v-show="activeTab === 'locationMap'"
-              size="small"
-              clearable
-              filterable
-              remote
-              :placeholder="$t('location.enterPhoneNumberToSearch')"
-              popper-class="search-select"
-              :teleported="false"
-              placement="bottom"
-              @visible-change="visibleChange"
-              :remote-method="dropDownSearch"
-              v-select-load-more="onLoadMore"
-              class="location__select"
-      >
-        <el-option
-                v-for="item in searchValueListShow"
-                :key="item.subscriberId"
-                :value="item.phoneNumber"
-        >
-          <span class="search-active" :class="item.active === 1 ? 'active-icon' : 'inactive-icon'"></span>
-          <div class="search-content">
-            <span class="search-value">{{ item.phoneNumber }}</span>
-            <span class="search-id">ID&nbsp;&nbsp;{{ item.subscriberId }}</span>
-          </div>
-          <span class="search-follow__icon" @click.stop="followSubscribers(item)">
-            <i class="cn-icon-follow-fill cn-icon" v-if="item.follow === 1"></i>
-            <i class="cn-icon-follow cn-icon" v-else></i>
-          </span>
-        </el-option>
-        <template #empty>
-          <div v-if="loading.searchLoading" class="location__select-empty">
-            <simple-loading class="padding-t-10" size="small" placement="top" :loading="loading.searchLoading" ></simple-loading>
-          </div>
-          <div v-else-if="emptyTip !== ''" class="location__select-empty">
-            {{emptyTip}}
-          </div>
-        </template>
-      </el-select>
       <div class="panel__time">
         <date-time-range
             class="date-time-range"
@@ -85,7 +43,8 @@
         <time-line v-if="activeTab === 'locationMap'" :timeFilter="timeFilter" @change="mapTimeLineChange"></time-line>
       </div>
       <!-- 右侧数据栏-map -->
-      <div class="analysis-statistics" v-show="activeTab === 'locationMap'">
+      <div class="analysis-statistics" id="locationMap-subscriber-scroll" v-show="activeTab === 'locationMap'"
+           @scroll="scrollList" >
         <!-- 饼图 -->
         <div class="analysis-statistics__chart">
           <simple-loading size="small" placement="top-end" :loading="loading.pieLoading"></simple-loading>
@@ -112,11 +71,28 @@
           <div class="chart-line__drawing" id="activeSubscribersChart"></div>
         </div>
         <div class="analysis-statistics__title">
-          {{$t('location.followedSubscribers')}}
-          <simple-loading :loading="loading.followSubscriberLoading" placement="right" size="small"></simple-loading>
+          {{$t('location.subscribers')}}
+          <simple-loading :loading="loading.subscriberLoading" placement="right" size="small"></simple-loading>
+        </div>
+        <div class="analysis-statistics__search">
+          <el-input id="searchValue2"
+                    ref="searchValue2"
+                    size="small"
+                    :placeholder="$t('location.searchSubscriberTip')"
+                    v-model="curSearchValue"
+                    v-show="activeTab === 'locationMap'"
+                    @input="searchSubscribers"></el-input>
+        </div>
+        <div class="analysis-statistics__condition">
+          <div class="hexId-tag">
+            <el-tag v-if="curHexId !== ''" key="hexId" closable type="info" @close="clearHexId" disable-transitions>
+              HexId:{{ curHexId }}
+            </el-tag>
+          </div>
+          <el-checkbox v-model="isChecked" @change="showFollowedSubscribers" :label="$t('location.onlyFollowed')" size="small" />
         </div>
         <div class="analysis-statistics__subscribers">
-          <template v-for="item in followedSubscribersList" :key="item.subscriberId">
+          <template v-for="item in subscribersList" :key="item.subscriberId">
             <div class="analysis-statistics__subscriber"
                  @click="subscriberListClick(item)"
                  @mouseenter="subscriberListMouseEnter(item)"
@@ -139,8 +115,9 @@
                     <div class="trajectory-text" @click.stop="addOrRemoveTrackingSubscriber(item)">
                         <i class="cn-icon" :class="symbolClass(item)"></i>{{$t('location.track')}}
                     </div>
-                    <div class="cancel-follow" @click.stop="cancelFollowSubscribers(item)">
-                      <i class="cn-icon-close cn-icon"></i>
+                    <div class="cancel-follow">
+                      <i class="cn-icon-follow-fill cn-icon" v-if="item.follow === 1"  @click.stop="cancelFollowSubscribers(item)"></i>
+                      <i class="cn-icon-follow cn-icon" v-else @click.stop="followSubscribers(item)"></i>
                     </div>
                   </div>
                 </div>
@@ -379,7 +356,7 @@ import maplibregl from 'maplibre-gl'
 import mapStyle from '@/views/charts2/charts/entityDetail/mapStyle'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
-import { unitTypes, storageKey, defaultMapConfig } from '@/utils/constants'
+import { unitTypes, storageKey, defaultMapConfig,mapLevelField } from '@/utils/constants'
 import * as echarts from 'echarts'
 import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
 import { pieOption } from '@/views/location/chartOption'
@@ -414,7 +391,10 @@ export default {
       scrollInfo: {
         itemSize: 50, // 一个滚动item高度
         containerHeight: 300 // 滚动列表
-      }
+      },
+      isChecked: false,
+      curHexId: '',
+      busy: false
     }
   },
   components: {
@@ -496,8 +476,8 @@ export default {
       const mapFollowedSubscriberData = await this.queryMapFollowedSubscriber()
       this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
 
-      /* 右侧关注列表 */
-      await this.queryFollowedList()
+      /* 右侧默认显示普通列表 */
+      this.initSubscriberList()
       /* 右上角折线图 */
       await this.renderActiveSubscribersLine()
     },
@@ -587,20 +567,26 @@ export default {
       }
     },
     async queryFollowedList () {
-      const params = {
+      let params = {
         ...this.timeFilter,
         pageSize: -1,
         level: this.mapLevel
       }
-      this.loading.followSubscriberLoading = true
+      if (this.curSearchValue && this.curSearchValue !== '') {
+        params = {
+          ...params,
+          params: "  subscriber_id like '%" + this.curSearchValue + "%'"
+        }
+      }
+      this.loading.subscriberLoading = true
       try {
         const response = await axios.get(api.location.followedSubscriber, { params })
-        this.followedSubscribersList = response.data.data.list
+        this.subscribersList = response.data.data.list
       } catch (e) {
         this.errorMsgHandler(e)
         console.error(e)
       } finally {
-        this.loading.followSubscriberLoading = false
+        this.loading.subscriberLoading = false
       }
     },
     async queryHexagon () {
@@ -1000,6 +986,7 @@ export default {
       this.mapChart.on('mousemove', 'hexagon', this.hexagonMouseMove)
       this.mapChart.on('moveend', this.debounceVisualChange)
       this.mapChart.on('zoomend', this.debounceVisualChange)
+      this.mapChart.on('click', this.choosePolygon)
     },
     unbindHexagonEvents () {
       this.mapChart.off('mouseenter', this.hexagonMouseEnter)
@@ -1007,6 +994,8 @@ export default {
       this.mapChart.off('mousemove', this.hexagonMouseMove)
       this.mapChart.off('moveend', this.debounceVisualChange)
       this.mapChart.off('zoomend', this.debounceVisualChange)
+      this.mapChart.off('click', this.choosePolygon)
+
     },
     bindTrackingHexagonEvents () {
       this.mapChart.on('mouseenter', 'trackingHexagon', this.trackingHexagonMouseEnter)
@@ -1222,6 +1211,17 @@ export default {
         target.getElement().classList.remove('map-marker--hover')
       }
     },
+    async scrollList(e) {
+      if(!this.isChecked) {
+        const obj = document.getElementById('locationMap-subscriber-scroll')
+        if ((obj.scrollHeight - obj.scrollTop - obj.clientHeight <=10) &&
+            (obj.scrollHeight - obj.scrollTop - obj.clientHeight > 1) &&
+            obj.scrollHeight !== 0 &&
+            !this.loading.subscriberLoading) {
+          await this.initSubscriberList()
+        }
+      }
+    },
     timeRefreshChange () {
       // 不是自选时间
       if (this.$refs.dateTimeRange) {
@@ -1311,63 +1311,63 @@ export default {
       this.activeTab = 'traceTracking'
       this.tooltip.showMarkerTooltip = false
     },
-    async initDropdownList (curSearchValue) {
-      if (curSearchValue !== '') {
-        const params = {
-          startTime: this.timeFilter.startTime,
-          endTime: this.timeFilter.endTime,
-          pageNo: this.curPageNum++,
-          pageSize: 10,
-          params: "phone_number like '%" + curSearchValue + "%'"
-        }
-        try {
-          this.loading.searchLoading = true
-          this.emptyTip = ''
-          await axios.get(api.location.list, { params }).then(async response => {
-            if (response.status === 200) {
-              if (params.pageNo === 1) {
-                this.searchValueListShow = response.data.data
-              } else {
-                this.searchValueListShow = this.searchValueListShow.concat(response.data.data)
-              }
-              if (response.data.data.length === 0 && this.curPageNum > 1) {
-                this.curPageNum--
-              }
-              if (params.pageNo === 1) {
-                this.$nextTick(() => {
-                  const selectDom = document.getElementsByClassName('el-select-dropdown search-select')
-                  if (selectDom) {
-                    const dom = selectDom[0].getElementsByClassName('el-scrollbar__thumb')
-                    if (dom && dom[1]) {
-                      dom[1].style = 'transform: translateY(0%) !important;'
-                    }
-                  }
-                })
-              }
-            }
-          })
-        } catch (e) {
-          this.errorMsgHandler(e)
-          console.error(e)
-        } finally {
-          this.loading.searchLoading = false
-          if (this.searchValueListShow.length === 0) {
-            this.emptyTip = 'No Data'
-          }
-        }
+    // 地图上点击多边形
+    choosePolygon () {
+      if(this.tooltip.type === this.tooltipType.hexagon) {
+        this.curHexId = this.currentPolygon.hexId
+        this.curPageNum = 1
+        this.subscribersList = []
+        this.initSubscriberList()
       }
     },
-    onLoadMore () {
-      if (!this.loading.searchLoading) {
-        this.initDropdownList(this.curSearchValue)
+    async initSubscriberList () {
+      let params = {
+        startTime: this.timeFilter.startTime,
+        endTime: this.timeFilter.endTime,
+        pageNo: this.curPageNum++,
+        pageSize: 10,
+        params: '',
+        isFollowed: this.isChecked ? 1 : 0
+      }
+      let paramArray = []
+      if(this.curHexId) {
+        let levelField = this.mapLevelField.find(item => item.level === this.mapLevel)
+        paramArray.push(levelField ? levelField.field + "='" + this.curHexId + "'" : "")
+      }
+      if (this.curSearchValue && this.curSearchValue !== '') {
+        paramArray.push(" (subscriber_id like '%" + this.curSearchValue + "%' or phone_number like '%" + this.curSearchValue + "%') ")
+      }
+      if(paramArray.length > 0) {
+        params.params = paramArray.join(' and ')
+      }
+      try {
+        this.loading.subscriberLoading = true
+        await axios.get(api.location.list, { params }).then(async response => {
+          if (response.status === 200) {
+            if (response.data.data.length === 0 && this.curPageNum > 1) {
+              this.curPageNum--
+            } else {
+              if (params.pageNo === 1) {
+                this.subscribersList = response.data.data
+              } else {
+                this.subscribersList = this.subscribersList.concat(response.data.data)
+              }
+            }
+          }
+        })
+      } catch (e) {
+        this.errorMsgHandler(e)
+        console.error(e)
+      } finally {
+        this.loading.subscriberLoading = false
       }
     },
     cancelFollowSubscribers (item) {
       axios.delete(api.location.follow + '?subscriberId=' + item.subscriberId).then(res => {
         if (res.status === 200) {
           this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancleFollow.success') })
-          /* 刷新右侧关注列表 */
-          this.queryFollowedList()
+          /* 刷新右侧列表 */
+          item.follow = 0
           // 删除地图中对应的人
           this.humanMarkers.forEach(marker => {
             if (marker.subscriberId === item.subscriberId) {
@@ -1386,15 +1386,14 @@ export default {
         axios.delete(api.location.follow + '?subscriberId=' + item.subscriberId).then(res => {
           if (res.status === 200) {
             this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancleFollow.success') })
-            item.follow = 0
             // 删除地图中对应的人
             this.humanMarkers.forEach(marker => {
               if (marker.subscriberId === item.subscriberId) {
                 marker.remove()
               }
             })
-            /* 刷新右侧关注列表 */
-            this.queryFollowedList()
+            /* 刷新右侧列表 */
+            item.follow = 0
           } else {
             this.$message.error(res.data.message)
           }
@@ -1405,9 +1404,8 @@ export default {
         axios.post(api.location.follow, { subscriberId: item.subscriberId }).then(async res => {
           if (res.status === 200) {
             this.$message({ duration: 2000, type: 'success', message: this.$t('location.follow.success') })
+            /* 刷新右侧列表 */
             item.follow = 1
-            /* 刷新右侧关注列表 */
-            await this.queryFollowedList()
             // 刷新地图上的人
             this.humanMarkers.forEach(marker => {
               marker.remove && marker.remove()
@@ -1423,15 +1421,22 @@ export default {
         })
       }
     },
-    visibleChange (state) {
-      this.searchValueListShow = []
-    },
-    dropDownSearch (curVal) {
-      this.curSearchValue = curVal
+    async clearHexId () {
+      this.curHexId = ''
       this.curPageNum = 1
-      this.searchValueListShow = []
-      this.emptyTip = ''
-      this.initDropdownList(curVal)
+      this.subscribersList = []
+      await this.initSubscriberList()
+    },
+    async showFollowedSubscribers () {
+      this.curPageNum = 1
+      this.subscribersList = []
+      await this.initSubscriberList()
+    },
+    async searchSubscribers () {
+      this.curPageNum = 1
+      this.subscribersList = []
+      //根据输入字符串，查找用户信息
+      await this.initSubscriberList()
     },
     mapTimeLineChange (timeFilter) {
       this.minuteTimeFilter = {
@@ -1629,7 +1634,7 @@ export default {
     // const pieColorRamp = ['196,214,59', '190,230,255', '135,206,250', '63,133,186', '37,55,128']
     const pieColorRamp = ['196,214,59', '135,206,250', '63,133,186', '45,65,135', '34,7,90']
     const pieValueRamp = ref([])
-    const followedSubscribersList = ref([])
+    const subscribersList = ref([])
     const searchValueListShow = ref([])
     const boundaryBox = ref({}) // minLongitude、maxLongitude、minLatitude、maxLatitude
     const boundaryBoxExtreme = ref({}) // minLongitude、maxLongitude、minLatitude、maxLatitude
@@ -1662,7 +1667,7 @@ export default {
       timeBarLoading: true, // 时间轴和地图上的人型图标的加载状态
       baseStationLoading: true, // 基站加载状态
 
-      followSubscriberLoading: true, // 控制右侧关注用户列表加载状态
+      subscriberLoading: true, // 控制右侧关注用户列表加载状态
       pieLoading: true, // 控制饼图加载状态
       lineLoading: true, // 控制折线图加载状态
       searchLoading: false, // 搜索框加载状态
@@ -1687,7 +1692,7 @@ export default {
       tooltip, // 控制鼠标悬浮框
       pieColorRamp, // 六边形颜色坡度
       pieValueRamp, // 饼图数值坡度，动态获取
-      followedSubscribersList, // Location关注用户列表
+      subscribersList, // Location用户列表
       boundaryBox, // 查六边形数据的经纬度范围，minLongitude、maxLongitude、minLatitude、maxLatitude
       boundaryBoxExtreme, // boundaryBox的历史极值，用来判断当前boundaryBox下是否需要查数据
       mapChart, // 地图对象
@@ -1718,6 +1723,7 @@ export default {
       debounceMinuteChange: shallowRef(null),
       debounceOnResize: shallowRef(null),
       debounceVisualChange: shallowRef(null),
+      mapLevelField,
       mapDomHeight, // 地图dom的高度，用来计算悬浮框的位置
       tooltipDomHeight // 计算悬浮框位置时默认的悬浮框高度
     }

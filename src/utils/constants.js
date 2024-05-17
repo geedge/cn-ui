@@ -54,7 +54,7 @@ export const largeCountryList = ['CN', 'US', 'RU', 'AU', 'CA', 'KZ', 'IN', 'BR']
 
 export const dbTableColumnCustomizeConfig = [
   {
-    version: '24.04.01',
+    version: '24.04.06',
     tableName: dbUserTableColumnCustomizeConfig
   },{
     version: '24.04.01',
@@ -2661,6 +2661,21 @@ export const defaultMapConfig = {
   mapLevel: 2, // 数据精度 1、2、3，1最大
   defaultZoom: 12 // 默认缩放等级
 }
+
+export const mapLevelField = [
+  {
+    level: 1,
+    field: 'first_location'
+  },
+  {
+    level: 2,
+    field: 'second_location'
+  },
+  {
+    level: 3,
+    field: 'third_location'
+  }
+]
 
 export const report = {
   timeRuleList: [
