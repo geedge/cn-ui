@@ -356,7 +356,7 @@ import maplibregl from 'maplibre-gl'
 import mapStyle from '@/views/charts2/charts/entityDetail/mapStyle'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
-import { unitTypes, storageKey, defaultMapConfig,mapLevelField } from '@/utils/constants'
+import { unitTypes, storageKey, defaultMapConfig, mapLevelField } from '@/utils/constants'
 import * as echarts from 'echarts'
 import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
 import { pieOption } from '@/views/location/chartOption'
@@ -470,6 +470,7 @@ export default {
         }
       })
       // 六边形的鼠标事件
+      this.unbindHexagonEvents()
       this.bindHexagonEvents()
 
       /* 地图上的人 */
@@ -986,16 +987,15 @@ export default {
       this.mapChart.on('mousemove', 'hexagon', this.hexagonMouseMove)
       this.mapChart.on('moveend', this.debounceVisualChange)
       this.mapChart.on('zoomend', this.debounceVisualChange)
-      this.mapChart.on('click', this.choosePolygon)
+      this.mapChart.on('click', 'hexagon', this.hexagonClick)
     },
     unbindHexagonEvents () {
-      this.mapChart.off('mouseenter', this.hexagonMouseEnter)
-      this.mapChart.off('mouseleave', this.hexagonMouseLeave)
-      this.mapChart.off('mousemove', this.hexagonMouseMove)
+      this.mapChart.off('mouseenter', 'hexagon', this.hexagonMouseEnter)
+      this.mapChart.off('mouseleave', 'hexagon', this.hexagonMouseLeave)
+      this.mapChart.off('mousemove', 'hexagon', this.hexagonMouseMove)
       this.mapChart.off('moveend', this.debounceVisualChange)
       this.mapChart.off('zoomend', this.debounceVisualChange)
-      this.mapChart.off('click', this.choosePolygon)
-
+      this.mapChart.off('click', 'hexagon', this.hexagonClick)
     },
     bindTrackingHexagonEvents () {
       this.mapChart.on('mouseenter', 'trackingHexagon', this.trackingHexagonMouseEnter)
@@ -1003,9 +1003,9 @@ export default {
       this.mapChart.on('mousemove', 'trackingHexagon', this.trackingHexagonMouseMove)
     },
     unbindTrackingHexagonEvents () {
-      this.mapChart.off('mouseenter', this.trackingHexagonMouseEnter)
-      this.mapChart.off('mouseleave', this.trackingHexagonMouseLeave)
-      this.mapChart.off('mousemove', this.trackingHexagonMouseMove)
+      this.mapChart.off('mouseenter', 'trackingHexagon', this.trackingHexagonMouseEnter)
+      this.mapChart.off('mouseleave', 'trackingHexagon', this.trackingHexagonMouseLeave)
+      this.mapChart.off('mousemove', 'trackingHexagon', this.trackingHexagonMouseMove)
     },
     hexagonMouseEnter () {
       this.tooltip.mouseIsInPolygon = true
@@ -1211,10 +1211,10 @@ export default {
         target.getElement().classList.remove('map-marker--hover')
       }
     },
-    async scrollList(e) {
-      if(!this.isChecked) {
+    async scrollList (e) {
+      if (!this.isChecked) {
         const obj = document.getElementById('locationMap-subscriber-scroll')
-        if ((obj.scrollHeight - obj.scrollTop - obj.clientHeight <=10) &&
+        if ((obj.scrollHeight - obj.scrollTop - obj.clientHeight <= 10) &&
             (obj.scrollHeight - obj.scrollTop - obj.clientHeight > 1) &&
             obj.scrollHeight !== 0 &&
             !this.loading.subscriberLoading) {
@@ -1312,16 +1312,55 @@ export default {
       this.tooltip.showMarkerTooltip = false
     },
     // 地图上点击多边形
-    choosePolygon () {
-      if(this.tooltip.type === this.tooltipType.hexagon) {
-        this.curHexId = this.currentPolygon.hexId
+    hexagonClick (e) {
+      if (this.tooltip.type === this.tooltipType.hexagon) {
+        this.removeHighlightHexagon()
+        // 点击时已经高亮的话，取消过滤条件
+        if (this.curHexId === this.currentPolygon.hexId) {
+          this.curHexId = ''
+        } else {
+          this.curHexId = this.currentPolygon.hexId
+        }
+        // 单独生成一块色块，模拟高亮
+        this.addHighlightHexagon()
         this.curPageNum = 1
         this.subscribersList = []
         this.initSubscriberList()
       }
     },
+    addHighlightHexagon () {
+      const featureCollection = { type: 'FeatureCollection' }
+      featureCollection.features = [{
+        id: 9920447175, // 随便写个数
+        type: 'Feature',
+        geometry: {
+          type: 'Polygon',
+          coordinates: [
+            h3ToGeoBoundary(this.curHexId, true)
+          ]
+        }
+      }]
+      this.mapChart.addSource('highlightHexGrid', {
+        type: 'geojson',
+        data: featureCollection
+      })
+      this.mapChart.addLayer({
+        id: 'highlightHexagon',
+        type: 'line',
+        source: 'highlightHexGrid',
+        layout: {},
+        paint: {
+          'line-color': 'rgb(255,255,255)',
+          'line-width': 3
+        }
+      })
+    },
+    removeHighlightHexagon () {
+      this.mapChart.getLayer('highlightHexagon') && this.mapChart.removeLayer('highlightHexagon')
+      this.mapChart.getSource('highlightHexGrid') && this.mapChart.removeSource('highlightHexGrid')
+    },
     async initSubscriberList () {
-      let params = {
+      const params = {
         startTime: this.timeFilter.startTime,
         endTime: this.timeFilter.endTime,
         pageNo: this.curPageNum++,
@@ -1329,15 +1368,15 @@ export default {
         params: '',
         isFollowed: this.isChecked ? 1 : 0
       }
-      let paramArray = []
-      if(this.curHexId) {
-        let levelField = this.mapLevelField.find(item => item.level === this.mapLevel)
-        paramArray.push(levelField ? levelField.field + "='" + this.curHexId + "'" : "")
+      const paramArray = []
+      if (this.curHexId) {
+        const levelField = this.mapLevelField.find(item => item.level === this.mapLevel)
+        paramArray.push(levelField ? levelField.field + "='" + this.curHexId + "'" : '')
       }
       if (this.curSearchValue && this.curSearchValue !== '') {
         paramArray.push(" (subscriber_id like '%" + this.curSearchValue + "%' or phone_number like '%" + this.curSearchValue + "%') ")
       }
-      if(paramArray.length > 0) {
+      if (paramArray.length > 0) {
         params.params = paramArray.join(' and ')
       }
       try {
@@ -1426,6 +1465,7 @@ export default {
       this.curPageNum = 1
       this.subscribersList = []
       await this.initSubscriberList()
+      this.removeHighlightHexagon()
     },
     async showFollowedSubscribers () {
       this.curPageNum = 1
@@ -1435,7 +1475,7 @@ export default {
     async searchSubscribers () {
       this.curPageNum = 1
       this.subscribersList = []
-      //根据输入字符串，查找用户信息
+      // 根据输入字符串，查找用户信息
       await this.initSubscriberList()
     },
     mapTimeLineChange (timeFilter) {
@@ -1486,6 +1526,8 @@ export default {
         this.unbindHexagonEvents()
         this.mapChart.getLayer('hexagon') && this.mapChart.removeLayer('hexagon')
         this.mapChart.getSource('hexGrid') && this.mapChart.removeSource('hexGrid')
+        this.removeHighlightHexagon()
+        this.curHexId = ''
         this.humanMarkers.forEach(marker => {
           marker.remove && marker.remove()
         })
@@ -1523,16 +1565,20 @@ export default {
         this.renderTrackingHexagon()
       }
     },
-    timeFilter (n) {
+    async timeFilter (n) {
       if (this.activeTab === 'locationMap') {
         this.unbindHexagonEvents()
         this.mapChart.getLayer('hexagon') && this.mapChart.removeLayer('hexagon')
         this.mapChart.getSource('hexGrid') && this.mapChart.removeSource('hexGrid')
+        this.removeHighlightHexagon()
         this.humanMarkers.forEach(marker => {
           marker.remove && marker.remove()
         })
         this.humanMarkers = []
-        this.initLocationMapTab()
+        await this.initLocationMapTab()
+        if (this.curHexId) {
+          this.addHighlightHexagon()
+        }
       } else if (this.activeTab === 'traceTracking') {
         this.unbindTrackingHexagonEvents()
         this.mapChart.getLayer('trackingHexagon') && this.mapChart.removeLayer('trackingHexagon')
