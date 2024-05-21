@@ -116,7 +116,7 @@
                         <i class="cn-icon" :class="symbolClass(item)"></i>{{$t('location.track')}}
                     </div>
                     <div class="cancel-follow">
-                      <i class="cn-icon-follow-fill cn-icon" v-if="item.follow === 1"  @click.stop="cancelFollowSubscribers(item)"></i>
+                      <i class="cn-icon-follow-fill cn-icon" v-if="item.isFollowed === 1"  @click.stop="cancelFollowSubscribers(item)"></i>
                       <i class="cn-icon-follow cn-icon" v-else @click.stop="followSubscribers(item)"></i>
                     </div>
                   </div>
@@ -138,6 +138,10 @@
                 <div class="body__item">
                   <div class="item__label">{{$t('location.location')}}</div>
                   <div class="item__value">China, Shanghai</div>
+                </div>
+                <div class="body__item">
+                  <div class="item__label">{{$t('location.phoneNumber')}}</div>
+                  <div class="item__value">{{item.phoneNumber}}</div>
                 </div>
               </div>
             </div>
@@ -394,7 +398,8 @@ export default {
       },
       isChecked: false,
       curHexId: '',
-      busy: false
+      busy: false,
+      preScrollTop: 0
     }
   },
   components: {
@@ -1214,7 +1219,11 @@ export default {
     async scrollList (e) {
       if (!this.isChecked) {
         const obj = document.getElementById('locationMap-subscriber-scroll')
-        if ((obj.scrollHeight - obj.scrollTop - obj.clientHeight <= 10) &&
+        let scrollTop = obj.scrollTop
+        let scroll = scrollTop - this.preScrollTop;
+        this.preScrollTop = scrollTop;
+        //向下滚动才进行加载数据
+        if(scroll >= 0 && (obj.scrollHeight - obj.scrollTop - obj.clientHeight <= 10) &&
             (obj.scrollHeight - obj.scrollTop - obj.clientHeight > 1) &&
             obj.scrollHeight !== 0 &&
             !this.loading.subscriberLoading) {
@@ -1406,7 +1415,7 @@ export default {
         if (res.status === 200) {
           this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancleFollow.success') })
           /* 刷新右侧列表 */
-          item.follow = 0
+          item.isFollowed = 0
           // 删除地图中对应的人
           this.humanMarkers.forEach(marker => {
             if (marker.subscriberId === item.subscriberId) {
@@ -1421,7 +1430,7 @@ export default {
       })
     },
     followSubscribers (item) {
-      if (item.follow === 1) {
+      if (item.isFollowed === 1) {
         axios.delete(api.location.follow + '?subscriberId=' + item.subscriberId).then(res => {
           if (res.status === 200) {
             this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancleFollow.success') })
@@ -1432,7 +1441,7 @@ export default {
               }
             })
             /* 刷新右侧列表 */
-            item.follow = 0
+            item.isFollowed = 0
           } else {
             this.$message.error(res.data.message)
           }
@@ -1444,7 +1453,7 @@ export default {
           if (res.status === 200) {
             this.$message({ duration: 2000, type: 'success', message: this.$t('location.follow.success') })
             /* 刷新右侧列表 */
-            item.follow = 1
+            item.isFollowed = 1
             // 刷新地图上的人
             this.humanMarkers.forEach(marker => {
               marker.remove && marker.remove()
