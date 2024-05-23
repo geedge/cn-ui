@@ -1171,7 +1171,7 @@ export default class Parser {
               return { key: '[' + key + ']', isKey: false }
             }
           } else if (item.indexOf(' in ') > -1) {
-            const key = q.substring(0, q.indexOf(' in '))
+            const key = q.substring(0, item.indexOf(' in '))
             const obj = this.columnList.find(t => t.label.toLowerCase() === key.toLowerCase())
             if (!obj) {
               return { key: '[' + key + ']', isKey: false }
@@ -1195,7 +1195,7 @@ export default class Parser {
         }
         return { key: q, isKey: true }
       } else if (lowerQ.indexOf(' like ') > -1) {
-        const key = q.substring(0, q.indexOf(' like '))
+        const key = q.substring(0, lowerQ.indexOf(' like '))
         const obj = this.columnList.find(t => t.label.toLowerCase() === key.toLowerCase())
         if (obj) {
           return { key: obj.label + q.substring(lowerQ.indexOf(' like '), q.length), isKey: true }
