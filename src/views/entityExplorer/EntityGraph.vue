@@ -926,7 +926,7 @@ export default {
           </ul>`
         },
         handleClick: (code, graph) => {
-          if (code === 'undo') {
+          if (code === 'undo') { // 删掉刚加进来的node和edge
             const data = this.stackData.undo.pop()
             this.stackData.justUndo = true
             data.nodes.forEach(n => {
@@ -950,17 +950,18 @@ export default {
             this.cleanTempNodesAndTempEdges()
             this.graph.layout()
             this.onCloseBlock()
-          } else if (code === 'redo') {
+            // graph中删掉后，右侧列表也得删
+          } else if (code === 'redo') { // 恢复刚删掉的node和edge
             const data = this.stackData.redo.pop()
             this.stackData.justRedo = true
             this.addItems(data.nodes, data.edges)
-            // this.stackData.undo.push(data)
             if (this.stackData.justUndo) {
               this.stackData.justUndo = false
             }
             this.cleanTempNodesAndTempEdges()
             this.graph.layout()
             this.onCloseBlock()
+            // graph中恢复后，右侧列表也得恢复
           } else if (code === 'autoZoom') {
             this.graph.zoomTo(1)
             this.graph.fitCenter()
