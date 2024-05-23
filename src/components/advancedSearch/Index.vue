@@ -129,7 +129,13 @@ export default {
     enterListener (event) {
       if (event.keyCode === 13) {
         this.$refs.tagMode && this.$refs.tagMode.enterSearch()
-        this.$refs.textMode && this.$refs.textMode.search()
+        const timer = setTimeout(() => {
+          // 如果回车是选择hint面板的值，则不进行搜索
+          if (this.$refs.textMode && !this.$refs.textMode.isHintEnter) {
+            this.$refs.textMode.search()
+          }
+          clearTimeout(timer)
+        }, 100)
       }
     }
   },

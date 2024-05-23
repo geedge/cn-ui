@@ -44,6 +44,7 @@
           <hint v-if="hintVisible" :hintList="hintList"
                 @load="handleHintLoad"
                 @select="handleSelect"
+                @keydownEnter="handleEnter"
                 :hintParams="hintParams"
                 :hintSearch="searchStr"></hint>
         </div>
@@ -86,7 +87,8 @@ export default {
       hintVisible: false,
       dataset: null,
       CodeMirror,
-      myUnitTestStr: this.unitTestStr
+      myUnitTestStr: this.unitTestStr,
+      isHintEnter: null
     }
   },
   emits: ['changeMode', 'search'],
@@ -467,6 +469,9 @@ export default {
       this.emitter.on('advanced-search', function () {
         vm.search()
       })
+    },
+    handleEnter (e) {
+      this.isHintEnter = e
     }
   },
   watch: {
