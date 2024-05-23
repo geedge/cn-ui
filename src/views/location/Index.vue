@@ -109,7 +109,7 @@
                 <div class="header__right">
                   <div class="header-msisdn">
                     <div class="header__title">MSISDN</div>
-                    <div class="header__content">{{$_.get(item, 'subscriberDto.phoneNumber', '-')}}</div>
+                    <div class="header__content">{{$_.get(item, 'phoneNumber', '-') || '-'}}</div>
                   </div>
                   <div class="header__operation">
                     <div class="trajectory-text" @click.stop="addOrRemoveTrackingSubscriber(item)">
@@ -137,11 +137,7 @@
                 </div>
                 <div class="body__item">
                   <div class="item__label">{{$t('location.location')}}</div>
-                  <div class="item__value">China, Shanghai</div>
-                </div>
-                <div class="body__item">
-                  <div class="item__label">{{$t('location.phoneNumber')}}</div>
-                  <div class="item__value">{{item.phoneNumber}}</div>
+                  <div class="item__value">{{locationHandler(item)}}</div>
                 </div>
               </div>
             </div>
@@ -166,7 +162,7 @@
                 <div class="header__right">
                   <div class="header-msisdn">
                     <div class="header__title">MSISDN</div>
-                    <div class="header__content">{{$_.get(subscriber, 'subscriberDto.phoneNumber', '-')}}</div>
+                    <div class="header__content">{{$_.get(subscriber, 'phoneNumber', '-') || '-'}}</div>
                   </div>
                   <div class="header__operation">
                     <div class="cancel-follow" @click.stop="removeTrackingSubscriber(subscriber)">
@@ -190,7 +186,7 @@
                 </div>
                 <div class="body__item">
                   <div class="item__label">{{$t('overall.location')}}</div>
-                  <div class="item__value">China, Shanghai</div>
+                  <div class="item__value">{{locationHandler(subscriber)}}</div>
                 </div>
                 <div class="body-item-record">
                   <div class="item-record__header">{{ $t('location.trackRecord') }}</div>
@@ -206,7 +202,7 @@
                         </div>
                         <div class="timeline__info--item" @mouseenter="timelineMouseEnter(subscriber, trackingSubscriberRecordMap[subscriber.subscriberId][0])" @mouseleave="timelineMouseLeave(subscriber, trackingSubscriberRecordMap[subscriber.subscriberId][0])">
                           <div>
-                            <span>{{$t('overall.location')}}: </span><span class="info--item__value">{{trackingSubscriberRecordMap[subscriber.subscriberId][0].subscriberLongitude}},&nbsp;{{trackingSubscriberRecordMap[subscriber.subscriberId][0].subscriberLatitude}}</span>
+                            <span>{{$t('overall.location')}}: </span><span class="info--item__value">{{locationHandler(trackingSubscriberRecordMap[subscriber.subscriberId][0])}}</span>
                           </div>
                           <div>
                             <span>{{ $t('location.timeOfArrival') }}: </span><span class="info--item__value">{{dateFormatByAppearance(Number(trackingSubscriberRecordMap[subscriber.subscriberId][0].time))}}</span>
@@ -232,7 +228,7 @@
                             </div>
                             <div class="item-content">
                               <div>
-                                <span>{{$t('overall.location')}}: </span><span class="item__value">{{record.subscriberLongitude}},&nbsp;{{record.subscriberLatitude}}</span>
+                                <span>{{$t('overall.location')}}: </span><span class="item__value">{{locationHandler(record)}}</span>
                               </div>
                               <div>
                                 <span>{{ $t('location.timeOfArrival') }}: </span><span class="item__value">{{dateFormatByAppearance(Number(record.time))}}</span>
@@ -258,6 +254,7 @@
         </div>
       </div>
     </div>
+    <!-- tooltip -->
     <div class="geo-analysis__hexagon-tooltip" id="tooltip" :class="`geo-analysis__hexagon-tooltip--${tooltip.type}`" v-if="tooltip.showMarkerTooltip || tooltip.showPolygonTooltip" :style="{'left': `${tooltip.x}px`, 'top': `${tooltip.y}px`}" @mouseenter="tooltipMouseEnter" @mouseleave="tooltipMouseLeave">
       <div class="hexagon-tooltip__header" :style="`background-color: ${tooltipHeaderColor}`">
         <div class="header__icon">
@@ -280,7 +277,7 @@
         </div>
         <div class="header__content">
           <template v-if="tooltip.type === tooltipType.hexagon">{{currentPolygon.hexId}}</template>
-          <template v-else-if="tooltip.type === tooltipType.human">{{currentSubscriber.subscriberDto.phoneNumber}}</template>
+          <template v-else-if="tooltip.type === tooltipType.human">{{currentSubscriber.phoneNumber || '-'}}</template>
           <template v-else-if="tooltip.type === tooltipType.baseStation">0xxa8805</template>
         </div>
       </div>
@@ -293,16 +290,12 @@
             </div>
           </template>
           <template v-else>
+            <span class="body__header">{{locationHandler(JSON.parse(currentPolygon.locations)[0])}}</span>
             <template v-for="(item, i) in JSON.parse(currentPolygon.locations)" :key="item.hexId">
               <div class="body__timeline" v-if="i < 5">
                 <div class="timeline-symbol"></div>
                 <div>
                   <div class="body__item">
-                    <div class="item__label">{{ $t('location.location') }}</div>
-                    <div class="item__value">{{item.longitude}},&nbsp;{{item.latitude}}</div>
-                  </div>
-                  <div class="body__item">
-                    <div class="item__label">Time</div>
                     <div class="item__value">{{dateFormatByAppearance(Number(item.time))}}</div>
                   </div>
                 </div>
@@ -326,7 +319,7 @@
           </div>
           <div class="body__item">
             <div class="item__label">{{$t('overall.location')}}</div>
-            <div class="item__value">China, Shanghai</div>
+            <div class="item__value">{{locationHandler(currentSubscriber.subscriberDto)}}</div>
           </div>
           <div class="body__tracking" @click="trackSubscriber(currentSubscriber)">{{$t('location.traceTracking')}}</div>
         </template>
@@ -669,6 +662,22 @@ export default {
       }
       return []
     },
+    async queryCityByLngLat (lng, lat) {
+      const params = {
+        longitude: lng,
+        latitude: lat
+      }
+      try {
+        const response = await axios.get(api.location.geoLocation, { params })
+        return response.data.data
+      } catch (e) {
+        this.errorMsgHandler(e)
+        console.error(e)
+      } finally {
+        this.loading.timeBarLoading = false
+      }
+      return {}
+    },
     async queryTraceTracking () {
       if (this.trackingSubscribers.length > 0) {
         this.loading.trackingMapLoading = true
@@ -932,7 +941,7 @@ export default {
         data.forEach(d => {
           const find = hexagons.find(h => h.hexId === d.hexId)
           if (!find) {
-            hexagons.push({ hexId: d.hexId, locations: [{ time: d.time, longitude: d.subscriberLongitude, latitude: d.subscriberLatitude }] })
+            hexagons.push({ hexId: d.hexId, locations: [{ time: d.time, longitude: d.subscriberLongitude, latitude: d.subscriberLatitude, country: d.country, superAdministrativeArea: d.superAdministrativeArea, administrativeArea: d.administrativeArea }] })
           } else {
             if (find.locations.length < 6) {
               find.locations.push({ time: d.time, longitude: d.subscriberLongitude, latitude: d.subscriberLatitude })
@@ -1602,7 +1611,7 @@ export default {
     trackingSubscribers: {
       deep: true,
       handler (n) {
-        sessionStorage.setItem(storageKey.trackingSubscribers, JSON.stringify(n.map(item => ({ subscriberId: item.subscriberId, subscriberDto: item.subscriberDto ? { phoneNumber: item.subscriberDto.phoneNumber } : null }))))
+        sessionStorage.setItem(storageKey.trackingSubscribers, JSON.stringify(n.map(item => ({ subscriberId: item.subscriberId, phoneNumber: item.phoneNumber, country: item.country, superAdministrativeArea: item.superAdministrativeArea, administrativeArea: item.administrativeArea }))))
       }
     },
     // 控制map loading
@@ -1635,6 +1644,21 @@ export default {
         return '#233447'
       }
       return ''
+    },
+    locationHandler () {
+      return function (item) {
+        const result = []
+        if (item.country) {
+          result.push(item.country)
+        }
+        if (item.superAdministrativeArea) {
+          result.push(item.superAdministrativeArea)
+        }
+        if (item.administrativeArea) {
+          result.push(item.administrativeArea)
+        }
+        return result.length > 0 ? result.join(', ') : '-'
+      }
     }
   },
   async mounted () {

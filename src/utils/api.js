@@ -371,7 +371,8 @@ export const api = {
     list: apiVersion + '/locationIntelligence/list',
     followedSubscriber: apiVersion + '/locationIntelligence/followed/subscribers',
     tracking: apiVersion + '/locationIntelligence/trace/tracking',
-    follow: apiVersion + '/locationIntelligence/follow'
+    follow: apiVersion + '/locationIntelligence/follow',
+    geoLocation: apiVersion + 'locationIntelligence/geolocation'
   }
 }
 

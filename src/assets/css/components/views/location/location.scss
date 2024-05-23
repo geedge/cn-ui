@@ -800,16 +800,22 @@ $color-highlight: #CC4444;
     .hexagon-tooltip__body {
       padding: 8px 18px;
 
+      .body__header {
+        color: $color-human;
+        font-weight: bold;
+        font-size: 12px;
+      }
+
       .body__timeline {
         display: flex;
         flex-direction: row;
         padding: 3px 0;
 
         .timeline-symbol {
-          margin-top: 6px;
+          margin-top: 8px;
           margin-right: 6px;
-          width: 8px;
-          height: 8px;
+          width: 5px;
+          height: 5px;
           border-radius: 50%;
           background-color: $color-circle;
         }
@@ -821,7 +827,7 @@ $color-highlight: #CC4444;
         .item__label {
           padding-right: 10px;
           text-align: right;
-          width: 60px;
+          width: 40px;
           font-size: 12px;
           color: $color-text-primary;
         }
