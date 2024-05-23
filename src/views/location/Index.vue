@@ -81,7 +81,7 @@
                     :placeholder="$t('location.searchSubscriberTip')"
                     v-model="curSearchValue"
                     v-show="activeTab === 'locationMap'"
-                    @input="searchSubscribers"></el-input>
+                    @input="debounceSearch"></el-input>
         </div>
         <div class="analysis-statistics__condition">
           <div class="hexId-tag">
@@ -1666,6 +1666,7 @@ export default {
     this.debounceMinuteChange = _.debounce(this.minuteTimeFilterChange, 500)
     this.debounceOnResize = _.debounce(this.onResize, 500)
     this.debounceVisualChange = _.debounce(this.hexagonVisualRangeChange, 500)
+    this.debounceSearch = _.debounce(this.searchSubscribers, 500)
     this.onResize()
   },
   setup () {
@@ -1802,6 +1803,7 @@ export default {
       debounceMinuteChange: shallowRef(null),
       debounceOnResize: shallowRef(null),
       debounceVisualChange: shallowRef(null),
+      debounceSearch: shallowRef(null),
       mapLevelField,
       mapDomHeight, // 地图dom的高度，用来计算悬浮框的位置
       tooltipDomHeight // 计算悬浮框位置时默认的悬浮框高度
