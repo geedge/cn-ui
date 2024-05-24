@@ -58,7 +58,7 @@
                     >
                       <template #reference>
                         <div :ref="`tabSearchRef${tab.prop}`">
-                          <div class="tab-search-button" :id="`tabSearchButton${tab.prop}`"
+                          <div class="tab-search-button" :id="`tabSearchButton${tab.prop}`" v-show="showSearchButton"
                                @click="handlePopoverShow(item.prop,tab.prop)">
                             <el-icon style="color: var(--el-text-color-regular);"><Search/></el-icon>
                           </div>
@@ -69,6 +69,9 @@
                                       readonly
                                       @click="showListPopover(item.prop)"
                             >
+                              <template v-slot:prefix >
+                                <el-icon style="color: var(--el-text-color-regular);"><Search/></el-icon>
+                              </template>
                               <template v-if="curTabProp === 'qtype'">
                                 <span>{{ dnsQtypeMapData.get(item.value)}}</span>
                               </template>
@@ -624,6 +627,7 @@ export default {
     hideTabSearchPopover () {
       this.showSearchButton = false
       this.showSearchList = false
+      this.tabSearchColumnValueListShow = []
     },
     closeSearchInput (prop) {
       this.showSearchInput = false
