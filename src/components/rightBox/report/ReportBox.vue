@@ -327,6 +327,11 @@ export default {
       if (startTime.value !== '' && endTime.value <= startTime.value) {
         validate = false
       }
+      if ((proxy.editObject && proxy.editObject.config && proxy.editObject.config.startTime) && !startTime.value) {
+        if (endTime.value <= proxy.editObject.config.startTime) {
+          validate = false
+        }
+      }
       return validate
     }
     const rules = { // 表单校验规则
