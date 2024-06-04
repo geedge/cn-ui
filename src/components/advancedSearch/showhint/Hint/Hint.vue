@@ -3,7 +3,7 @@
   <div class="Hint" @click.stop>
     <div class="hint__block">
       <div class="hint__block-filter">
-        <hint-info v-on="$listeners" :hintList="hintList" @select="onSelect" @keydownEnter="onKeydownEnter"></hint-info>
+        <hint-info v-on="$listeners" :hintList="hintList" :columnList="columnList" @select="onSelect" @keydownEnter="onKeydownEnter"></hint-info>
       </div>
       <div class="hint__block-helper">
         <helper-info :hintSearch="hintSearch"></helper-info>
@@ -20,7 +20,8 @@ export default {
   name: 'Hint',
   props: {
     hintList: [],
-    hintSearch: {}
+    hintSearch: {},
+    columnList: []
   },
   components: {
     HintInfo,

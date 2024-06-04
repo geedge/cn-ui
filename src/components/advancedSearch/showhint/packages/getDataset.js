@@ -8,16 +8,35 @@ export class Dataset {
     this.sourceData = this.keepSourcedata(operatesList, funcDic, filtersList, operatesDic, operatorManual, fields, doc)
     // 存储格式化的数据
     this.hintData = {}
+    this.columnList = JSON.parse(JSON.stringify(filtersList))
     this.hintData.operatesList = this.formatOperates(operatesList)
     this.hintData.filtersList = this.formatFilters(filtersList)
   }
 
   getHintList (keyword, sqlKeywordsOptions = null, callback, completeFilter) {
     // 获取提示列表
-    const operatesList = this.matchFilter(sqlKeywordsOptions || this.hintData.operatesList || [], keyword)
-    const filtersList = this.matchFilter(this.hintData.filtersList || [], keyword)
+    let operatesList = this.matchFilter(sqlKeywordsOptions || this.hintData.operatesList || [], keyword)
+    let filtersList = this.matchFilter(this.hintData.filtersList || [], keyword)
+    let fieldOperatesList = []
+    if (keyword) {
+      const obj = this.columnList.find(d => d.label === keyword)
+      if (obj) {
+        const operatorFunctions = obj.doc && obj.doc.constraints && obj.doc.constraints.operator_functions
+        fieldOperatesList = this.formatFieldOperates(operatorFunctions.split(','))
+      } else if (keyword === '=') {
+        fieldOperatesList = this.formatFieldOperates(['='])
+        filtersList = []
+      } else if (keyword === 'in') {
+        fieldOperatesList = this.formatFieldOperates(['in'])
+        operatesList = []
+        filtersList = []
+      } else if (keyword === 'like') {
+        fieldOperatesList = this.formatFieldOperates(['like'])
+        filtersList = []
+      }
+    }
 
-    const hintList = [...operatesList, ...filtersList]
+    const hintList = [...operatesList, ...filtersList, ...fieldOperatesList]
     callback && callback(operatesList, filtersList, hintList)
     return hintList
   }
@@ -104,6 +123,29 @@ export class Dataset {
         displayText: item.name,
         className: 'operates-item el-dropdown-menu__item relative-item'
         // hint(cm, callback, options) {}
+      }
+    })
+    results.unshift(tempTitle)
+    return results
+  }
+
+  formatFieldOperates (list) {
+    // 格式化操作符，如=，in，like
+    const tempTitle = {
+      type: 'abstract',
+      text: '',
+      displayText: i18n.global.t('overall.operators'),
+      className: 'divider hint-title',
+      hint (cm, callback, options) {
+      }
+    }
+
+    const results = list.map((item) => {
+      return {
+        text: item,
+        displayText: item,
+        className: 'filter-item el-dropdown-menu__item relative-item',
+        field: item
       }
     })
     results.unshift(tempTitle)

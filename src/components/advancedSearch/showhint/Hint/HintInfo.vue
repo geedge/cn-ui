@@ -22,6 +22,9 @@ export default {
       default () {
         return []
       }
+    },
+    columnList: {
+      type: Array
     }
   },
   data () {
@@ -52,8 +55,24 @@ export default {
             const item = vm.hintList[vm.currentIndex]
             if (item) {
               this.$emit('keydownEnter', 'Enter')
-              vm.handleSelect(item, vm.currentIndex, vm.hintList)
-              vm.currentIndex = -1
+              const obj = vm.columnList.find(d => d.label === item.displayText)
+              // 如果选中label，数组更新，光标处在第一行。如果选择操作符，光标位置不变
+              if (obj) {
+                vm.handleSelect(item, vm.currentIndex, vm.hintList)
+                const itemDom = document.getElementById('filterItem' + vm.currentIndex)
+                if (itemDom) {
+                  itemDom.style.backgroundColor = ''
+                }
+                vm.$nextTick(() => {
+                  vm.currentIndex = 1
+                  const itemDom1 = document.getElementById('filterItem1')
+                  if (itemDom1) {
+                    itemDom1.style.backgroundColor = 'var(--el-fill-color-dark)'
+                  }
+                })
+              } else {
+                vm.handleSelect(item, vm.currentIndex, vm.hintList)
+              }
             } else {
               this.$emit('keydownEnter', null)
             }
@@ -75,11 +94,7 @@ export default {
                 const itemDom = document.getElementById('filterItem' + realIndex)
                 if (itemDom) {
                   itemDom.style.backgroundColor = 'var(--el-fill-color-dark)'
-                  if (realIndex >= 10) {
-                    dom.scrollTop = (realIndex - 10) * 26 + 16
-                  } else {
-                    dom.scrollTop = 0
-                  }
+                  itemDom.scrollIntoView(false)
                 }
               } else {
                 const itemDom = document.getElementById('filterItem' + index)
@@ -105,12 +120,7 @@ export default {
                 const itemDom = document.getElementById('filterItem' + realIndex)
                 if (itemDom) {
                   itemDom.style.backgroundColor = 'var(--el-fill-color-dark)'
-                  if (realIndex >= 10) {
-                    // 26是24的行高+2px的margin，16是两个标题总的margin
-                    dom.scrollTop = (realIndex - 10) * 26 + 16
-                  } else {
-                    dom.scrollTop = 0
-                  }
+                  itemDom.scrollIntoView(false)
                 }
               } else {
                 const itemDom = document.getElementById('filterItem' + index)

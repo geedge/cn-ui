@@ -45,6 +45,7 @@
                 @load="handleHintLoad"
                 @select="handleSelect"
                 @keydownEnter="handleEnter"
+                :columnList="columnList"
                 :hintParams="hintParams"
                 :hintSearch="searchStr"></hint>
         </div>
