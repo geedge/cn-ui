@@ -288,9 +288,9 @@ export default {
           }
           this.filterData[this.pageType][0].data = data.map(r => {
             let label = ''
-            if (r.status === '0') {
+            if (r.status === '0' || r.status === 0) {
               label = this.$t('detections.active')
-            } else if (r.status === '1') {
+            } else if (r.status === '1' || r.status === 1) {
               label = this.$t('detections.ended')
             }
             return { label, value: r.status, count: r.count }
