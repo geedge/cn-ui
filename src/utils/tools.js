@@ -1427,7 +1427,7 @@ export const myHighLight = {
           const newText = text.replace(regex, (match) => {
             // 将value中的value提取出来对比，string即精准搜索，fullText模糊搜索
             for (const item of value) {
-              if ((item.type === columnType.string && item.value === el.innerHTML) || el.className.indexOf('high-location') > -1) {
+              if ((item.value && item.type === columnType.string && item.value === el.innerHTML) || el.className.indexOf('high-location') > -1) {
                 if (el.className.indexOf('high-light-block') > -1) {
                   return `<span class="highlight__block">${match}</span>`
                 } else {
