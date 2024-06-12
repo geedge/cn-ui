@@ -25,6 +25,10 @@ export default class Node {
       this.sourceNode = sourceNode
     }
     this.label = this.generateLabel()
+
+    const img = new Image()
+    img.src = this.getIconUrl(cfg.entityType, type === nodeType.rootNode)
+    this.img = img
   }
 
   generateLabel () {
@@ -34,7 +38,7 @@ export default class Node {
         return this.id
       }
       case nodeType.listNode: {
-        return `${this.getLabelText()}(${_.get(this.sourceNode.myData, 'relatedEntity.' + this.myData.entityType + '.total', 0)})`
+        return `${this.getLabelText()}(${_.get(this.sourceNode.myData, 'relatedEntities.' + this.myData.entityType + '.total', 0)})`
       }
       case nodeType.tempNode: {
         return this.getLabelText()
@@ -64,6 +68,11 @@ export default class Node {
     return ''
   }
 
+  getIconUrl (entityType, colored) {
+    const suffix = colored ? '-colored' : ''
+    return require(`@/assets/img/entity-symbol2/${entityType}${suffix}.svg`)
+  }
+
   isSubdomain () {
     if (this.sourceNode) {
       return this.sourceNode.myData.entityType === 'domain' && this.myData.entityType === 'domain'
@@ -87,11 +96,11 @@ export default class Node {
     }
     this.myData.tags = _tags
 
-    const relatedEntityTotalCount = await this.queryRelatedEntityCount(entityType, entityName)
-    this.myData.relatedEntity = {
-      ip: { total: relatedEntityTotalCount.ipCount, list: [] },
-      domain: { total: this.myData.entityType === 'domain' ? relatedEntityTotalCount.subDomainCount : relatedEntityTotalCount.domainCount, list: [] },
-      app: { total: relatedEntityTotalCount.appCount, list: [] }
+    const relatedEntityTotalCount = await this.queryRelatedEntitiesCount(entityType, entityName)
+    this.myData.relatedEntities = {
+      ip: { total: relatedEntityTotalCount.ipCount, loadedCount: 0 },
+      domain: { total: this.myData.entityType === 'domain' ? relatedEntityTotalCount.subDomainCount : relatedEntityTotalCount.domainCount, loadedCount: 0 },
+      app: { total: relatedEntityTotalCount.appCount, loadedCount: 0 }
     }
   }
 
@@ -121,7 +130,7 @@ export default class Node {
     }
   }
 
-  async queryRelatedEntityCount (entityType, entityName) {
+  async queryRelatedEntitiesCount (entityType, entityName) {
     const response = await axios.get(`${api.entity.entityGraph.relatedEntityCount}/${entityType}?resource=${entityName}`).catch(e => {
       console.error(e)
       throw e
@@ -137,7 +146,7 @@ export default class Node {
 export const nodeType = {
   rootNode: 'rootNode',
   listNode: 'listNode',
-  entityNode: 'entityNode',
+  entityNode: 'en-tityNode',
   tempNode: 'tempNode'
 }
 export async function queryRelatedEntity (node, targetEntityType) {
@@ -146,7 +155,7 @@ export async function queryRelatedEntity (node, targetEntityType) {
     _targetEntityType = 'subdomain'
   }
   let url = `${api.entity.entityGraph[`${node.myData.entityType}Related${_.upperFirst(_targetEntityType)}`]}?resource=${node.myData.entityName}&pageSize=10`
-  const current = node.myData.relatedEntity[targetEntityType].list.length
+  const current = node.myData.relatedEntities[targetEntityType].loadedCount
   const pageNo = parseInt(current / 10) + 1
   url += `&pageNo=${pageNo}`
   const response = await axios.get(url).catch(e => {

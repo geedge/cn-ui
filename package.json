@@ -1,6 +1,6 @@
 {
   "name": "cn",
-  "version": "0.1.0",
+  "version": "24.04",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -18,10 +18,12 @@
     "babel-plugin-lodash": "~3.3.0",
     "codemirror": "^5.65.1",
     "core-js": "~3.31.0",
+    "d3": "^7.9.0",
     "dayjs": "^1.10.5",
     "dexie": "~3.2.0",
     "echarts": "^5.1.1",
     "element-plus": "^2.5.1",
+    "force-graph": "^1.43.5",
     "h3-js": "~3.7.2",
     "lib-flexible": "^0.3.2",
     "lodash": "^4.17.21",
