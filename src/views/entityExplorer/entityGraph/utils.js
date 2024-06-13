@@ -21,6 +21,78 @@ export function generateLabel (type, id, data, sourceNode) {
   return ''
 }
 
+export function builtTooltip (node) {
+  if (node) {
+    if (node.type === nodeType.listNode) {
+      let iconClass = ''
+      let title = ''
+      let total = 0
+      let loadedCount = 0
+      switch (node.data.entityType) {
+        case 'ip': {
+          iconClass = 'cn-icon cn-icon-resolve-ip'
+          title = i18n.global.t('entities.graph.resolveIp')
+          total = _.get(node.sourceNode.data, 'relatedEntities.ip.total', 0)
+          loadedCount = _.get(node.sourceNode.data, 'relatedEntities.ip.list', []).length
+          break
+        }
+        case 'domain': {
+          iconClass = 'cn-icon cn-icon-subdomain'
+          title = node.isSubdomain ? i18n.global.t('entities.subdomain') : i18n.global.t('entity.graph.resolveDomain')
+          total = _.get(node.sourceNode.data, 'relatedEntities.domain.total', 0)
+          loadedCount = _.get(node.sourceNode.data, 'relatedEntities.domain.list', []).length
+          break
+        }
+        case 'app': {
+          iconClass = 'cn-icon cn-icon-app-name'
+          title = i18n.global.t('entities.tab.relatedApp')
+          total = _.get(node.sourceNode.data, 'relatedEntities.app.total', 0)
+          loadedCount = _.get(node.sourceNode.data, 'relatedEntities.app.list', []).length
+          break
+        }
+      }
+      return `<div class="primary-node-tooltip">
+              <div class="tooltip__header"><i class="${iconClass}"></i><span class="tooltip__title">${title}</span></div>
+              <div class="tooltip__content">
+                <span>${i18n.global.t('entity.graph.associatedCount')}:&nbsp;${total}</span>
+                <span>${i18n.global.t('entity.graph.expandedEntityCount')}:&nbsp;${loadedCount}</span>
+              </div>
+            </div>`
+    } else if (node.type === nodeType.entityNode || node.type === nodeType.rootNode) {
+      if (node.data && node.data.tags && node.data.tags.length > 0) {
+        return `<div class="entity-node-tooltip">
+                <div class="tooltip__header">
+                  <span class="tooltip__title">${node.id}</span>
+                </div>
+                <div class="tooltip__content">
+                  <div class="content-header">
+                    <div class="header-icon"></div>
+                    <span>${i18n.global.t('entity.graph.tags')}</span>
+                  </div>
+                  <div class="content-tag-list">${this.generateTagHTML(node.data.tags)}</div>
+                </div>
+              </div>`
+      } else {
+        return `<div style="padding: 0 6px; font-size: 15px; line-height: 15px; color: #111;">${node.id}</div>`
+      }
+    } else if (node.type === nodeType.tempNode) {
+      return `<div style="padding: 0 6px; font-size: 15px; line-height: 15px; color: #111;">${node.id}</div>`
+      // return node.label
+    }
+  }
+}
+function generateTagHTML (tags) {
+  let html = ''
+  if (tags) {
+    tags.forEach(t => {
+      html += `<div class="entity-tag entity-tag--level-two-${t.type}">
+                  <span>${t.value}</span>
+                </div>`
+    })
+  }
+  return html
+}
+
 function getLabelText (data, sourceNode) {
   if (data.entityType === entityType.ip) {
     if (sourceNode.data.entityType === entityType.app) {
