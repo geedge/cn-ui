@@ -7,7 +7,7 @@
       </div>
 
       <div class="key-search">
-        <el-input v-model="searchKey" @keyup.enter="onSearch" size="mini" placeholder="Search for">
+        <el-input v-model="searchKey" @keyup.enter="onSearch" size="small" placeholder="Search for">
           <template #prefix>
             <i class="cn-icon cn-icon-search key-search-icon"></i>
           </template>
@@ -49,7 +49,7 @@
           </el-table-column>
 
           <template v-slot:empty >
-            <chart-error v-if="showError" :content="errorMsg" style="line-height: 0" />
+            <chart-error v-if="showError" :content="errorMsg" class="chart-error__setting" />
           </template>
         </el-table>
       </div>
@@ -183,74 +183,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.history-top-key {
-  width: 396px;
-  height: 520px;
-
-  .el-drawer__body {
-    border: 1px #E2E5EC solid;
-  }
-}
-.key-header {
-  height: 41px;
-  background: #F7F7F7;
-  box-shadow: 0 1px 0 0 rgba(226,229,236,1);
-  border-radius: 2px 2px 0 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 12px;
-  font-family: NotoSansHans-Medium;
-  font-size: 14px;
-  color: #353636;
-  font-weight: 500;
-
-  i {
-    font-size: 12px;
-    color: #575757;
-    cursor: pointer;
-  }
-}
-
-.key-search {
-  margin-left: 12px;
-  margin-top: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  .key-search-icon {
-    font-size: 13px;
-    color: #999999;
-  }
-
-  .key-refresh {
-    margin: 0 10px;
-    color: #38ACD2;
-    font-size: 14px;
-    height: 28px;
-    line-height: 28px;
-    cursor: pointer;
-  }
-}
-
-.key-total {
-  margin: 10px 12px;
-  font-family: NotoSansSChineseRegular;
-  font-size: 14px;
-  color: #999999;
-  line-height: 21px;
-  font-weight: 400;
-
-  .key-total-number {
-    color: #666666;
-    margin-left: 4px;
-  }
-}
-
-.el-table .key-click-row {
-  background: #F5F7FA !important;
-}
-</style>

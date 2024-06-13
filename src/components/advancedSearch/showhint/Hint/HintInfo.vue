@@ -1,10 +1,11 @@
 <template>
-  <div class="HintInfo">
+  <div class="HintInfo" id="myHint" @mouseenter="onMouseenter">
     <ul style="padding-left: 0;margin: -10px 0 0 0;min-width: calc(100% - 12px)">
       <template v-for="(item,index) in hintList" :key="index">
         <li :ref="'hint_'+index" class="relative-item CodeMirror-hint"
             style="margin-bottom: 2px"
             @click="handleSelect(item,index,hintList)"
+            :id="'filterItem'+index"
             :class="{'CodeMirror-hint-active':index === activeIndex,[item.className]:true}"
         >{{ item.displayText }}</li>
       </template>
@@ -26,7 +27,8 @@ export default {
   data () {
     return {
       active: true,
-      activeIndex: null
+      activeIndex: null,
+      currentIndex: -1
     }
   },
   mounted () {
@@ -36,8 +38,94 @@ export default {
       label: this.name,
       vm: this
     })
+    document.addEventListener('keydown', this.initKeyDown)
   },
   methods: {
+    initKeyDown (event) {
+      const dom = document.getElementById('myHint')
+      const vm = this
+      if (dom) {
+        // 检测方向键
+        switch (event.key) {
+          case 'Enter':
+            // eslint-disable-next-line no-case-declarations
+            const item = vm.hintList[vm.currentIndex]
+            if (item) {
+              this.$emit('keydownEnter', 'Enter')
+              vm.handleSelect(item, vm.currentIndex, vm.hintList)
+              vm.currentIndex = -1
+            } else {
+              this.$emit('keydownEnter', null)
+            }
+            break
+          case 'ArrowUp': // 上方向键
+            // 上方向键被按下时的操作
+            if ((vm.currentIndex <= vm.hintList.length - 1) && vm.currentIndex > 0) {
+              vm.currentIndex -= 1
+            } else {
+              vm.currentIndex = vm.hintList.length - 1
+            }
+            vm.hintList.forEach((e, index) => {
+              if (index === vm.currentIndex) {
+                let realIndex = index
+                if (e.type === 'abstract') {
+                  realIndex -= 1
+                  vm.currentIndex -= 1
+                }
+                const itemDom = document.getElementById('filterItem' + realIndex)
+                if (itemDom) {
+                  itemDom.style.backgroundColor = 'var(--el-fill-color-dark)'
+                  if (realIndex >= 10) {
+                    dom.scrollTop = (realIndex - 10) * 26 + 16
+                  } else {
+                    dom.scrollTop = 0
+                  }
+                }
+              } else {
+                const itemDom = document.getElementById('filterItem' + index)
+                if (itemDom) {
+                  itemDom.style.backgroundColor = ''
+                }
+              }
+            })
+            break
+          case 'ArrowDown': // 下方向键
+            if (vm.currentIndex < vm.hintList.length - 1) {
+              vm.currentIndex += 1
+            } else {
+              vm.currentIndex = 0
+            }
+            vm.hintList.forEach((e, index) => {
+              if (index === vm.currentIndex) {
+                let realIndex = index
+                if (e.type === 'abstract') {
+                  realIndex += 1
+                  vm.currentIndex += 1
+                }
+                const itemDom = document.getElementById('filterItem' + realIndex)
+                if (itemDom) {
+                  itemDom.style.backgroundColor = 'var(--el-fill-color-dark)'
+                  if (realIndex >= 10) {
+                    // 26是24的行高+2px的margin，16是两个标题总的margin
+                    dom.scrollTop = (realIndex - 10) * 26 + 16
+                  } else {
+                    dom.scrollTop = 0
+                  }
+                }
+              } else {
+                const itemDom = document.getElementById('filterItem' + index)
+                if (itemDom) {
+                  itemDom.style.backgroundColor = ''
+                }
+              }
+            })
+            break
+          default:
+            // 其他按键的操作
+            break
+        }
+      }
+    },
     scrollToView (index = 0) {
       // 移动到可视区域
       const li = this.$refs['hint_' + index][0]
@@ -96,32 +184,17 @@ export default {
       const index = this.activeIndex || 0
       const item = this.hintList[index]
       this.$emit('select', item, index, this.hintList)
+    },
+    onMouseenter () {
+      const itemDom = document.getElementById('filterItem' + this.currentIndex)
+      if (itemDom) {
+        itemDom.style.backgroundColor = ''
+        this.currentIndex = -1
+      }
     }
+  },
+  unmounted () {
+    document.removeEventListener('keydown', this.initKeyDown)
   }
 }
 </script>
-
-<style scoped>
-  .HintInfo {
-    height: 280px;
-    overflow: auto;
-    background: #fff;
-  }
-  ul {
-    min-width: 300px;
-    height:auto;
-    width: fit-content;
-    box-sizing: border-box;
-    padding-bottom: 10px;
-  }
-  .el-dropdown-menu__item{
-    text-indent: 1em;
-    font-size: 12px !important;
-    font-family: NotoSansSChineseRegular;
-    color: #575757;
-    font-weight: 400;
-  }
-  .hint-clear{
-    text-indent: 1em;
-  }
-</style>

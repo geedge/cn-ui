@@ -29,7 +29,7 @@
                      action=""
                      class="upload-demo"
                      drag>
-            <i class="el-icon-upload"></i>
+            <el-icon><UploadFilled /></el-icon>
             <div class="el-upload__text">{{$t('overall.dragFileTip')}}，{{$t('overall.or')}}&nbsp;<em>{{$t('overall.clickUpload')}}</em></div>
             <template #tip>
               <div class="el-upload__tip" >
@@ -232,12 +232,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-  .cn-dialog {
-    overflow: hidden;
-  }
-  .upload-body{
-    text-align: center;
-  }
-</style>

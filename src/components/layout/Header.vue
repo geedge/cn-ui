@@ -9,16 +9,16 @@
       <!--个人操作-->
       <div class="personal">
         <el-dropdown>
-          <div class="header-menu--item"><i class="cn-icon cn-icon-language"></i></div>
+          <div class="header-menu__item"><i class="cn-icon cn-icon-language"></i></div>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>
-                <div id="header-to-english" :style="language === EN?'color:#0091ff':''" @click="changeLocal(EN)">
+              <el-dropdown-item @click="changeLocal(EN)">
+                <div id="header-to-english" class="personal-dropdown-item" :class="language === EN ? 'is-active' : ''">
                   English
                 </div>
               </el-dropdown-item>
-              <el-dropdown-item>
-                <div id="header-to-chinese" :style="language === ZH?'color:#0091ff':''" @click="changeLocal(ZH)">
+              <el-dropdown-item @click="changeLocal(ZH)">
+                <div id="header-to-chinese" class="personal-dropdown-item" :class="language === ZH ? 'is-active' : ''">
                   中文
                 </div>
               </el-dropdown-item>
@@ -26,15 +26,21 @@
           </template>
         </el-dropdown>
         <el-dropdown>
-          <div class='login-user header-menu--item'>{{ nickName }}&nbsp;<i class="cn-icon cn-icon-arrow-down"></i></div>
+          <div class='login-user header-menu__item'>{{ nickName }}&nbsp;<i class="cn-icon cn-icon-arrow-down"></i></div>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>
-                <div id="header-to-changepin" @click="showPinDialog">{{ $t('overall.changePassword') }}</div>
+              <el-dropdown-item @click="showPinDialog">
+                <div id="header-to-changepin">{{ $t('overall.changePassword') }}</div>
               </el-dropdown-item>
-              <el-dropdown-item>
-                <div id="header-to-logout" @click="logout">{{ $t('overall.logout') }}</div>
+              <el-dropdown-item @click="logout">
+                <div id="header-to-logout">{{ $t('overall.logout') }}</div>
               </el-dropdown-item>
+<!--              <el-dropdown-item>-->
+<!--                <div id="header-to-theme" @click="switchTheme">-->
+<!--                  <span>暗黑模式</span>-->
+<!--                  <el-switch v-model="isDark" size="large" class="mt-2" style="margin-left: 24px" inline-prompt />-->
+<!--                </div>-->
+<!--              </el-dropdown-item>-->
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -46,8 +52,9 @@
         <el-breadcrumb-item class="header__left-breadcrumb-item" :id="`breadcrumb${item.value}`" :title="index===3?item.value:''"
                             v-for="(item,index) in breadcrumb" :key="item.value">
           <template v-if="index===3" >
-            <div class="header__left-breadcrumb-item-select" >
+            <div class="header__left-breadcrumb-item-select" style="position: relative">
               <el-popover placement="bottom-start"
+                          style="position: absolute"
                           ref="breadcrumbPopover"
                           :show-arrow="false"
                           :append-to-body="false"
@@ -76,7 +83,7 @@
                 <el-row type="flex" justify="center" style="width: fit-content;flex-direction: column;">
                   <div class="search-input">
                     <el-input :placeholder="$t('filter.options')"
-                              size="mini"
+                              size="small"
                               v-model="dropDownValue"
                               @input="dropDownSearch"></el-input>
                   </div>
@@ -128,6 +135,7 @@
         direction="ttb"
         custom-class="cn-menu"
         modal-class="cn-menu-modal"
+        class="cn-menu"
         :with-header="false"
         :show-close="false"
     >
@@ -158,11 +166,31 @@
             </div>
           </div>
         </div>
+        <div class="middle-menus middle-menus--location-intelligence">
+          <div class="middle-menus__header">{{ $t('overall.locationIntelligence') }}</div>
+          <div class="middle-menus__body" v-if="locationIntelligenceMenu && locationIntelligenceMenu.children">
+            <div style="width: 260px;">
+              <template v-for="(menu, index) in locationIntelligenceMenu.children" :key="index">
+                <div class="middle-menu" v-if="index < 5" @click="jump(menu.route,'','',2)">
+                  {{ $t(menu.i18n || menu.name) }}
+                </div>
+              </template>
+            </div>
+            <div>
+              <template v-for="(menu, index) in locationIntelligenceMenu.children" :key="index">
+                <div class="middle-menu" v-if="index >= 5 && index < 10" @click="jump(menu.route,'','',2)">
+                  {{ $t(menu.i18n || menu.name) }}
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
       </div>
     </el-drawer>
 
     <!-- 改密码 -->
     <el-dialog v-model="showChangePin"
+               class="change-pin-dialog"
                width="30%"
                :before-close="handleClose">
       <el-form :rules="changePassFormRules" :model="changePassForm" ref="changePassForm">
@@ -222,6 +250,7 @@ import {
 import { getNowTime, getSecond } from '@/utils/date-util'
 import _ from 'lodash'
 import { useRoute } from 'vue-router'
+import { useDark, useToggle } from '@vueuse/core'
 
 export default {
   name: 'Header',
@@ -307,15 +336,19 @@ export default {
       wholeScreenRouterMapping,
       logo: 'images/logo-header.svg',
       ZH,
-      EN
+      EN,
+      // isDark: useDark()
     }
   },
   computed: {
     networkAnalyticsMenu () {
       return this.$store.getters.menuList.find(menu => menu.code === 'networkAnalytics')
     },
+    locationIntelligenceMenu () {
+      return this.$store.getters.menuList.find(menu => menu.code === 'locationIntelligence')
+    },
     otherMenu () {
-      return this.$store.getters.menuList.filter(menu => ['networkAnalytics', 'I18N', 'entityDetail', 'entityGraph', 'detectionPolicy'].indexOf(menu.code) === -1)
+      return this.$store.getters.menuList.filter(menu => ['locationIntelligence', 'networkAnalytics', 'I18N', 'entityDetail', 'entityGraph', 'detectionPolicy'].indexOf(menu.code) === -1)
 
       /* function excludeButton (menu) {
         for (let i = 0; i < menu.length; i++) {
@@ -332,7 +365,7 @@ export default {
     },
     breadcrumb () {
       const breadcrumb = []
-      this.generateBreadcrumb(breadcrumb, this.$store.getters.menuList)
+      this.generateBreadcrumb(breadcrumb, this.$store.getters.menuList, this.$store.state.headerMenuByTab)
       if (breadcrumb) {
         // panel菜单是否可以点击跳转：一级菜单不可点击，二级菜单可以点击
         if (breadcrumb[0] && breadcrumb[1] && breadcrumb[1].route &&
@@ -378,6 +411,7 @@ export default {
       }
     },
     async breadcrumb (n) {
+      this.breadcrumbColumnValueListShow = []
       this.curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
       if (this.$route.path.replace('/panel/', '') === fromRoute.dnsServiceInsights) {
         if (this.dnsQtypeMapData.size === 0) {
@@ -390,6 +424,26 @@ export default {
     },
     '$store.getters.timeFilter': function (newVal) {
       if (newVal && Object.keys(newVal).length > 0) {
+        this.chartTimeFilter = newVal
+      }
+    },
+    '$store.state.headerMenuByTab': function (newVal) {
+      if (newVal) {
+        const find = this.$store.getters.menuList.find(d => d.code === 'locationIntelligence')
+        if (find) {
+          const children = find.children
+          const item = children.find(d => d.code === newVal)
+          if (this.breadcrumb[0].code === find.code) {
+            const obj = {
+              code: item.code,
+              value: item.i18n ? this.$t(item.i18n) : item.name,
+              route: item.route,
+              type: 1,
+              clickable: true
+            }
+            this.breadcrumb[1] = obj
+          }
+        }
         this.chartTimeFilter = newVal
       }
     }
@@ -435,7 +489,7 @@ export default {
     }
   },
   methods: {
-    generateBreadcrumb (breadcrumb, menus) {
+    generateBreadcrumb (breadcrumb, menus, tab) {
       const menu = menus.find(m => m.route === this.route)
       if (menu) {
         breadcrumb.unshift({
@@ -477,6 +531,11 @@ export default {
       sessionStorage.removeItem(storageKey.tokenExpireCurrentPath)
       localStorage.removeItem(storageKey.token)
       axios.get(api.logout)
+    },
+    switchTheme () {
+      useToggle(this.isDark)
+      const theme = this.isDark ? 'light' : 'dark'
+      localStorage.setItem(storageKey.theme, theme)
     },
     refreshLang () {
       this.language = localStorage.getItem(storageKey.language)
@@ -543,9 +602,9 @@ export default {
                   itemName = this.dnsRcodeMapData.get(item)
                 }
                 if (itemName === currentValue) {
-                  selectedDom.style.cssText = 'color:#0091ff;font-weight: bold;'
+                  selectedDom.classList.add('is-active')
                 } else {
-                  selectedDom.style.cssText = ''
+                  selectedDom.classList.remove('is-active')
                 }
               }
             })
@@ -554,7 +613,6 @@ export default {
       })
     },
     showBreadcrumbPopover (valueMenuId) {
-      this.breadcrumbColumnValueListShow.splice(0, this.breadcrumbColumnValueListShow.length)
       this.curPageNum = 1
       this.showBackground = true
       this.dropDownValue = ''
@@ -572,6 +630,7 @@ export default {
       }
     },
     changeValue (value) {
+      this.breadcrumbColumnValueListShow = []
       // 设置面包屑显示的内容及hover时的title
       let valName = value
       if (this.curTabProp === 'qtype') {

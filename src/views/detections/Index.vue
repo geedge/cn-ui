@@ -38,7 +38,7 @@
          <div class="no-data detection__event-severity-bar" >{{ $t('npm.noData') }}</div>
       </template>
       <template v-if="!isEventSeverityNoData">
-        <div class="detection__event-severity-bar detection-border"  :id="`eventSeverityTrendBar${pageType}`">
+        <div class="detection__event-severity-bar detection-border"  :id="`eventSeverityTrendBar${pageType}`"  :ref="`eventSeverityTrendBar${pageType}`">
         </div>
       </template>
       <div style="display: flex; flex-grow: 1; height: 100%;">
@@ -322,7 +322,8 @@ export default {
             }
           })
 
-          const chartDom = document.getElementById(`eventSeverityTrendBar${this.pageType}`)
+          // const chartDom = document.getElementById(`eventSeverityTrendBar${this.pageType}`)
+          const chartDom = this.$refs.eventSeverityTrendBarsecurityEvent
           const eventSeverityTrendOption = this.$_.cloneDeep(multipleBarOption)
 
           const key = changeI18nOfSeverity(data[0].severity)

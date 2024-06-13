@@ -1,0 +1,62 @@
+// 通用的 business 色的 button 和白色 button 样式的颜色，包括 top-tool、right-box 的 footer、各页面保存按钮 等.
+// business 色的 class 为 'business-button'，白色的 class 为 'business-button business-button--light'
+.business-button {
+  color: var(--el-color-white);
+  background-color: var(--el-color-business);
+  border: 1px solid var(--el-color-business-dark-2);
+  border-radius: var(--el-border-radius-small);
+  transition: all linear .1s;
+  cursor: pointer;
+  outline: none;
+
+  &:hover:not(:disabled) {
+    background-color: var(--el-color-business-light-2);
+  }
+
+  &:focus:not(:disabled) {
+    background-color: var(--el-color-business-dark-1);
+  }
+
+  &.business-button--light {
+    color: var(--el-text-color-primary);
+    background-color: var(--el-fill-color-blank);
+    border: 1px solid var(--el-color-info-light-7);
+
+    &:hover:not(:disabled) {
+      background-color: var(--el-fill-color);
+    }
+
+    &:focus:not(:disabled) {
+      background-color: var(--el-fill-color-darker);
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.66;
+  }
+}
+
+//删除确认弹框messageBox的底部按钮样式。应用场景：administration下顶部工具栏的删除按钮
+.del-model-message-box {
+  .el-message-box__btns {
+    .el-button:nth-child(1) {
+      width: 80px;
+      height: 28px;
+      margin-right: 20px;
+      color: var(--el-text-color-primary);
+      background: var(--el-fill-color-light);
+      border: 1px solid var(--el-border-color-dark);
+      border-radius: 2px;
+    }
+
+    .el-button:nth-child(2) {
+      width: 80px;
+      height: 28px;
+      margin-right: 20px;
+      margin-left: 0 !important;
+      background-color: var(--el-color-business);
+      border-color: var(--el-color-business-dark-2);
+    }
+  }
+}

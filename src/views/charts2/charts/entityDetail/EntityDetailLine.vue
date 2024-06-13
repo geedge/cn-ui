@@ -47,28 +47,28 @@
             </div>
             <div class="line-select-metric">
               <span class="select-prefix line-margin-right">{{$t('network.metric')}}:</span>
-              <el-select
-                  size="mini"
-                  v-model="metric"
-                  placeholder=" "
-                  popper-class="common-select"
-                  :popper-append-to-body="false"
-                  @change="metricChange"
-              >
-                <el-option v-for="item in metricOptions" :key="item.value" :label="$t(item.label)" :value="item.value"></el-option>
-              </el-select>
+              <div class="line-metric__select">
+                <el-select
+                    v-model="metric"
+                    placeholder=" "
+                    popper-class="common-select"
+                    :teleported="false"
+                    @change="metricChange"
+                >
+                  <el-option v-for="item in metricOptions" :key="item.value" :label="$t(item.label)" :value="item.value"></el-option>
+                </el-select>
+              </div>
             </div>
           </div>
           <div class="line-select-reference-line">
             <span class="line-margin-right">{{ $t('network.referenceLine') }}:</span>
             <div class="line-select__operation">
               <el-select
-                  size="mini"
                   v-model="lineRefer"
                   :disabled="!lineTab"
                   placeholder=" "
                   popper-class="common-select"
-                  :popper-append-to-body="false"
+                  :teleported="false"
                   @change="referenceSelectChange"
               >
                 <el-option :key="options2[0].value" :label="$t(options2[0].label)" :value="options2[0].value"></el-option>
@@ -79,7 +79,7 @@
           </div>
         </div>
       </div>
-      <div style="height: calc(100% - 74px); position: relative">
+      <div class="line__block">
         <chart-no-data v-if="isNoData && !showError"></chart-no-data>
         <div class="chart-drawing" v-show="showMarkLine && !isNoData && !showError" ref="overviewLineChart"></div>
       </div>

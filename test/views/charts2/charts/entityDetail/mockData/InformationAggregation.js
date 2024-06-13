@@ -59,21 +59,23 @@ const mockData = {
             }
           },
           {
-            userDefinedTag: {
+            tags: {
               id: 1,
-              tagValue: '门户网站',
+              name: '门户网站',
               updateTime: 1685696500,
               createTime: 1685696500,
-              isValid: 1
+              isValid: 1,
+              intent: 'Unknow'
             }
           },
           {
-            userDefinedTag: {
+            tags: {
               id: 1,
-              tagValue: '用户tag',
+              name: '用户tag',
               updateTime: 1685696500,
               createTime: 1685696500,
-              isValid: 1
+              isValid: 1,
+              intent: 'Benign'
             }
           }
         ]

@@ -1,14 +1,9 @@
 @import './components/advancedSearch/advanced-search2';
 @import './components/advancedSearch/codemirror';
-// @import './components/charts/panel';
 @import './components/common/TimeRange/date-time-range';
 @import './components/common/TimeRange/time-refresh';
 @import './components/common/pagination';
-// @import './components/entities/entities';
 @import './components/layout/layout';
-@import 'components/rightBox/administration/chart-box';
-@import 'components/setting/galaxy-proxy-debug';
-@import 'components/table/administration/galaxy-proxy-table';
 @import './components/table/common';
 @import './views/charts/chart';
 @import 'views/entityExplorer/entity-explorer';
@@ -25,25 +20,12 @@
 @import './views/detections/detection-list/detection-list';
 @import './views/detections/detection-list/row';
 @import './views/detections/detection-overview';
-@import './views/charts/chartSingleValue';
 @import './views/charts/panel';
-@import 'views/charts/chartIpOpenPortBar';
-@import './views/charts/chartTable';
-@import './views/charts/chartCryptocurrencyEventList';
-@import './views/charts/chartAppBasicInfo';
-@import './views/charts/chartDomainDnsRecord';
-@import './views/charts/chartDomainWhois';
-@import './views/charts/chartEchartWithTable';
-@import './views/charts/ipBasicInfo';
-@import './views/charts/chartEchartIpHostedDomain';
-@import './views/charts/chartEchartAppRelateDomain';
-@import './views/charts/ChartOneSituationStatistics';
-@import './views/charts/ChartTwoSituationStatistics';
-@import './views/charts/chartAlarmInfo';
 @import './views/chartHeader';
 @import './views/charts/chartMap';
-@import 'views/charts/chartRelationShipList';
 @import 'views/report/report';
+@import 'views/tag/tag';
+@import 'views/tag/tagForm';
 @import 'components/rightBox/report/reportBox';
 
 @import './views/charts2/panel';
@@ -69,17 +51,13 @@
 @import './views/charts2/domainNameResolution.scss';
 @import './views/charts2/informationAggregation.scss';
 @import 'views/charts2/linkTrafficLine';
-@import 'views/charts2/dnsTrafficLine';
-@import 'views/charts2/dnsRecentEvents';
-@import 'views/charts2/dnsActiveMaliciousDomain';
-@import 'views/charts2/dnsEventChart';
-@import './views/charts2/dnsEventChartByPie';
 //@import '../chart';
 @import './components/common/chart-error';
 @import './components/common/chart-tab';
 
 @import 'views/administration/AdministrationTabs';
 @import 'views/administration/Appearance.scss';
+@import 'views/administration/License.scss';
 
 @import 'views/system/Plugin';
 
@@ -102,3 +80,12 @@
 @import "views/detections/detection-table";
 @import "views/detections/detection-create/detection-form";
 @import "views/detections/detection-create/detection-form-setting";
+@import "views/detections/detection-create/detection-history";
+
+@import "views/entityExplorer/helper-info";
+
+@import "./components/common/time-line";
+@import "./components/common/login";
+@import "./components/common/simple-loading";
+
+@import "views/location/location";

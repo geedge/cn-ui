@@ -13,11 +13,10 @@
             <span @click="drillDownData(app.type, app.name)" :test-id="`name${index}`">{{app.name}}</span>
           </div>
           <div class="app-card-title-more">
-            <span v-show="app.showMore"><i class="cn-icon cn-icon-more-dark" @mouseenter="mouseenterMore(app)" test-id="mouseenter-dark"></i></span>
-            <span class="app-card-title-more-delete" @click="del(app, index)" v-show="app.moreOptions" @mouseleave="mouseleaveMore(app)" test-id="mouseleave-more"><i class="cn-icon cn-icon-delete"></i>{{$t('overall.delete')}}</span>
+            <span v-show="app.showMore" @click="del(app, index)"><i class="cn-icon cn-icon-delete" test-id="mouseenter-dark"></i></span>
           </div>
         </div>
-        <div class="app-card__bodys">
+        <div class="app-card__bodies">
           <div class="app-card__body">
             <div class="app-card__body-content">
               <div class="app-card__body-content-value">
@@ -55,7 +54,7 @@
     <el-drawer
         v-model="showAddApp"
         direction="btt"
-        custom-class="add-app-drawer"
+        class="add-app-drawer"
         :with-header="false"
         :show-close="false"
     >
@@ -63,8 +62,8 @@
         <div class="add-app__header">
           <div class="header__title">{{$t('overall.add')}}</div>
           <div class="header__operations">
-            <div class="header__operation header__operation--cancel" @click="cancelApp" test-id="cancel-app">{{$t('overall.cancel')}}</div>
-            <div class="header__operation header__operation--save" @click="save">{{$t('overall.save')}}</div>
+            <button class="business-button business-button--light" @click="cancelApp" test-id="cancel-app">{{$t('overall.cancel')}}</button>
+            <button class="business-button" :disabled="toSaveApp.length === 0" @click="save">{{$t('overall.save')}}</button>
           </div>
         </div>
         <div class="add-app__body">
@@ -111,7 +110,7 @@
             </el-tab-pane>
           </el-tabs>
           <div class="body__searcher">
-            <el-input v-model="searcherApp" @input="searcherAppChange" size="mini" :placeholder="$t('networkOverview.search')" prefix-icon="el-icon-search" test-id="search-input"></el-input>
+            <el-input v-model="searcherApp" @input="searcherAppChange" size="small" :placeholder="$t('networkOverview.search')" prefix-icon="Search" test-id="search-input"></el-input>
           </div>
           <div class="body__loading"><loading :loading="loading"></loading></div>
         </div>
@@ -122,7 +121,7 @@
 
 <script>
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
-import { storageKey, unitTypes, networkTable, operationType, curTabState, metricType, metricOptions } from '@/utils/constants'
+import { storageKey, unitTypes, networkTable, operationType, curTabState, metricOptions } from '@/utils/constants'
 import * as echarts from 'echarts'
 import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
 import { shallowRef } from 'vue'
@@ -464,7 +463,10 @@ export default {
         }
       }
     },
-    addApp (pageNo, val, show) {
+    addApp (pageNo, val, show, index) {
+      if (!index) {
+        index = this.appTypeTab
+      }
       this.showAddApp = true
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
@@ -484,7 +486,7 @@ export default {
       } else {
         params.pageNo = 1
       }
-      if (parseFloat(this.appTypeTab) === 0) {
+      if (parseFloat(index) === 0) {
         params.type = 'overviewProvide'
         axios.get(api.dict, { params: params }).then(response => {
           const res = response.data
@@ -508,7 +510,7 @@ export default {
           this.loading = false
           this.loadingBody = false
         })
-      } else if (parseFloat(this.appTypeTab) === 1) {
+      } else if (parseFloat(index) === 1) {
         params.type = 'overviewApp'
         axios.get(api.dict, { params: params }).then(response => {
           const res = response.data
@@ -547,10 +549,11 @@ export default {
     cancelApp () {
       this.showAddApp = false
     },
-    appTypeTabChange () {
+    appTypeTabChange (n) {
+      // 此处的tab-click有延迟，获取的是上一个路由，jest单测里获取的是click，为兼容故继续使用tab-click而非tab-change
       this.pageObj.pageNo = 1
       this.searcherApp = ''
-      this.addApp()
+      this.addApp('', '', '', n.index)
       this.loadingBody = true
       window.addEventListener('scroll', this.scrollChange, true)
       this.timerScroll = setTimeout(() => {
@@ -693,20 +696,6 @@ export default {
     resize () {
       this.myChart.forEach(t => {
         t.resize()
-      })
-    },
-    mouseenterMore (app) {
-      this.appData.forEach(t => {
-        if (t.name === app.name && t.type === app.type) {
-          t.moreOptions = true
-        }
-      })
-    },
-    mouseleaveMore (app) {
-      this.appData.forEach(t => {
-        if (t.name === app.name && t.type === app.type) {
-          t.moreOptions = false
-        }
       })
     },
     mouseenter (app) {

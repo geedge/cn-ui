@@ -18,10 +18,14 @@ export const errorDesc = {
     str: 'parse.errorTip.typeError.expectString', // Expected parameter type is string
     number: 'parse.errorTip.typeError.expectNumber', // Expected parameter type is number
     meta: 'parse.errorTip.typeError.expectMetaArray' // Expected parameter type is Meta array
-  }
+  },
+  invalidQuery: 'tip.invalidQueryField'
 }
 export function handleErrorTip (error) {
   return i18n.global.t(error.type) + ': ' + i18n.global.t(error.desc) + ', at index ' + error.index
+}
+export function invalidErrorTip (error) {
+  return i18n.global.t(errorDesc.invalidQuery) + ' ' + error.key
 }
 export default class ParserError {
   constructor (index, type, desc) {

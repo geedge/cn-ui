@@ -1135,12 +1135,12 @@ export default class Parser {
         }
 
         return returnObj
-      } else if (q.indexOf(' LIKE ') > -1 || q.indexOf(' like ') > -1) {
+      } else if (q.toLowerCase().indexOf(' like ') > -1) {
         return {
           key: q,
           isKey: true
         }
-      } else if (q.indexOf(' IN ') > -1 || q.indexOf(' in ') > -1) {
+      } else if (q.toLowerCase().indexOf(' in ') > -1) {
         return {
           key: q,
           isKey: true
@@ -1154,19 +1154,83 @@ export default class Parser {
           return { key: '[' + key + ']', isKey: false }
         }
       }
-    } else if (q && (q.indexOf(' IN ') > -1 || q.indexOf(' in ') > -1 || q.indexOf(' LIKE ') > -1 || q.indexOf(' like ') > -1)) {
-      return {
-        key: q,
-        isKey: true
-      }
-    } else if (q && (q.indexOf('has(') > -1)) {
-      return {
-        key: q,
-        isKey: true
+    } else if (q && (q.toLowerCase().indexOf(' in ') > -1 || q.toLowerCase().indexOf(' like ') > -1 || q.toLowerCase().indexOf('has(') > -1)) {
+      const lowerQ = q.toLowerCase()
+      if (lowerQ.indexOf(' and ') > -1) {
+        if (this.checkStrIncludeAnd(q)) {
+          q = q.replace(/ and /g, ' AND ')
+        }
+        const arr = q.split(' AND ')
+
+        for (let i = 0; i < arr.length; i++) {
+          const item = arr[i].toLowerCase()
+          if (item.indexOf(' like ') > -1) {
+            const key = item.substring(0, item.indexOf(' like '))
+            const obj = this.columnList.find(t => t.label.toLowerCase() === key.toLowerCase())
+            if (!obj) {
+              return { key: '[' + key + ']', isKey: false }
+            }
+          } else if (item.indexOf(' in ') > -1) {
+            const key = q.substring(0, item.indexOf(' in '))
+            const obj = this.columnList.find(t => t.label.toLowerCase() === key.toLowerCase())
+            if (!obj) {
+              return { key: '[' + key + ']', isKey: false }
+            }
+          } else if (item.indexOf('has(') > -1) {
+            const key = item.substring(0, 4)
+            if (key === 'has(') {
+              const label = item.substring(4, item.indexOf(','))
+              if (label) {
+                const obj = this.columnList.find(t => t.label.toLowerCase() === label.toLowerCase())
+                if (!obj) {
+                  return { key: '[' + label + ']', isKey: false }
+                }
+              } else {
+                return { key: 'in index ' + q.indexOf('has('), isKey: false }
+              }
+            } else {
+              return { key: 'in index ' + q.indexOf('has('), isKey: false }
+            }
+          }
+        }
+        return { key: q, isKey: true }
+      } else if (lowerQ.indexOf(' like ') > -1) {
+        const key = q.substring(0, lowerQ.indexOf(' like '))
+        const obj = this.columnList.find(t => t.label.toLowerCase() === key.toLowerCase())
+        if (obj) {
+          return { key: obj.label + q.substring(lowerQ.indexOf(' like '), q.length), isKey: true }
+        } else {
+          return { key: '[' + key + ']', isKey: false }
+        }
+      } else if (lowerQ.indexOf(' in ') > -1) {
+        const key = lowerQ.substring(0, lowerQ.indexOf(' in '))
+        const obj = this.columnList.find(t => t.label.toLowerCase() === key.toLowerCase())
+        if (obj) {
+          return { key: obj.label + q.substring(lowerQ.indexOf(' in '), q.length), isKey: true }
+        } else {
+          return { key: '[' + key + ']', isKey: false }
+        }
+      } else if (lowerQ.indexOf('has(') > -1) {
+        const key = lowerQ.substring(0, 4)
+        if (key === 'has(') {
+          const label = lowerQ.substring(4, lowerQ.indexOf(','))
+          if (label) {
+            const obj = this.columnList.find(t => t.label.toLowerCase() === label.toLowerCase())
+            if (obj) {
+              return { key: 'has(' + obj.label + q.substring(lowerQ.indexOf(','), lowerQ.length), isKey: true }
+            } else {
+              return { key: '[' + label + ']', isKey: false }
+            }
+          } else {
+            return { key: 'in index 5', isKey: false }
+          }
+        } else {
+          return { key: 'in index 5', isKey: false }
+        }
       }
     } else {
       return {
-        key: q,
+        key: '[' + q + ']',
         isKey: false
       }
     }
@@ -1250,13 +1314,18 @@ export default class Parser {
           if (str.toLowerCase().indexOf(item.toLowerCase()) > -1) {
             // todo 记录一下此处取消了转小写转换，后续搜索验证
             // str = str.replace(new RegExp(item, 'gi'), item)
-            if (!operatorList.some(ite => str.includes(ite)) && str.toLowerCase() !== item.toLowerCase()) {
+            const isSpace = /\s/.test(str)
+            if (!operatorList.some(ite => str.includes(ite)) && str.toLowerCase() !== item.toLowerCase() && !isSpace) {
               str = this.checkFormatByStr(str)
             }
           }
         })
         return str
       } else if (!result) {
+        // 此处为不能识别的字段，不能当成app处理
+        if (str.indexOf('=') > -1 || str.toLowerCase().indexOf(' in ') > -1 || str.toLowerCase().indexOf(' like ') > -1 || str.toLowerCase().indexOf('has(') > -1) {
+          return str
+        }
         const regex = /^["']|["']$/
         // 去除两侧引号，如'1.1.1.1',避免校验时被当作app
         if (regex.test(str)) {
@@ -1285,7 +1354,7 @@ export default class Parser {
     }
 
     if (regexIPv4.test(str) || regexIPv6.test(str)) {
-      const obj = this.columnList.find(t => t.label.toLowerCase() === 'ip')
+      const obj = this.columnList.find(t => t.label.toLowerCase() === 'ip' || t.label.toLowerCase() === 'ip.addr')
       if (obj) {
         return `${obj.label}='${str}'`
       } else {
@@ -1296,7 +1365,7 @@ export default class Parser {
       }
     } else if (regexDomain.test(str)) {
       // 只写作domain即可，schema字段更改几次，避免后续再更改，直接拿this.columnList的label进行替换
-      const obj = this.columnList.find(t => t.label.toLowerCase() === 'domain')
+      const obj = this.columnList.find(t => t.label.toLowerCase() === 'domain' || t.label.toLowerCase() === 'domain.name')
       if (obj) {
         return `${obj.label} LIKE '%${str}'`
       } else {
@@ -1306,7 +1375,7 @@ export default class Parser {
         return str
       }
     } else {
-      const obj = this.columnList.find(t => t.label.toLowerCase() === 'app')
+      const obj = this.columnList.find(t => t.label.toLowerCase() === 'app' || t.label.toLowerCase() === 'app.name')
       if (obj) {
         return `${obj.label} LIKE '%${str}%'`
       } else {

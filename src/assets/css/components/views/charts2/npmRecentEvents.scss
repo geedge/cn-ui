@@ -1,11 +1,12 @@
 .npm-recent {
   height: 100%;
   width: 100%;
+
   .npm-recent-title {
     display: flex;
     font-size: 14px;
-    color: #353636;
-    font-weight: 600;
+    color: var(--el-text-color-primary);
+    font-weight: bold;
     margin-bottom: 10px;
   }
   .npm-recent-table-ten.npm-recent-table {
@@ -17,16 +18,35 @@
   }
   .npm-recent-table {
     height: calc(100% - 30px) !important;
-    border: 1px solid #E2E5EC;
+    border: 1px solid var(--el-border-color-light);
     border-radius: 4px;
-    padding: 1px;
+
+    .el-table__inner-wrapper::before {
+      height: 0; // 去掉底部的边框
+    }
+    .el-table__empty-text {
+      line-height: 25px !important;
+
+      .table-no-data {
+        .icon {
+          width: 30px;
+          height: 30px;
+          margin-left: 1px;
+        }
+        .table-no-data__title {
+          font-size: 14px;
+          color: var(--el-text-color-regular);
+        }
+      }
+    }
     .el-table__header-wrapper {
       tr th {
         padding: 4px 0;
+
         .data-column__span {
           font-size: 12px;
-          color: #353636;
-          font-weight: 600;
+          color: var(--el-text-color-primary);
+          font-weight: bold;
         }
       }
     }
@@ -34,76 +54,57 @@
       tr td {
         padding: 6.75px 0;
       }
-      .el-table__empty-block .el-table__empty-text {
-        line-height: 25px;
-        .table-no-data {
-          .icon {
-            width: 30px;
-            height: 30px;
-          }
-          .table-no-data__title {
-            font-size: 14px;
-            color: #575757;
-            font-weight: 400;
-          }
-        }
-      }
     }
   }
   .data-recent-table {
     display: flex !important;
     height: 20px;
     line-height: 20px;
+
     .data-recent-table-severity {
       font-size: 12px;
-      font-weight: 500;
       border-radius: 4px;
       padding: 0 6px;
       text-transform: capitalize;
     }
     .critical {
-      color: #E26154;
-      background: rgba(226,97,84, .18);
+      color: var(--cn-color-critical);
+      background: rgba(var(--cn-color-critical-rgb), .18);
     }
     .high {
-      color: #E48E4D;
-      background: rgba(228,142,77, .18);
+      color: var(--cn-color-high);
+      background: rgba(var(--cn-color-high-rgb), .18);
     }
     .info {
-      color: #88AF65;
-      background: rgba(136,175,101, .18);
+      color: var(--cn-color-info);
+      background: rgba(var(--cn-color-info-rgb), .18);
     }
     .medium {
-      color: #E7B34E;
-      background: rgba(231,179,78, .18);
+      color: var(--cn-color-medium);
+      background: rgba(var(--cn-color-medium-rgb), .18);
     }
     .low {
-      color: #DAC74B;
-      background: rgba(218,199,75, .18);
+      color: var(--cn-color-low);
+      background: rgba(var(--cn-color-low-rgb), .18);
     }
     .data-recent-table-entity {
       font-size: 12px;
-      color: #046ECA;
-      font-weight: 400
+      color: var(--el-color-primary);
     }
     .click-active {
       cursor: pointer;
     }
     .data-recent-table-eventType {
       font-size: 12px;
-      color: #046ECA;
-      font-weight: 600;
-      background: #EBF1F4;
+      color: var(--el-color-primary);
+      font-weight: bold;
+      background: var(--cn-bg-color-light);
       border-radius: 4px;
       padding: 0 6px;
     }
     span {
       font-size: 12px;
-      color: #353636;
-      font-weight: 400;
+      color: var(--el-text-color-primary);
     }
-  }
-  .el-table--group::after,.el-table--border::after, .el-table::before {
-    height: 0px;
   }
 }

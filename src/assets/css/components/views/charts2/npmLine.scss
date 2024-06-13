@@ -2,26 +2,27 @@
   position: relative;
   height: 100%;
   width: 100%;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--el-border-color-lighter);
+
   .npm-line-title {
     display: flex;
     font-size: 14px;
-    color: #353636;
-    font-weight: 500;
+    color: var(--el-text-color-primary);
     margin: 20px 0 0 20px;
   }
   .npm-line-header {
     display: flex;
     margin: 20px 20px 0 20px;
     justify-content: space-between;
+
     .npm-line-header-title {
       display: flex;
       font-size: 14px;
-      color: #353636;
-      font-weight: 500;
+      color: var(--el-text-color-primary);
     }
     .npm-line-header-rights {
       display: flex;
+
       .npm-line-header-right {
         display: flex;
         margin-right: 10px;
@@ -33,10 +34,10 @@
     }
     .npm-line-header-right.active {
       .npm-line-header-icon {
-        background: #ccc;
+        background: var(--el-color-info-light-5);
       }
       .npm-line-header-value {
-        color: #ccc;
+        color: var(--el-color-info-light-5);
       }
     }
     .npm-line-header-icon {
@@ -46,39 +47,41 @@
       margin-right: 4px;
     }
     .npm-line-header-icon.icon0 {
-      background: #749F4D;
+      background: var(--el-color-success);
     }
     .npm-line-header-icon.icon1 {
-      background: #98709B;
+      background: #98709B; // TODO 暂无变量
     }
     .npm-line-header-icon.icon2 {
-      background: #E5A219;
+      background: var(--el-color-warning);
     }
     .npm-line-header-value {
       font-size: 12px;
-      color: #717171;
+      color: var(--el-text-color-regular);
       line-height: 12px;
-      font-weight: 400;
     }
   }
   .chart-drawing {
     height: calc(100% - 41px);
     width: 100%;
+
     .echarts-tooltip.echarts-tooltip-dark {
       .cn-chart-body {
         display: flex;
+
         .cn-chart-tooltip {
           display: flex;
           flex-direction: column;
           flex: 1;
+
           .cn-chart-tooltip-box {
             margin-right: 10px;
           }
           .cn-chart-tooltip-value.cn-chart-tooltip__color {
             font-size: 12px;
-            color: #353636;
+            color: var(--el-text-color-primary);
             line-height: 21px;
-            font-weight: 600;
+            font-weight: bold;
           }
         }
       }

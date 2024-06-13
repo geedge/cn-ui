@@ -21,11 +21,13 @@
       </span>
       <!--删除图标-->
       <span v-show="isCloseIcon" class="search__suffix search__suffix-close" @click="cleanParams">
-        <i class="el-icon-error"></i>
+        <el-icon><CircleCloseFilled /></el-icon>
+        <!--<i class="el-icon-error"></i>-->
       </span>
       <!--搜索图标-->
       <span class="search__suffix" test-id="text-search" @click.stop="search">
-        <i class="el-icon-search"></i>
+        <el-icon><Search /></el-icon>
+        <!--<i class="el-icon-search"></i>-->
       </span>
     </div>
 
@@ -42,6 +44,7 @@
           <hint v-if="hintVisible" :hintList="hintList"
                 @load="handleHintLoad"
                 @select="handleSelect"
+                @keydownEnter="handleEnter"
                 :hintParams="hintParams"
                 :hintSearch="searchStr"></hint>
         </div>
@@ -56,7 +59,7 @@ import CodeMirror from 'codemirror'
 import { toRaw } from 'vue'
 import _ from 'lodash'
 import { columnType } from '@/components/advancedSearch/meta/meta'
-import { handleErrorTip } from '@/components/advancedSearch/meta/error'
+import { handleErrorTip, invalidErrorTip } from '@/components/advancedSearch/meta/error'
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import Hint from '@/components/advancedSearch/showhint/Hint/Hint'
 import { getDataset } from '@/components/advancedSearch/showhint/packages/getDataset'
@@ -84,7 +87,8 @@ export default {
       hintVisible: false,
       dataset: null,
       CodeMirror,
-      myUnitTestStr: this.unitTestStr
+      myUnitTestStr: this.unitTestStr,
+      isHintEnter: null
     }
   },
   emits: ['changeMode', 'search'],
@@ -176,7 +180,7 @@ export default {
       this.handleBlur()
       let str
       if (!this.isUnitTesting) {
-        str = this.codeMirror.getValue().trim()
+        str = this.codeMirror.getValue().replace(/\s+/g, ' ').trim() // 去除多余空格
       } else {
         str = this.myUnitTestStr
       }
@@ -199,7 +203,7 @@ export default {
             this.$message.error(handleErrorTip(errorList[0]))
           }
         } else {
-          this.$message.error(this.$t('tip.invalidQueryField') + ' ' + keyInfo.key)
+          this.$message.error(invalidErrorTip(keyInfo))
         }
       } else {
         this.$emit('search', { q: '', str: '', metaList: [] })
@@ -465,6 +469,9 @@ export default {
       this.emitter.on('advanced-search', function () {
         vm.search()
       })
+    },
+    handleEnter (e) {
+      this.isHintEnter = e
     }
   },
   watch: {
@@ -502,9 +509,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.el-popper.search-show-hint-popover {
-  visibility: hidden !important;
-}
-</style>

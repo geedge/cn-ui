@@ -1,4 +1,6 @@
 $font-size: 12px;
+$color-regular: var(--el-text-color-regular);
+$color-primary: var(--el-text-color-primary);
 .graph-detail-basic-info {
   position: relative;
   padding-bottom: 12px;
@@ -6,19 +8,23 @@ $font-size: 12px;
   justify-content: space-between;
   //height: 100%;
 
+  .graph-detail-basic-info__block {
+    display: flex;
+  }
+
   .graph-detail-header {
     display: flex;
     flex-direction: column;
 
     .entity-graph-type {
       font-size: 12px;
-      color: #717171;
+      color: $color-regular;
       font-weight: 400;
     }
   }
 
   .entity-type {
-    color: #717171;
+    color: $color-regular;
   }
 
   .graph-basic-info {
@@ -34,7 +40,7 @@ $font-size: 12px;
         padding-right: 10px;
         max-width: 260px;
         font-size: 20px;
-        color: #353636;
+        color: $color-primary;
         font-weight: 700;
         white-space: nowrap;
         overflow: hidden;
@@ -48,12 +54,12 @@ $font-size: 12px;
         height: 18px;
         width: 18px;
         border-radius: 50%;
-        background-color: #EFF1F4;
+        background-color: var(--el-bg-color-page);
         cursor: pointer;
         flex-shrink: 0;
 
         i {
-          color: #717171;
+          color: $color-regular;
           font-size: 10px;
           -webkit-transform: scale(0.8); // 强制给文字进行缩放，达到12px以下小字体的效果
         }
@@ -71,17 +77,17 @@ $font-size: 12px;
     align-items: center;
     margin-right: 10px;
     border-radius: 50%;
-    background-color: #F3F7FA;
+    background-color: var(--el-fill-color-light);
 
     i {
       font-size: 26px;
-      color: #4E84B4;
+      color: #4E84B4; // todo 待确定
     }
   }
 }
 
 .graph-close {
-  color: #575757;
+  color: $color-regular;
   font-size: 8px;
   cursor: pointer;
 }
@@ -108,7 +114,7 @@ $font-size: 12px;
         width: 130px;
         font-family: NotoSansSChineseRegular;
         font-size: $font-size;
-        color: #717171;
+        color: $color-regular;
         font-weight: 400;
         padding-right: 10px;
         flex-shrink: 0;
@@ -116,7 +122,7 @@ $font-size: 12px;
 
       .graph-content-item-value {
         width: 230px;
-        color: #353636;
+        color: $color-primary;
         font-weight: 400;
         overflow-wrap: break-word;
         line-height: normal;
@@ -130,7 +136,7 @@ $font-size: 12px;
 
       .graph-relationship-item-label, .graph-relationship-item-value {
         font-size: $font-size;
-        color: #353636;
+        color: $color-primary;
         font-weight: 400;
         //height: 40px;
         display: flex;
@@ -143,13 +149,17 @@ $font-size: 12px;
       }
 
       .graph-relationship-item-value {
-        color: #717171;
+        color: $color-regular;
 
         i {
           cursor: pointer;
         }
       }
     }
+  }
+
+  .margin-t--4 {
+    margin-top: -4px;
   }
 
   .graph-tag-list {
@@ -184,14 +194,14 @@ $font-size: 12px;
 //修改popover样式
 .graph-popover {
   width: auto !important;
-  background: #303133 !important;
-  color: #fff !important;
+  background: $color-primary !important;
+  color: var(--el-color-white) !important;
   font-size: 12px !important;
   padding: 10px !important;
 }
 
 .graph-popover .el-popper__arrow::before {
-  background: #303133 !important;
+  background: $color-primary !important;
 }
 
 .graph-expand-relationship__icon {
@@ -200,6 +210,6 @@ $font-size: 12px;
 
 .graph-basic-info__block-title {
   font-size: 13px;
-  color: #353636;
+  color: $color-primary;
   font-weight: 600;
 }

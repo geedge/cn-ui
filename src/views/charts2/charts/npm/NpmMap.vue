@@ -5,25 +5,23 @@
 
     <div class="map-filter">
       <el-select
-          size="mini"
+          size="small"
           v-model="trafficDirection"
           class="map-select map-select__direction"
-          popper-class="map-select-down"
           placeholder=" "
-          :popper-append-to-body="false"
+          :teleported="false"
       >
         <el-option value="Server" :label="$t('overall.server')">{{$t('overall.server')}}</el-option>
         <el-option value="Client" :label="$t('overall.client')">{{$t('overall.client')}}</el-option>
       </el-select>
       <el-select
-          size="mini"
+          size="small"
           v-model="location"
           class="map-select map-select__location"
           clearable
           :placeholder="$t('overall.country')"
           filterable
-          popper-class="map-select-down"
-          :popper-append-to-body="false"
+          :teleported="false"
       >
         <template #prefix><i class="cn-icon cn-icon-location" style="color: #575757;"></i></template>
         <el-option v-for="country in showLocationOptions" :key="country" :value="country">{{country}}</el-option>
@@ -252,7 +250,7 @@ export default {
     generatePolygonTooltipHTML () {
       const html = `
         <div class="map-tooltip" style="padding-bottom: 10px;">
-          <div class="map-tooltip__title"><img src="/images/flag/{id}.png" style="width: 18px;display: {tooltip.display};height: 12px;margin-right: 6px;border: 1px solid #E8E8E8;"/>{name}</div>
+          <div class="map-tooltip__title"><img src="/images/flag/{id}.png" style="width: 18px;display: {tooltip.display};height: 12px;margin-right: 6px;border: 1px solid var(--el-color-info-light-8);"/>{name}</div>
           <div class="map-tooltip__content">
             <div class="content-title">{tooltip.text.traffic}</div>
             <div class="content-row">

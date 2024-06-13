@@ -8,7 +8,7 @@
     .digital-certificate-header__icon {
       width: 4px;
       height: 16px;
-      background: #38ACD2;
+      background: var(--el-color-business);
       border-radius: 1px;
       margin-right: 6px;
     }
@@ -16,8 +16,8 @@
     .digital-certificate-header-name {
       font-family: PingFangSC-Semibold;
       font-size: 14px;
-      color: #575757;
-      font-weight: 600;
+      color: var(--el-text-color-regular);
+      font-weight: bold;
     }
   }
 
@@ -25,9 +25,9 @@
     height: auto;
     min-height: 262px;
     padding: 20px;
-    background: rgba(113, 113, 113, 0.04);
-    border: 1px solid #E2E5ECFF;
-    border-radius: 4px;
+    background: var(--el-fill-color-lighter);
+    border: 1px solid var(--el-border-color-light);
+    border-radius: var(--el-border-radius-base);
 
     .digital-certificate-body-tags {
       display: flex;
@@ -48,21 +48,19 @@
         width: 176px;
         font-family: $font-family;
         font-size: 14px;
-        color: #717171;
-        font-weight: 400;
+        color: var(--el-text-color-regular);
       }
 
       .certificate-list-item__value, .certificate-list-item__value1 {
         width: calc(100% - 176px - 75px);
         font-family: $font-family;
         font-size: 14px;
-        color: #353636;
-        font-weight: 400;
+        color: var(--el-text-color-primary);
       }
 
       .certificate-list-item__value1 {
         padding-bottom: 2px;
-        border-bottom: 1px #353636 solid;
+        border-bottom: 1px var(--el-text-color-primary) solid;
         word-break: break-word;
       }
     }

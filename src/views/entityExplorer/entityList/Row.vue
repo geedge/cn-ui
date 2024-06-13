@@ -10,9 +10,12 @@
       <div class="cn-entity__icon"><i :class="iconClass"></i></div>
       <div class="cn-entity__row">
         <!--标签-->
-        <div class="cn-entity__header" style="display: flex;">
-          <span class="cn-entity__header-title" v-high-light="keywordList">{{ entityData.entityValue || 'Unknown' }}</span>
-          <span v-show="entityData.isRelated">
+        <div class="cn-entity__header my__display1">
+          <template v-if="entityData.entityType">
+            <span v-if="entityData.entityType==='subscriber_id'" v-high-light="keywordList">{{ entityData.phone_number }}</span>
+            <span v-else v-high-light="keywordList">{{ entityData.entityValue || 'Unknown' }}</span>
+          </template>
+          <span v-show="entityData.isRelated" class="cn-entity__header-icon">
             <el-popover
                 popper-class="my-popper-class"
                 placement="right"
@@ -89,6 +92,18 @@
                   <span class="row-item-value">{{ entityData.category ? appRisk(entityData.category.appRisk) : '-' }}</span>
                 </div>
               </template>
+              <template v-else-if="entityData.entityType === 'subscriber_id'">
+                <div class="basic-info__item">
+                  <i class="cn-icon cn-icon-account-info"></i>
+                  <span class="row-item-label">{{ $t('entity.subscriberId') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value" v-high-light="keywordList">{{ $_.get(entityData, 'entityValue', '-') || '-' }}</span>
+                </div>
+                <div class="basic-info__item">
+                  <i class="cn-icon cn-icon-location"></i>
+                  <span class="row-item-label">{{ $t('overall.location') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value">{{$_.get(entityData, 'subscriber_longitude', '-') || '-'}},&nbsp;{{$_.get(entityData, 'subscriber_latitude', '-') || '-'}}</span>
+                </div>
+              </template>
               <!-- 通用字段 -->
               <div class="basic-info__item">
                 <div class="item__box">
@@ -102,21 +117,7 @@
                   <!-- 曲线-->
                   <div class="item-box-loading">
                     <loading :loading="loading" size="small"></loading>
-                    <div
-                        class="row__charts"
-                        :id="`entityDetailSend${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'domain'">
-                    </div>
-                    <div
-                        class="row__charts"
-                        :id="`entityDetailSend${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'app'">
-                    </div>
-                    <div
-                        class="row__charts"
-                        :id="`entityDetailSend${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'ip'">
-                    </div>
+                    <div class="row__charts" :id="`entityDetailSend${entityType}${listMode}`"></div>
                   </div>
                 </div>
               </div>
@@ -130,27 +131,13 @@
                   </span>
                   <div class="item-box-loading">
                     <loading :loading="loading" size="small"></loading>
-                    <div
-                        class="row__charts"
-                        :id="`entityDetailReceived${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'domain'">
-                    </div>
-                    <div
-                        class="row__charts"
-                        :id="`entityDetailReceived${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'app'">
-                    </div>
-                    <div
-                        class="row__charts"
-                        :id="`entityDetailReceived${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'ip'">
-                    </div>
+                    <div class="row__charts" :id="`entityDetailReceived${entityType}${listMode}`"></div>
                   </div>
                 </div>
               </div>
 
               <!--score分数-->
-              <div class="basic-info__item" style="display: flex;align-items: center;">
+              <div class="basic-info__item my__display">
                 <i class="cn-icon cn-icon-Score"></i>
                 <div class="row-item-label">
                   <span class="row-item-label">{{ $t('network.score') }}&nbsp;:&nbsp;&nbsp;</span>
@@ -158,7 +145,7 @@
                     <template v-if="!loadingNetworkQuality && score !=='-'">
                       <span v-for="(dot, i) in scoreDot" :key="i" :class="dot.class"></span>
                     </template>
-                    <span style="padding-left: 4px;">{{score}}</span>
+                    <span class="padding-l-4">{{score}}</span>
                     <loading :loading="loadingNetworkQuality" size="small"></loading>
                   </span>
                 </div>
@@ -166,24 +153,23 @@
 
               <!--事件数量，即Performance和security事件总和-->
               <div class="basic-info__item" style="position: relative">
-                <div v-if="eventNum>0 && !loadingEvent" style="display: flex;align-items: center;">
+                <div v-if="eventNum>0 && !loadingEvent" class="my__display">
                   <i class="cn-icon cn-icon-Event1"></i>
                   <div class="row-item-label">
                     <span class="row-item-label">{{ $t('dnsInsight.event') }}&nbsp;:&nbsp;&nbsp;</span>
                     <span class="row-item-value">{{ eventNum }}</span>
                   </div>
                 </div>
-
-<!--                <loading :loading="loadingEvent" size="small" style="width: 90px"></loading>-->
               </div>
-
             </div>
           </div>
         </div>
       </div>
-      <div class="new-show-detail">
-        <div @click="showDetail"><i class="cn-icon cn-icon-detail"></i>{{ $t('overall.detail') }} ></div>
-        <div @click="showGraph"><i class="cn-icon cn-icon-graph"></i>{{ $t('entities.graph') }} ></div>
+      <div class="show-detail__block">
+        <div class="new-show-detail">
+          <div @click="showDetail"><i class="cn-icon cn-icon-detail"></i>{{ $t('overall.detail') }} ></div>
+          <div @click="showGraph" v-if="entity.entityType !== 'subscriber_id'"><i class="cn-icon cn-icon-graph"></i>{{ $t('entities.graph') }} ></div>
+        </div>
       </div>
       <el-collapse-transition>
         <div class="cn-entity__detail-overview" v-if="!isCollapse">
@@ -202,7 +188,7 @@ import relatedServer from '@/mixins/relatedServer'
 import Loading from '@/components/common/Loading'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { entityDefaultColor } from '@/utils/constants'
+import { entityDefaultColor, intentColor } from '@/utils/constants'
 import _ from 'lodash'
 import { getTagColor, formatTags } from '@/utils/tools'
 
@@ -277,6 +263,10 @@ export default {
           url = api.entity.entityList.appBasicInfo
           break
         }
+        case ('subscriber_id'): {
+          url = api.entity.entityList.subscriberBasicInfo
+          break
+        }
       }
       axios.get(`${url}?resource=${this.entity.entityValue}`).then(response => {
         this.$nextTick(() => {
@@ -295,21 +285,19 @@ export default {
           url = api.entity.entityList.ipTags
           break
         }
-        case ('app'): {
-          url = api.entity.entityList.appTags
-          break
-        }
       }
-      axios.get(`${url}?resource=${this.entity.entityValue}`).then(responese => {
-        const res = responese.data
-        if (responese.status === 200) {
-          formatTags(res.data, this.entity.entityType, this.levelTwoTags)
-          if (_.isArray(res.data.userDefinedTags)) {
-            this.levelTwoTags = _.concat(this.levelTwoTags, res.data.userDefinedTags.map(tag => ({ value: tag.tagValue, color: tag.knowledgeBase ? tag.knowledgeBase.color : entityDefaultColor })))
+      if (this.entity.entityType === 'domain' || this.entity.entityType === 'ip') {
+        axios.get(`${url}?resource=${this.entity.entityValue}`).then(responese => {
+          const res = responese.data
+          if (responese.status === 200) {
+            formatTags(res.data, this.entity.entityType, this.levelTwoTags)
+            if (_.isArray(res.data.tags)) {
+              this.levelTwoTags = _.concat(this.levelTwoTags, res.data.tags.map(tag => ({ value: tag.name, color: intentColor[tag.intent] || entityDefaultColor })))
+            }
+            this.hideTagArea = _.isEmpty(this.levelTwoTags)
           }
-          this.hideTagArea = _.isEmpty(this.levelTwoTags)
-        }
-      })
+        })
+      }
     },
     /* 切换折叠状态 */
     switchCollapse () {
@@ -318,7 +306,7 @@ export default {
       if (this.isCollapse) {
         this.$refs.rowBlock.style.cssText = 'background-color: none'
       } else {
-        this.$refs.rowBlock.style.cssText = 'background-color: #fff'
+        this.$refs.rowBlock.style.cssText = 'background-color: var(--el-fill-color-blank)'
       }
       this.$emit('switchCollapse', this.isCollapse, this.index)
     },

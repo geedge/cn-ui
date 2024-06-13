@@ -4,120 +4,177 @@
       .el-checkbox {
         margin-right: 24px;
         line-height: 28px;
+        margin-top: -2px;
       }
+
       .el-checkbox-group {
         line-height: 28px;
       }
+
       .el-height.el-form-item {
         margin-bottom: 18px;
+
         .el-form-item__content {
           height: 20px;
           line-height: 20px;
         }
       }
+
       .enable-tab {
         display: flex;
         width: 100%;
+
         .enable-tabs {
           flex: 1;
           height: 32px;
           width: 160px;
           text-align: center;
-          border: 1px solid #E7EAED;
+          border: 1px solid var(--el-border-color-light);
           border-right: none;
           line-height: 32px;
-          color: #333;
+          color: var(--el-text-color-primary);
         }
+
         .enable-tabs:nth-of-type(4) {
-          border-right: 1px solid #E7EAED;
+          border-right: 1px solid var(--el-border-color-light);
         }
+
         .enable-tabs.active {
-          border: 1px solid #1890FF;
+          border: 1px solid var(--el-color-primary);
           border-radius: 2px;
-          color: #1890FF;
+          color: var(--el-color-primary);
         }
+
         .enable-tabs.disable {
           cursor: not-allowed;
         }
       }
+
       .enable-tabs-per-month {
         margin-top: 10px;
+
         .enable-month-tab {
           display: flex;
+
           .enable-month-tabs {
             height: 32px;
             width: 290px;
             text-align: center;
-            border: 1px solid #E7EAED;
+            border: 1px solid var(--el-border-color-light);
             border-right: none;
             line-height: 32px;
-            color: #333;
+            color: var(--el-text-color-primary);
           }
+
           .enable-month-tabs:nth-of-type(2) {
-            border-right: 1px solid #E7EAED;
+            border-right: 1px solid var(--el-border-color-light);
           }
+
           .enable-month-tabs.active {
-            border: 1px solid #1890FF;
+            border: 1px solid var(--el-color-primary);
             border-radius: 2px;
-            color: #1890FF;
+            color: var(--el-color-primary);
           }
+
           .enable-month-tabs.disable {
             cursor: not-allowed;
           }
+
           .el-checkbox {
             padding-left: 10px;
             margin-right: 0;
           }
         }
+
         .enable-month-data-tab {
           margin-bottom: 20px;
+
           .enable-month-value {
             font-size: 12px;
-            color: #666666;
+            color: var(--el-text-color-regular);
             height: 16px;
             line-height: 16px;
           }
         }
       }
+
       .enable-month-moon-custom, .enable-tabs-custom {
         height: 32px;
         line-height: 40px;
-        color: #666;
+        color: var(--el-text-color-regular);
       }
-      .enable-month-all, .enable-month-data-tabs {
+
+      .enable-tabs-weekly, .enable-month-all, .enable-month-data-tabs, .enable-month-week {
         display: flex;
+        margin-top: 10px;
       }
-      .enable-month-week {
-        display: flex;
-      }
+
       .el-input-single {
         width: 140px;
-        height: 32px;
         margin-top: 10px;
+
         .el-input__inner {
           text-align: center;
         }
+
         .el-input-group__prepend, .el-input-group__append {
           padding: 0 10px;
+
           i {
             font-size: 12px;
           }
         }
       }
+
       .right-box__select-single {
-        height: 32px;
         margin: 10px 0 0 10px;
       }
+
+      .el-input__wrapper {
+        border-radius: 2px;
+      }
+
+      .report__display {
+        width: 100%;
+        display: flex;
+      }
+
+      .demo-datetime-picker {
+        width: 100%;
+
+        .block {
+          width: 100%;
+        }
+
+        .el-date-editor.el-input, .el-date-editor.el-input__wrapper {
+          width: 100%;
+        }
+      }
+
+      .report__params-vertical {
+        vertical-align: unset;
+      }
     }
+
   }
+
   .right-box__select--param {
-    .el-input__prefix {
-      left: 0;
-      background-color: #f5f7fa;
-      color: #999;
+    .el-select__prefix {
+      line-height:30px;
+    }
+    .el-select__prefix, .el-input__prefix {
+      background-color: var(--el-border-color-extra-light);
+      color: var(--el-color-info);
       padding: 0 15px;
-      border: 1px solid #dcdfe6;
       border-radius: 2px 0 0 2px;
     }
+
+    .el-select__wrapper {
+      padding-left: 1px !important;
+    }
   }
+}
+
+.my-form-item .el-form-item__content {
+  display: block !important;
 }

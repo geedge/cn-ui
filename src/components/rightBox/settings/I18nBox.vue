@@ -12,12 +12,12 @@
           <!--name-->
           <el-form-item :label="$t('overall.name')" prop="name">
             <el-input id="account-input-name" v-model="editObject.name" :disabled="editObject.name==='admin' && editObject.id === 1"
-                      maxlength="64" placeholder="" show-word-limit size="small" type="text"></el-input>
+                      maxlength="64" placeholder="" show-word-limit type="text"></el-input>
           </el-form-item>
           <!--code-->
           <el-form-item :label="$t('config.i18n.code')" prop="code">
             <el-input id="account-input-code" v-model="editObject.code" :disabled="editObject.code==='admin' && editObject.id === 1"
-                      maxlength="64" placeholder="" show-word-limit size="small" type="text"></el-input>
+                      maxlength="64" placeholder="" show-word-limit type="text"></el-input>
           </el-form-item>
           <!--lang-->
           <el-form-item :label="$t('config.i18n.lang')" prop="lang">
@@ -28,7 +28,7 @@
                        collapse-tags
                        placeholder=" "
                        popper-class="right-box-select-dropdown prevent-clickoutside"
-                       size="small"
+
                        @change="()=>{ this.$forceUpdate() }">
               <template v-for="role in langData" :key="role.value">
                 <el-option :label="role.value" :value="role.value"></el-option>
@@ -38,16 +38,16 @@
           <!--value-->
           <el-form-item :label="$t('config.i18n.value')" label-width="200px" prop="value">
             <el-input id="account-input-value" v-model="editObject.value"  maxlength="256" placeholder=""
-                      show-word-limit size="small"></el-input>
+                      show-word-limit></el-input>
           </el-form-item>
         </el-form>
       </div>
     </div>
     <div class="right-box__footer">
-      <button id="asset-edit-cancel" v-cancel="{object: editObject, func: esc}" class="footer__btn footer__btn--light">
+      <button id="asset-edit-cancel" v-cancel="{object: editObject, func: esc}" class="business-button business-button--light">
         <span>{{$t('overall.cancel')}}</span>
       </button>
-      <button id="asset-edit-save" :class="{'footer__btn--disabled': blockOperation.save}" :disabled="blockOperation.save" class="footer__btn" @click="save">
+      <button id="asset-edit-save" class="business-button" @click="save">
         <span>{{$t('overall.save')}}</span>
       </button>
     </div>

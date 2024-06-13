@@ -7,8 +7,6 @@
         <div class="filter__header">{{filter.title}}</div>
 
         <div class="filter__body" style="position: relative">
-          <loading :loading="loadingLeft" style="top: -5px;"></loading>
-
           <div class="filter__body-item"
                v-for="(data, i) in filter.data.slice(0, filter.showIndex)"
                :key="i"
@@ -26,10 +24,10 @@
             <div class="filter__body-item-right">{{ data.count }}</div>
           </div>
         </div>
-        <div v-show="filter.showMore"  @click="showMore(filter)"
+        <span v-show="filter.showMore"  @click="showMore(filter)"
              :class="filter.showDisabled? 'filter-no-show-more' : 'filter-show-more'">
           {{ $t('overall.showMore') }}
-        </div>
+        </span>
         <div class="filter-hr"></div>
       </div>
     </template>

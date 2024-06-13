@@ -1,6 +1,6 @@
 const BASE_CONFIG = {
   baseUrl: 'http://192.168.44.54:8090/',
-  version: '23.12',
+  version: '24.04',
   apiVersion: 'v1'
 }
 // 默认时间过滤条件，单位分钟. 0表示请求接口时不传时间参数
@@ -21,5 +21,9 @@ const DEFAULT_TIME_FILTER_RANGE = {
     performanceEvent: 60 * 24 * 7, // 实体详情--通用--性能事件
     behaviorPattern: 60 * 24 * 7 // 实体详情--IP--行为模式
   },
-  detection: 60 // 事件日志列表
+  detection: 60, // 事件日志列表
+  tag: { // 标签列表
+    activeEntity: 60, // 标签table下拉--活跃实体
+    totalEntity: 7 * 24 * 60 // 标签table下拉--全部实体
+  }
 }

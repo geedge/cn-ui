@@ -1,12 +1,8 @@
-export default class Edge {
-  constructor (sourceNode, targetNode, type = linkType.normal) {
+export default class Link {
+  constructor (sourceNode, targetNode, type) {
+    this.id = sourceNode.id + '__' + targetNode.id
     this.source = sourceNode.id
     this.target = targetNode.id
-    this.type = type
+    this.isTemp = type === 'temp'
   }
-}
-
-export const linkType = {
-  normal: 'normal',
-  temp: 'temp'
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="HelperInfo">
+  <div class="helper-info">
     <div class="tips-container">
       <Renderer ref="renderVm" :renderProps="renderProps" :renderFun="helperDataFun"></Renderer>
     </div>
@@ -12,7 +12,6 @@ import defaultTips from '@/components/advancedSearch/showhint/const/defaultTips.
 import sqlTips from '@/components/advancedSearch/showhint/const/sqlTips.js'
 import functionTips from '@/components/advancedSearch/showhint/const/functionTips.js'
 import filterTips from '@/components/advancedSearch/showhint/const/filterTips.js'
-import varTips from '@/components/advancedSearch/showhint/const/varTips.js'
 
 import { fieldRender } from '@/components/advancedSearch/showhint/const/fieldTips.js'
 import { EN, storageKey, ZH } from '@/utils/constants'
@@ -115,57 +114,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-  .HelperInfo {
-    min-width: 450px;
-    background-color: #fff;
-    height: 294px;
-    box-sizing: border-box;
-    overflow: auto;
-    z-index: 99;
-  }
-
-  .tips-container {
-    padding: 12px;
-  }
-
-  /deep/ ul li {
-    list-style: inside;
-    line-height: 20px;
-  }
-
-  /deep/ h3 {
-    margin: 8px 0;
-    line-height: 22px;
-  }
-
-  /deep/ p {
-    line-height: 22px;
-    word-break: break-all;
-  }
-
-  /deep/ code,
-  .code {
-    background: initial;
-    border: 1px solid #DEDEDE;
-    height: 24px;
-    line-height: 24px;
-    padding: 0 12px;
-    margin: 6px 0;
-    display: block;
-  }
-
-  /deep/ .sub-url {
-    padding-left: 18px;
-  }
-
-  /deep/ .sub-url li {
-    list-style: inside circle;
-  }
-
-  /deep/ i.ref-txt {
-    line-height: 20px;
-    color: #aaa;
-  }
-</style>

@@ -167,8 +167,12 @@ export default {
       })
     },
     resize () {
-      this.myChart.resize()
-      this.myChart2.resize()
+      if(this.myChart) {
+        this.myChart.resize()
+      }
+      if(this.myChart2) {
+        this.myChart2.resize()
+      }
     }
   },
   computed: {

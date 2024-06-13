@@ -12,7 +12,7 @@ import {
   ZH,
   EN,
   securityLevel,
-  entityDetailTags, entityDefaultColor, tagValueLabelMapping
+  entityDetailTags, entityDefaultColor, tagValueLabelMapping, intentColor
 } from '@/utils/constants'
 import { getIso36112JsonData, getDictList } from '@/utils/api'
 import { format } from 'echarts'
@@ -291,6 +291,35 @@ export const cancelWithChange = {
     // 解除事件监听
     document.removeEventListener('click', el.__vueDomClick__)
     delete el.__vueDomClick__
+  }
+}
+
+/* 滚动条指令 */
+export const selectLoadMore = {
+  mounted (el, binding) {
+    const selectDom = document.querySelector('.search-select .el-select-dropdown__wrap')
+    function loadMores () {
+      // 判断是否到底
+      const isBase = this.scrollHeight - this.scrollTop <= this.clientHeight + 10
+      if (isBase) {
+        binding.value && binding.value()
+      }
+    }
+    // 将获取到的dom和函数挂载到el-select上，实例销毁时好处理
+    el.selectDomInfo = selectDom
+    el.selectLoadMore = loadMores
+    // 监听滚动事件
+    if (selectDom) {
+      selectDom.addEventListener('scroll', loadMores.bind(selectDom))
+    }
+  },
+  unmounted (el, binding) {
+    // 解除事件监听
+    if (el.selectLoadMore) {
+      el.selectDomInfo.removeEventListener('scroll', el.selectLoadMore)
+      delete el.selectDomInfo
+      delete el.selectLoadMore
+    }
   }
 }
 
@@ -1369,7 +1398,13 @@ export function getTagColor (color) {
   if (color) {
     let backgroundColor = ''
     if (color.indexOf('rgb(') > -1) {
-      backgroundColor = color.replace('rgb(', 'rgba(').replace(')', ',0.06)')
+      color = color.replace(/\s+/g, '')
+      if (color === 'rgb(119,131,145)') {
+        // 此为info原来的颜色，修改为统一的info颜色
+        backgroundColor = 'var(--el-fill-color-light)'
+      } else {
+        backgroundColor = color.replace('rgb(', 'rgba(').replace(')', ',0.06)')
+      }
     }
     return `color: ${color};border-color: ${color};background-color: ${backgroundColor};`
   }
@@ -1411,7 +1446,7 @@ export const myHighLight = {
           if (newText && newText !== '-') {
             // 此处不用el.className.indexOf('high-light-block')判断，是因为block可能会有多个，有一个满足所有的都会渲染
             if (newText.indexOf('highlight__block') > -1) {
-              el.style.cssText = el.style.cssText + 'background: #FEECC2;'
+              el.style.cssText = el.style.cssText + 'background: var(--el-color-warning-light-7);'
               // 此处是相关app、相关ip、相关domain弹窗获取不到dom的操作
               let dom
               if (document.getElementById('showRelatedApp')) {
@@ -1425,7 +1460,7 @@ export const myHighLight = {
                 if (itemDom) {
                   for (let i = 0; i < itemDom.length; i++) {
                     if (itemDom[i].innerHTML === el.innerHTML) {
-                      itemDom[i].style.cssText = itemDom[i].style.cssText + 'background: #FEECC2;'
+                      itemDom[i].style.cssText = itemDom[i].style.cssText + 'background: var(--el-color-warning-light-7);'
                     }
                   }
                 }
@@ -1499,17 +1534,8 @@ export const changeTimestampToTime = (timestamp) => {
  */
 export const formatTags = (data, type, list) => {
   Object.keys(data).forEach(k => {
-    if (k !== 'userDefinedTags' && data[k]) {
-      if (_.isArray(data[k])) {
-        data[k].forEach(k3 => {
-          const find = entityDetailTags[type].find(t => t.name === k3.vpnServiceName)
-          if (find) {
-            list.push({ key: 'vpnServiceName', value: tagValueHandler(k3.vpnServiceName), type: find.type })
-          } else {
-            list.push({ key: 'vpnServiceName', value: tagValueHandler(k3.vpnServiceName), color: k3.knowledgeBase ? (k3.knowledgeBase.color || entityDefaultColor) : entityDefaultColor })
-          }
-        })
-      } else {
+    if (k !== 'tags' && data[k]) {
+      if (!_.isArray(data[k])) {
         Object.keys(data[k]).forEach(k2 => {
           const find = entityDetailTags[type].find(t => t.name === k2)
           if (find) {
@@ -1533,26 +1559,15 @@ export const formatTagsOfDetails = (data, type, list) => {
         status: r[k].isValid,
         intelligenceContent: []
       }
-      if (k === 'userDefinedTag') {
-        aggregation.intelligenceContent.push({ key: k, value: r[k].tagValue, type: 'normal' })
-      } else {
-        if (_.isArray(r[k])) {
-          r[k].forEach(k3 => {
-            const find = entityDetailTags[type].find(t => t.name === k3.vpnServiceName)
-            if (find) {
-              aggregation.intelligenceContent.push({ key: 'vpnServiceName', value: tagValueHandler(k3.vpnServiceName), type: find.type })
-            } else {
-              aggregation.intelligenceContent.push({ key: 'vpnServiceName', value: tagValueHandler(k3.vpnServiceName), color: k3.knowledgeBase ? (k3.knowledgeBase.color || entityDefaultColor) : entityDefaultColor })
-            }
-          })
-        } else {
-          Object.keys(r[k]).forEach(k2 => {
-            const find = entityDetailTags[type].find(t => t.name === k2)
-            if (find) {
-              aggregation.intelligenceContent.push({ key: k2, value: tagValueHandler(r[k][k2]), type: find.type })
-            }
-          })
-        }
+      if (k === 'tags') {
+        aggregation.intelligenceContent.push({ key: k, value: r[k].name, type: 'normal', color: intentColor[r[k].intent] || entityDefaultColor })
+      } else if (!_.isArray(r[k])) {
+        Object.keys(r[k]).forEach(k2 => {
+          const find = entityDetailTags[type].find(t => t.name === k2)
+          if (find) {
+            aggregation.intelligenceContent.push({ key: k2, value: tagValueHandler(r[k][k2]), type: find.type })
+          }
+        })
       }
       if (aggregation.intelligenceContent.length > 0) {
         list.push(aggregation)
@@ -1564,4 +1579,8 @@ export const formatTagsOfDetails = (data, type, list) => {
 const tagValueHandler = (value) => {
   const find = tagValueLabelMapping.find(t => t.value === value)
   return find ? find.name : value
+}
+
+export const headerCellClass = (row) => {
+  return 'my-header-cell-class'
 }

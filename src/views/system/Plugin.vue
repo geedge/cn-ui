@@ -1,28 +1,28 @@
 <template>
-  <div style="height: 100%;">
+  <div class="plugin-management">
     <cn-data-list
-            ref="dataList"
-            :tableId="tableId"
-            v-model:custom-table-title="tools.customTableTitle"
-            :api="url"
-            :from="fromRoute.plugin"
-            :layout="['columnCustomize']"
-            @search="search"
+        ref="dataList"
+        :tableId="tableId"
+        v-model:custom-table-title="tools.customTableTitle"
+        :api="url"
+        :from="fromRoute.plugin"
+        :layout="['columnCustomize']"
+        @search="search"
     >
       <template #default>
         <loading :loading="loading"></loading>
         <plugin-table
-                ref="dataTable"
-                :api="url"
-                :isNoData="isNoData"
-                :custom-table-title="tools.customTableTitle"
-                :height="mainTableHeight"
-                :table-data="tableData"
-                @delete="del"
-                @edit="edit"
-                @orderBy="tableDataSort"
-                @reload="getTableData"
-                @selectionChange="selectionChange"
+            ref="dataTable"
+            :api="url"
+            :isNoData="isNoData"
+            :custom-table-title="tools.customTableTitle"
+            :height="mainTableHeight"
+            :table-data="tableData"
+            @delete="del"
+            @edit="edit"
+            @orderBy="tableDataSort"
+            @reload="getTableData"
+            @selectionChange="selectionChange"
         />
       </template>
       <template #pagination>
@@ -71,7 +71,11 @@ export default {
         this.searchLabel = { ...this.searchLabel, ...params }
       }
       // this.searchLabel = { ...this.searchLabel, ...this.pageObj }
-      this.searchLabel = { ...this.searchLabel, jobGroup: 3 }
+      this.searchLabel = {
+        ...this.searchLabel,
+        jobGroup: 3,
+        pageSize: -1
+      }
       this.isNoData = false
       this.toggleLoading(true)
       delete this.searchLabel.total
@@ -87,7 +91,7 @@ export default {
             response.data.data.list[i].triggerStatus = response.data.data.list[i].triggerStatus + ''
             const basicInfo = pluginBasicInfo.find(plugin => plugin.id === response.data.data.list[i].id)
             if (basicInfo) {
-              filterDataList.push(response.data.data.list[i])
+              filterDataList.push(Object.assign({}, basicInfo, response.data.data.list[i]))
             }
           }
           this.tableData = filterDataList

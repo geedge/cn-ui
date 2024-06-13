@@ -1,13 +1,15 @@
 .npm-traffic-line {
   height: 100%;
   width: 100%;
+
   .npm-traffic-line-header {
     display: flex;
     justify-content: space-between;
+
     .npm-traffic-line-title {
       font-size: 14px;
-      color: #353636;
-      font-weight: 600;
+      color: var(--el-text-color-primary);
+      font-weight: bold;
       height: 32px;
     }
     .line-select-metric {
@@ -16,32 +18,47 @@
 
       &>span {
         font-size: 12px;
-        color: #575757;
-        font-weight: 400;
+        color: var(--el-text-color-regular);
         margin-right: 3px;
       }
       .line-select__operation {
         height: 24px;
+        min-height: 24px;
         margin-left: 3px;
         box-shadow: none;
         border-radius: 2px;
-        .el-input__inner {
+
+        .el-select__wrapper {
           width: 225px;
-          height: 24px;
+          height: 24px !important;
+          min-height: 24px !important;
           padding-left: 4px;
           line-height: 24px;
           font-size: 12px;
-          color: #2C72C6;
-          font-weight: 400;
+
+          .el-select__placeholder {
+            color: var(--el-color-primary);
+            margin-left: 1px;
+          }
+          .el-input__inner {
+            width: 225px;
+            height: 24px;
+            padding-left: 4px;
+            line-height: 24px;
+            font-size: 12px;
+            color: var(--el-color-primary);
+          }
         }
         .el-input__suffix {
           display: flex;
+
           .el-input__suffix-inner {
             line-height: 24px;
+
             .el-select__caret {
               line-height: 24px;
               width: 16px;
-              color: #575757;
+              color: var(--el-color-primary);
             }
           }
         }
@@ -49,31 +66,35 @@
     }
   }
   .npm-traffic-line-body {
-    border: 1px solid #E2E5EC;
+    border: 1px solid var(--el-border-color-light);
     border-radius: 4px;
     height: calc(100% - 32px);
     width: 100%;
+
     .panel-chart__no-data {
       height: calc(100% - 32px);
     }
     .chart-drawing {
       height: 100%;
       width: 100%;
+
       .echarts-tooltip.echarts-tooltip-dark {
         .cn-chart-body {
           display: flex;
+
           .cn-chart-tooltip {
             display: flex;
             flex-direction: column;
             flex: 1;
+
             .cn-chart-tooltip-box {
               margin-right: 10px;
             }
             .cn-chart-tooltip-value.cn-chart-tooltip__color {
               font-size: 12px;
-              color: #353636;
+              color: var(--el-text-color-primary);
               line-height: 21px;
-              font-weight: 600;
+              font-weight: bold;
             }
           }
         }

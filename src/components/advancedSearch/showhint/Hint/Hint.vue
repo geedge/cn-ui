@@ -3,7 +3,7 @@
   <div class="Hint" @click.stop>
     <div class="hint__block">
       <div class="hint__block-filter">
-        <hint-info v-on="$listeners" :hintList="hintList" @select="onSelect"></hint-info>
+        <hint-info v-on="$listeners" :hintList="hintList" @select="onSelect" @keydownEnter="onKeydownEnter"></hint-info>
       </div>
       <div class="hint__block-helper">
         <helper-info :hintSearch="hintSearch"></helper-info>
@@ -29,6 +29,9 @@ export default {
   methods: {
     onSelect (item, index, hintList) {
       this.$emit('select', item, index, hintList)
+    },
+    onKeydownEnter (e) {
+      this.$emit('keydownEnter', e)
     }
   }
 }

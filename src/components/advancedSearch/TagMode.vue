@@ -7,14 +7,18 @@
     >
       <template v-if="meta.meta === condition">
         <!-- 删除按钮 -->
-        <div class="condition__delete" @click="removeCondition(index)"><i class="el-icon-error"></i></div>
+        <div class="condition__delete" @click="removeCondition(index)">
+          <el-icon><CircleCloseFilled /></el-icon>
+          <!--<i class="el-icon-error"></i>-->
+        </div>
         <!-- 字段选择 -->
         <div v-if="meta.column.show" class="condition__column">
+<!--          <div>-->
           <div v-show="meta.column.isEditing">
             <el-select
                 allow-create
                 filterable
-                size="mini"
+                size="small"
                 v-model="meta.column.label"
                 ref="columnSelect"
                 :placeholder="meta.column.label || ' '"
@@ -45,7 +49,7 @@
             <el-select
                 allow-create
                 filterable
-                size="mini"
+                size="small"
                 v-model="meta.value.value"
                 ref="columnValue"
                 :placeholder="meta.value.value || ' '"
@@ -67,7 +71,7 @@
                 v-model="myCheckboxList"
                 ref="valuesSelect"
                 multiple
-                size="mini"
+                size="small"
                 collapse-tags
                 collapse-tags-tooltip
                 :placeholder="meta.value.value || ' '"
@@ -96,7 +100,7 @@
             <el-input
                 ref="valueInput"
                 v-model="meta.value.value"
-                size="mini"
+                size="small"
                 @blur="valueBlur(meta)"
                 @focus="valueFocus(meta)"
                 @keyup.enter="valueBlur(meta)"></el-input>
@@ -125,7 +129,7 @@
 <!--            <el-select-->
 <!--                :placeholder="meta.value"-->
 <!--                v-model="meta.value"-->
-<!--                size="mini"-->
+<!--                size="small"-->
 <!--                @change="(value) => selectConnection(value, meta)"-->
 <!--            >-->
 <!--              <el-option-->
@@ -155,10 +159,12 @@
         </el-popover>
       </span>
       <span v-show="metaList.length>0" class="search__suffix search__suffix-close" @click="cleanMetaList">
-        <i class="el-icon-error"></i>
+        <el-icon><CircleCloseFilled /></el-icon>
+        <!--<i class="el-icon-error"></i>-->
       </span>
       <span test-id="tag-search" class="search__suffix" @click="search">
-        <i class="el-icon-search"></i>
+        <el-icon><Search /></el-icon>
+        <!--<i class="el-icon-search"></i>-->
       </span>
     </div>
   </div>
@@ -344,11 +350,11 @@ export default {
         // 根据所选label在columnList中匹配label来确定操作符，一般为=,IN，tags操作符为has
         const obj = this.columnList.find(t => t.label === meta.column.label)
         this.operatorList = obj ? obj.doc.constraints.operator_functions.split(',') : ['=', 'IN']
-        if (meta.column && meta.column.type === 'fullText') {
+        if (meta.column && meta.column.type === columnType.fullText) {
           meta.operator.value = '='
-          meta.column.show = true
+          meta.column.show = false
           meta.column.isFullText = true
-          meta.operator.show = true
+          meta.operator.show = false
           const label = JSON.parse(JSON.stringify(meta.column.label))
           meta.column.label = parser.getEntityTypeByValue(meta.column.label)
           meta.value.value = label

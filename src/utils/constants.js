@@ -46,9 +46,36 @@ export const storageKey = {
   userCustomizationConfig: 'userCustomizationConfig',
   linkInfo: 'cn-link-info',
   history: 'cn-history',
-  schemaEntityExplore: 'schema_entity_explore'
+  schemaEntityExplore: 'schema_entity_explore',
+  trackingSubscribers: 'cn-tracking-subscribers',
+  mapConfig: 'cn-map-config'
 }
 export const largeCountryList = ['CN', 'US', 'RU', 'AU', 'CA', 'KZ', 'IN', 'BR']
+
+export const dbTableColumnCustomizeConfig = [
+  {
+    version: '24.04.06',
+    tableName: dbUserTableColumnCustomizeConfig
+  },{
+    version: '24.04.01',
+    tableName: dbRoleTableColumnCustomizeConfig
+  },{
+    version: '24.04.01',
+    tableName: dbOperationLogTableColumnCustomizeConfig
+  },{
+    version: '24.04.01',
+    tableName: dbChartTableColumnCustomizeConfig
+  },{
+    version: '24.04.01',
+    tableName: dbI18nTableColumnCustomizeConfig
+  },{
+    version: '24.04.01',
+    tableName: dbReportTableColumnCustomizeConfig
+  },{
+    version: '24.04.01',
+    tableName: dbGalaxySettingTableColumnCustomizeConfig
+  }
+]
 
 // 统一定义跳转来源
 export const fromRoute = {
@@ -61,7 +88,8 @@ export const fromRoute = {
   galaxyProxy: 'galaxyProxy',
   chart: 'chart',
   cryptocurrency: 'cryptocurrency',
-  builtinReport: 'builtinReport'
+  builtinReport: 'builtinReport',
+  tag: 'tag'
 }
 
 /* panel类别和名称之间的映射 */
@@ -91,7 +119,7 @@ export const operationLogStateMapping = {
 
 export const position = {
   tableHeight: {
-    normal: 'calc(100% - 48px)' // 常规高度，特例在下方定义
+    normal: 'calc(100% - 58px)' // 常规高度，特例在下方定义
   }
 }
 
@@ -229,32 +257,32 @@ export const eventSeverity = {
   info: 'info'
 }
 export const eventSeverityColor = {
-  critical: '#D84C4C',
-  high: '#FE845D',
-  medium: '#FFB65A',
-  low: '#FFD82D',
-  info: '#D1BD50'
+  critical: 'var(--cn-color-critical)',
+  high: 'var(--cn-color-high)',
+  medium: 'var(--cn-color-medium)',
+  low: 'var(--cn-color-low)',
+  info: 'var(--cn-color-info)'
 }
 export const riskLevelColor = {
-  5: '#D84C4C',
-  4: '#FE845D',
-  3: '#FFB65A',
-  2: '#FFD82D',
-  1: '#D1BD50'
+  5: 'var(--cn-color-critical)',
+  4: 'var(--cn-color-high)',
+  3: 'var(--cn-color-medium)',
+  2: 'var(--cn-color-low)',
+  1: 'var(--cn-color-info)'
 }
 export const riskLevelColor1 = {
-  'High Risk': '#D84C4C',
-  Suspicious: '#FE845D',
-  'Moderate Risk': '#FFB65A',
-  'Low Risk': '#FFD82D',
-  Trustworthy: '#D1BD50'
+  'High Risk': 'var(--cn-color-critical)',
+  Suspicious: 'var(--cn-color-high)',
+  'Moderate Risk': 'var(--cn-color-medium)',
+  'Low Risk': 'var(--cn-color-low)',
+  Trustworthy: 'var(--cn-color-info)'
 }
 export const eventSeverityColor1 = {
-  Critical: '#D84C4C',
-  High: '#FE845D',
-  Medium: '#FFB65A',
-  Low: '#FFD82D',
-  Info: '#D1BD50'
+  Critical: 'var(--cn-color-critical)',
+  High: 'var(--cn-color-high)',
+  Medium: 'var(--cn-color-medium)',
+  Low: 'var(--cn-color-low)',
+  Info: 'var(--cn-color-info)'
 }
 export const securityType = {
   commandAndControl: 'common and control',
@@ -306,6 +334,67 @@ export const metricOptions = [
   {
     value: 'Sessions/s',
     label: 'metric.sessions'
+  }
+]
+
+export const tagIntentOptions = [
+  {
+    value: 'Malicious',
+    label: 'tag.intent.malicious'
+  },
+  {
+    value: 'Benign',
+    label: 'tag.intent.benign'
+  },
+  {
+    value: 'Info',
+    label: 'tag.intent.info'
+  }
+]
+
+export const tagCategoryOptions = [
+  {
+    value: 'VPN',
+    label: 'VPN'
+  },
+  {
+    value: 'Anonymous Proxy',
+    label: 'Anonymous Proxy'
+  },
+  {
+    value: 'C2',
+    label: 'C2'
+  },
+  {
+    value: 'Brute Force',
+    label: 'Brute Force'
+  },
+  {
+    value: 'Cryptomining',
+    label: 'Cryptomining'
+  },
+  {
+    value: 'DDoS',
+    label: 'DDoS'
+  },
+  {
+    value: 'Whitelist',
+    label: 'Whitelist'
+  },
+  {
+    value: 'Info',
+    label: 'Info'
+  }
+]
+
+export const tagSourceOptions = [
+  {
+    value: 1,
+    label: 'tag.builtInTag'
+  },
+  {
+    value: 0,
+    label: 'tag.userDefined'
   }
 ]
 
@@ -399,6 +488,19 @@ export const itemListHeight = {
   noData: 250
 }
 
+export const tagType = [
+  {
+    label: 'IP',
+    value: 'IP',
+    name: 'ip'
+  },
+  {
+    label: 'Domain',
+    value: 'Domain',
+    name: 'domain'
+  }
+]
+
 export const knowledgeBaseType = [
   {
     label: 'IP',
@@ -431,6 +533,25 @@ export const knowledgeBaseCategory = [
     value: 'user_defined'
   }
 ]
+
+export const tagIntent = [
+  {
+    label: 'tag.intent.info',
+    value: 'Info',
+    name: 'info'
+  },
+  {
+    label: 'tag.intent.benign',
+    value: 'Benign',
+    name: 'benign'
+  },
+  {
+    label: 'tag.intent.malicious',
+    value: 'Malicious',
+    name: 'malicious'
+  }
+]
+
 export const knowledgeBaseColor = [
   {
     label: 'knowledge.info',
@@ -451,6 +572,9 @@ export const knowledgeBaseColor = [
 export const knowledgeCategoryValue = {
   webSketch: 'websketch',
   aiTagging: 'ai_tagging',
+  userDefined: 'user_defined'
+}
+export const tagCategoryValue = {
   userDefined: 'user_defined'
 }
 export const knowledgeSourceValue = {
@@ -1883,36 +2007,84 @@ export const performanceMetricMapping = {
 
 export const pluginBasicInfo = [
   {
-    id: 110,
+    id: 109,
+    name: 'Psiphon3 VPN',
+    type: ['IP'],
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.psiphon3',
+    iconUrl: 'images/knowledge-base-logo/psiphon3-vpn.png'
+  },
+  {
+    id: 111,
     name: 'HotSpot VPN',
-    type: 'IP',
-    schedule: 'plugin.daily',
+    type: ['IP'],
+    schedule: 'plugin.hourly',
     desc: 'knowledgeBase.desc.hotSpot',
     iconUrl: 'images/knowledge-base-logo/hotspot-vpn.png'
   },
   {
-    id: 111,
+    id: 112,
     name: 'IpVanish VPN',
-    type: 'Domain',
+    type: ['IP', 'Domain'],
     schedule: 'plugin.hourly',
     desc: 'knowledgeBase.desc.ipVanishDomain',
     iconUrl: 'images/knowledge-base-logo/ip-vanish.png'
   },
   {
-    id: 112,
-    name: 'IpVanish VPN',
-    type: 'IP',
-    schedule: 'plugin.hourly',
-    desc: 'knowledgeBase.desc.ipVanishIp',
-    iconUrl: 'images/knowledge-base-logo/ip-vanish.png'
+    id: 113,
+    name: 'Ivacy VPN',
+    type: ['IP', 'Domain'],
+    schedule: 'plugin.daily',
+    desc: 'knowledgeBase.desc.ivacyDomain',
+    iconUrl: 'images/knowledge-base-logo/ivacy.png'
   },
   {
-    id: 109,
-    name: 'Psiphon3 VPN',
-    type: 'IP',
-    schedule: 'plugin.always',
-    desc: 'knowledgeBase.desc.psiphon3',
-    iconUrl: 'images/knowledge-base-logo/psiphon3-vpn.png'
+    id: 114,
+    name: 'Proton VPN',
+    type: ['IP'],
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.protonvpn',
+    iconUrl: 'images/knowledge-base-logo/protonvpn.png'
+  },
+  {
+    id: 115,
+    name: 'CyberGhost VPN',
+    type: ['IP', 'Domain'],
+    schedule: 'plugin.daily',
+    desc: 'knowledgeBase.desc.cyberGhostDomain',
+    iconUrl: 'images/knowledge-base-logo/cyber-ghost.png'
+  },
+  {
+    id: 116,
+    name: 'Windscribe VPN',
+    type: ['IP', 'Domain'],
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.windscribeDomain',
+    iconUrl: 'images/knowledge-base-logo/windscribe.png'
+  },
+  {
+    id: 117,
+    name: 'Turbo VPN',
+    type: ['IP'],
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.turboIp',
+    iconUrl: 'images/knowledge-base-logo/turbo.png'
+  },
+  {
+    id: 118,
+    name: 'Gecko VPN',
+    type: ['IP'],
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.geckoIp',
+    iconUrl: 'images/knowledge-base-logo/gecko.png'
+  },
+  {
+    id: 119,
+    name: 'Vpnunlimited',
+    type: ['IP'],
+    schedule: 'plugin.hourly',
+    desc: 'knowledgeBase.desc.vpnunlimited',
+    iconUrl: 'images/knowledge-base-logo/vpnunlimited.png'
   }
 ]
 
@@ -2482,6 +2654,29 @@ export const reg = {
   containChinese: /[\u4E00-\u9FA5\uF900-\uFA2D]+/
 }
 
+export const defaultMapConfig = {
+  center: [116.38, 39.82], // 默认地图中心
+  maxZoom: 14, // 最大缩放等级
+  minZoom: 3, // 最小缩放等级
+  mapLevel: 2, // 数据精度 1、2、3，1最大
+  defaultZoom: 12 // 默认缩放等级
+}
+
+export const mapLevelField = [
+  {
+    level: 1,
+    field: 'first_location'
+  },
+  {
+    level: 2,
+    field: 'second_location'
+  },
+  {
+    level: 3,
+    field: 'third_location'
+  }
+]
+
 export const report = {
   timeRuleList: [
     { name: 'overall.today', value: 'today' },
@@ -2553,7 +2748,7 @@ export const entityDetailTags = {
     },
     {
       name: 'vpnServiceName',
-      type: 'normal'
+      type: 'negative'
     }
   ],
   ip: [
@@ -2579,7 +2774,7 @@ export const entityDetailTags = {
     },
     {
       name: 'vpnServiceName',
-      type: 'normal'
+      type: 'negative'
     }
   ],
   app: [
@@ -2655,27 +2850,27 @@ export const securityLevel = [
   {
     value: 'critical',
     label: 'overall.critical',
-    color: '#D84C4C'
+    color: 'var(--cn-color-critical)'
   },
   {
     value: 'high',
     label: 'overall.high',
-    color: '#FE845D'
+    color: 'var(--cn-color-high)'
   },
   {
     value: 'medium',
     label: 'overall.medium',
-    color: '#FFB65A'
+    color: 'var(--cn-color-medium)'
   },
   {
     value: 'low',
     label: 'overall.low',
-    color: '#FFD82D'
+    color: 'var(--cn-color-low)'
   },
   {
     value: 'info',
     label: 'overall.info',
-    color: '#D1BD50'
+    color: 'var(--cn-color-info)'
   }
 ]
 
@@ -2703,6 +2898,13 @@ export const durationTimeMapping = [
     labelCN: '秒'
   }
 ]
+
+export const intentColor = {
+  Malicious: 'rgb(226, 97, 84)',
+  Benign: 'rgb(116, 159, 77)',
+  Info: 'rgb(119, 131, 145)',
+  Unknow: 'rgb(119, 131, 145)'
+}
 
 // 赛风3IP的type字段字典
 export const tagValueLabelMapping = [{ name: 'Psiphon3 Server', value: 'psiphon3_server' }, { name: 'Psiphon3 Server', value: 0 }, { name: 'Psiphon3 CDN', value: 1 }, { name: 'I2P', value: 'i2p' }, { name: 'MTProxy', value: 'mtproxy' }, { name: 'Obfs4', value: 'obfs4' }, { name: 'Snowflake', value: 'snowflake' }, { name: 'Tor', value: 'tor' }, { name: 'Loki Password Stealer', value: 'Loki Password Stealer (PWS)' }, { name: 'IcedID', value: 'IcedID' }, { name: 'QakBot', value: 'QakBot' }, { name: 'Mirai', value: 'Mirai' }, { name: 'BazarBackdoor', value: 'BazarBackdoor' }, { name: 'NjRAT', value: 'NjRAT' }, { name: 'CryptBot', value: 'CryptBot' }, { name: 'BitRAT', value: 'BitRAT' }, { name: 'RedLine Stealer', value: 'RedLine Stealer' }, { name: 'Nanocore RAT', value: 'Nanocore RAT' }, { name: 'DCRat', value: 'DCRat' }, { name: 'Cobalt Strike', value: 'Cobalt Strike' }, { name: 'AsyncRAT', value: 'AsyncRAT' }, { name: 'ostap', value: 'ostap' }, { name: 'Vidar', value: 'Vidar' }, { name: 'magecart', value: 'magecart' }, { name: 'Hancitor', value: 'Hancitor' }, { name: 'SystemBC', value: 'SystemBC' }, { name: 'SmokeLoader', value: 'SmokeLoader' }, { name: 'Remcos', value: 'Remcos' }, { name: 'Amadey', value: 'Amadey' }, { name: 'Ficker Stealer', value: 'Ficker Stealer' }, { name: 'Get2', value: 'Get2' }, { name: 'ISFB', value: 'ISFB' }, { name: 'Dridex', value: 'Dridex' }, { name: 'Pony', value: 'Pony' }, { name: 'Azorult', value: 'Azorult' }, { name: 'NetWire RC', value: 'NetWire RC' }, { name: 'Mozi', value: 'Mozi' }, { name: 'Raccoon', value: 'Raccoon' }, { name: 'Quasar RAT', value: 'Quasar RAT' }, { name: 'Emotet', value: 'Emotet' }, { name: 'Numando', value: 'Numando' }, { name: 'Oski Stealer', value: 'Oski Stealer' }, { name: 'Ave Maria', value: 'Ave Maria' }, { name: 'NetSupportManager RAT', value: 'NetSupportManager RAT' }, { name: 'STRRAT', value: 'STRRAT' }, { name: 'Orcus RAT', value: 'Orcus RAT' }, { name: 'Vjw0rm', value: 'Vjw0rm' }, { name: 'Ghost RAT', value: 'Ghost RAT' }, { name: 'LimeRAT', value: 'LimeRAT' }, { name: 'Astaroth', value: 'Astaroth' }, { name: 'Unknown malware', value: 'Unknown malware' }, { name: 'TrickBot', value: 'TrickBot' }, { name: 'IcedID Downloader', value: 'IcedID Downloader' }, { name: 'BetaBot', value: 'BetaBot' }, { name: 'Agent Tesla', value: 'Agent Tesla' }, { name: 'Bashlite', value: 'Bashlite' }, { name: 'DanaBot', value: 'DanaBot' }, { name: 'Snake', value: 'Snake' }, { name: 'Gozi', value: 'Gozi' }, { name: 'PoshC2', value: 'PoshC2' }, { name: 'Houdini', value: 'Houdini' }, { name: 'BlackNET RAT', value: 'BlackNET RAT' }, { name: 'Revenge RAT', value: 'Revenge RAT' }, { name: 'ServHelper', value: 'ServHelper' }, { name: 'Alien', value: 'Alien' }, { name: 'N-W0rm', value: 'N-W0rm' }, { name: 'LokiBot', value: 'LokiBot' }, { name: 'Zloader', value: 'Zloader' }, { name: 'Crimson RAT', value: 'Crimson RAT' }, { name: 'Grandoreiro', value: 'Grandoreiro' }, { name: 'Buer', value: 'Buer' }, { name: 'Qealler', value: 'Qealler' }, { name: 'FastCash', value: 'FastCash' }, { name: 'CyberGate', value: 'CyberGate' }, { name: 'Formbook', value: 'Formbook' }, { name: 'Hydra', value: 'Hydra' }, { name: 'Arkei Stealer', value: 'Arkei Stealer' }, { name: 'Tsunami', value: 'Tsunami' }, { name: 'AdWind', value: 'AdWind' }, { name: 'Dofloo', value: 'Dofloo' }, { name: 'MrBlack', value: 'MrBlack' }, { name: 'XLoader', value: 'XLoader' }, { name: 'Anatsa', value: 'Anatsa' }, { name: 'TeamBot', value: 'TeamBot' }, { name: 'DiamondFox', value: 'DiamondFox' }, { name: 'BillGates', value: 'BillGates' }, { name: 'Kinsing', value: 'Kinsing' }, { name: 'CCleaner Backdoor', value: 'CCleaner Backdoor' }, { name: 'JSOutProx', value: 'JSOutProx' }, { name: 'SharkBot', value: 'SharkBot' }, { name: 'Empire Downloader', value: 'Empire Downloader' }, { name: 'solarmarker', value: 'solarmarker' }, { name: 'FireBird RAT', value: 'FireBird RAT' }, { name: 'XpertRAT', value: 'XpertRAT' }, { name: 'RMS', value: 'RMS' }, { name: 'GCleaner', value: 'GCleaner' }, { name: 'Unidentified Linux 001', value: 'Unidentified Linux 001' }, { name: 'Ousaban', value: 'Ousaban' }, { name: 'sLoad', value: 'sLoad' }, { name: 'PerlBot', value: 'PerlBot' }, { name: 'SectopRAT', value: 'SectopRAT' }, { name: 'Loda', value: 'Loda' }, { name: 'Coinminer', value: 'Coinminer' }, { name: 'DarkSide', value: 'DarkSide' }, { name: '404 Keylogger', value: '404 Keylogger' }, { name: 'Cpuminer', value: 'Cpuminer' }, { name: 'MooBot', value: 'MooBot' }, { name: 'Parallax RAT', value: 'Parallax RAT' }, { name: 'XOR DDoS', value: 'XOR DDoS' }, { name: 'Vulturi', value: 'Vulturi' }, { name: 'Taurus Stealer', value: 'Taurus Stealer' }, { name: 'Cutwail', value: 'Cutwail' }, { name: 'Metamorfo', value: 'Metamorfo' }, { name: 'GootLoader', value: 'GootLoader' }, { name: 'Meterpreter', value: 'Meterpreter' }, { name: 'BumbleBee', value: 'BumbleBee' }, { name: 'Tofsee', value: 'Tofsee' }, { name: 'Socelars', value: 'Socelars' }, { name: 'Squirrelwaffle', value: 'Squirrelwaffle' }, { name: 'Roaming Mantis', value: 'Roaming Mantis' }, { name: 'Alfonso Stealer', value: 'Alfonso Stealer' }, { name: 'DarkComet', value: 'DarkComet' }, { name: 'STOP', value: 'STOP' }, { name: 'MoqHao', value: 'MoqHao' }, { name: 'CollectorGoomba', value: 'CollectorGoomba' }, { name: 'Prometei', value: 'Prometei' }, { name: 'Cerberus', value: 'Cerberus' }, { name: 'Spectre Rat', value: 'Spectre Rat' }, { name: 'Unidentified 001', value: 'Unidentified 001' }, { name: 'FluBot', value: 'FluBot' }, { name: 'BlackRock', value: 'BlackRock' }, { name: 'CryptoNight', value: 'CryptoNight' }, { name: 'Kronos', value: 'Kronos' }, { name: 'Winnti', value: 'Winnti' }, { name: 'Korlia', value: 'Korlia' }, { name: 'Monero Miner', value: 'Monero Miner' }, { name: 'Anubis', value: 'Anubis' }, { name: 'MirrorBlast', value: 'MirrorBlast' }, { name: 'Banload', value: 'Banload' }, { name: 'FlawedGrace', value: 'FlawedGrace' }, { name: 'DoppelDridex', value: 'DoppelDridex' }, { name: 'Mispadu', value: 'Mispadu' }, { name: 'Mekotio', value: 'Mekotio' }, { name: 'Ozone RAT', value: 'Ozone RAT' }, { name: 'StealthWorker Go', value: 'StealthWorker Go' }, { name: 'SilverFish', value: 'SilverFish' }, { name: 'NodeJS Ransomware', value: 'NodeJS Ransomware' }, { name: 'Ryuk', value: 'Ryuk' }, { name: 'QNAPCrypt', value: 'QNAPCrypt' }, { name: 'Venom RAT', value: 'Venom RAT' }, { name: 'BlackMatter', value: 'BlackMatter' }, { name: 'Janeleiro', value: 'Janeleiro' }, { name: 'Chrysaor', value: 'Chrysaor' }, { name: 'PurpleFox', value: 'PurpleFox' }, { name: 'Mars Stealer', value: 'Mars Stealer' }, { name: 'Matanbuchus', value: 'Matanbuchus' }, { name: 'FFDroider', value: 'FFDroider' }, { name: 'BlackGuard', value: 'BlackGuard' }, { name: 'SMSspy', value: 'SMSspy' }, { name: 'TitanStealer', value: 'TitanStealer' }, { name: 'BianLian', value: 'BianLian' }, { name: 'Deimos', value: 'Deimos' }, { name: 'Sliver', value: 'Sliver' }, { name: 'Aurora Stealer', value: 'Aurora Stealer' }, { name: 'Stealc', value: 'Stealc' }, { name: 'Gomorrah stealer', value: 'Gomorrah stealer' }, { name: 'RecordBreaker', value: 'RecordBreaker' }, { name: 'Brute Ratel C4', value: 'Brute Ratel C4' }, { name: 'LaplasClipper', value: 'LaplasClipper' }, { name: 'XWorm', value: 'XWorm' }, { name: 'PhotoLoader', value: 'PhotoLoader' }, { name: 'Kimsuky', value: 'Kimsuky' }, { name: 'Rhadamanthys', value: 'Rhadamanthys' }, { name: 'Nighthawk', value: 'Nighthawk' }, { name: 'Fabookie', value: 'Fabookie' }, { name: 'Lumma Stealer', value: 'Lumma Stealer' }, { name: 'Kaiji', value: 'Kaiji' }, { name: 'ClipBanker', value: 'ClipBanker' }, { name: 'PrivateLoader', value: 'PrivateLoader' }, { name: 'ViperSoftX', value: 'ViperSoftX' }, { name: 'Phonk', value: 'Phonk' }, { name: 'PlugX', value: 'PlugX' }, { name: 'HyperBro', value: 'HyperBro' }, { name: 'SideWinder', value: 'SideWinder' }, { name: 'Coper', value: 'Coper' }, { name: 'Specter', value: 'Specter' }, { name: 'Kaiten', value: 'Kaiten' }, { name: 'Bitter RAT', value: 'Bitter RAT' }, { name: 'BATLOADER', value: 'BATLOADER' }, { name: 'ACBackdoor', value: 'ACBackdoor' }, { name: 'BKA Trojaner', value: 'BKA Trojaner' }, { name: 'JSSLoader', value: 'JSSLoader' }, { name: 'PureCrypter', value: 'PureCrypter' }, { name: 'SpyNote', value: 'SpyNote' }, { name: 'S.O.V.A.', value: 'S.O.V.A.' }, { name: 'Ginzo Stealer', value: 'Ginzo Stealer' }, { name: 'PennyWise Stealer', value: 'PennyWise Stealer' }, { name: 'DOUBLEBACK', value: 'DOUBLEBACK' }, { name: 'OPRDNS', value: 'OPRDNS' }, { name: 'TLDNS', value: 'TLDNS' }, { name: 'RTDNS', value: 'RTDNS' }, { name: 'ADNS', value: 'ADNS' }, { name: 'FWDNS', value: 'FWDNS' }]

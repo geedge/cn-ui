@@ -3,7 +3,7 @@
     <chart-no-data v-if="isNoData"></chart-no-data>
 
     <div v-if="!isNoData && initFlag" class="type-data__column">
-      <div class="type-data" v-if="entity.entityType !== 'app'">
+      <div class="type-data" v-if="entity.entityType !== entityType.app">
         <div class="type-title">
           <span class="title-mark"></span>
           {{ $t('entities.tab.relatedApp') }}&nbsp;&nbsp;({{ relatedAppList.length }})
@@ -23,7 +23,7 @@
         </div>
       </div>
 
-      <div class="type-data" v-if="entity.entityType !== 'ip'">
+      <div class="type-data" v-if="entity.entityType !== entityType.ip && entity.entityType !== entityType.subscriber">
         <div class="type-title">
           <span class="title-mark"></span>
           {{ $t('entities.tab.relatedIp') }}&nbsp;&nbsp;({{ relatedIpList.length }})
@@ -43,7 +43,7 @@
         </div>
       </div>
 
-      <div class="type-data">
+      <div class="type-data" v-if="entity.entityType !== entityType.subscriber">
         <div class="type-title">
           <span class="title-mark"></span>
           {{ $t('entities.tab.relatedDomain') }}&nbsp;&nbsp;({{ relatedDomainList.length }})
@@ -102,7 +102,8 @@ export default {
       showError1: false,
       errorMsg1: '',
       showError2: false,
-      errorMsg2: ''
+      errorMsg2: '',
+      entityType
     }
   },
   setup (props) {
@@ -143,9 +144,8 @@ export default {
       }
 
       if (this.entity.entityType === entityType.subscriber) {
-        this.isNoData = true
-        this.initFlag = true
-        this.toggleLoading(false)
+        const subscriberOfApp = axios.get(api.entity.entityList.subscriberRelatedApp, { params: params })
+        this.promiseData(subscriberOfApp)
       }
     },
     promiseData (data1, data2, data3) {
@@ -155,13 +155,19 @@ export default {
       this.toggleLoading(true)
       Promise.all([data1, data2, data3]).then(res => {
         const res0 = res[0].data
-        const res1 = res[1].data
-        if (res[0].status === 200 && res[1].status === 200) {
-          this.isNoData = res0.data.result.length === 0 && res1.data.result.length === 0
+        const res1 = res[1] ? res[1].data : res[1]
+        if (this.entity.entityType === entityType.subscriber) {
+          if (res[0].status === 200) {
+            this.isNoData = res0.data.result.length === 0
+          }
+        } else {
+          if (res[0].status === 200 && res[1].status === 200) {
+            this.isNoData = res0.data.result.length === 0 && res1.data.result.length === 0
+          }
         }
 
         // app相关，显示ip、domain
-        if (this.entity.entityType === 'app' && !this.isNoData) {
+        if (this.entity.entityType === entityType.app && !this.isNoData) {
           if (res[0].status === 200) {
             this.relatedIpList = res0.data.result
             this.handleShowDataNum(this.showRelatedIpListInfo, this.relatedIpList)
@@ -178,12 +184,12 @@ export default {
             this.errorMsg2 = this.errorMsgHandler(res1)
           }
           this.$emit('checkTag', entityDetailTabsName.relatedEntity, res0.data.result.length + res1.data.result.length)
-        } else if (this.entity.entityType === 'app') {
+        } else if (this.entity.entityType === entityType.app) {
           this.$emit('checkTag', entityDetailTabsName.relatedEntity, 0)
         }
 
         // ip相关，显示app，domain
-        if (this.entity.entityType === 'ip' && !this.isNoData) {
+        if (this.entity.entityType === entityType.ip && !this.isNoData) {
           if (res[0].status === 200) {
             this.relatedAppList = res0.data.result
             this.handleShowDataNum(this.showRelatedAppListInfo, this.relatedAppList)
@@ -199,12 +205,12 @@ export default {
             this.errorMsg2 = this.errorMsgHandler(res1)
           }
           this.$emit('checkTag', entityDetailTabsName.relatedEntity, res0.data.result.length + res1.data.result.length)
-        } else if (this.entity.entityType === 'ip') {
+        } else if (this.entity.entityType === entityType.ip) {
           this.$emit('checkTag', entityDetailTabsName.relatedEntity, 0)
         }
 
         // domain相关，显示app，ip，domain
-        if (this.entity.entityType === 'domain') {
+        if (this.entity.entityType === entityType.domain) {
           const res2 = res[2].data
           if (res[0].status === 200 && res[1].status === 200 && res[2].status === 200) {
             this.isNoData = res0.data.result.length === 0 && res1.data.result.length === 0 && res2.data.result.length === 0
@@ -234,6 +240,19 @@ export default {
             this.errorMsg2 = this.errorMsgHandler(res2)
           }
           this.$emit('checkTag', entityDetailTabsName.relatedEntity, res0.data.result.length + res1.data.result.length + res2.data.result.length)
+        }
+
+        if (this.entity.entityType === entityType.subscriber && !this.isNoData) {
+          if (res0.status === 200) {
+            this.relatedAppList = res0.data.result
+            this.handleShowDataNum(this.showRelatedAppListInfo, this.relatedAppList)
+          } else {
+            this.showError1 = true
+            this.errorMsg1 = this.errorMsgHandler(res0)
+          }
+          this.$emit('checkTag', entityDetailTabsName.relatedEntity, res0.data.result.length)
+        } else if (this.entity.entityType === entityType.subscriber) {
+          this.$emit('checkTag', entityDetailTabsName.relatedEntity, 0)
         }
       }).catch(e => {
         console.error(e)

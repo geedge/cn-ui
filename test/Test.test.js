@@ -203,11 +203,16 @@ describe('单元测试demo', () => {
       }
     })
     // 执行nextTick等待el-table渲染完成
-    await wrapper.vm.$nextTick()
-    const textNode = await wrapper.get('[test-id="name0"]')
-    const textNode2 = await wrapper.get('[test-id="age1"]')
-    expect(textNode.text()).toBe('a')
-    expect(textNode2.text()).toBe('11')
+    // await wrapper.vm.$nextTick()
+    await new Promise(resolve => setTimeout(async () => {
+      const textNode = await wrapper.get('[test-id="name0"]')
+      const textNode2 = await wrapper.get('[test-id="age1"]')
+      await wrapper.vm.$nextTick(() => {
+        expect(textNode.text()).toBe('a')
+        expect(textNode2.text()).toBe('11')
+      })
+      resolve()
+    }, 200))
   })
   test('js方法--getNameByEventType', async () => {
     expect(getNameByEventType('http error')).toBe('http error ratio')

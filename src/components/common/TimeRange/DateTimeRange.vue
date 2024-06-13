@@ -1,6 +1,6 @@
 <template>
-  <div v-ele-click-outside="changeDropdown" style="position: relative;" class="date-range-box">
-    <div @click="showDropdown" class="date-range-text" :class="myClass" :style="style">
+  <div v-ele-click-outside="changeDropdown" class="date-range-box">
+    <div @click="showDropdown" tabindex="1" class="date-range-text" :class="myClass" :style="style">
       <div class="calendar-popover-text"><i class="cn-icon cn-icon-Data"></i></div>
       <div class="calendar-popover-text" style="display: flex" v-if="isCustom" :title="`${dateFormatByAppearance(getMillisecond(startTime))} -${dateFormatByAppearance(getMillisecond(endTime))}`">
         <div class="calendar-popover-text" :style="showPosition === 'left' ? 'width: 90px;text-overflow: ellipsis;overflow: hidden;' : ''" >{{ dateFormatByAppearance(getMillisecond(startTime)) }}</div>
@@ -56,10 +56,11 @@
           <el-col
               :span="8"
               class="date-range-panel-content date-range-panel-content-right"
-              style="border-left: 1px solid rgba(0,0,0,0.09);">
+          >
             <div class="date-range-title">{{$t('dateTime.relativeTimeRanges')}}</div>
-            <ul class="date-range-item">
+            <ul class="date-range-item" :style="{flex: noMinutes ? 0 : 1}">
               <li v-for="item in dateRangeArr"
+                  :style="noMinutes ? 'line-height: 38px;' : ''"
                   @click="quickChange(item.value)"
                   :class="(item.value===dateRangeValue.value || item.value===dateRangeValue)?'active':''"
                   :key="item.value">
@@ -86,9 +87,9 @@ import { ref, computed, watch, reactive } from 'vue'
 import { EN, storageKey, ZH } from '@/utils/constants'
 import { getMillisecond, millTimestampDiffFromTz, timestampToList } from '@/utils/date-util'
 import { useStore } from 'vuex'
-import ElConfigProvider from 'element-plus'
 import cn from 'element-plus/lib/locale/lang/zh-cn'
 import en from 'element-plus/lib/locale/lang/en'
+import i18n from '@/i18n'
 
 export default {
   name: 'DateTimeRange',
@@ -113,24 +114,16 @@ export default {
     showPosition: {
       type: String,
       default: 'right'
+    },
+    noMinutes: {
+      type: Boolean,
+      default: false
+    },
+    dateRangeArr: {
+      type: Array
     }
   },
   emits: ['change'],
-  data () {
-    return {
-      dateRangeArr: [
-        { value: 5, name: this.$t('dateTime.last5Mins') }, // 'last 5 mins'
-        { value: 15, name: this.$t('dateTime.last15Mins') },
-        { value: 30, name: this.$t('dateTime.last30Mins') },
-        { value: 60, name: this.$t('dateTime.last1Hour') }, // dateTime.last1Hour
-        { value: 180, name: this.$t('dateTime.last3Hours') },
-        { value: 360, name: this.$t('dateTime.last6Hours') },
-        { value: 720, name: this.$t('dateTime.last12Hours') },
-        { value: 1440, name: this.$t('dateTime.last1Day') }, // dateTime.last2Days
-        { value: 2880, name: this.$t('dateTime.last2Days') }
-      ]
-    }
-  },
   computed: {
     showDetail () {
       let str = ''
@@ -183,6 +176,31 @@ export default {
     const datePickerRightStyle = 'position: absolute;top: -53px;left: -536px;'
     const datePickerLeftStyle = 'position: absolute;top: -53px;left: -536px;'
     const leftStyle = ref('position: absolute;top: 32px;left: 0px;')
+    const dateRangeArr = ref([
+      { value: 5, name: i18n.global.t('dateTime.last5Mins') }, // 'last 5 mins'
+      { value: 15, name: i18n.global.t('dateTime.last15Mins') },
+      { value: 30, name: i18n.global.t('dateTime.last30Mins') },
+      { value: 60, name: i18n.global.t('dateTime.last1Hour') }, // dateTime.last1Hour
+      { value: 180, name: i18n.global.t('dateTime.last3Hours') },
+      { value: 360, name: i18n.global.t('dateTime.last6Hours') },
+      { value: 720, name: i18n.global.t('dateTime.last12Hours') },
+      { value: 1440, name: i18n.global.t('dateTime.last1Day') }, // dateTime.last2Days
+      { value: 2880, name: i18n.global.t('dateTime.last2Days') }
+    ])
+    if (props.noMinutes) {
+      dateRangeArr.value = [
+        { value: 60, name: i18n.global.t('dateTime.last1Hour') }, // dateTime.last1Hour
+        { value: 180, name: i18n.global.t('dateTime.last3Hours') },
+        { value: 360, name: i18n.global.t('dateTime.last6Hours') },
+        { value: 720, name: i18n.global.t('dateTime.last12Hours') },
+        { value: 1440, name: i18n.global.t('dateTime.last1Day') }, // dateTime.last2Days
+        { value: 2880, name: i18n.global.t('dateTime.last2Days') }
+      ]
+    }
+    if (props && props.dateRangeArr) {
+      // eslint-disable-next-line vue/no-setup-props-destructure
+      dateRangeArr.value = props.dateRangeArr
+    }
     // computed
     const utcStr = computed(() => {
       let str = 'UTC '
@@ -371,7 +389,9 @@ export default {
       returnValue,
       quickChange,
       historyChange,
-      locale
+      locale,
+      // eslint-disable-next-line vue/no-dupe-keys
+      dateRangeArr
     }
   }
 }

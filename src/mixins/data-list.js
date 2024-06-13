@@ -1,5 +1,5 @@
 import { tableSort } from '@/utils/tools'
-import { defaultPageSize, fromRoute, position, storageKey, dbTableColumnCustomizeConfigPre } from '@/utils/constants'
+import { defaultPageSize, fromRoute, position, storageKey, dbTableColumnCustomizeConfigPre,dbTableColumnCustomizeConfig } from '@/utils/constants'
 import _ from 'lodash'
 import { ref } from 'vue'
 import pagination from '@/components/common/Pagination'
@@ -167,6 +167,7 @@ export default {
         this.$confirm(this.$t('tip.confirmDelete'), {
           confirmButtonText: this.$t('tip.yes'),
           cancelButtonText: this.$t('tip.no'),
+          customClass: 'del-model-message-box',
           type: 'warning'
         }).then(() => {
           this.toggleLoading(true)
@@ -427,9 +428,21 @@ export default {
       localStorageTableTitle = await indexedDBUtils.selectTable(tableName).get({ id: userId })
     }
 
-    localStorageTableTitle = localStorageTableTitle && localStorageTableTitle.config
-      ? localStorageTableTitle.config
-      : (this.$refs.dataTable && this.$refs.dataTable.tableTitle ? this.$refs.dataTable.tableTitle : [])
+    let curTableTitles = this.$refs.dataTable && this.$refs.dataTable.tableTitle ? this.$refs.dataTable.tableTitle : []
+    let curTableConfig = dbTableColumnCustomizeConfig.find(item => item.tableName === tableName)
+    if(localStorageTableTitle && curTableConfig &&
+          localStorageTableTitle.version !== curTableConfig.version && curTableTitles) {
+      if(this.$refs.dataList) {
+        this.$refs.dataList.updateCustomTableTitle(curTableTitles)
+      }
+      await indexedDBUtils.selectTable(tableName).put({
+        id: userId,
+        version: curTableConfig.version,
+        config: _.cloneDeep(curTableTitles)
+      })
+    }
+
+    localStorageTableTitle = localStorageTableTitle && localStorageTableTitle.config ? localStorageTableTitle.config : curTableTitles
     // this.tools.customTableTitle = this.$refs.dataTable.tableTitle.map((item, index) => { // 修复切换中英文的问题
     //   if (localStorageTableTitle[index]) {
     //     item.show = localStorageTableTitle[index].show

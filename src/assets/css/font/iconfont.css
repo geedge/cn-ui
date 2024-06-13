@@ -1,8 +1,8 @@
 @font-face {
   font-family: "cn-icon"; /* Project id 2614877 */
-  src: url('iconfont.woff2?t=1703561754372') format('woff2'),
-       url('iconfont.woff?t=1703561754372') format('woff'),
-       url('iconfont.ttf?t=1703561754372') format('truetype');
+  src: url('iconfont.woff2?t=1711625913930') format('woff2'),
+       url('iconfont.woff?t=1711625913930') format('woff'),
+       url('iconfont.ttf?t=1711625913930') format('truetype');
 }
 
 .cn-icon {
@@ -11,6 +11,46 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.cn-icon-tag-fill:before {
+  content: "\e775";
+}
+
+.cn-icon-follow:before {
+  content: "\e83b";
+}
+
+.cn-icon-follow-fill:before {
+  content: "\e83c";
+}
+
+.cn-icon-down2:before {
+  content: "\ec0b";
+}
+
+.cn-icon-up2:before {
+  content: "\ec0c";
+}
+
+.cn-icon-license:before {
+  content: "\e666";
+}
+
+.cn-icon-base-station:before {
+  content: "\e6cf";
+}
+
+.cn-icon-home:before {
+  content: "\e6d0";
+}
+
+.cn-icon-company:before {
+  content: "\e6d1";
+}
+
+.cn-icon-pedestrian:before {
+  content: "\e6d2";
 }
 
 .cn-icon-system:before {
@@ -373,7 +413,7 @@
   content: "\e7b4";
 }
 
-.cn-icon-a-GeneralSettings:before {
+.cn-icon-general-setting:before {
   content: "\e7b5";
 }
 

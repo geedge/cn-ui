@@ -50,16 +50,6 @@ th *:first-letter,
   text-transform: capitalize;
 }
 
-.outer-box {
-  padding: 10px;
-  height: 100%;
-  width: 100%;
-}
-
-.el-table__empty-block {
-  width: 100% !important;
-}
-
 /* 淡化amcharts的logo */
 g [aria-labelledby$=-title] {
   opacity: 0.1;

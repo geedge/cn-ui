@@ -40,11 +40,11 @@
            <span>{{$t('detections.metric')}}:</span>
            <div class="line-select__operation">
              <el-select
-                 size="mini"
+                 size="small"
                  v-model="lineMetric"
                  placeholder=" "
                  popper-class="common-select"
-                 :popper-append-to-body="false"
+                 :teleported="false"
                  @change="metricSelectChange"
              >
                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>

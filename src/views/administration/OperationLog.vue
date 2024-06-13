@@ -1,29 +1,29 @@
 <template>
-  <div style="height: 100%;">
+  <div class="administration-container__body">
     <cn-data-list
-      ref="dataList"
-      :api="url"
-      :tableId="tableId"
-      :layout="['search', 'elementSet','search']"
-      v-model:custom-table-title="tools.customTableTitle"
-      :from="fromRoute.operationLog"
-      @search="search">
+        ref="dataList"
+        :api="url"
+        :tableId="tableId"
+        :layout="['search', 'elementSet','search']"
+        v-model:custom-table-title="tools.customTableTitle"
+        :from="fromRoute.operationLog"
+        @search="search">
       <template v-slot:default>
         <loading :loading="loading"></loading>
         <operation-log-table
-          ref="dataTable"
-          :api="url"
-          :isNoData="isNoData"
-          :custom-table-title="tools.customTableTitle"
-          :height="mainTableHeight"
-          :table-data="tableData"
-          @del="del"
-          @edit="edit"
-          @orderBy="tableDataSort"
-          @reload="getTableData"
-          @selectionChange="selectionChange"
-          @showBottomBox="(targetTab, object) => { $refs.dataList.showBottomBox(targetTab, object) }"></operation-log-table>
-          @search="search"
+            ref="dataTable"
+            :api="url"
+            :isNoData="isNoData"
+            :custom-table-title="tools.customTableTitle"
+            :height="mainTableHeight"
+            :table-data="tableData"
+            @del="del"
+            @edit="edit"
+            @orderBy="tableDataSort"
+            @reload="getTableData"
+            @selectionChange="selectionChange"
+            @search="search"
+            @showBottomBox="(targetTab, object) => { $refs.dataList.showBottomBox(targetTab, object) }"></operation-log-table>
       </template>
       <!-- 分页组件 -->
       <template #pagination>

@@ -532,13 +532,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.row__label {
-  width: 176px;
-}
-.row__content {
-  width: calc(100% - 176px);
-  padding-right: 50px;
-}
-</style>

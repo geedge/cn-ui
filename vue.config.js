@@ -6,12 +6,6 @@ function resolve (dir) {
 module.exports = {
   transpileDependencies: ['/@intlify'],
   css: {
-    /* loaderOptions: {
-      // scss变量全局应用
-      scss: {
-        prependData: '@import "~@/assets/css/main.scss";'
-      }
-    }, */
     sourceMap: false // 开启浏览器调试css定位
   },
   chainWebpack: (config) => {

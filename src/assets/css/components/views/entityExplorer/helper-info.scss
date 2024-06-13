@@ -1,0 +1,50 @@
+.helper-info {
+  min-width: 450px;
+  background-color: var(--el-fill-color-blank);
+  height: 294px;
+  box-sizing: border-box;
+  overflow: auto;
+  z-index: 99;
+
+  .tips-container {
+    padding: 12px;
+
+    ul li {
+      list-style: inside;
+      line-height: 20px;
+    }
+
+    h3 {
+      margin: 8px 0;
+      line-height: 22px;
+    }
+
+    p {
+      line-height: 22px;
+      word-break: break-all;
+    }
+
+    code, .code {
+      background: initial;
+      border: 1px solid var(--el-color-info-light-7);
+      height: 24px;
+      line-height: 24px;
+      padding: 0 12px;
+      margin: 6px 0;
+      display: block;
+    }
+
+    .sub-url {
+      padding-left: 18px;
+    }
+
+    .sub-url li {
+      list-style: inside circle;
+    }
+
+    i.ref-txt {
+      line-height: 20px;
+      color: var(--el-text-color-placeholder);
+    }
+  }
+}

@@ -6,14 +6,14 @@
         <span>{{$t('detections.metric')}}:</span>
         <div class="line-select__operation">
           <el-select
-              size="mini"
+              size="small"
               v-model="metricFilter"
               placeholder=" "
               popper-class="common-select"
-              :popper-append-to-body="false"
+              :teleported="false"
               @change="metricChange"
           >
-            <el-option v-for="item in metricOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            <el-option v-for="item in metricOptions" :key="item.value" :label="$t(item.label)" :value="item.value"></el-option>
           </el-select>
         </div>
       </div>

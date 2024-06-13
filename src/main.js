@@ -6,7 +6,7 @@ import store from '@/store'
 import App from '@/App.vue'
 import '@/utils/http.js'
 import commonMixin from '@/mixins/common'
-import { cancelWithChange, noData, myHighLight } from '@/utils/tools'
+import { cancelWithChange, noData, myHighLight, selectLoadMore } from '@/utils/tools'
 import { ClickOutside } from 'element-plus/lib/directives'
 import i18n from '@/i18n'
 // import '@/mock/index.js'
@@ -23,6 +23,7 @@ import PanelChartList from '@/views/charts/PanelChartList'
 import Error from '@/components/common/Error'
 import Renderer from '@/components/advancedSearch/showhint/Hint/Renderer'
 import 'lib-flexible'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 const emitter = new bus()
 
@@ -41,6 +42,7 @@ app.directive('ele-click-outside', ClickOutside)
 app.directive('cancel', cancelWithChange)
 app.directive('no-data', noData)
 app.directive('high-light', myHighLight)
+app.directive('select-load-more', selectLoadMore)
 app.config.globalProperties.$_ = _
 
 app.mixin(commonMixin)
@@ -50,6 +52,10 @@ app.component('time-refresh', TimeRefresh)
 app.component('panel-chart-list', PanelChartList)
 app.component('chart-error', Error)
 app.component('Renderer', Renderer)
+
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component)
+}
 
 app.mount('#app')
 

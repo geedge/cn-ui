@@ -3,9 +3,8 @@
     id="userTable"
     ref="dataTable"
     :data="tableData"
-    :height="height"
+    tooltip-effect="light"
     empty-text=" "
-    border
     @header-dragend="dragend"
     @sort-change="tableDataSort"
     @selection-change="selectionChange"
@@ -112,6 +111,11 @@ export default {
         }, {
           label: this.$t('config.user.roles'),
           prop: 'roles',
+          show: true,
+          minWidth: 150
+        }, {
+          label: this.$t('config.user.mobile'),
+          prop: 'mobile',
           show: true,
           minWidth: 150
         }, {

@@ -1,5 +1,5 @@
 <template>
-  <chart-error v-if="showError" :content="errorMsg" class="entity-detail-event-error"></chart-error>
+  <chart-error v-if="showError" :content="errorMsg"></chart-error>
   <chart-no-data v-if="isNoData && !showError"></chart-no-data>
 
   <div v-if="!isNoData && !showError" class="entity-detail-event-block" style="height: 100%;width: 100%;position: relative;">

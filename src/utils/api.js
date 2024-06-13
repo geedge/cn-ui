@@ -2,7 +2,7 @@
  * @author 陈劲松
  * @date 2021/6/11
  * @description 1.定义api；2.定义通用查询方法，函数名应为 获取详情getItem、获取列表getItemList。例如getUser、getUserList
-*/
+ */
 import axios from 'axios'
 import { sortByOrderNum } from '@/permission'
 import { storageKey } from '@/utils/constants'
@@ -15,6 +15,9 @@ export const api = {
   logout: '/logout',
   pin: 'sys/user/pin',
   appearance: '/sys/appearance',
+  license: '/sys/license/detail',
+  licenseStatus: '/sys/license/status',
+  downloadLicenseC2v: '/sys/license/download',
   permissions: '/sys/user/permissions',
   operationLog: '/sys/log',
   login: '/sys/login',
@@ -57,6 +60,13 @@ export const api = {
   reportBatchDownloadPdf: '/report/job/batchDownloadPdf',
   reportDownloadPdf: '/report/job/downloadPdf',
   reportView: '/report/job/view',
+  // tag 相关
+  tagList: '/v1/tag/list',
+  tag: '/v1/tag',
+  tagIndicatorStatistics: '/v1/tag/{{name}}/indicator/statistics',
+  tagIndicatorTrend: '/v1/tag/{{name}}/indicator/trend',
+  tagTrafficEntityStatistics: '/v1/tag/{{name}}/trafficEntity/statistics',
+  tagTrafficEntityTrend: '/v1/tag/{{name}}/trafficEntity/trend',
   // 业务
   panel: '/visual/panel',
   chart: '/visual/chart',
@@ -310,15 +320,17 @@ export const api = {
       domainBasicInfo: apiVersion + '/entity/explorer/detail/basic/domain', // Domain实体响应结果
       ipBasicInfo: apiVersion + '/entity/explorer/detail/basic/ip', // ip实体响应
       appBasicInfo: apiVersion + '/entity/explorer/detail/basic/app', // app实体响应
+      subscriberBasicInfo: apiVersion + '/entity/explorer/detail/basic/subscriber', // subscriber实体响应
       domainTags: apiVersion + '/entity/explorer/detail/kb/intelligence/tag/domain', // Domain实体标签响应结果
       ipTags: apiVersion + '/entity/explorer/detail/kb/intelligence/tag/ip', // ip实体标签响应结果
-      appTags: apiVersion + '/entity/explorer/detail/kb/intelligence/tag/app', // app实体标签响应结果
       domainThroughput: apiVersion + '/entity/explorer/detail/traffic/throughput/domain', // 实体流量信息
       ipThroughput: apiVersion + '/entity/explorer/detail/traffic/throughput/ip', // 实体流量信息
       appThroughput: apiVersion + '/entity/explorer/detail/traffic/throughput/app', // 实体流量信息
+      subscriberThroughput: apiVersion + '/entity/explorer/detail/traffic/throughput/subscriber', // 实体流量信息
       domainPerformance: apiVersion + '/entity/explorer/detail/traffic/performance/domain', // domain网络质量
       ipPerformance: apiVersion + '/entity/explorer/detail/traffic/performance/ip', // ip网络质量
       appPerformance: apiVersion + '/entity/explorer/detail/traffic/performance/app', // app网络质量
+      subscriberPerformance: apiVersion + '/entity/explorer/detail/traffic/performance/subscriber', // subscriber网络质量
       domainRelatedApp: apiVersion + '/entity/explorer/detail/domain/relate/apps', // 域名相关app
       domainRelatedIp: apiVersion + '/entity/explorer/detail/domain/relate/ips', // 域名相关ip
       appRelatedDomain: apiVersion + '/entity/explorer/detail/app/relate/domains', // app相关域名
@@ -346,8 +358,21 @@ export const api = {
       appEventPerformance: apiVersion + '/entity/explorer/detail/event/performance/app', // app服务质量详情
       entityActive: apiVersion + '/entity/explorer/overview/active', // entity首页active数据概览
       entityNew: apiVersion + '/entity/explorer/overview/new', // entity首页new数据概览
-      entityTotal: apiVersion + '/entity/explorer/overview/total' // entity首页total数据概览
+      entityTotal: apiVersion + '/entity/explorer/overview/total', // entity首页total数据概览
+      subscriberRelatedApp: apiVersion + '/entity/explorer/detail/subscriber/relate/apps' // subscriber相关app
     }
+  },
+  location: {
+    map: apiVersion + '/locationIntelligence/map',
+    density: apiVersion + '/locationIntelligence/population/density',
+    trend: apiVersion + '/locationIntelligence/active/trend',
+    count: apiVersion + '/locationIntelligence/active/count',
+    baseStation: apiVersion + '/locationIntelligence/baseStation',
+    list: apiVersion + '/locationIntelligence/list',
+    followedSubscriber: apiVersion + '/locationIntelligence/followed/subscribers',
+    tracking: apiVersion + '/locationIntelligence/trace/tracking',
+    follow: apiVersion + '/locationIntelligence/follow',
+    geoLocation: apiVersion + 'locationIntelligence/geolocation'
   }
 }
 

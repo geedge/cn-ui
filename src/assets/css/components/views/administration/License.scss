@@ -1,0 +1,49 @@
+.license {
+  height: 100%;
+
+  .license-form {
+    padding-top: 40px;
+    padding-left: 100px;
+    background-color: var(--el-fill-color-blank);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .license__loading {
+      top: 75px;
+      left: 130px;
+      width: 304px;
+      flex: 1;
+      position: relative;
+    }
+    .license-file {
+      display: flex;
+      flex-direction: row;
+      height: 100%;
+      margin-top: 3px;
+
+      .business-button {
+        height: 30px;
+        min-width: 74px;
+        font-size: 14px;
+      }
+    }
+
+    .el-form .el-form-item {
+      margin-bottom: 0;
+      padding: 4px 0;
+
+      .el-form-item__label {
+        color: var(--el-text-color-primary) !important;
+        font-weight: bold;
+        font-size: 14px;
+      }
+
+      .el-form-item__content {
+        color: var(--el-text-color-primary) !important;
+        font-size: 14px;
+      }
+    }
+  }
+}

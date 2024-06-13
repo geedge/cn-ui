@@ -3,9 +3,7 @@
     id="pluginTable"
     ref="dataTable"
     :data="tableData"
-    :height="height"
     empty-text=" "
-    border
     class="plugin"
     @header-dragend="dragend"
     @sort-change="tableDataSort"
@@ -37,19 +35,19 @@
           </el-switch>
         </template>
         <template v-else-if="item.prop === 'type'">
-          <span class="type-tag">{{typeText(scope.row['id'])}}</span>
+          <span class="type-tag" v-for="type in scope.row.type">{{type}}</span>
         </template>
         <template v-else-if="item.prop === 'name'">
           <div class="plugin-name">
-            <div class="icon-background"><img class="plugin-name-icon" :src="getIconUrl(scope.row['id'])"/></div>
-            {{getName(scope.row['id'])}}
+            <div class="icon-background"><img class="plugin-name-icon" :src="scope.row['iconUrl']"/></div>
+            {{scope.row['name']}}
           </div>
         </template>
         <template v-else-if="item.prop === 'description'">
-          <div class="two-line" :title="getDescription(scope.row['id'])">{{getDescription(scope.row['id'])}}</div>
+          <div class="two-line" :title="$t(scope.row['desc'])">{{$t(scope.row['desc'])}}</div>
         </template>
         <template v-else-if="item.prop === 'schedule'">
-          <div class="two-line" >{{scheduleText(scope.row['id'])}}</div>
+          <div class="two-line" >{{$t(scope.row['schedule'])}}</div>
         </template>
         <span v-else>{{scope.row[item.prop] || '-'}}</span>
       </template>
@@ -110,36 +108,6 @@ export default {
     }
   },
   computed: {
-    typeText () {
-      return function (id) {
-        const t = pluginBasicInfo.find(t => t.id === id)
-        return t ? t.type : 'Unknown Tag'
-      }
-    },
-    scheduleText () {
-      return function (id) {
-        const basicInfo = pluginBasicInfo.find(bi => bi.id === id)
-        return basicInfo ? this.$t(basicInfo.schedule) : ''
-      }
-    },
-    getIconUrl () {
-      return function (id) {
-        const basicInfo = pluginBasicInfo.find(bi => bi.id === id)
-        return basicInfo ? basicInfo.iconUrl : ''
-      }
-    },
-    getDescription () {
-      return function (id) {
-        const basicInfo = pluginBasicInfo.find(bi => bi.id === id)
-        return basicInfo ? this.$t(basicInfo.desc) : '-'
-      }
-    },
-    getName () {
-      return function (id) {
-        const basicInfo = pluginBasicInfo.find(bi => bi.id === id)
-        return basicInfo ? this.$t(basicInfo.name) : '-'
-      }
-    }
   },
   methods: {
     statusChange (plugin) {

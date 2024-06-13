@@ -51,6 +51,10 @@ export default {
           className = 'cn-icon cn-icon-app2'
           break
         }
+        case ('subscriber_id'): {
+          className = 'cn-icon cn-icon-pedestrian'
+          break
+        }
         default: break
       }
       return className
@@ -120,13 +124,22 @@ export default {
   },
   methods: {
     showDetail () {
+      let entityType = _.cloneDeep(this.entityData.entityType)
+      if (entityType === 'subscriber_id') {
+        entityType = entityType.slice(0, -3)
+      }
+      const queryParam = {
+        entityType: entityType,
+        entityName: this.entityData.entityValue,
+        range: this.timeFilter.dateRangeValue
+      }
+      if (queryParam.range === -1) {
+        queryParam.startTime = this.timeFilter.startTime
+        queryParam.endTime = this.timeFilter.endTime
+      }
       const { href } = this.$router.resolve({
         path: '/entity/detail',
-        query: {
-          entityType: this.entityData.entityType,
-          entityName: this.entityData.entityValue,
-          range: this.timeFilter.dateRangeValue
-        }
+        query: queryParam
       })
       window.open(href, '_blank')
     },
@@ -264,6 +277,10 @@ export default {
             this.performanceEventUrl = api.entity.entityList.appEventPerformance
             break
           }
+          case 'subscriber_id': {
+            this.trafficUrl = api.entity.entityList.subscriberThroughput
+            break
+          }
           default:
             break
         }
@@ -348,8 +365,10 @@ export default {
     this.initUrl()
     setTimeout(() => {
       this.queryEntityDetailTraffic()
-      this.queryNetworkQuantity()
-      this.queryEventNum()
+      if (this.entity.entityType !== 'subscriber_id') {
+        this.queryNetworkQuantity()
+        this.queryEventNum()
+      }
     })
   },
   beforeUnmount () {

@@ -6,7 +6,6 @@
         :data="tableData"
         class="npm-app-event-table"
         :row-class-name="rowClassName"
-        height="100%"
         empty-text=""
     >
       <template v-for="(item, index) in customTableTitles" :key="index">

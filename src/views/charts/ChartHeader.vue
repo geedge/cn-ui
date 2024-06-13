@@ -55,7 +55,7 @@
         </el-popover>
         <div class="header__operation header__operation--table">
           <el-select
-            size="mini"
+              size="small"
             v-model="table.limit"
             class="option__select select-topn"
             placeholder=" "
@@ -73,7 +73,7 @@
         </div>
         <div class="header__operation header__operation--table">
           <el-select
-            size="mini"
+            size="small"
             v-model="table.orderBy"
             class="option__select select-column"
             :placeholder="$t('overall.field')"
@@ -100,7 +100,7 @@
       <div class="header__operations">
         <div class="header__operation header__operation--table">
           <el-select
-            size="mini"
+            size="small"
             v-model="activeIpTable.orderBy"
             class="option__select select-column"
             :placeholder="$t('overall.field')"
@@ -122,7 +122,7 @@
       <div class="header__operations">
         <div class="header__operation header__operation--table">
           <el-select
-            size="mini"
+            size="small"
             v-model="copyOrderPieTable"
             class="option__select select-column"
             placeholder=" "

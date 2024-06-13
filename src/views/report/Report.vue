@@ -23,19 +23,19 @@
           @search="search"
       >
         <template #top-tool-left>
-          <button id="account-add"  class="top-tool-btn margin-r-10 top-tool-btn--create"
+          <button id="account-add"  class="business-button margin-r-10"
                   v-if="hasPermission('createReport')"
                   @click="add">
             <i class="cn-icon-xinjian cn-icon"></i>
             <span>{{$t('overall.create')}}</span>
           </button>
-          <button id="report-edit"  class="top-tool-btn margin-r-10" :disabled="disableEdit"
+          <button id="report-edit"  class="business-button business-button--light margin-r-10" :disabled="disableEdit"
                   v-if="hasPermission('editReport')"
                   @click="editReport">
             <i class="cn-icon-edit cn-icon"></i>
             <span>{{$t('overall.edit')}}</span>
           </button>
-          <button id="report-delete"  class="top-tool-btn margin-r-10" :disabled="disableDelete"
+          <button id="report-delete" class="business-button business-button--light margin-r-10" :disabled="disableDelete"
                   v-if="hasPermission('deleteReport')"
                   @click="delBatch">
             <i class="cn-icon-delete cn-icon"></i>
@@ -70,6 +70,7 @@
           v-model="rightBox.show"
           direction="rtl"
           custom-class="common-right-box"
+          class="common-right-box"
           :size="700"
           :with-header="false"
           destroy-on-close>
@@ -316,10 +317,17 @@ export default {
           type: 'warning'
         }).catch(() => {})
       } else {
-        const curRecord = this.batchDeleteObjs[0]
-        this.initConfig(curRecord)
-        this.object = curRecord
-        this.rightBox.show = true
+        axios.get(`${this.url}/${this.batchDeleteObjs[0].id}`).then(response => {
+          if (response.status === 200) {
+            const curRecord = response.data.data
+            if (curRecord.config) {
+              curRecord.config = JSON.parse(curRecord.config)
+            }
+            this.initConfig(curRecord)
+            this.object = curRecord
+            this.rightBox.show = true
+          }
+        })
       }
     },
     initConfig (u) {

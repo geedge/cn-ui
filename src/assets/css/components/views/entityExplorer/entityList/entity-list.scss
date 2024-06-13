@@ -18,6 +18,7 @@
       width: calc(100% - 10px);
       height: 100%;
     }
+
     .entity-list--list {
       display: flex;
       flex-direction: column;
@@ -36,8 +37,7 @@
     }
   }
 
-
-  .entity__pagination{
+  .entity__pagination {
     position: absolute;
     bottom: 9px;
     height: 40px;

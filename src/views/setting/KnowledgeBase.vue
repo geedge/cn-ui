@@ -4,14 +4,14 @@
       <div class="top-title">
         {{$t('overall.knowledgeBase')}}
       </div>
-      <div class="builtIn-to-user-defined" >
-        <button :title="$t('knowledgeBase.userDefinedLibrary')" class="top-tool-btn--user_defined_library"
-                v-if="hasPermission('userDefinedLibrary')"
-                @click="changeToUserDefinedList">
-          <i class="cn-icon-add-knowledge-base cn-icon" ></i>
-          <span>{{$t('knowledgeBase.userDefinedLibrary')}}</span>
-        </button>
-      </div>
+<!--      <div class="builtIn-to-user-defined" >-->
+<!--        <button :title="$t('knowledgeBase.userDefinedLibrary')" class="top-tool-btn&#45;&#45;user_defined_library"-->
+<!--                v-if="hasPermission('userDefinedLibrary')"-->
+<!--                @click="changeToUserDefinedList">-->
+<!--          <i class="cn-icon-add-knowledge-base cn-icon" ></i>-->
+<!--          <span>{{$t('knowledgeBase.userDefinedLibrary')}}</span>-->
+<!--        </button>-->
+<!--      </div>-->
     </div>
 
     <!-- 内置库列表 -->
@@ -296,6 +296,7 @@ export default {
       this.$confirm(this.$t('tip.confirmDelete'), {
         confirmButtonText: this.$t('tip.yes'),
         cancelButtonText: this.$t('tip.no'),
+        customClass: 'del-model-message-box',
         type: 'warning'
       }).then(() => {
         this.toggleLoading(true)

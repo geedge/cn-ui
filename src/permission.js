@@ -17,11 +17,11 @@ router.beforeEach(async (to, from, next) => {
   loadGeoData()
   // 加载baseUrl
   if (!axios.defaults.baseURL) {
-    // eslint-disable-next-line no-undef
+  // eslint-disable-next-line no-undef
     axios.defaults.baseURL = BASE_CONFIG.baseUrl
   }
   if (localStorage.getItem(storageKey.token)) {
-    // 加载i18n
+  // 加载i18n
     await loadI18n()
     // 加载权限
     if (permissionWhiteList.indexOf(to.path) !== -1) {
@@ -162,13 +162,20 @@ export function handleComponent (code) {
       return () => import('@/views/detections/detectionPolicies/PolicyForm')
     case 'report':
       return () => import('@/views/report/Report')
+    case 'tag':
+      return () => import('@/views/tag/Tag')
+    case 'createTag':
+    case 'editTag':
+      return () => import('@/views/tag/TagForm')
     case 'knowledgeBase':
       return () => import('@/views/setting/KnowledgeBase')
     case 'userDefinedLibrary':
-      return () => import('@/views/setting/KnowledgeBaseUserDefinedList')
-    case 'createUserDefinedLibrary':
-    case 'editUserDefinedLibrary':
-      return () => import('@/views/setting/KnowledgeBaseForm')
+      return () => import('@/views/tag/Tag')
+    // case 'userDefinedLibrary':
+      // return () => import('@/views/setting/KnowledgeBaseUserDefinedList')
+    // case 'createUserDefinedLibrary':
+    // case 'editUserDefinedLibrary':
+      // return () => import('@/views/setting/KnowledgeBaseForm')
     case 'administration':
       return () => import('@/views/administration/Index')
     case 'user':
@@ -179,12 +186,17 @@ export function handleComponent (code) {
       return () => import('@/views/administration/OperationLog')
     case 'appearance':
       return () => import('@/views/administration/Appearance')
+    case 'license':
+      return () => import('@/views/administration/License')
     case 'I18N':
       return () => import('@/views/administration/I18n')
     case 'system':
       return () => import('@/views/system/Index')
     case 'plugin':
       return () => import('@/views/system/Plugin')
+    case 'locationMap':
+    case 'traceTracking':
+      return () => import('@/views/location/Index')
     default:
       return null
   }

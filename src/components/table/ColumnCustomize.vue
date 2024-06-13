@@ -1,6 +1,6 @@
 <template>
   <div class="pop-custom" v-ele-click-outside="esc">
-    <transition-group name="dragTabs" class="list" tag="ul" ref="tabs">
+    <transition-group name="dragTabs" class="drag-list" tag="ul" ref="tabs">
       <li v-for="(item, index) in custom"
           :key="item.label"
           class="list-item"
@@ -39,17 +39,17 @@
     <!--      </div>-->
     <!--    </div>-->
     <!--    <div class="custom-bottom-btns">-->
-    <!--      <el-button size="mini" v-if="isCancel" :id="tableId+'-element-set-none'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new is-cancel" @click="batchHandler(false)">-->
+    <!--      <el-button size="small" v-if="isCancel" :id="tableId+'-element-set-none'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new is-cancel" @click="batchHandler(false)">-->
     <!--        <span class="top-tool-btn-txt">{{$t('overall.clear')}}</span>-->
     <!--      </el-button>-->
-    <!--      <el-button size="mini" v-if="!isCancel" :id="tableId+'-element-set-all'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" @click="batchHandler(true)">-->
+    <!--      <el-button size="small" v-if="!isCancel" :id="tableId+'-element-set-all'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" @click="batchHandler(true)">-->
     <!--        <span class="top-tool-btn-txt">{{$t('overall.all')}}</span>-->
     <!--      </el-button>-->
     <!--      <div class="custom-bottom-btns-right">-->
-    <!--        <el-button size="mini" :id="tableId+'-element-set-esc'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" @click="esc">-->
+    <!--        <el-button size="small" :id="tableId+'-element-set-esc'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" @click="esc">-->
     <!--          <span class="top-tool-btn-txt">{{$t('overall.cancel')}}</span>-->
     <!--        </el-button>-->
-    <!--        <el-button size="mini" :id="tableId+'-element-set-save'" class="cn-btn cn-btn-size-small-new cn-btn-style-normal-new" @click="save" style="background-color: #0091ff;color:#DCDFE6">-->
+    <!--        <el-button size="small" :id="tableId+'-element-set-save'" class="cn-btn cn-btn-size-small-new cn-btn-style-normal-new" @click="save" style="background-color: #0091ff;color:#DCDFE6">-->
     <!--          <span class="top-tool-btn-txt top-tool-btn-save">{{$t('overall.save')}}</span>-->
     <!--        </el-button>-->
     <!--      </div>-->
@@ -59,7 +59,7 @@
 
 <script>
 import indexedDBUtils from '@/indexedDB'
-import { storageKey, dbTableColumnCustomizeConfigPre } from '@/utils/constants'
+import { storageKey, dbTableColumnCustomizeConfigPre,dbTableColumnCustomizeConfig } from '@/utils/constants'
 export default {
   props: {
     customTableTitle: Array, // 自定义的title
@@ -153,7 +153,7 @@ export default {
       this.$emit('update', this.custom)
       const userId = localStorage.getItem(storageKey.userId)
       const tableName = dbTableColumnCustomizeConfigPre + '-' + this.tableId
-
+/*
       const defaultConfigInDb = await indexedDBUtils.selectTable(tableName).get({ id: userId })
       let fullVersion = ''
       if (defaultConfigInDb && defaultConfigInDb.version) {
@@ -167,12 +167,15 @@ export default {
       } else {
         fullVersion = BASE_CONFIG.version + '.1'
       }
-
-      await indexedDBUtils.selectTable(tableName).put({
-        id: userId,
-        version: fullVersion,
-        config: _.cloneDeep(this.custom)
-      })
+*/
+      let curTableConfig = dbTableColumnCustomizeConfig.find(item => item.tableName === tableName)
+      if(curTableConfig) {
+        await indexedDBUtils.selectTable(tableName).put({
+          id: userId,
+          version: curTableConfig.version,
+          config: _.cloneDeep(this.custom)
+        })
+      }
     }
   },
   computed: {

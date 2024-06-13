@@ -5,18 +5,18 @@
   margin-right: 12px;
   overflow: auto;
   z-index: 1;
-  border: 1px solid rgba(226, 229, 236, 1) !important;
-  border-radius: 4px !important;
+  border: 1px solid var(--el-border-color-light) !important;
+  border-radius: var(--el-border-radius-base) !important;
 
   .filter-case__header {
     padding-left: 8px;
     height: 36px;
     line-height: 36px;
-    color: #666;
+    color: var(--el-text-color-regular);
     font-size: 14px;
-    background: #F7F7F7;
-    box-shadow: 0 1px 0 0 rgba(226,229,236,1);
-    border-radius: 4px 4px 0 0;
+    background: var(--cn-bg-color-lighter);
+    box-shadow: 0 1px 0 0 var(--el-border-color-light);
+    border-radius: var(--el-border-radius-base) var(--el-border-radius-base) 0 0;
   }
 
   .filter__header {
@@ -24,8 +24,7 @@
     line-height: 46px;
     margin: 0 20px;
     font-size: 14px;
-    color: #353636;
-    font-weight: 500;
+    color: var(--el-text-color-primary);
   }
 
   .filter__body {
@@ -47,20 +46,19 @@
         display: flex;
         align-items: center;
         font-size: 14px;
-        color: #353636;
+        color: var(--el-text-color-primary);
         font-weight: 400;
 
         .filter__body-item-left-index {
           width: 16px;
           height: 16px;
           text-align: center;
-          background: #EFF2F5;
+          background: var(--el-bg-color-page);
           border-radius: 2px;
           margin-right: 6px;
-          font-family: NotoSansHans-Black;
           font-size: 9px;
-          color: #96A2B0;
-          font-weight: 900;
+          color: var(--el-color-info);
+          font-weight: bold;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -68,10 +66,8 @@
 
         .filter__body-item-left-label {
           max-width: 180px;
-          font-family: NotoSansSChineseRegular;
           font-size: 14px;
-          color: #353636;
-          font-weight: 400;
+          color: var(--el-text-color-primary);
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
@@ -80,10 +76,8 @@
 
       .filter__body-item-right {
         flex-shrink: 0;
-        font-family: NotoSansSChineseRegular;
         font-size: 12px;
-        color: #717171;
-        font-weight: 400;
+        color: var(--el-text-color-regular);
         margin-right: 10px;
       }
     }
@@ -94,7 +88,7 @@
   width: 18px;
   height: 12px;
   margin-right: 6px;
-  border: 1px solid #E8E8E8;
+  border: 1px solid var(--el-color-info-light-8);
 }
 
 .filter-show-more, .filter-no-show-more {
@@ -102,13 +96,14 @@
   height: 26px;
   line-height: 26px;
   margin-left: 20px;
-  color: #046ECA;
+  color: var(--el-color-primary);
   user-select: none; // 禁止文本选中
   font-size: 12px;
 }
+
 .filter-no-show-more {
   cursor: not-allowed;
-  color: rgba(16, 16, 16, 0.3);
+  color: var(--el-text-color-disabled);
 }
 
 .filter-hr {
@@ -116,76 +111,55 @@
   margin-left: 20px;
   margin-top: 6px;
   height: 1px;
-  background: #EFF2F5;
-  //background: #000;
+  background: var(--el-bg-color-page);
 }
 
 .new-detection-filter-title {
   height: 32px;
   line-height: 32px;
-  background: #F7F7F7;
+  background: var(--cn-bg-color-lighter);
   padding: 0 20px;
-  box-shadow: 0 1px 0 0 rgba(226, 229, 236, 1);
-  border-radius: 4px 4px 0 0;
+  box-shadow: 0 1px 0 0 var(--el-border-color-light);
+  border-radius: var(--el-border-radius-base) var(--el-border-radius-base) 0 0;
 }
+
 .new-detection-filter-content {
   padding: 20px;
 
+  .el-checkbox {
+    display: inline-block !important;
+    height: auto !important;
+  }
+
   .new-filter-content-title {
-    font-family: NotoSansHans-Medium;
     font-size: 14px;
     line-height: 14px;
     margin-bottom: 10px;
-    color: #353636;
+    color: var(--el-text-color-primary);
     font-weight: 500;
   }
+
   .new-filter-content-content {
     display: flex;
     flex-direction: column;
 
     .new-filter-content-checkbox {
       line-height: 16px;
-      margin-bottom: 10px;
-      font-family: NotoSansSChineseRegular;
+      margin-bottom: 13.6px;
       font-size: 14px;
-      color: #353636;
-      font-weight: 400;
-
-      .el-checkbox__inner {
-        width: 16px !important;
-        height: 16px !important;
-        text-align: center !important;
-        line-height: 16px !important;
-      }
-
-      .el-checkbox__input.is-indeterminate .el-checkbox__inner {
-        border-color: #38ACD2;
-        background: #38ACD2;
-        border-radius: 2px;
-      }
-      .el-checkbox__input.is-indeterminate .el-checkbox__inner:before {
-        background: #FFFFFF;
-        border-radius: 1px;
-      }
-      .el-checkbox__input.is-checked {
-        .el-checkbox__inner {
-          border-color: #38ACD2;
-          background: #38ACD2;
-          border-radius: 2px;
-        }
-      }
-      .el-checkbox__input.is-focus {
-        .el-checkbox__inner {
-          border-color: #38ACD2;
-        }
-      }
+      color: var(--el-text-color-primary);
+      display: flex !important;
 
       .el-checkbox__label {
-        font-family: NotoSansSChineseRegular;
         font-size: 14px;
-        color: #353636;
-        font-weight: 400;
+        color: var(--el-text-color-primary);
+        padding-left: 10px !important;
       }
+    }
+
+    .content__display {
+      display: flex;
+      flex-direction: column;
     }
   }
 }

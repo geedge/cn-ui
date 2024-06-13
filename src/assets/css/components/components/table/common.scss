@@ -1,6 +1,6 @@
 .pop-custom {
   padding: 12px;
-  border: 1px solid #EBEEF5;
+  border: 1px solid var(--el-border-color-lighter);
   position: absolute;
   top: 55px;
   right: 20px;
@@ -14,7 +14,7 @@
   .pop-title {
     margin: 10px 0;
   }
-  .el-button--mini{
+  .el-button--small{
     padding: 5px 7px;
   }
 }
@@ -66,45 +66,9 @@
     }
   }
 }
-.unshow {
-  display: none;
-}
 
-.list-page .top-tools .top-tool-btn {
-  height: 33px;
-  width: 36px;
-  border: 1px solid #DEDEDE;
-  outline: none;
-  border-radius: 2px;
-  background-color: #F9F9F9;
-  transition: background-color linear .1s;
-  padding-left:10px;
-}
-
-
-.list-page .top-tools .top-tool-btn--search{
-  width:28px !important;
-  height:28px !important;
-  padding:unset !important;
-  i {
-    font-size: 14px;
-    color: #575757;
-    margin-right:unset !important;
-  }
-}
-
-.list-page {
-  .el-input--small{
-    width: 214px !important;
-    line-height: 27px;
-  }
-  .el-input--small .el-input__inner {
-    height: 28px;
-    border-radius: 2px 0px 0px 2px;
-  }
-}
-
-.list {
+// 自定义列
+.drag-list {
   list-style: none;
   padding-inline-start: 0 !important;
   max-height: 358px !important;

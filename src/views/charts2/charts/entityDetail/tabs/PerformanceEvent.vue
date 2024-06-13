@@ -1,5 +1,5 @@
 <template>
-  <chart-error v-if="showError" :content="errorMsg" class="entity-detail-event-error"></chart-error>
+  <chart-error v-if="showError" :content="errorMsg"></chart-error>
   <chart-no-data v-if="isNoData && !showError"></chart-no-data>
 
   <div v-if="!isNoData && !showError" class="entity-detail-event-block">
@@ -17,7 +17,7 @@
                 class="detection-event-severity-color-block"
                 :style="`background-color: ${eventSeverityColor[item.eventSeverity]}`">
             </span>
-              <span class="detection-event-severity-block" style="margin-right: 30px">
+              <span class="detection-event-severity-block margin-r-30">
               {{ toUpperCaseByString(item.eventType) || '-' }}
             </span>
               <div class="cn-detection__body">

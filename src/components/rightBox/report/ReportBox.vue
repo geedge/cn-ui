@@ -11,7 +11,7 @@
         <el-form ref="reportForm" :model="editObject" :rules="rules" label-position="top" label-width="120px">
           <!--name-->
           <el-form-item :label="$t('report.name')" prop="name">
-            <el-input id="account-input-name" v-model="editObject.name" maxlength="64" placeholder=" " show-word-limit size="small" type="text"></el-input>
+            <el-input id="account-input-name" v-model="editObject.name" maxlength="64" placeholder=" " show-word-limit type="text"></el-input>
           </el-form-item>
           <!--time limit-->
           <el-form-item :label="$t('report.timeLimit')" prop="timeLimit">
@@ -20,8 +20,6 @@
                        class="right-box__select"
                        collapse-tags
                        placeholder=" "
-                       popper-class="right-box-select-dropdown right-box-select-report "
-                       size="small"
                        @change="timeConfigTypeChange"
             >
               <template v-for="time in timeRuleList" :key="time.value">
@@ -34,26 +32,24 @@
                          class="right-box__select"
                          collapse-tags
                          placeholder=" "
-                         popper-class="right-box-select-dropdown right-box-select-report "
-                         size="small"
+                         style="margin-top: 10px;"
                          @change="()=>{ this.$forceUpdate() }">
                 <template v-for="time in timeUnitList" :key="time.value">
                   <el-option :label="$t(time.name)" :value="time.value"></el-option>
                 </template>
               </el-select>
             </template>
-            <div v-else-if="editObject.config.timeConfig.type === 'last' || editObject.config.timeConfig.type === 'previous'" style="display: flex;">
-              <el-input v-model.number="editObject.config.timeConfig.offset" size="small" class="el-input-single" placeholder=" ">
+            <div v-else-if="editObject.config.timeConfig.type === 'last' || editObject.config.timeConfig.type === 'previous'" class="report__display">
+              <el-input-number v-model.number="editObject.config.timeConfig.offset" class="el-input-single" placeholder=" ">
                 <template #prepend><i @click="timeOffsetHandle('m')" class="cn-icon cn-icon-a-"></i></template>
                 <template #append><i @click="timeOffsetHandle('p')" class="cn-icon cn-icon-a-1"></i></template>
-              </el-input>
+              </el-input-number>
               <el-select id="reportBoxTimeUnitSelect"
                          v-model="editObject.config.timeConfig.unit"
                          class="right-box__select right-box__select-single"
                          collapse-tags
                          placeholder=" "
                          popper-class="right-box-select-dropdown  el-select-last"
-                         size="small"
                          @change="()=>{ this.$forceUpdate() }">
                 <template v-for="time in timeUnitList" :key="time.value">
                   <el-option :label="$t(time.name)" :value="time.value"></el-option>
@@ -66,13 +62,11 @@
             <div class="demo-datetime-picker">
               <div class="block">
                 <el-date-picker
-                    style="width: 100%"
                     v-model="editObject.config.startTime"
-                    size="small"
                     :format="dateFormat"
                     :disabled-date="startDisabledDate"
                     @change="startTimeChang"
-                    prefix-icon="cn-icon cn-icon-shijian"
+                    prefix-icon=""
                     type="datetime"
                     placeholder=" "
                 />
@@ -84,13 +78,11 @@
             <div class="demo-datetime-picker">
               <div class="block">
                 <el-date-picker
-                    style="width: 100%"
                     v-model="editObject.config.endTime"
-                    size="small"
                     :format="dateFormat"
                     :disabled-date="endDisabledDate"
                     @change="endTimeChange"
-                    prefix-icon="cn-icon cn-icon-shijian"
+                    prefix-icon=""
                     type="datetime"
                     placeholder=" "
                 />
@@ -107,17 +99,17 @@
             </div>
             <div class="enable-tabs-daily" v-if="scheduleType === scheduleTypeList[0].value">
               <div class="enable-tabs-custom">{{$t('report.customEvery')}}</div>
-              <el-input v-model.number="editObject.config.schedulerConfig.interval" size="small" placeholder=" " style="margin-top: 0.3125rem;">
+              <el-input-number v-model.number="editObject.config.schedulerConfig.interval" placeholder=" ">
                 <template #append>{{$t('report.day')}}</template>
-              </el-input>
+              </el-input-number>
             </div>
             <div class="enable-tabs-weekly" v-else-if="scheduleType === scheduleTypeList[1].value">
               <!-- 每隔几周暂时隐藏 -->
               <!-- <div class="enable-tabs-custom">{{$t('report.customEvery')}}</div>
-              <el-input v-model="editObject.config.schedulerConfig.interval" size="small" placeholder="Please input">
+              <el-input v-model="editObject.config.schedulerConfig.interval" placeholder="Please input">
                 <template #append>{{$t('report.week')}}</template>
               </el-input>-->
-              <el-checkbox-group v-model="editObject.config.schedulerConfig.weekDates" style="margin-top: 0.3125rem">
+              <el-checkbox-group v-model="editObject.config.schedulerConfig.weekDates">
                 <el-checkbox v-for="(item, index) in weekdayList" :key="index" :label="item.value">{{$t(item.name)}}</el-checkbox>
               </el-checkbox-group>
             </div>
@@ -132,9 +124,9 @@
                 <!-- 自定义月，循环 -->
                 <template v-if="monthIsCycle">
                   <div class="enable-tabs-custom">{{$t('report.customEvery')}}</div>
-                  <el-input v-model="editObject.config.schedulerConfig.interval" size="small" placeholder=" " style="margin-top: 0.3125rem;">
+                  <el-input-number v-model="editObject.config.schedulerConfig.interval" placeholder=" ">
                     <template #append>{{$t('report.month')}}</template>
-                  </el-input>
+                  </el-input-number>
                 </template>
                 <!-- 自定义月，非循环 -->
                 <template v-else>
@@ -160,10 +152,9 @@
                   <el-select id="account-input-roleIds"
                              v-model="editObject.config.schedulerConfig.monthWeekDates"
                              class="right-box__select"
+                             style="margin-top: 10px;"
                              multiple
                              placeholder=" "
-                             popper-class="right-box-select-dropdown right-box-select-report"
-                             size="small"
                              @change="()=>{ this.$forceUpdate() }">
                     <template v-for="time in weekOptions" :key="time.value">
                       <el-option :label="$t(time.name)" :value="time.value"></el-option>
@@ -184,12 +175,11 @@
             <div class="demo-datetime-picker">
               <div class="block">
                 <el-date-picker
-                    style="width: 100%"
                     v-model="editObject.schedulerStart"
-                    size="small"
                     :format="dateFormat"
-                    prefix-icon="cn-icon cn-icon-shijian"
+                    prefix-icon=""
                     type="datetime"
+                    @change="onChangeSchedulerStart"
                     placeholder=" "
                 />
               </div>
@@ -200,12 +190,11 @@
             <div class="demo-datetime-picker">
               <div class="block">
                 <el-date-picker
-                    style="width: 100%"
                     v-model="editObject.schedulerEnd"
-                    size="small"
                     :format="dateFormat"
-                    prefix-icon="cn-icon cn-icon-shijian"
+                    prefix-icon=""
                     type="datetime"
+                    @change="onChangeSchedulerEnd"
                     placeholder=" "
                 />
               </div>
@@ -219,8 +208,6 @@
                        collapse-tags
                        placeholder=" "
                        :disabled="!!editObject.id"
-                       popper-class="right-box-select-dropdown right-box-select-report"
-                       size="small"
             >
               <template v-for="category in categoryList" :key="category.id">
                 <el-option :label="category.name" :value="category.id"></el-option>
@@ -231,26 +218,28 @@
           <el-form-item :label="$t('config.operationlog.params')" prop="categoryParams" v-if="editObject.categoryParams && editObject.categoryParams.length > 0">
 <!--            <el-input v-model="param.value" placeholder=" " v-for="(param, index) in editObject.categoryParams" :key="index" size="small" style="vertical-align: unset;" :disabled="!!editObject.id">
               <template #prepend>{{param.key}}</template>
-            </el-input>-->
+            </el-input-number>-->
             <template v-for="(param, index) in editObject.categoryParams" :key="index">
-              <el-input v-if="param.labelType === 'input'" v-model="param.value" placeholder=" " size="small" style="vertical-align: unset;" :disabled="!!editObject.id">
+              <el-input-number v-if="param.labelType === 'input'" v-model="param.value" placeholder=" " class="report__params-vertical" :disabled="!!editObject.id">
                 <template #prepend>{{param.key}}</template>
-              </el-input>
+              </el-input-number>
               <el-select v-model="param.value"
                          v-else
                          class="right-box__select right-box__select--param"
                          placeholder=" "
                          filterable
+                         :filter-method="filterMethod"
+                         popper-class="search-select"
+                         v-select-load-more="loadMore"
+                         @visible-change="onVisibleChange"
                          :disabled="!!editObject.id"
-                         popper-class="right-box-select-dropdown right-box-select-report "
-                         size="small"
               >
                 <template #prefix>
                   {{$t(param.i18n)}}
                 </template>
                 <template v-for="paramOption in paramsOptions">
                   <template v-if="paramOption.key === param.key">
-                    <el-option :key="p" :value="p" v-for="p in paramOption.options"></el-option>
+                    <el-option :key="p" :value="p" v-for="p in paramOption.options.slice(0, rangeNumber)"></el-option>
                   </template>
                 </template>
               </el-select>
@@ -260,10 +249,10 @@
       </div>
     </div>
     <div class="right-box__footer">
-      <button id="asset-edit-cancel" v-cancel="{object: editObject, func: esc}" class="footer__btn footer__btn--light">
+      <button id="asset-edit-cancel" v-cancel="{object: editObject, func: esc}" class="business-button business-button--light">
         <span>{{$t('overall.cancel')}}</span>
       </button>
-      <button id="asset-edit-save" :class="{'footer__btn--disabled': blockOperation.save}" :disabled="blockOperation.save" class="footer__btn" @click="save">
+      <button id="asset-edit-save" :disabled="blockOperation.save" class="business-button" @click="save">
         <span>{{$t('overall.save')}}</span>
       </button>
     </div>
@@ -276,7 +265,7 @@ import { storageKey, report } from '@/utils/constants'
 import { api } from '@/utils/api'
 import _ from 'lodash'
 import axios from 'axios'
-import { dateFormat, getMillisecond } from '@/utils/date-util'
+import { dateFormat, getMillisecond, millTimestampDiffFromTz } from '@/utils/date-util'
 import { ref, getCurrentInstance } from 'vue'
 import i18n from '@/i18n'
 export default {
@@ -292,24 +281,20 @@ export default {
     const startTime = ref('')
     const endTime = ref('')
     function endTimeChange (val) {
-      endTime.value = val
+      // endTime.value = val + millTimestampDiffFromTz()
+      endTime.value = getMillisecond(val) + millTimestampDiffFromTz()
     }
     function startTimeChang (val) {
-      startTime.value = val
+      // startTime.value = val + millTimestampDiffFromTz()
+      startTime.value = getMillisecond(val) + millTimestampDiffFromTz()
     }
     const endDisabledDate = (time) => {
       if (time.getTime() > new Date()) {
         return true
       }
-      if (startTime.value !== '' && startTime.value > time) {
-        return true
-      }
     }
     const startDisabledDate = (time) => {
-      if (time.getTime() > new Date()) {
-        return true
-      }
-      if (endTime.value !== '' && endTime.value < time) {
+      if (time.getTime() > (new Date()).getTime()) {
         return true
       }
     }
@@ -332,14 +317,14 @@ export default {
     }
     const startTimeValidator = (rule, value, callback) => {
       const form = proxy.$refs.reportForm
-      if (form.model.config.endTime) {
+      if (proxy.endTime || (proxy.editObject && proxy.editObject.config && proxy.editObject.config.endTime)) {
         form.validateField('config.endTime', () => null)
       }
       callback()
     }
     const endTimeValidator = (rule, value, callback) => {
       let validate = true
-      if (startTime.value !== '' && value <= startTime.value) {
+      if (startTime.value !== '' && endTime.value <= startTime.value) {
         validate = false
       }
       return validate
@@ -350,9 +335,6 @@ export default {
         { validator: nameValidator, message: i18n.global.t('validate.onlyAllowNumberLetterChinese-_'), trigger: 'blur' }
       ],
       categoryId: [
-        { required: true, message: i18n.global.t('validate.required'), trigger: 'change' }
-      ],
-      schedulerStart: [
         { required: true, message: i18n.global.t('validate.required'), trigger: 'change' }
       ],
       'config.startTime': [
@@ -368,15 +350,53 @@ export default {
         { validator: paramValidator, message: i18n.global.t('validate.required'), trigger: 'blur' }
       ]
     }
+    const mySchedulerStart = ref('')
+    const mySchedulerEnd = ref('')
+    const onChangeSchedulerStart = (val) => {
+      mySchedulerStart.value = getMillisecond(val) + millTimestampDiffFromTz()
+    }
+    const onChangeSchedulerEnd = (val) => {
+      mySchedulerEnd.value = getMillisecond(val) + millTimestampDiffFromTz()
+    }
     return {
       endDisabledDate,
       startDisabledDate,
       startTimeChang,
       endTimeChange,
-      rules
+      rules,
+      startTime,
+      endTime,
+      mySchedulerStart,
+      mySchedulerEnd,
+      onChangeSchedulerStart,
+      onChangeSchedulerEnd
     }
   },
   data () {
+    const schedulerStartTimeValidator = (rule, value, callback) => {
+      if (this.editObject.schedulerEnd) {
+        if (this.$refs.reportForm) {
+          this.$refs.reportForm.validateField('schedulerEnd')
+        }
+      }
+      callback()
+    }
+
+    const schedulerEndTimeValidator = (rule, value, callback) => {
+      if (value && this.editObject.schedulerStart && (getMillisecond(this.editObject.schedulerStart) >= getMillisecond(value))) {
+        callback(new Error(this.$t('config.user.timeVerification')))
+      } else {
+        callback()
+      }
+    }
+
+    this.rules.schedulerStart = [
+      { required: true, message: i18n.global.t('validate.required'), trigger: 'change' },
+      { validator: schedulerStartTimeValidator, trigger: 'change' }
+    ]
+    this.rules.schedulerEnd = [
+      { validator: schedulerEndTimeValidator, trigger: 'change' }
+    ]
     return {
       url: api.reportTemp,
 
@@ -403,7 +423,9 @@ export default {
       monthWeekdayCheckedAll: false,
       monthWeekdayIsIndeterminate: false,
 
-      paramsOptions: []
+      paramsOptions: [],
+      newParamsOptions: [],
+      rangeNumber: 10
     }
   },
   watch: {
@@ -414,6 +436,7 @@ export default {
     scheduleChecked (n) {
       this.editObject.config.isScheduler = n ? 1 : 0
       this.cleanScheduleConfig()
+      this.initDateCalendarPreIcon()
     },
     monthScheduleType (n) {
       this.cleanScheduleConfig()
@@ -495,6 +518,14 @@ export default {
           }
         }
 
+        if (n.config) {
+          if (n.config.startTime) {
+            this.editObject.config.startTime = getMillisecond(n.config.startTime) - millTimestampDiffFromTz()
+          }
+          if (n.config.endTime) {
+            this.editObject.config.endTime = getMillisecond(n.config.endTime) - millTimestampDiffFromTz()
+          }
+        }
         if (n.schedulerStart) {
           this.editObject.schedulerStart = dateFormat(this.editObject.schedulerStart, this.dateFormat)
         }
@@ -521,10 +552,24 @@ export default {
       }
     }
   },
+  mounted () {
+    this.initDateCalendarPreIcon()
+  },
   methods: {
+    initDateCalendarPreIcon () {
+      this.$nextTick(() => {
+        const datePrefixIcon = document.getElementsByClassName('el-input__prefix-inner')
+        if (datePrefixIcon && datePrefixIcon.length > 0) {
+          Array.prototype.forEach.call(datePrefixIcon, function (element) {
+            element.innerHTML = '<i class="el-input__icon cn-icon cn-icon-shijian"></i>'
+          })
+        }
+      })
+    },
     loadParamOptions () {
       if (_.isArray(this.editObject.categoryParams) && !_.isEmpty(this.editObject.categoryParams)) {
         this.editObject.categoryParams.forEach(param => {
+          this.paramsOptions = _.cloneDeep(this.newParamsOptions)
           if (!this.paramsOptions.some(p => p.key === param.key)) {
             axios.get(api.dict, { params: { type: param.key, pageSize: -1 } }).then(response => {
               if (response.status === 200) {
@@ -532,6 +577,7 @@ export default {
                   key: param.key,
                   options: response.data.data.list.map(d => d.value)
                 })
+                this.newParamsOptions = this.paramsOptions
               }
             })
           }
@@ -569,6 +615,7 @@ export default {
       if (val === 'customize') {
         this.scheduleChecked = false
       }
+      this.initDateCalendarPreIcon()
     },
     scheduleTypeChange (val) {
       this.scheduleType = val
@@ -584,10 +631,12 @@ export default {
           let schedulerStart = ''
           let schedulerEnd = ''
           if (this.editObject.config && this.editObject.config.startTime) {
-            startTime = getMillisecond(this.editObject.config.startTime)
+            // startTime = getMillisecond(this.editObject.config.startTime)
+            startTime = this.startTime ? this.startTime : this.object.config.startTime
           }
           if (this.editObject.config && this.editObject.config.endTime) {
-            endTime = getMillisecond(this.editObject.config.endTime)
+            // endTime = getMillisecond(this.editObject.config.endTime)
+            endTime = this.endTime ? this.endTime : this.object.config.endTime
           }
           if (this.editObject.config && this.editObject.config.schedulerConfig) {
             if (['day', 'week', 'month'].indexOf(this.editObject.config.schedulerConfig.type) > -1) {
@@ -597,10 +646,12 @@ export default {
             }
           }
           if (this.editObject.schedulerStart) {
-            schedulerStart = getMillisecond(this.editObject.schedulerStart)
+            // schedulerStart = getMillisecond(this.editObject.schedulerStart)
+            schedulerStart = this.mySchedulerStart ? this.mySchedulerStart : this.object.schedulerStart
           }
           if (this.editObject.schedulerEnd) {
-            schedulerEnd = getMillisecond(this.editObject.schedulerEnd)
+            // schedulerEnd = getMillisecond(this.editObject.schedulerEnd)
+            schedulerEnd = this.mySchedulerEnd ? this.mySchedulerEnd : this.object.schedulerEnd
           }
 
           const copyObject = _.cloneDeep(this.editObject)
@@ -721,6 +772,36 @@ export default {
       const checkedCount = val.length
       this.monthWeekdayCheckedAll = checkedCount === this.weekdayList.length
       this.monthWeekdayIsIndeterminate = checkedCount > 0 && checkedCount < this.weekdayList.length
+    },
+    /**
+     * params的option筛选方法，组件自带的方法在paramsOptions的options长度超过1512后会保留部分值
+     * @param filterVal
+     */
+    filterMethod (filterVal) {
+      const key = this.editObject.categoryParams[0].key
+      if (filterVal) {
+        const obj = this.newParamsOptions.find(d => d.key === key)
+        if (_.isString(filterVal) && obj) {
+          const filterArr = _.cloneDeep(obj.options).filter(d => d.toLowerCase().includes(filterVal.toLowerCase()))
+          const paramsOptionsObj = this.paramsOptions.find(d => d.key === key)
+          paramsOptionsObj.options = filterArr
+        } else if (_.isNumber(filterVal) && obj) {
+          const filterArr = _.cloneDeep(obj.options).filter(d => d.toLowerCase().includes(filterVal))
+          const paramsOptionsObj = this.paramsOptions.find(d => d.key === key)
+          paramsOptionsObj.options = filterArr
+        }
+      } else {
+        this.paramsOptions = _.cloneDeep(this.newParamsOptions)
+        this.rangeNumber = 10
+      }
+    },
+    loadMore () {
+      this.rangeNumber += 10
+    },
+    onVisibleChange (flag) {
+      if (!flag) {
+        this.rangeNumber = 0
+      }
     }
   }
 }

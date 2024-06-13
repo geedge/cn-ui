@@ -10,6 +10,7 @@
       <div class="block-list__list" v-show="!linkNoData" v-else>
         <el-popover
             placement="bottom"
+            effect="dark"
             trigger="hover"
             popper-class="link-block__popper"
             v-for="(item, index) in linkData"
@@ -122,7 +123,6 @@ import { drillDownPanelTypeMapping, storageKey, unitTypes } from '@/utils/consta
 import { getSecond } from '@/utils/date-util'
 import ChartError from '@/components/common/Error'
 import axios from 'axios'
-import { analysis, analysisOneWay, nextHopAnalysis, nextHopAnalysisOneWay} from './test-data'
 
 export default {
   name: 'LinkBlock',
@@ -239,13 +239,7 @@ export default {
               data.forEach(item => {
                 item.totalBitsRate = item.outBitsRate + item.inBitsRate
                 linkConfig.filter(info => info.interfaceName === item.interfaceName).forEach(info => {
-                  if (info.direction === 0) {
-                    item.outLinkId = info.linkId
-                  } else if (info.direction === 1) {
-                    item.inLinkId = info.linkId
-                  } else if (info.direction === 2) {
-                    item.linkId = info.linkId
-                  }
+                  item.linkId = info.linkId
                 })
               })
 
@@ -389,7 +383,7 @@ export default {
       return width
     },
     drillLinkId (item) {
-      const queryCondition = `out_link_id = ${item.outLinkId} or in_link_id = ${item.inLinkId}`
+      const queryCondition = `out_link_id = ${item.linkId} or in_link_id = ${item.linkId}`
       beforeRouterPush()
       this.$router.push({
         query: {

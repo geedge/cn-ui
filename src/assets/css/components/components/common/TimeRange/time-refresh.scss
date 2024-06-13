@@ -2,13 +2,12 @@
   position: relative;
   font-size: 14px;
 
-  .cn-icon-refresh{
+  .cn-icon-refresh1 {
     font-size: 14px;
-    color:  #575757;
   }
   .cn-icon-dropdown {
     font-size: 14px;
-    transition: all .3s;
+    transition: all var(--el-transition-duration);
     display: inline-block;
   }
   .cn-icon-dropdown.active{
@@ -17,54 +16,59 @@
   .refresh-list{
     position: absolute;
     z-index: 2;
-    background: #FFFFFF;
-    border: 1px solid #DEDEDE;
-    box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
-    border-radius: 2px;
+    border: 1px solid var(--el-border-color);
+    background-color: var(--el-fill-color-blank);
+    box-shadow: var(--el-box-shadow-light);
+    border-radius: var(--el-border-radius-base);
     top: 30px;
     right: 0;
+
     .refresh-list-item{
       width: 82px;
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      color: #333333;
+      color: var(--el-text-color-regular);
       cursor: pointer;
       position: relative;
       padding: 8px 0 8px 12px;
     }
     .refresh-list-item.active{
-      background: #F2F9FF;
-      color: #0091FF;
-      font-weight: 400;
+      color: var(--el-color-primary);
+      font-weight: bold;
+
       .cn-icon-check{
-        color: #0091FF;
+        color: var(--el-color-primary);
         position: absolute;
         right: 7px;
       }
     }
     .refresh-list-item:hover{
-      background: #F2F9FF;
-      color: #0091FF;
+      background-color: var(--el-fill-color-light);
     }
   }
-  .el-button--mini.cn-button {
+  .el-button--small.el-button--icon {
     span {
       font-size: 14px;
-      color: #2C72C6;
-      font-weight: 400;
-      .cn-button-label {
+      color: var(--el-color-primary);
+
+      .button-label {
         padding: 0 8px 0 3px;
       }
       i {
         font-size: 14px;
-        color: #575757;
+        color: var(--el-text-color-regular);
       }
     }
+
+    &:hover span i {
+      color: var(--el-button-hover-text-color);
+    }
   }
-  .el-button--mini{
+  .el-button--small{
     padding: 4px 6px !important;
     min-height: 28px !important;
+    height: 28px !important;
   }
 }

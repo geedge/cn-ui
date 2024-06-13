@@ -33,8 +33,9 @@
             </button>
             <div class="top-tool-search margin-l-10" >
               <el-input v-model="keyWord"  size="small" @keyup.enter="onSearch"></el-input>
-              <button class="top-tool-btn  top-tool-btn--search" style="border-radius: 0 2px 2px 0 !important;" @click="onSearch">
-                <i class="el-icon-search"></i>
+              <button class="top-tool-btn top-tool-btn--search" @click="onSearch">
+                <el-icon><Search /></el-icon>
+                <!--<i class="el-icon-search"></i>-->
               </button>
             </div>
           </div>
@@ -43,7 +44,6 @@
           <loading :loading="loading"></loading>
           <knowledge-base-table-for-row
                   ref="dataTable"
-                  height="100%"
                   :api="url"
                   :isNoData="isNoData"
                   :custom-table-title="tools.customTableTitle"
@@ -67,6 +67,7 @@
              :title="$t('overall.hint')"
              width="480px"
              custom-class="del-model-hint"
+             class="del-model-hint"
              :before-close="handleClose">
     <div class="dialog-message">{{$t('knowledge.deleteDataHint')}}</div>
     <el-table v-model="delItemList"
@@ -76,8 +77,8 @@
               height="156px"
               width="100%"
               class="dialog-table"
-              cell-style="padding:4px 0px;font-size: 12px;color: #353636;font-weight: 400;"
-              header-cell-style="padding:4px 0px;background: #F5F8FA;font-size: 12px;color: #353636;font-weight: 500;">
+              :cell-style="myCellStyle"
+              :header-cell-style="myHeaderCellStyle">
       <el-table-column
               :resizable="false"
               align="center"
@@ -120,7 +121,20 @@ export default {
       keyWord: '',
       showConfirmDialog: false,
       delItemList: [],
-      secondBatchDeleteObjs: []
+      secondBatchDeleteObjs: [],
+      myCellStyle: {
+        padding: '4px 0px',
+        'font-size': '12px',
+        color: '#353636',
+        'font-weight': 400
+      },
+      myHeaderCellStyle: {
+        padding: '4px 0px',
+        background: '#F5F8FA',
+        'font-size': '12px',
+        color: '#353636',
+        'font-weight': 500
+      }
     }
   },
   watch: {
@@ -328,6 +342,7 @@ export default {
       this.$confirm(this.$t('tip.confirmDelete'), {
         confirmButtonText: this.$t('tip.yes'),
         cancelButtonText: this.$t('tip.no'),
+        customClass: 'del-model-message-box',
         type: 'warning'
       }).then(() => {
         this.toggleLoading(true)

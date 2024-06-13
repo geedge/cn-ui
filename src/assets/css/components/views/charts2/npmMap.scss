@@ -1,7 +1,7 @@
 .cn-chart__map-title {
   display: flex;
   font-size: 14px;
-  color: #353636;
+  color: var(--el-text-color-regular);
   font-weight: 600;
   margin-bottom: 10px;
 }
@@ -18,26 +18,50 @@
   .map-canvas {
     height: 100%;
     width: 100%;
-    background-color: #CAD2D3;
+    background-color: var(--cn-map-bg-color);
   }
   .map-filter {
     position: absolute;
     right: 10px;
     top: 10px;
-    .el-select__popper.map-select-down {
-      top: 32px !important;
-      .el-popper__arrow {
-        display: none;
-      }
+    display: inline-block;
+
+    .el-select__wrapper {
+      font-size: 12px;
+      padding: 0;
+    }
+    .el-select__placeholder {
+      padding-left: 16px;
+      color: var(--el-color-primary);
+    }
+    .el-select__prefix {
+      padding-left: 5px;
+    }
+    .el-select__suffix {
+      padding-right: 10px;
+      padding-bottom: 2px;
     }
     .map-select {
       margin-left: 10px;
 
       .el-input__inner {
-        color: #2C72C6;
+        color: var(--el-color-primary);
       }
       &.map-select__direction {
         width: 110px;
+      }
+    }
+    .map-select__location {
+      &.el-select {
+        width: 222px;
+      }
+      .el-select__wrapper {
+        min-height: 28px;
+        height: 28px;
+        .el-select__placeholder {
+          padding-left: 4px;
+          color: var(--el-color-info-light-5);
+        }
       }
     }
   }
@@ -50,7 +74,7 @@
     left: 10px;
     position: absolute;
     padding: 0 10px;
-    background-color: white;
+    background-color: var(--el-fill-color-blank);
 
     .map-legend__row {
       display: flex;
@@ -63,18 +87,18 @@
         border-radius: 50%;
 
         &.map-legend__symbol--green {
-          background-color: #7E9F54;
+          background-color: var(--el-color-success-dark-2);
         }
         &.map-legend__symbol--yellow {
-          background-color: #E5A219;
+          background-color: var(--el-color-warning);
         }
         &.map-legend__symbol--red {
-          background-color: #E26154;
+          background-color: var(--el-color-error);
         }
       }
       .map-legend__desc {
         padding-left: 5px;
-        color: #575757;
+        color: var(--el-text-color-regular);
       }
     }
   }
