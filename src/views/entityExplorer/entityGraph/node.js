@@ -11,12 +11,15 @@ export default class Node {
   * cfg: { entityType, entityName }
   * */
   constructor (type, id, data, sourceNode, strength, img) {
-    this.id = id
+    this.id = id + type
+    this.realId = id
     this.type = type
     this.vx = 0
     this.vy = 0
     this.fx = sourceNode ? null : 0// 设置为0，即可固定中心节点。0为中心节点，1为中心节点的子节点，2为第三级节点
     this.fy = sourceNode ? null : 0// 设置为0，即可固定中心节点。0为中心节点，1为中心节点的子节点，2为第三级节点
+    this.preDragX = null
+    this.preDragY = null
     this.img = img
     this.strength = strength || -10
     this.sourceNode = sourceNode

@@ -62,7 +62,7 @@ export function builtTooltip (node) {
       if (node.data && node.data.tags && node.data.tags.length > 0) {
         return `<div class="entity-node-tooltip">
                 <div class="tooltip__header">
-                  <span class="tooltip__title">${node.id}</span>
+                  <span class="tooltip__title">${node.realId}</span>
                 </div>
                 <div class="tooltip__content">
                   <div class="content-header">
@@ -73,7 +73,7 @@ export function builtTooltip (node) {
                 </div>
               </div>`
       } else {
-        return `<div style="padding: 0 6px; font-size: 15px; line-height: 15px; color: #111;">${node.id}</div>`
+        return `<div style="padding: 0 6px; font-size: 15px; line-height: 15px; color: #111;">${node.realId}</div>`
       }
     }
   }
