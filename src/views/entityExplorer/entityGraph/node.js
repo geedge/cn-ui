@@ -53,9 +53,34 @@ export default class Node {
   }
 
   getNeighbors (gData) {
-    const links = gData.links.filter(l => l.source.id === this.id || l.target.id === this.id)
-    const nodes = gData.nodes.filter(n => links.some(l => l.source.id === n.id || l.target.id === n.id))
-    return { links, nodes }
+    const { links } = gData
+    const neighboringNodes = []
+    const neighboringTargetNodes = []
+    const neighboringSourceNodes = []
+    const neighboringTargetLinks = []
+    const neighboringSourceLinks = []
+    const neighboringLinks = links.filter(l => {
+      if (l.target === this || l.source === this) {
+        neighboringNodes.push(l.target === this ? l.source : l.target)
+        if (l.target === this) {
+          neighboringSourceNodes.push(l.source)
+          neighboringSourceLinks.push(l)
+        } else {
+          neighboringTargetNodes.push(l.target)
+          neighboringTargetLinks.push(l)
+        }
+        return true
+      }
+      return false
+    })
+    return {
+      nodes: neighboringNodes,
+      targetNodes: neighboringTargetNodes,
+      sourceNodes: neighboringSourceNodes,
+      links: neighboringLinks,
+      targetLinks: neighboringTargetLinks,
+      sourceLinks: neighboringSourceLinks
+    }
   }
 
   // 获取唯一source，listNode和tempNode专用，因为entityNode的source可能有多个，rootNode无source

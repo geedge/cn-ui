@@ -67,7 +67,6 @@ export default {
       debounceFunc: null,
       center: {},
       initialData: null, // 初始化数据，用于重置
-      currentNodeData: [],
       nodes: [],
       links: [],
       graph: shallowRef(null),
@@ -81,11 +80,11 @@ export default {
   methods: {
     async init () {
       try {
-        this.currentNodeData = await this.generateInitialData()
-        this.initialData = _.cloneDeep(this.currentNodeData) // 初始化数据
+        const initialData = await this.generateInitialData()
+        this.initialData = _.cloneDeep(initialData) // 初始化数据
         let hoverNode = null
         this.graph = ForceGraph()(document.getElementById('entityGraph'))
-          .graphData(this.currentNodeData)
+          .graphData(initialData)
           .nodeCanvasObject((node, ctx) => {
             const nodeStyle = this.getNodeStyle(node.type, node.data.entityType)
             const iconWidth = nodeStyle.iconWidth / 2
@@ -224,35 +223,35 @@ export default {
             }
           })
           .centerAt(0, 30)// 设置中心节点位置
-          .onNodeClick(async (nodeModel, e) => {
-            this.clickNode = nodeModel || null
-            if (nodeModel.type !== 'tempNode') {
+          .onNodeClick(async (node, e) => {
+            this.clickNode = node || null
+            if (node.type !== 'tempNode') {
               this.rightBox.show = true
               this.cleanTempItems()
               // 点击entityNode，查询数据，并根据数据生成tempNode
-              if (nodeModel.type === nodeType.entityNode) {
+              if (node.type === nodeType.entityNode) {
                 this.rightBox.loading = true
                 try {
                   // 若已查过数据，不重复查询
-                  if (!nodeModel.data.relatedEntities) {
-                    await nodeModel.queryDetailData()
+                  if (!node.data.relatedEntities) {
+                    await node.queryDetailData()
                   }
-                  let change = false
-                  Object.keys(nodeModel.data.relatedEntities).forEach(k => {
-                    if (nodeModel.data.relatedEntities[k].total) {
+                  const toAddNodes = []
+                  const toAddLinks = []
+                  Object.keys(node.data.relatedEntities).forEach(k => {
+                    if (node.data.relatedEntities[k].total) {
                       // 若已有同级同类型的listNode，不生成此tempNode
-                      const neighbors = nodeModel.getNeighbors(this.currentNodeData)
+                      const neighbors = node.getNeighbors(this.graph.graphData())
                       const hasListNode = neighbors.nodes.some(b => b.data.entityType === k)
                       if (!hasListNode) {
-                        change = true
                         const tempNode = new Node(
                           nodeType.tempNode,
-                              `${nodeModel.id}__${k}__temp`,
+                              `${node.id}__${k}__temp`,
                               {
                                 entityType: k,
-                                ...this.generateTempNodeCoordinate(nodeModel.getSourceNode(this.currentNodeData), e)
+                                ...this.generateTempNodeCoordinate(node.getSourceNode(this.graph.graphData()), e)
                               },
-                              nodeModel,
+                              node,
                               this.defaultChargeStrength,
                               this.getIconUrl(k, false, false)
                         )
@@ -261,15 +260,16 @@ export default {
                           tempNode.fy = tempNode.y
                         })
 
-                        const tempEdge = new Link(nodeModel, tempNode, 'temp', this.defaultLinkDistance, 3)
-                        this.currentNodeData.nodes.push(tempNode)
-                        this.currentNodeData.links.push(tempEdge)
-                        this.graph.graphData(this.currentNodeData)
+                        const tempLink = new Link(node, tempNode, 'temp', this.defaultLinkDistance, 3)
+                        toAddNodes.push(tempNode)
+                        toAddLinks.push(tempLink)
                       }
                     }
                   })
-                  // change && this.graph.layout()//?????????????
-                  this.rightBox.node = _.cloneDeep(nodeModel)
+                  if (toAddNodes.length || toAddLinks.length) {
+                    this.addItems(toAddNodes, toAddLinks)
+                  }
+                  this.rightBox.node = _.cloneDeep(node)
                   this.rightBox.mode = 'detail'
                 } catch (e) {
                   console.error(e)
@@ -277,11 +277,11 @@ export default {
                 } finally {
                   this.rightBox.loading = false
                 }
-              } else if (nodeModel.type === nodeType.listNode) {
-                this.rightBox.node = _.cloneDeep(nodeModel)
+              } else if (node.type === nodeType.listNode) {
+                this.rightBox.node = _.cloneDeep(node)
                 this.rightBox.mode = 'list'
-              } else if (nodeModel.type === nodeType.rootNode) {
-                this.rightBox.node = _.cloneDeep(nodeModel)
+              } else if (node.type === nodeType.rootNode) {
+                this.rightBox.node = _.cloneDeep(node)
                 this.rightBox.mode = 'detail'
               }
             } else {
@@ -289,18 +289,18 @@ export default {
               // 若已达第六层，则只生成listNode，不再展开entityNode
               const nodes = []
               const edges = []
-              const sourceNode = nodeModel.getSourceNode(this.currentNodeData)
+              const sourceNode = node.getSourceNode(this.graph.graphData())
               const listNode = new Node(
                 nodeType.listNode,
-                    `${sourceNode.id}__${nodeModel.data.entityType}-list`,
+                    `${sourceNode.id}__${node.data.entityType}-list`,
                     {
-                      entityType: nodeModel.data.entityType,
-                      x: nodeModel.x,
-                      y: nodeModel.y
+                      entityType: node.data.entityType,
+                      x: node.x,
+                      y: node.y
                     },
                     sourceNode,
                     this.defaultChargeStrength,
-                    this.getIconUrl(nodeModel.data.entityType, false, false)
+                    this.getIconUrl(node.data.entityType, false, false)
               )
               nodes.push(listNode)
               edges.push(new Link(sourceNode, listNode, null, this.defaultLinkDistance, 2))
@@ -432,13 +432,7 @@ export default {
       } else if (code === 'zoomIn') {
         this.graph.zoom(this.graph.zoom() - 0.2)
       } else {
-        // this.graph = null
-        // this.currentNodeData = []
-        // this.nodes = []
-        // this.links = []
         this.clickNode = this.rootNode
-        // this.init()
-
         this.graph.graphData(this.initialData).centerAt(0, 30)
       }
     },
@@ -878,7 +872,7 @@ export default {
             // 移除 tempNode 和 tempEdge
             this.cleanTempItems()
 
-            const neighbors = this.getNeighborItems(node)
+            const neighbors = node.getNeighbors(this.graph.graphData())
             let listNode = neighbors.targetNodes.find(n => n.data.entityType === expandType)
             if (!listNode) {
               listNode = new Node(nodeType.listNode, `${node.id}__${expandType}-list`, { entityType: expandType }, node, this.defaultChargeStrength, this.getIconUrl(expandType, false, false))
@@ -919,36 +913,6 @@ export default {
       const img = new Image()
       img.src = require(`@/assets/img/entity-symbol2/${entityType}${suffix}.svg`)
       return img
-    },
-    getNeighborItems (node) {
-      const { links } = this.graph.graphData()
-      const neighboringNodes = []
-      const neighboringTargetNodes = []
-      const neighboringSourceNodes = []
-      const neighboringTargetLinks = []
-      const neighboringSourceLinks = []
-      const neighboringLinks = links.filter(l => {
-        if (l.target === node || l.source === node) {
-          neighboringNodes.push(l.target === node ? l.source : l.target)
-          if (l.target === node) {
-            neighboringSourceNodes.push(l.source)
-            neighboringSourceLinks.push(l)
-          } else {
-            neighboringTargetNodes.push(l.target)
-            neighboringTargetLinks.push(l)
-          }
-          return true
-        }
-        return false
-      })
-      return {
-        nodes: neighboringNodes,
-        targetNodes: neighboringTargetNodes,
-        sourceNodes: neighboringSourceNodes,
-        links: neighboringLinks,
-        targetLinks: neighboringTargetLinks,
-        sourceLinks: neighboringSourceLinks
-      }
     }
   },
   watch: {

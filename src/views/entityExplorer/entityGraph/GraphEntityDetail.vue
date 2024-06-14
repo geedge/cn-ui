@@ -176,7 +176,6 @@ export default {
     node: {
       deep: true,
       handler (n) {
-        console.info(n)
         this.handleDetailData(n)
       }
     }
