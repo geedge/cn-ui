@@ -22,7 +22,7 @@ export function generateLabel (type, id, data, sourceNode) {
 }
 
 export function builtTooltip (node) {
-  if (node) {
+  if (node && node.type !== nodeType.tempNode) {
     if (node.type === nodeType.listNode) {
       let iconClass = ''
       let title = ''
@@ -75,9 +75,6 @@ export function builtTooltip (node) {
       } else {
         return `<div style="padding: 0 6px; font-size: 15px; line-height: 15px; color: #111;">${node.id}</div>`
       }
-    } else if (node.type === nodeType.tempNode) {
-      return `<div style="padding: 0 6px; font-size: 15px; line-height: 15px; color: #111;">${node.id}</div>`
-      // return node.label
     }
   }
 }
