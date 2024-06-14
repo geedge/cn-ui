@@ -753,10 +753,12 @@ export default {
       }
     },
     cleanTempItems () {
-      let { nodes, links } = this.graph.graphData()
-      nodes = nodes.filter(n => n.type !== nodeType.tempNode)
-      links = links.filter(l => l.level !== 3)
-      this.graph.graphData({ nodes, links })
+      const { nodes, links } = this.graph.graphData()
+      const newNodes = nodes.filter(n => n.type !== nodeType.tempNode)
+      const newLinks = links.filter(l => l.level !== 3)
+      if (newNodes.length !== nodes.length || newLinks.length !== links.length) {
+        this.graph.graphData({ nodes: newNodes, links: newLinks })
+      }
     },
     async generateInitialData (clickNode) {
       const nodes = []
@@ -812,6 +814,7 @@ export default {
         }
         nodes.push(...listNodes, ...entityNodes)
       }
+      this.rightBox.node = rootNode
       return {
         nodes,
         links
@@ -939,7 +942,7 @@ export default {
 
     const rightBox = ref({
       mode: 'detail', // list | detail
-      show: false,
+      show: true,
       node: null,
       loading: true
     })
