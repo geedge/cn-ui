@@ -1,6 +1,6 @@
 {
   "name": "cn",
-  "version": "24.04",
+  "version": "24.4.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

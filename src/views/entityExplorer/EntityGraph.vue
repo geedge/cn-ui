@@ -5,7 +5,7 @@
       <el-drawer
           v-model="rightBox.show"
           direction="rtl"
-          custom-class="entity-graph__detail"
+          class="entity-graph__detail"
           :close-on-click-modal="true"
           :modal="false"
           :size="400"
@@ -48,6 +48,7 @@ import GraphEntityDetail from '@/views/entityExplorer/entityGraph/GraphEntityDet
 import { useRoute } from 'vue-router'
 import { ref, shallowRef } from 'vue'
 import ForceGraph from 'force-graph'
+import { Algorithm } from '@antv/g6'
 // import ForceGraph3D from '3d-force-graph'
 import * as d3 from 'd3'
 import Node, { nodeType } from './entityGraph/node'
@@ -82,12 +83,11 @@ export default {
       try {
         this.currentNodeData = await this.generateInitialData()
         this.initialData = _.cloneDeep(this.currentNodeData) // 初始化数据
-        const _this = this
         let hoverNode = null
         this.graph = ForceGraph()(document.getElementById('entityGraph'))
-          .graphData(_this.currentNodeData)
+          .graphData(this.currentNodeData)
           .nodeCanvasObject((node, ctx) => {
-            const nodeStyle = _this.getNodeStyle(node.type, node.data.entityType)
+            const nodeStyle = this.getNodeStyle(node.type, node.data.entityType)
             const iconWidth = nodeStyle.iconWidth / 2
             const iconHeight = nodeStyle.iconHeight / 2
             const x = node.x - iconWidth / 2
@@ -180,14 +180,14 @@ export default {
             }
           })
           .nodePointerAreaPaint((node, color, ctx) => { // 鼠标hover起作用的范围
-            const nodeStyle = _this.getNodeStyle(node.type, node.data.entityType)
+            const nodeStyle = this.getNodeStyle(node.type, node.data.entityType)
             const size = nodeStyle.innerR
             ctx.fillStyle = color
             ctx.fillRect(node.x - size / 2, node.y - size / 2, size, size) // draw square as pointer trap
           })
           .linkCanvasObject((link, ctx) => {
             if (link.source.x !== undefined && link.source.y !== undefined && link.target.x !== undefined && link.target.y !== undefined) {
-              const nodeStyle = _this.getNodeStyle(link.target.type, link.target.data.entityType)
+              const nodeStyle = this.getNodeStyle(link.target.type, link.target.data.entityType)
 
               ctx.lineWidth = 0.5
               ctx.beginPath()
@@ -200,9 +200,9 @@ export default {
               const lineDash = link.target.type === nodeType.tempNode ? [2, 2] : []
               ctx.setLineDash(lineDash)
               ctx.moveTo(link.source.x, link.source.y)
-              const xy = _this.findCircleLineIntersection(link.target.x, link.target.y, nodeStyle.innerR / 2, link.source.x, link.source.y)
+              const xy = this.findCircleLineIntersection(link.target.x, link.target.y, nodeStyle.innerR / 2, link.source.x, link.source.y)
               ctx.lineTo(xy[0].x, xy[0].y)
-              _this.drawArrow(ctx, link.source.x, link.source.y, xy[0].x, xy[0].y, 40, 3)
+              this.drawArrow(ctx, link.source.x, link.source.y, xy[0].x, xy[0].y, 40, 3)
 
               // 圆角三角形
               if (this.clickNode && (this.clickNode.id === link.source.id || this.clickNode.id === link.target.id)) {
@@ -226,13 +226,12 @@ export default {
           .centerAt(0, 30)// 设置中心节点位置
           .onNodeClick(async (nodeModel, e) => {
             this.clickNode = nodeModel || null
-            const newLevel = nodeModel.level + 1
             if (nodeModel.type !== 'tempNode') {
-              // _this.rightBox.show = true
-              _this.cleanTempNodesAndTempEdges()
+              this.rightBox.show = true
+              this.cleanTempItems()
               // 点击entityNode，查询数据，并根据数据生成tempNode
               if (nodeModel.type === nodeType.entityNode) {
-                // _this.rightBox.loading = true
+                this.rightBox.loading = true
                 try {
                   // 若已查过数据，不重复查询
                   if (!nodeModel.data.relatedEntities) {
@@ -251,12 +250,11 @@ export default {
                               `${nodeModel.id}__${k}__temp`,
                               {
                                 entityType: k,
-                                ..._this.generateTempNodeCoordinate(nodeModel.getSourceNode(_this.currentNodeData), e)
+                                ...this.generateTempNodeCoordinate(nodeModel.getSourceNode(this.currentNodeData), e)
                               },
                               nodeModel,
                               this.defaultChargeStrength,
-                              this.getIconUrl(k, false, false),
-                              newLevel
+                              this.getIconUrl(k, false, false)
                         )
                         this.$nextTick(() => {
                           tempNode.fx = tempNode.x
@@ -264,34 +262,34 @@ export default {
                         })
 
                         const tempEdge = new Link(nodeModel, tempNode, 'temp', this.defaultLinkDistance, 3)
-                        _this.currentNodeData.nodes.push(tempNode)
-                        _this.currentNodeData.links.push(tempEdge)
-                        _this.graph.graphData(_this.currentNodeData)
+                        this.currentNodeData.nodes.push(tempNode)
+                        this.currentNodeData.links.push(tempEdge)
+                        this.graph.graphData(this.currentNodeData)
                       }
                     }
                   })
-                  // change && _this.graph.layout()//?????????????
-                  _this.rightBox.node = _.cloneDeep(nodeModel)
-                  _this.rightBox.mode = 'detail'
+                  // change && this.graph.layout()//?????????????
+                  this.rightBox.node = _.cloneDeep(nodeModel)
+                  this.rightBox.mode = 'detail'
                 } catch (e) {
-                  console.log(e)
-                  _this.$message.error(_this.errorMsgHandler(e))
+                  console.error(e)
+                  this.$message.error(this.errorMsgHandler(e))
                 } finally {
-                  _this.rightBox.loading = false
+                  this.rightBox.loading = false
                 }
               } else if (nodeModel.type === nodeType.listNode) {
-                _this.rightBox.node = _.cloneDeep(nodeModel)
-                _this.rightBox.mode = 'list'
+                this.rightBox.node = _.cloneDeep(nodeModel)
+                this.rightBox.mode = 'list'
               } else if (nodeModel.type === nodeType.rootNode) {
-                _this.rightBox.node = _.cloneDeep(nodeModel)
-                _this.rightBox.mode = 'detail'
+                this.rightBox.node = _.cloneDeep(nodeModel)
+                this.rightBox.mode = 'detail'
               }
             } else {
               // 点击tempNode，根据source生成listNode和entityNode以及对应的edge。查完entityNode的接口再删除临时node和edge。
               // 若已达第六层，则只生成listNode，不再展开entityNode
               const nodes = []
               const edges = []
-              const sourceNode = nodeModel.getSourceNode(_this.currentNodeData)
+              const sourceNode = nodeModel.getSourceNode(this.currentNodeData)
               const listNode = new Node(
                 nodeType.listNode,
                     `${sourceNode.id}__${nodeModel.data.entityType}-list`,
@@ -302,16 +300,15 @@ export default {
                     },
                     sourceNode,
                     this.defaultChargeStrength,
-                    this.getIconUrl(nodeModel.data.entityType, false, false),
-                    newLevel
+                    this.getIconUrl(nodeModel.data.entityType, false, false)
               )
               nodes.push(listNode)
               edges.push(new Link(sourceNode, listNode, null, this.defaultLinkDistance, 2))
 
               // 判断listNode的sourceNode层级，若大于等于10（即第6层listNode），则不继续拓展entity node，并给用户提示。否则拓展entity node
-              const level = _this.getNodeLevel(listNode.sourceNode.id)
+              const level = this.getNodeLevel(listNode.sourceNode.id)
               if (level < 10) {
-                // _this.rightBox.loading = true
+                // this.rightBox.loading = true
                 try {
                   const entities = await sourceNode.queryRelatedEntities(listNode.data.entityType)
                   sourceNode.data.relatedEntities[listNode.data.entityType].list.push(...entities.list)
@@ -321,37 +318,37 @@ export default {
                       entityName: entity.vertex,
                       x: e.x + Math.random() * 100 - 50,
                       y: e.y + Math.random() * 100 - 50
-                    }, listNode, this.defaultChargeStrength, this.getIconUrl(listNode.data.entityType, true, false), newLevel)
+                    }, listNode, this.defaultChargeStrength, this.getIconUrl(listNode.data.entityType, true, false))
                     nodes.push(entityNode)
                     edges.push(new Link(listNode, entityNode, null, this.defaultLinkDistance, 2))
                   })
                 } catch (e) {
-                  console.log(e)
-                  _this.$message.error(_this.errorMsgHandler(e))
+                  console.error(e)
+                  this.$message.error(this.errorMsgHandler(e))
                 } finally {
-                  _this.rightBox.loading = false
+                  this.rightBox.loading = false
                 }
               } else {
                 this.$message.warning(this.$t('tip.maxExpandDepth'))
               }
-              _this.addItems(nodes, edges)
-              _this.cleanTempNodesAndTempEdges()
-              // _this.graph.layout()
+              this.addItems(nodes, edges)
+              this.cleanTempItems()
+              // this.graph.layout()
 
               // 手动高亮listNode
-              /* const _listNode = _this.graph.findById(listNode.id)
-                _this.graph.emit('node:click', { item: _listNode, target: _listNode.getKeyShape() })
-                if (_this.stackData.justUndo) {
-                  _this.stackData.justUndo = false
-                  _this.stackData.redo = []
+              /* const _listNode = this.graph.findById(listNode.id)
+                this.graph.emit('node:click', { item: _listNode, target: _listNode.getKeyShape() })
+                if (this.stackData.justUndo) {
+                  this.stackData.justUndo = false
+                  this.stackData.redo = []
                 }
-                if (_this.stackData.justRedo) {
-                  _this.stackData.justRedo = false
-                  _this.stackData.redo = []
+                if (this.stackData.justRedo) {
+                  this.stackData.justRedo = false
+                  this.stackData.redo = []
                 } */
             }
 
-            // _this.graph.zoom(1,0)//缩放画布
+            // this.graph.zoom(1,0)//缩放画布
 
             /* if(node.type !== nodeType.listNode && node.type !== nodeType.rootNode) {
                 let clickNodeData = await this.generateInitialData(node)
@@ -375,7 +372,7 @@ export default {
             }))// 设置线对点的力？
           .d3Force('center', d3.forceCenter().strength(0))// 设置力导图点阵中心位置, 向心力设置为0以后，d3.forceCenter(-50,-70)不起作用了
           .d3Force('charge', d3.forceManyBody().strength(node => { // 电荷力：吸引力或排斥力。forceManyBody使所有元素相互吸引或排斥。可以设置吸引或排斥的强度，.strength()其中正值导致元素相互吸引，而负值将导致元素相互排斥。
-            const strength = node.level === 0 ? -350 : node.strength// 中心节点的排斥力要设置的比较大（-300，-200，-100），这样中心节点的子节点的子节点就会是远离中心节点的状态，进行聚集。
+            const strength = node.type === nodeType.rootNode ? -350 : node.strength// 中心节点的排斥力要设置的比较大（-300，-200，-100），这样中心节点的子节点的子节点就会是远离中心节点的状态，进行聚集。
             return strength
           }))
           .onNodeDrag((node, translate) => {
@@ -413,7 +410,7 @@ export default {
         if (this.stackData.justRedo) {
           this.stackData.justRedo = false
         }
-        // this.cleanTempNodesAndTempEdges()
+        // this.cleanTempItems()
         this.graph.layout()
         this.onCloseBlock()
       } else if (code === 'redo') {
@@ -424,7 +421,7 @@ export default {
         if (this.stackData.justUndo) {
           this.stackData.justUndo = false
         }
-        // this.cleanTempNodesAndTempEdges()
+        // this.cleanTempItems()
         this.graph.layout()
         this.onCloseBlock()
       } else if (code === 'autoZoom') {
@@ -447,19 +444,18 @@ export default {
     },
 
     getNodeStyle (curNodeType, entityType) {
-      const _this = this
       switch (curNodeType) {
         case nodeType.rootNode: {
-          return _this.getRootNodeStyle(entityType)
+          return this.getRootNodeStyle(entityType)
         }
         case nodeType.listNode: {
-          return _this.getListNodeStyle(entityType)
+          return this.getListNodeStyle(entityType)
         }
         case nodeType.entityNode: {
-          return _this.getEntityNodeStyle(entityType)
+          return this.getEntityNodeStyle(entityType)
         }
         case nodeType.tempNode: {
-          return _this.getTempNodeStyle(entityType)
+          return this.getTempNodeStyle(entityType)
         }
       }
     },
@@ -733,8 +729,15 @@ export default {
       ctx.lineTo(toX + topX, toY + topY)
     },
     getNodeLevel (id) {
-      // this.graph.d3AlphaTarget()
-      return 2
+      const { findShortestPath } = Algorithm
+      const { nodes, links } = this.graph.graphData()
+      const g6FormatData = { nodes: _.cloneDeep(nodes), edges: _.cloneDeep(links) }
+      g6FormatData.edges.forEach(l => {
+        l.source = l.source.id
+        l.target = l.target.id
+      })
+      const info = findShortestPath(g6FormatData, this.entity.entityName, id)
+      return info.length
     },
     generateTempNodeCoordinate (sourceNode, event) {
       const sx = sourceNode.x
@@ -746,42 +749,26 @@ export default {
         y: cy + cy - sy + Math.random() * 30 - 15
       }
     },
-    addItems (nodes = [], edges = [], stack = true) {
-      // 过滤掉已经存在的node
-      const _nodes = nodes.filter(n => {
-        return !this.currentNodeData.nodes.find(node => node.id === n.id)// ???????????
-      })
-      _nodes.forEach(n => {
-        this.currentNodeData.nodes.push(n)
-      })
-      edges.forEach(e => {
-        this.currentNodeData.links.push(e)
-      })
-      if (_nodes.length > 0 || edges.length > 0) {
-        this.graph.graphData(this.currentNodeData)
+    addItems (toAddNodes, toAddLinks) {
+      if (toAddNodes.length || toAddLinks.length) {
+        const { nodes, links } = this.graph.graphData()
+        const nodes2 = toAddNodes.filter(n => !nodes.some(n2 => n.id === n2.id))
+        nodes.push(...nodes2)
+        links.push(...toAddLinks)
+        this.graph.graphData({ nodes, links })
       }
     },
-    cleanTempNodesAndTempEdges () {
-      // 清除现有tempNode和tempEdge
-      const tempNodes = this.currentNodeData.nodes.filter(node => node.type === nodeType.tempNode)
-      tempNodes.forEach(n => {
-        const tempNodeIndex = this.currentNodeData.nodes.indexOf(n)
-        this.currentNodeData.nodes.splice(tempNodeIndex, 1)
-      })
-      const tempEdges = this.currentNodeData.links.filter(edge => edge.type === 'temp')
-      tempEdges.forEach(n => {
-        const tempEdgeIndex = this.currentNodeData.links.indexOf(n)
-        this.currentNodeData.links.splice(tempEdgeIndex, 1)
-      })
-      if (tempNodes.length > 0 || tempEdges.length > 0) {
-        this.graph.graphData(this.currentNodeData)
-      }
+    cleanTempItems () {
+      let { nodes, links } = this.graph.graphData()
+      nodes = nodes.filter(n => n.type !== nodeType.tempNode)
+      links = links.filter(l => l.level !== 3)
+      this.graph.graphData({ nodes, links })
     },
     async generateInitialData (clickNode) {
       const nodes = []
       const links = []
 
-      const rootNode = clickNode || new Node(nodeType.rootNode, this.entity.entityName, this.entity, null, this.defaultChargeStrength, this.getIconUrl(this.entity.entityType, true, true), 0)
+      const rootNode = clickNode || new Node(nodeType.rootNode, this.entity.entityName, this.entity, null, this.defaultChargeStrength, this.getIconUrl(this.entity.entityType, true, true))
       await rootNode.queryDetailData()
       nodes.push(rootNode)
       this.clickNode = rootNode
@@ -802,8 +789,7 @@ export default {
               },
               rootNode,
               this.defaultChargeStrength,
-              this.getIconUrl(k, false, false),
-              1
+              this.getIconUrl(k, false, false)
             )
             listNodes.push(listNode)
             links.push(new Link(rootNode, listNode, null, 60, 1))
@@ -824,8 +810,7 @@ export default {
               },
               listNode,
               this.defaultChargeStrength,
-              this.getIconUrl(listNode.data.entityType, true, false),
-              2
+              this.getIconUrl(listNode.data.entityType, true, false)
             )
             entityNodes.push(entityNode)
             links.push(new Link(listNode, entityNode, null, this.defaultLinkDistance, 2))
@@ -839,38 +824,34 @@ export default {
       }
     },
     async expandList (nodeId) {
-      const node = this.graph.findById(nodeId)
-      const model = node.getModel()
-      const sourceNode = this.graph.findById(model.sourceNode.id)
-      const sourceModel = sourceNode.getModel()
-      const expandType = model.myData.entityType
-      if (sourceModel.myData.relatedEntity[expandType].list.length >= sourceModel.myData.relatedEntity[expandType].total) {
+      const { nodes } = this.graph.graphData()
+      const node = nodes.find(n => n.id === nodeId)
+      const sourceNode = nodes.find(n => n.id === node.sourceNode.id)
+      const expandType = node.data.entityType
+      if (sourceNode.data.relatedEntities[expandType].list.length >= sourceNode.data.relatedEntities[expandType].total) {
         return
       }
-      if (sourceModel.myData.relatedEntity[expandType].list.length < 50) {
+      if (sourceNode.data.relatedEntities[expandType].list.length < 50) {
         this.rightBox.loading = true
         try {
-          const entities = await queryRelatedEntity(sourceModel, expandType)
-          sourceModel.myData.relatedEntity[expandType].list.push(...entities.list)
-          const entityNodeModels = []
-          const edgeModels = []
+          const entities = await sourceNode.queryRelatedEntities(expandType)
+          sourceNode.data.relatedEntities[expandType].list.push(...entities.list)
+          const toAddNodes = []
+          const toAddLinks = []
           entities.list.forEach(entity => {
-            const entityNodeModel = new Node(nodeType.entityNode, entity.vertex, {
+            const toAddNode = new Node(nodeType.entityNode, entity.vertex, {
               entityType: expandType,
-              entityName: entity.vertex,
-              x: model.x + Math.random() * 500 - 250,
-              y: model.y + Math.random() * 500 - 250
-            }, model)
-            entityNodeModels.push(entityNodeModel)
+              entityName: entity.vertex
+            }, node, this.defaultChargeStrength, this.getIconUrl(node.data.entityType, true, false))
+            toAddNodes.push(toAddNode)
 
-            const edge = new Edge(model, entityNodeModel)
-            edgeModels.push(edge)
+            const toAddLink = new Link(node, toAddNode, null, this.defaultLinkDistance)
+            toAddLinks.push(toAddLink)
           })
-          this.addItems(entityNodeModels, edgeModels)
-          this.setItemsStata(edgeModels, 'mySelected', true)
-          this.graph.layout()
-          this.rightBox.node = _.cloneDeep(model)
+          this.addItems(toAddNodes, toAddLinks)
+          this.rightBox.node = _.cloneDeep(node)
         } catch (e) {
+          console.error(e)
           this.$message.error(this.errorMsgHandler(e))
         } finally {
           this.rightBox.loading = false
@@ -880,55 +861,43 @@ export default {
       }
     },
     async expandDetailList (nodeId, expandType) {
-      const node = this.graph.findById(nodeId)
+      const { nodes } = this.graph.graphData()
+      const node = nodes.find(n => n.id === nodeId)
       if (node) {
-        const nodeModel = node.getModel()
-        if (nodeModel.myData.relatedEntity[expandType].list.length >= nodeModel.myData.relatedEntity[expandType].total) {
+        if (node.data.relatedEntities[expandType].list.length >= node.data.relatedEntities[expandType].total) {
           return
         }
-        if (nodeModel.myData.relatedEntity[expandType].list.length < 50) {
-          const toAddNodeModels = []
-          const toAddEdgeModels = []
+        if (node.data.relatedEntities[expandType].list.length < 50) {
+          const toAddNodes = []
+          const toAddLinks = []
 
           this.rightBox.loading = true
           try {
-            const entities = await queryRelatedEntity(nodeModel, expandType)
-            nodeModel.myData.relatedEntity[expandType].list.push(...entities.list)
-            const neighbors = node.getNeighbors('target')
-            const listNode = neighbors.find(n => n.getModel().myData.entityType === expandType)
-            let listNodeModel = listNode.getModel()
-            let listEdgeModel
-            // 如果listNode是tempNode，移除，并新建listNode
-            if (listNodeModel.type === nodeType.tempNode) {
-              // 移除tempNode和tempEdge
-              const tempEdges = listNode.getInEdges()
-              tempEdges.forEach(edge => {
-                this.graph.removeItem(edge)
-              })
-              this.graph.removeItem(listNode)
+            const entities = await node.queryRelatedEntities(expandType)
+            node.data.relatedEntities[expandType].list.push(...entities.list)
+            // 移除 tempNode 和 tempEdge
+            this.cleanTempItems()
 
-              listNodeModel = new Node(nodeType.listNode, `${nodeModel.id}__${expandType}-list`, { entityType: expandType, x: listNodeModel.x, y: listNodeModel.y }, nodeModel)
-              listEdgeModel = new Edge(nodeModel, listNodeModel)
-              toAddNodeModels.push(listNodeModel)
-              toAddEdgeModels.push(listEdgeModel)
+            const neighbors = this.getNeighborItems(node)
+            let listNode = neighbors.targetNodes.find(n => n.data.entityType === expandType)
+            if (!listNode) {
+              listNode = new Node(nodeType.listNode, `${node.id}__${expandType}-list`, { entityType: expandType }, node, this.defaultChargeStrength, this.getIconUrl(expandType, false, false))
+              const link = new Link(node, listNode, null, this.defaultLinkDistance)
+              toAddNodes.push(listNode)
+              toAddLinks.push(link)
             }
             entities.list.forEach(entity => {
-              const entityNodeModel = new Node(nodeType.entityNode, entity.vertex, {
+              const entityNode = new Node(nodeType.entityNode, entity.vertex, {
                 entityType: expandType,
-                entityName: entity.vertex,
-                x: listNodeModel.x + Math.random() * 500 - 250,
-                y: listNodeModel.y + Math.random() * 500 - 250
-              }, listNodeModel)
-              toAddNodeModels.push(entityNodeModel)
-              toAddEdgeModels.push(new Edge(listNodeModel, entityNodeModel))
+                entityName: entity.vertex
+              }, listNode, this.defaultChargeStrength, this.getIconUrl(expandType, true, false))
+              toAddNodes.push(entityNode)
+              toAddLinks.push(new Link(listNode, entityNode, null, this.defaultLinkDistance))
             })
-            this.addItems(toAddNodeModels, toAddEdgeModels)
-            if (listEdgeModel) {
-              this.graph.setItemState(this.graph.findById(listEdgeModel.id), 'mySelected', true)
-            }
-            this.graph.layout()
-            this.rightBox.node = _.cloneDeep(nodeModel)
+            this.addItems(toAddNodes, toAddLinks)
+            this.rightBox.node = _.cloneDeep(node)
           } catch (e) {
+            console.error(e)
             this.$message.error(this.errorMsgHandler(e))
           } finally {
             this.rightBox.loading = false
@@ -946,22 +915,47 @@ export default {
 
     },
     getIconUrl (entityType, colored, isRoot) {
-      let suffix
-      if (entityType === 'domain' && isRoot) {
-        suffix = '-colored2'
-      } else {
-        suffix = colored ? '-colored' : ''
-      }
+      const suffix = colored ? '-colored' : ''
       const img = new Image()
       img.src = require(`@/assets/img/entity-symbol2/${entityType}${suffix}.svg`)
       return img
+    },
+    getNeighborItems (node) {
+      const { links } = this.graph.graphData()
+      const neighboringNodes = []
+      const neighboringTargetNodes = []
+      const neighboringSourceNodes = []
+      const neighboringTargetLinks = []
+      const neighboringSourceLinks = []
+      const neighboringLinks = links.filter(l => {
+        if (l.target === node || l.source === node) {
+          neighboringNodes.push(l.target === node ? l.source : l.target)
+          if (l.target === node) {
+            neighboringSourceNodes.push(l.source)
+            neighboringSourceLinks.push(l)
+          } else {
+            neighboringTargetNodes.push(l.target)
+            neighboringTargetLinks.push(l)
+          }
+          return true
+        }
+        return false
+      })
+      return {
+        nodes: neighboringNodes,
+        targetNodes: neighboringTargetNodes,
+        sourceNodes: neighboringSourceNodes,
+        links: neighboringLinks,
+        targetLinks: neighboringTargetLinks,
+        sourceLinks: neighboringSourceLinks
+      }
     }
   },
   watch: {
   },
   async mounted () {
     if (this.entity.entityType && this.entity.entityName) {
-      this.init()
+      await this.init()
       this.debounceFunc = this.$_.debounce(this.resize, 300)
       window.addEventListener('resize', this.debounceFunc)
     }

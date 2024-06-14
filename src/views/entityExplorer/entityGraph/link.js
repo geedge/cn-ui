@@ -1,4 +1,4 @@
-export default class Edge {
+export default class Link {
   constructor (sourceNode, targetNode, type = linkType.normal, distance, level = 1) {
     this.source = sourceNode.id
     this.target = targetNode.id

@@ -10,14 +10,13 @@ export default class Node {
   * type: 对应nodeType
   * cfg: { entityType, entityName }
   * */
-  constructor (type, id, data, sourceNode, strength, img, level) {
+  constructor (type, id, data, sourceNode, strength, img) {
     this.id = id
     this.type = type
     this.vx = 0
     this.vy = 0
-    this.fx = level === 0 ? 0 : null// 设置为0，即可固定中心节点。0为中心节点，1为中心节点的子节点，2为第三级节点
-    this.fy = level === 0 ? 0 : null// 设置为0，即可固定中心节点。0为中心节点，1为中心节点的子节点，2为第三级节点
-    this.level = level
+    this.fx = sourceNode ? null : 0// 设置为0，即可固定中心节点。0为中心节点，1为中心节点的子节点，2为第三级节点
+    this.fy = sourceNode ? null : 0// 设置为0，即可固定中心节点。0为中心节点，1为中心节点的子节点，2为第三级节点
     this.img = img
     this.strength = strength || -10
     this.sourceNode = sourceNode
@@ -25,7 +24,6 @@ export default class Node {
     this.data = {
       entityType: data.entityType,
       entityName: data.entityName
-      // img:data.img
     }
     this.label = generateLabel(type, id, data, sourceNode)
     this.name = builtTooltip(this)
@@ -73,6 +71,7 @@ export default class Node {
     if (this.data.entityType === entityType.domain && targetEntityType === entityType.domain) {
       _targetEntityType = 'subdomain'
     }
+    console.info(this.data, targetEntityType)
     const url = `${api.entity.entityGraph[`${this.data.entityType}Related${_.upperFirst(_targetEntityType)}`]}?resource=${this.data.entityName}&pageSize=10&pageNo=${this.data.relatedEntities[targetEntityType].pageNo + 1}`
     const response = await axios.get(url).catch(e => {
       console.error(e)
