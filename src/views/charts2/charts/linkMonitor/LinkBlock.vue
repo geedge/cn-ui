@@ -64,6 +64,7 @@
       <div class="block-list__list" v-show="!nextHopNoData" v-else>
         <el-popover
             placement="bottom"
+            effect="dark"
             trigger="hover"
             popper-class="link-block__popper"
             v-for="(item, index) in nextHopData"
