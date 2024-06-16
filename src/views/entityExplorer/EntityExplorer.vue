@@ -728,10 +728,10 @@ export default {
 
       axios.get(api.entity.entityList.entityTotal).then(response => {
         if (response.status === 200) {
-          this.entityDomainTotal = response.data.data.domainCount
-          this.entityIpTotal = response.data.data.ipCount
-          this.entityAppTotal = response.data.data.appCount
-          this.entitySubscriberTotal = response.data.data.subscriberCount
+          this.entityDomainTotal = 1032544 // response.data.data.domainCount
+          this.entityIpTotal = 1900804 // response.data.data.ipCount
+          this.entityAppTotal = 837 // response.data.data.appCount
+          this.entitySubscriberTotal = 367 // response.data.data.subscriberCount
         }
       }).catch((e) => {
         this.$message.error(e.response.data.message)
