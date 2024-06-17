@@ -110,8 +110,12 @@ export default {
   mixins: [rightBoxMixin],
   data () {
     const validatePin = (rule, value, callback) => { // 确认密码
-      if (value && value.length < 5) {
-        callback(new Error(this.$t('validate.atLeastFive')))
+      const reg = /^[-\d\w/~!@#$%^&*_.?]+$/g
+      const isValid = value.match(reg) // 返回匹配到的值
+      if (value && value.length < 8) {
+        callback(new Error(this.$t('validate.atLeastEight')))
+      } else if (!isValid) {
+        callback(new Error(this.$t('validate.passwordError')))
       } else {
         callback()
       }
@@ -143,13 +147,13 @@ export default {
     const validateUserName = (rule, value, callback) => {
       let validate = true
       // const reg = /^[a-zA-Z0-9_\u4e00-\u9fa5\u30a1-\u30f6\u3041-\u3093\uFF00-\uFFFF\u4e00-\u9fa5\u0400-\u04FF\s]{2,64}$/
-      // 校验，只允许中、英、数字和下划线
-      const reg = /^[\u4e00-\u9fa5_a-zA-Z0-9]{2,64}$/
+      // 校验，只允许英文、数字和标点符号
+      const reg = /^[A-Za-z0-9~!@#$%^&*_.?]+$/
       validate = reg.test(value)
       if (value.length < 2) {
         callback(new Error(this.$t('validate.atLeastTwo')))
       } else if (!validate) {
-        callback(new Error(this.$t('validate.userName')))
+        callback(new Error(this.$t('validate.userName1')))
       } else {
         callback()
       }
