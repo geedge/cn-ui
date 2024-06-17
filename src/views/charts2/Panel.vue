@@ -422,6 +422,10 @@ export default {
     },
     // 动态查询评分基准
     queryScoreBase () {
+      const { name } = this.$route
+      if (name === fromRoute.linkMonitor) {
+        return true
+      }
       const params = {
         startTime: this.timeFilter.startTime,
         endTime: this.timeFilter.endTime
