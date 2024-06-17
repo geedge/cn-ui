@@ -1,4 +1,4 @@
-FROM nginx:latest
+FROM 192.168.40.153:9080/common/nginx-cn:1.0.0
 
 MAINTAINER shizhendong shizhendong@zdjizhi.com
 
