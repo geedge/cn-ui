@@ -25,15 +25,15 @@
       </div>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.tcpConnectionEstablishLatency')}}</div>
-        <div class="link-traffic-list-center-value" test-id="line-tcp">{{valueToRangeValue(Math.floor(linkTrafficListData.establishLatencyMs), unitTypes.time).join('')}}</div>
+        <div class="link-traffic-list-center-value" test-id="line-tcp">{{valueToRangeValue(linkTrafficListData.establishLatencyMs === null ? null : Math.floor(linkTrafficListData.establishLatencyMs), unitTypes.time).join('')}}</div>
       </div>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.httpResponse')}}</div>
-        <div class="link-traffic-list-center-value" test-id="line-http">{{valueToRangeValue(Math.floor(linkTrafficListData.httpResponseLatency), unitTypes.time).join('')}}</div>
+        <div class="link-traffic-list-center-value" test-id="line-http">{{valueToRangeValue(linkTrafficListData.httpResponseLatency === null ? null : Math.floor(linkTrafficListData.httpResponseLatency), unitTypes.time).join('')}}</div>
       </div>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.sslResponseLatency')}}</div>
-        <div class="link-traffic-list-center-value" test-id="line-ssl">{{valueToRangeValue(Math.floor(linkTrafficListData.sslConLatency), unitTypes.time).join('')}}</div>
+        <div class="link-traffic-list-center-value" test-id="line-ssl">{{valueToRangeValue(linkTrafficListData.sslConLatency === null ? null : Math.floor(linkTrafficListData.sslConLatency), unitTypes.time).join('')}}</div>
       </div>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.packetLoss')}}</div>
@@ -126,9 +126,9 @@ export default {
       if (this.queryCondition) {
         const condition = this.queryCondition.split(' or ')
         if (condition.length > 1) {
-          // params.outParam = true
           params.outParam = condition.find(c => c.indexOf('out_link_id') > -1 || c.indexOf('out_link_direction') > -1)
           params.inParam = condition.find(c => c.indexOf('in_link_id') > -1 || c.indexOf('in_link_direction') > -1)
+          params.q = this.queryCondition
           let bandwidthAll = 0
           let inLinkId = null
           let outLinkId = null
