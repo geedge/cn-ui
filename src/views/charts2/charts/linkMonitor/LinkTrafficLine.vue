@@ -161,6 +161,7 @@ export default {
         if (condition.length > 1) {
           params.outParam = condition.find(c => c.indexOf('out_link_id') > -1 || c.indexOf('out_link_direction') > -1)
           params.inParam = condition.find(c => c.indexOf('in_link_id') > -1 || c.indexOf('in_link_direction') > -1)
+          params.q = this.queryCondition
         }
       }
       this.loading = true
