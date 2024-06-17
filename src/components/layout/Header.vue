@@ -466,6 +466,15 @@ export default {
   },
   setup () {
     const { query } = useRoute()
+    const newQuery = query
+    // 重刷界面后url里参数带空格的部分会被转为+，此处将+再转为空格。后续观察是否存在原本参数带+被误转的
+    Object.keys(newQuery).forEach(item => {
+      if (newQuery[item] && newQuery[item].indexOf('+') > -1) {
+        newQuery[item] = newQuery[item].replaceAll('+', ' ')
+      }
+    })
+    const newUrl = urlParamsHandler(window.location.href, query, newQuery)
+    overwriteUrl(newUrl)
     // 获取url携带的range、startTime、endTime
     const rangeParam = query.range
     const startTimeParam = query.startTime
