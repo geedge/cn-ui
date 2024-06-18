@@ -128,7 +128,7 @@ export default {
       let className
       switch (_.get(this.node, 'data.entityType', '')) {
         case ('ip'): {
-          className = 'cn-icon cn-icon-ip2'
+          className = 'cn-icon cn-icon-resolve-ip'
           break
         }
         case ('domain'): {
