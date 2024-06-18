@@ -122,7 +122,7 @@ export default {
   watch: {
     timeFilter: {
       handler () {
-        if (this.$route.path === '/panel/networkAppPerformance') {
+        if (this.$route.path === '/panel/networkAppPerformance' || this.$route.path === '/panel/linkMonitor') {
           this.$store.commit('resetScoreBase')
           this.queryScoreBase()
           if (this.lineQueryCondition || this.networkOverviewBeforeTab) {
@@ -227,7 +227,7 @@ export default {
         this.scoreCalculation()
       }
     }
-    if (this.$route.path === '/panel/networkAppPerformance') {
+    if (this.$route.path === '/panel/networkAppPerformance' || this.$route.path === '/panel/linkMonitor') {
       this.$store.commit('resetScoreBase')
       this.queryScoreBase()
     }
