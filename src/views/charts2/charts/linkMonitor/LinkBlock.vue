@@ -237,12 +237,26 @@ export default {
                 }
               })
               this.linkNoData = data.length === 0
-              data.forEach(item => {
-                item.totalBitsRate = item.outBitsRate + item.inBitsRate
-                linkConfig.filter(info => info.interfaceName === item.interfaceName).forEach(info => {
-                  item.linkId = info.linkId
+              if (!isTwoWay) {
+                data.forEach(item => {
+                  item.totalBitsRate = item.outBitsRate + item.inBitsRate
+                  linkConfig.filter(info => info.interfaceName === item.interfaceName).forEach(info => {
+                    item.linkId = info.linkId
+                  })
                 })
-              })
+              } else {
+                data.forEach(item => {
+                  item.totalBitsRate = item.outBitsRate + item.inBitsRate
+                  item.isTwoWay = true
+                  linkConfig.filter(info => info.interfaceName === item.interfaceName).forEach(info => {
+                    if (info.direction === 0) {
+                      item.outLinkId = info.linkId
+                    } else if (info.direction === 1) {
+                      item.inLinkId = info.linkId
+                    }
+                  })
+                })
+              }
 
               const sorted = data.sort((a, b) => b.totalBitsRate - a.totalBitsRate)
               const linkColors = colorGradientCalculation(this.gradientColor[0], this.gradientColor[1], sorted.map(s => s.totalBitsRate))
@@ -384,7 +398,9 @@ export default {
       return width
     },
     drillLinkId (item) {
-      const queryCondition = `out_link_id = ${item.linkId} or in_link_id = ${item.linkId}`
+      const queryCondition = item.isTwoWay
+        ? `out_link_id = ${item.outLinkId} or in_link_id = ${item.inLinkId}`
+        : `out_link_id = ${item.linkId} or in_link_id = ${item.linkId}`
       beforeRouterPush()
       this.$router.push({
         query: {
