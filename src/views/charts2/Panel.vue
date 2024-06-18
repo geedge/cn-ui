@@ -122,7 +122,7 @@ export default {
   watch: {
     timeFilter: {
       handler () {
-        if (this.$route.path === '/panel/networkAppPerformance' || this.$route.path === '/panel/linkMonitor') {
+        if (this.$route.path === '/panel/networkAppPerformance') {
           this.$store.commit('resetScoreBase')
           this.queryScoreBase()
           if (this.lineQueryCondition || this.networkOverviewBeforeTab) {
@@ -227,7 +227,7 @@ export default {
         this.scoreCalculation()
       }
     }
-    if (this.$route.path === '/panel/networkAppPerformance' || this.$route.path === '/panel/linkMonitor') {
+    if (this.$route.path === '/panel/networkAppPerformance') {
       this.$store.commit('resetScoreBase')
       this.queryScoreBase()
     }
@@ -422,10 +422,6 @@ export default {
     },
     // 动态查询评分基准
     queryScoreBase () {
-      const { name } = this.$route
-      if (name === fromRoute.linkMonitor) {
-        return true
-      }
       const params = {
         startTime: this.timeFilter.startTime,
         endTime: this.timeFilter.endTime
