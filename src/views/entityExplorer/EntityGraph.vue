@@ -394,7 +394,7 @@ export default {
                     this.getIconUrl(node.data.entityType, false, false)
               )
               nodes.push(listNode)
-              links.push(new Link(sourceNode, listNode, null))
+              links.push(new Link(sourceNode, listNode))
 
               // 判断listNode的sourceNode层级，若大于等于10（即第6层listNode），则不继续拓展entity node，并给用户提示。否则拓展entity node
               const level = this.getNodeLevel(listNode.sourceNode.id)
@@ -411,7 +411,7 @@ export default {
                       y: e.y + Math.random() * 100 - 50
                     }, listNode, this.defaultChargeStrength, this.getIconUrl(listNode.data.entityType, false, false))
                     nodes.push(entityNode)
-                    links.push(new Link(listNode, entityNode, null))
+                    links.push(new Link(listNode, entityNode))
                   })
                 } catch (e) {
                   console.error(e)
@@ -909,7 +909,7 @@ export default {
     cleanTempItems () {
       const { nodes, links } = this.graph.graphData()
       const newNodes = nodes.filter(n => n.type !== nodeType.tempNode)
-      const newLinks = links.filter(l => l.level !== 3)
+      const newLinks = links.filter(l => l.type !== linkType.temp)
       if (newNodes.length !== nodes.length || newLinks.length !== links.length) {
         this.graph.graphData({ nodes: newNodes, links: newLinks })
       }
@@ -957,7 +957,7 @@ export default {
               this.getIconUrl(k, false, false)
             )
             listNodes.push(listNode)
-            links.push(new Link(rootNode, listNode, null, 60, 1))
+            links.push(new Link(rootNode, listNode))
           }
         })
         // entityNode
@@ -975,10 +975,10 @@ export default {
               },
               listNode,
               this.defaultChargeStrength,
-              this.getIconUrl(listNode.data.entityType, true, false)
+              this.getIconUrl(listNode.data.entityType, false, false)
             )
             entityNodes.push(entityNode)
-            links.push(new Link(listNode, entityNode, null, this.defaultLinkDistance, 2))
+            links.push(new Link(listNode, entityNode))
           })
         }
         nodes.push(...listNodes, ...entityNodes)
@@ -1008,10 +1008,10 @@ export default {
             const toAddNode = new Node(nodeType.entityNode, entity.vertex, {
               entityType: expandType,
               entityName: entity.vertex
-            }, node, this.defaultChargeStrength, this.getIconUrl(node.data.entityType, true, false))
+            }, node, this.defaultChargeStrength, this.getIconUrl(node.data.entityType, false, false))
             toAddNodes.push(toAddNode)
 
-            const toAddLink = new Link(node, toAddNode, null, this.defaultLinkDistance)
+            const toAddLink = new Link(node, toAddNode)
             toAddLinks.push(toAddLink)
           })
           this.addItems(toAddNodes, toAddLinks)
@@ -1048,7 +1048,7 @@ export default {
             let listNode = neighbors.targetNodes.find(n => n.data.entityType === expandType)
             if (!listNode) {
               listNode = new Node(nodeType.listNode, `${node.id}__${expandType}-list`, { entityType: expandType }, node, this.defaultChargeStrength, this.getIconUrl(expandType, false, false))
-              const link = new Link(node, listNode, null, this.defaultLinkDistance)
+              const link = new Link(node, listNode)
               toAddNodes.push(listNode)
               toAddLinks.push(link)
             }
@@ -1056,9 +1056,9 @@ export default {
               const entityNode = new Node(nodeType.entityNode, entity.vertex, {
                 entityType: expandType,
                 entityName: entity.vertex
-              }, listNode, this.defaultChargeStrength, this.getIconUrl(expandType, true, false))
+              }, listNode, this.defaultChargeStrength, this.getIconUrl(expandType, false, false))
               toAddNodes.push(entityNode)
-              toAddLinks.push(new Link(listNode, entityNode, null, this.defaultLinkDistance))
+              toAddLinks.push(new Link(listNode, entityNode))
             })
             this.addItems(toAddNodes, toAddLinks)
             this.rightBox.node = _.cloneDeep(node)
@@ -1111,7 +1111,7 @@ export default {
 
     const rightBox = ref({
       mode: 'detail', // list | detail
-      show: false,//true,
+      show: true,
       node: null,
       loading: true
     })
