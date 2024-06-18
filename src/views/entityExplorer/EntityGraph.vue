@@ -49,7 +49,6 @@ import { useRoute } from 'vue-router'
 import { ref, shallowRef } from 'vue'
 import ForceGraph from 'force-graph'
 import { Algorithm } from '@antv/g6'
-// import ForceGraph3D from '3d-force-graph'
 import * as d3 from 'd3'
 import Node, { nodeType } from './entityGraph/node'
 import Link, { linkType } from './entityGraph/link'
@@ -71,9 +70,8 @@ export default {
       links: [],
       graph: shallowRef(null),
       defaultChargeStrength: -20, // 之前的设置-20
-      defaultLinkDistance: 40,
+      defaultLinkDistance: 80,
       defaultMargin: 2, // 图像与箭头的距离
-      clickNode: null,
       rootNode: null
     }
   },
@@ -82,110 +80,193 @@ export default {
       try {
         const initialData = await this.generateInitialData()
         this.initialData = _.cloneDeep(initialData) // 初始化数据
+        console.info(initialData)
         let hoverNode = null
         this.graph = ForceGraph()(document.getElementById('entityGraph'))
           .graphData(initialData)
           .nodeCanvasObject((node, ctx) => {
+            /*
+            * 共有4种 nodeType，3种 entityType
+            * */
             const nodeStyle = this.getNodeStyle(node.type, node.data.entityType)
-            const iconWidth = nodeStyle.iconWidth / 2
-            const iconHeight = nodeStyle.iconHeight / 2
-            const x = node.x - iconWidth / 2
-            const y = node.y - iconHeight / 2
+            switch (node.type) {
+              case nodeType.rootNode: {
+                // 如果是鼠标点击高亮的，最外层加上第三层圆环
+                if (node === this.clickNode) {
+                  ctx.beginPath()
+                  ctx.arc(node.x, node.y, nodeStyle.selectedShadowR, 0, 2 * Math.PI, false)
+                  ctx.closePath()
+                  ctx.fillStyle = nodeStyle.selectedShadowColor
+                  ctx.fill()
+                }
 
-            if (node.type === nodeType.rootNode) {
-              if (this.clickNode && this.clickNode.type === nodeType.rootNode) {
+                // 第二层圆环
                 ctx.beginPath()
-                ctx.lineWidth = 1
-                ctx.strokeStyle = 'transparent'
-                ctx.arc(node.x, node.y, nodeStyle.selectedShadowR / 2, 0, Math.PI * 2)
-                ctx.fillStyle = nodeStyle.selectedShadowColor// 先画圆形，才能填色
+                ctx.arc(node.x, node.y, nodeStyle.shadowR, 0, 2 * Math.PI, false)
+                ctx.closePath()
+                ctx.fillStyle = node === this.clickNode || node === hoverNode ?
+                    nodeStyle.hoveredShadowColor :
+                    nodeStyle.shadowColor
                 ctx.fill()
-                ctx.stroke()
+                // 内部挖空
+                ctx.beginPath()
+                ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
+                ctx.closePath()
+                ctx.fillStyle = nodeStyle.fillStyle
+                ctx.fill()
 
+                // 第一层圆环
                 ctx.beginPath()
+                ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
+                ctx.closePath()
                 ctx.lineWidth = 1
-                ctx.strokeStyle = 'transparent'
-                ctx.arc(node.x, node.y, nodeStyle.shadowR / 2, 0, Math.PI * 2)
-                ctx.fillStyle = nodeStyle.shadowColor
-                ctx.fill()
+                ctx.strokeStyle = nodeStyle.borderColor
                 ctx.stroke()
-              } else if (hoverNode && hoverNode.id === node.id) {
-                ctx.beginPath()
-                ctx.lineWidth = 1
-                ctx.strokeStyle = 'transparent'
-                ctx.arc(node.x, node.y, nodeStyle.shadowR / 2, 0, Math.PI * 2)
-                ctx.fillStyle = nodeStyle.hoveredShadowColor
-                ctx.fill()
-                ctx.stroke()
-              } else {
-                ctx.beginPath()
-                ctx.lineWidth = 1
-                ctx.strokeStyle = 'transparent'
-                ctx.arc(node.x, node.y, nodeStyle.shadowR / 2, 0, Math.PI * 2)
-                ctx.fillStyle = nodeStyle.shadowColor
-                ctx.fill()
-                ctx.stroke()
+                // 图片
+                ctx.drawImage(node.img, node.x - nodeStyle.iconWidth / 2, node.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight);
+                // 文字
+                ctx.font = nodeStyle.font
+                const textWidth = ctx.measureText(node.label).width
+                const bckgDimensions = [textWidth, 9].map(n => n + 9 * 0.2)
+                ctx.fillStyle = nodeStyle.fontBgColor
+                ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2 + 31, ...bckgDimensions) // 文字的白底
+
+                ctx.textAlign = 'center'
+                ctx.textBaseline = 'middle'
+                ctx.fillStyle = nodeStyle.fontColor
+                ctx.fillText(node.label, node.x, node.y + 30)
+                break
               }
-            } else if (node.type === nodeType.listNode) {
-              if (this.clickNode && this.clickNode.id === node.id) {
+              case nodeType.listNode: {
+                // 如果是鼠标点击或者悬停的，有一层圆环
+                if (node === this.clickNode || node === hoverNode) {
+                  ctx.beginPath()
+                  ctx.arc(node.x, node.y, nodeStyle.shadowR, 0, 2 * Math.PI, false)
+                  ctx.closePath()
+                  if (node === this.currentSelectedNode) {
+                    ctx.fillStyle = nodeStyle.selectedShadowColor
+                  } else {
+                    ctx.fillStyle = nodeStyle.hoveredShadowColor
+                  }
+                  ctx.fill()
+                }
+
+                // 内部填白
                 ctx.beginPath()
-                ctx.lineWidth = 1
-                ctx.strokeStyle = 'transparent'
-                ctx.arc(node.x, node.y, nodeStyle.shadowR / 2, 0, Math.PI * 2)
-                ctx.fillStyle = nodeStyle.selectedShadowColor
+                ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
+                ctx.closePath()
+                ctx.fillStyle = nodeStyle.fillStyle
                 ctx.fill()
-                ctx.stroke()
-              } else if (hoverNode && hoverNode.id === node.id) {
+
+                // 第一层圆环
                 ctx.beginPath()
+                ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
+                ctx.closePath()
                 ctx.lineWidth = 1
-                ctx.strokeStyle = 'transparent'
-                ctx.arc(node.x, node.y, nodeStyle.shadowR / 2, 0, Math.PI * 2)
-                ctx.fillStyle = nodeStyle.hoveredShadowColor
-                ctx.fill()
+                ctx.strokeStyle = nodeStyle.borderColor
                 ctx.stroke()
+                // 图片
+                ctx.drawImage(node.img, node.x - nodeStyle.iconWidth / 2, node.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight)
+                // 文字
+                ctx.font = nodeStyle.font
+                const textWidth = ctx.measureText(node.label).width
+                const bckgDimensions = [textWidth, 8].map(n => n + 8 * 0.2)
+                ctx.fillStyle = nodeStyle.fontBgColor
+                ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2 + 24, ...bckgDimensions) // 文字的白底
+
+                ctx.textAlign = 'center'
+                ctx.textBaseline = 'middle'
+                ctx.fillStyle = nodeStyle.fontColor
+                ctx.fillText(node.label, node.x, node.y + 24)
+                break
+              }
+              case nodeType.entityNode: {
+                // 先画个白底圆环，避免 link 穿过不好看
+                ctx.beginPath()
+                ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
+                ctx.closePath()
+                ctx.fillStyle = nodeStyle.fillStyle
+                ctx.fill()
+                // 如果是鼠标点击或者悬停的，有一层圆环
+                if (node === this.clickNode || node === hoverNode) {
+                  ctx.beginPath()
+                  ctx.arc(node.x, node.y, nodeStyle.shadowR, 0, 2 * Math.PI, false)
+                  ctx.closePath()
+                  if (node === this.clickNode) {
+                    ctx.fillStyle = nodeStyle.selectedShadowColor
+                  } else {
+                    ctx.fillStyle = nodeStyle.hoveredShadowColor
+                  }
+                  ctx.fill()
+                }
+                // 图片
+                ctx.drawImage(node.img, node.x - nodeStyle.iconWidth / 2, node.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight)
+                break
+              }
+              case nodeType.tempNode: {
+                // 先画个白底圆环，避免 link 穿过不好看
+                ctx.beginPath()
+                ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
+                ctx.closePath()
+                ctx.fillStyle = nodeStyle.fillStyle
+                ctx.fill()
+                // 画透明度0.7的图标
+                ctx.globalAlpha = 0.7
+                ctx.drawImage(node.img, node.x - nodeStyle.iconWidth / 2, node.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight)
+                ctx.globalAlpha = 1
+                break
               }
             }
-
-            ctx.beginPath()
-            ctx.lineWidth = 0.5
-            ctx.strokeStyle = nodeStyle.borderColor// 边的颜色
-            ctx.arc(node.x, node.y, nodeStyle.innerR / 2, 0, Math.PI * 2)
-            ctx.fillStyle = nodeStyle.fill// 中间的填充色
-            ctx.fill()
-            ctx.stroke()
-
-            ctx.drawImage(node.img, x, y, iconWidth, iconHeight)
-
-            if (node.type === nodeType.rootNode) {
-              ctx.font = nodeStyle.font
-              ctx.fillStyle = nodeStyle.fillStyle
-              ctx.textAlign = nodeStyle.textAlign
-              ctx.textBaseline = nodeStyle.textBaseline
-              ctx.fillText(node.label, node.x, node.y + nodeStyle.selectedShadowR / 2 + 5)
-            } else if (node.type === nodeType.listNode || node.type === nodeType.tempNode) {
-              ctx.beginPath()
-              ctx.lineWidth = 1
-              ctx.strokeStyle = '#FFFFFF'// 边的颜色
-              ctx.rect(node.x - 19, node.y + nodeStyle.innerR / 2 + 8 - 6, 38, 12)
-              ctx.fillStyle = '#FFFFFF'
-              ctx.fill()
-              ctx.stroke()
-
-              ctx.font = nodeStyle.font
-              ctx.fillStyle = nodeStyle.fillStyle
-              ctx.textAlign = nodeStyle.textAlign
-              ctx.textBaseline = nodeStyle.textBaseline
-              ctx.fillText(node.label, node.x, node.y + nodeStyle.innerR / 2 + 8)
-            }
-          })
-          .nodePointerAreaPaint((node, color, ctx) => { // 鼠标hover起作用的范围
-            const nodeStyle = this.getNodeStyle(node.type, node.data.entityType)
-            const size = nodeStyle.innerR
-            ctx.fillStyle = color
-            ctx.fillRect(node.x - size / 2, node.y - size / 2, size, size) // draw square as pointer trap
           })
           .linkCanvasObject((link, ctx) => {
-            if (link.source.x !== undefined && link.source.y !== undefined && link.target.x !== undefined && link.target.y !== undefined) {
+            const start = link.source
+            const end = link.target
+            const width = 1 // 线宽
+            const arrowSize = 3 // 箭头大小
+            const shortenedLength = 20 // link 末端缩短长度
+
+            // 计算箭头角度
+            const dx = end.x - start.x
+            const dy = end.y - start.y
+            const angle = Math.atan2(dy, dx) // 计算与x轴的角度（弧度）
+            const lineEndX = end.x - shortenedLength * Math.cos(angle)
+            const lineEndY = end.y - shortenedLength * Math.sin(angle)
+            const arrowEndX = lineEndX + arrowSize * Math.cos(angle)
+            const arrowEndY = lineEndY + arrowSize * Math.sin(angle)
+
+            // 绘制线
+            let color
+            ctx.beginPath()
+            if (link.type === linkType.temp) {
+              ctx.setLineDash([2, 2])
+              color = 'rgba(119,131,145,0.2)' // 虚线颜色
+            } else {
+              ctx.setLineDash([])
+              if (this.clickNode === link.source || this.clickNode === link.target) {
+                color = 'rgba(119,131,145,0.8)' // 高亮线颜色
+              } else {
+                color = 'rgba(119,131,145,0.3)' // 普通线颜色
+              }
+            }
+            ctx.moveTo(start.x, start.y)
+            ctx.lineTo(lineEndX, lineEndY)
+            ctx.strokeStyle = color
+            ctx.lineWidth = width
+            ctx.stroke()
+
+            // 绘制箭头
+            ctx.save() // 保存当前状态以便之后恢复
+            ctx.translate(arrowEndX, arrowEndY) // 将坐标原点移动到箭头末端
+            ctx.rotate(angle) // 根据链接方向旋转坐标系
+            ctx.beginPath()
+            ctx.moveTo(0, 0)
+            ctx.lineTo(-arrowSize, arrowSize) // 绘制箭头的一边
+            ctx.lineTo(-arrowSize, -arrowSize) // 绘制箭头的另一边
+            ctx.closePath()
+            ctx.fillStyle = color
+            ctx.fill()
+            ctx.restore() // 恢复之前保存的状态
+            /*if (link.source.x !== undefined && link.source.y !== undefined && link.target.x !== undefined && link.target.y !== undefined) {
               const nodeStyle = this.getNodeStyle(link.target.type, link.target.data.entityType)
 
               ctx.lineWidth = 0.5
@@ -213,7 +294,7 @@ export default {
               ctx.fill()
               ctx.closePath()
               ctx.stroke()
-            }
+            }*/
           })
           .autoPauseRedraw(false) // keep redrawing after engine has stopped如果您有依赖于画布的不断重绘的自定义动态对象，建议关闭此选项。
           .onNodeHover(node => {
@@ -223,6 +304,7 @@ export default {
             }
           })
           .centerAt(0, 30)// 设置中心节点位置
+          .zoom(1)
           .onNodeClick(async (node, e) => {
             this.clickNode = node || null
             if (node.type !== 'tempNode') {
@@ -256,7 +338,7 @@ export default {
                               this.getIconUrl(k, false, false)
                         )
 
-                        const tempLink = new Link(node, tempNode, 'temp', this.defaultLinkDistance, 3)
+                        const tempLink = new Link(node, tempNode, linkType.temp)
                         toAddNodes.push(tempNode)
                         toAddLinks.push(tempLink)
                       }
@@ -265,7 +347,7 @@ export default {
                   if (toAddNodes.length || toAddLinks.length) {
                     this.addItems(toAddNodes, toAddLinks)
                   }
-                  this.rightBox.node = _.cloneDeep(node)
+                  this.rightBox.node = node
                   this.rightBox.mode = 'detail'
                 } catch (e) {
                   console.error(e)
@@ -274,17 +356,17 @@ export default {
                   this.rightBox.loading = false
                 }
               } else if (node.type === nodeType.listNode) {
-                this.rightBox.node = _.cloneDeep(node)
+                this.rightBox.node = node
                 this.rightBox.mode = 'list'
               } else if (node.type === nodeType.rootNode) {
-                this.rightBox.node = _.cloneDeep(node)
+                this.rightBox.node = node
                 this.rightBox.mode = 'detail'
               }
             } else {
               // 点击tempNode，根据source生成listNode和entityNode以及对应的edge。查完entityNode的接口再删除临时node和edge。
               // 若已达第六层，则只生成listNode，不再展开entityNode
               const nodes = []
-              const edges = []
+              const links = []
               const sourceNode = node.getSourceNode(this.graph.graphData())
               const listNode = new Node(
                 nodeType.listNode,
@@ -299,12 +381,12 @@ export default {
                     this.getIconUrl(node.data.entityType, false, false)
               )
               nodes.push(listNode)
-              edges.push(new Link(sourceNode, listNode, null, this.defaultLinkDistance, 2))
+              links.push(new Link(sourceNode, listNode, null))
 
               // 判断listNode的sourceNode层级，若大于等于10（即第6层listNode），则不继续拓展entity node，并给用户提示。否则拓展entity node
               const level = this.getNodeLevel(listNode.sourceNode.id)
               if (level < 10) {
-                // this.rightBox.loading = true
+                this.rightBox.loading = true
                 try {
                   const entities = await sourceNode.queryRelatedEntities(listNode.data.entityType)
                   sourceNode.data.relatedEntities[listNode.data.entityType].list.push(...entities.list)
@@ -314,9 +396,9 @@ export default {
                       entityName: entity.vertex,
                       x: e.x + Math.random() * 100 - 50,
                       y: e.y + Math.random() * 100 - 50
-                    }, listNode, this.defaultChargeStrength, this.getIconUrl(listNode.data.entityType, true, false))
+                    }, listNode, this.defaultChargeStrength, this.getIconUrl(listNode.data.entityType, false, false))
                     nodes.push(entityNode)
-                    edges.push(new Link(listNode, entityNode, null, this.defaultLinkDistance, 2))
+                    links.push(new Link(listNode, entityNode, null))
                   })
                 } catch (e) {
                   console.error(e)
@@ -327,7 +409,7 @@ export default {
               } else {
                 this.$message.warning(this.$t('tip.maxExpandDepth'))
               }
-              this.addItems(nodes, edges)
+              this.addItems(nodes, links)
               this.cleanTempItems()
               // this.graph.layout()
 
@@ -361,7 +443,10 @@ export default {
 
           .d3Force('link', d3.forceLink().id(link => link.id)
             .distance(link => {
-              return link.distance
+              if (link.source.type === nodeType.rootNode) {
+                return 160
+              }
+              return 80
             })
             .strength(link => {
               return link.strength
@@ -541,27 +626,26 @@ export default {
           return this.getEntityNodeStyle(entityType)
         }
         case nodeType.tempNode: {
-          return this.getTempNodeStyle(entityType)
+          return this.getEntityNodeStyle(entityType)
         }
       }
     },
     getRootNodeStyle (entityType) {
       const nodeStyle = {
-        innerR: 26,
-        fill: '#FFFFFF',
-        shadowR: 31.5,
-        selectedShadowR: 38.5,
-        font: '8px NotoSansSChineseRegular',
-        textAlign: 'center',
-        textBaseline: 'middle',
-        fillStyle: '#353636'
+        innerR: 19,
+        fillStyle: '#FFFFFF',
+        shadowR: 25,
+        selectedShadowR: 36,
+        font: '9px NotoSansSChineseRegular',
+        fontColor: '#353636',
+        fontBgColor: 'rgba(255,255,255,0.8)'
       }
       switch (entityType) {
         case 'ip': {
           return {
             ...nodeStyle,
-            iconWidth: 26,
-            iconHeight: 23,
+            iconWidth: 24,
+            iconHeight: 21,
             borderColor: 'rgba(126,159,84,1)',
             shadowColor: 'rgba(126,159,84,0.21)',
             hoveredShadowColor: 'rgba(126,159,84,0.36)',
@@ -571,7 +655,7 @@ export default {
         case 'domain': {
           return {
             ...nodeStyle,
-            iconWidth: 28,
+            iconWidth: 24,
             iconHeight: 24,
             borderColor: 'rgba(56,172,210,1)',
             shadowColor: 'rgba(56,172,210,0.21)',
@@ -582,8 +666,8 @@ export default {
         case 'app': {
           return {
             ...nodeStyle,
-            iconWidth: 24,
-            iconHeight: 26,
+            iconWidth: 21,
+            iconHeight: 24,
             borderColor: 'rgba(229,162,25,1)',
             shadowColor: 'rgba(229,162,25,0.21)',
             hoveredShadowColor: 'rgba(229,162,25,0.36)',
@@ -593,8 +677,8 @@ export default {
       }
       return {
         ...nodeStyle,
-        iconWidth: 26,
-        iconHeight: 23,
+        iconWidth: 24,
+        iconHeight: 21,
         borderColor: 'rgba(126,159,84,1)',
         shadowColor: 'rgba(126,159,84,0.21)',
         hoveredShadowColor: 'rgba(126,159,84,0.36)',
@@ -602,153 +686,68 @@ export default {
       }
     },
     getListNodeStyle (entityType) {
-      const nodeStyle = {
-        innerR: 21,
-        shadowR: 26.5,
-        fill: '#FFFFFF',
-        font: '8px NotoSansSChineseRegular',
-        textAlign: 'center',
-        textBaseline: 'middle',
-        fillStyle: '#353636'
-      }
+      let iconWidth = 20
+      let iconHeight = 18
       switch (entityType) {
         case 'ip': {
-          return {
-            ...nodeStyle,
-            iconWidth: 24,
-            iconHeight: 21,
-            borderColor: 'rgba(119,131,145,0.6)',
-            selectedBorderColor: 'rgba(126,159,84,1)',
-            hoveredShadowColor: 'rgba(151,151,151,0.21)',
-            selectedShadowColor: 'rgba(126,159,84,0.21)'
-          }
+          iconWidth = 20
+          iconHeight = 18
+          break
         }
         case 'domain': {
-          return {
-            ...nodeStyle,
-            iconWidth: 24,
-            iconHeight: 24,
-            borderColor: 'rgba(119,131,145,0.6)',
-            selectedBorderColor: 'rgba(56,172,210,1)',
-            hoveredShadowColor: 'rgba(151,151,151,0.21)',
-            selectedShadowColor: 'rgba(56,172,210,0.21)'
-          }
+          iconWidth = 20
+          iconHeight = 20
+          break
         }
         case 'app': {
-          return {
-            ...nodeStyle,
-            iconWidth: 22,
-            iconHeight: 24,
-            borderColor: 'rgba(119,131,145,0.6)',
-            selectedBorderColor: 'rgba(229,162,25,1)',
-            hoveredShadowColor: 'rgba(151,151,151,0.21)',
-            selectedShadowColor: 'rgba(229,162,25,0.21)'
-          }
+          iconWidth = 18
+          iconHeight = 20
+          break
         }
       }
       return {
-        ...nodeStyle,
-        iconWidth: 24,
-        iconHeight: 21,
-        borderColor: 'rgba(119,131,145,0.6)',
-        selectedBorderColor: 'rgba(126,159,84,1)',
+        innerR: 16,
+        shadowR: 22,
+        fillStyle: '#FFFFFF',
+        font: '9px NotoSansSChineseRegular',
+        fontColor: '#353636',
+        fontBgColor: 'rgba(255,255,255,0.8)',
+        iconWidth,
+        iconHeight,
+        borderColor: 'rgba(119,131,145,0.5)',
+        selectedBorderColor: 'rgba(119,131,145,0.8)',
         hoveredShadowColor: 'rgba(151,151,151,0.21)',
-        selectedShadowColor: 'rgba(126,159,84,0.21)'
-      }
-    },
-    getTempNodeStyle (entityType) {
-      const nodeStyle = {
-        innerR: 14,
-        fill: 'transparent',
-        font: '8px NotoSansSChineseRegular',
-        textAlign: 'center',
-        textBaseline: 'middle',
-        fillStyle: '#353636'
-      }
-      switch (entityType) {
-        case 'ip': {
-          return {
-            ...nodeStyle,
-            iconWidth: 24,
-            iconHeight: 21,
-            borderColor: '#FFFFFF',
-            selectedBorderColor: 'rgba(126,159,84,1)',
-            hoveredShadowColor: 'rgba(151,151,151,0.21)',
-            selectedShadowColor: 'rgba(126,159,84,0.21)'
-          }
-        }
-        case 'domain': {
-          return {
-            ...nodeStyle,
-            iconWidth: 24,
-            iconHeight: 24,
-            borderColor: '#FFFFFF',
-            selectedBorderColor: 'rgba(56,172,210,1)',
-            hoveredShadowColor: 'rgba(151,151,151,0.21)',
-            selectedShadowColor: 'rgba(56,172,210,0.21)'
-          }
-        }
-        case 'app': {
-          return {
-            ...nodeStyle,
-            iconWidth: 22,
-            iconHeight: 24,
-            borderColor: '#FFFFFF',
-            selectedBorderColor: 'rgba(229,162,25,1)',
-            hoveredShadowColor: 'rgba(151,151,151,0.21)',
-            selectedShadowColor: 'rgba(229,162,25,0.21)'
-          }
-        }
-      }
-      return {
-        ...nodeStyle,
-        iconWidth: 24,
-        iconHeight: 21,
-        borderColor: '#FFFFFF',
-        selectedBorderColor: 'rgba(126,159,84,1)',
-        hoveredShadowColor: 'rgba(151,151,151,0.21)',
-        selectedShadowColor: 'rgba(126,159,84,0.21)'
+        selectedShadowColor: 'rgba(151,151,151,0.4)'
       }
     },
     getEntityNodeStyle (entityType) {
-      const nodeStyle = {
-        innerR: 12,
-        fill: 'transparent'
-      }
+      let iconWidth = 20
+      let iconHeight = 18
       switch (entityType) {
         case 'ip': {
-          return {
-            ...nodeStyle,
-            iconWidth: 22,
-            iconHeight: 20,
-            selectedShadowColor: 'rgba(126,159,84,0.1)'
-          }
+          iconWidth = 20
+          iconHeight = 18
+          break
         }
         case 'domain': {
-          return {
-            ...nodeStyle,
-            iconWidth: 22,
-            iconHeight: 22,
-            selectedShadowColor: 'rgba(56,172,210,0.1)'
-          }
+          iconWidth = 20
+          iconHeight = 20
+          break
         }
         case 'app': {
-          return {
-            ...nodeStyle,
-            iconWidth: 21,
-            iconHeight: 24,
-            selectedShadowColor: 'rgba(229,162,25,0.1)'
-          }
+          iconWidth = 18
+          iconHeight = 20
+          break
         }
       }
       return {
-        ...nodeStyle,
-        iconWidth: 22,
-        iconHeight: 20,
-        borderColor: 'rgba(119,131,145,1)',
-        selectedBorderColor: 'rgba(126,159,84,1)',
-        hoveredShadowColor: 'rgba(151,151,151,0.21)',
-        selectedShadowColor: 'rgba(126,159,84,0.1)'
+        shadowR: 15,
+        innerR: 10,
+        fillStyle: '#FFFFFF',
+        iconWidth,
+        iconHeight,
+        hoveredShadowColor: 'rgba(151,151,151,0.12)',
+        selectedShadowColor: 'rgba(151,151,151,0.24)'
       }
     },
     /**
@@ -822,7 +821,7 @@ export default {
         l.source = l.source.id
         l.target = l.target.id
       })
-      const info = findShortestPath(g6FormatData, this.entity.entityName, id)
+      const info = findShortestPath(g6FormatData, this.entity.entityName + nodeType.rootNode, id)
       return info.length
     },
     generateTempNodeCoordinate (sourceNode, event) {
@@ -847,7 +846,7 @@ export default {
     cleanTempItems () {
       const { nodes, links } = this.graph.graphData()
       const newNodes = nodes.filter(n => n.type !== nodeType.tempNode)
-      const newLinks = links.filter(l => l.level !== 3)
+      const newLinks = links.filter(l => l.type !== linkType.temp)
       if (newNodes.length !== nodes.length || newLinks.length !== links.length) {
         this.graph.graphData({ nodes: newNodes, links: newLinks })
       }
@@ -895,7 +894,7 @@ export default {
               this.getIconUrl(k, false, false)
             )
             listNodes.push(listNode)
-            links.push(new Link(rootNode, listNode, null, 60, 1))
+            links.push(new Link(rootNode, listNode, null))
           }
         })
         // entityNode
@@ -913,10 +912,10 @@ export default {
               },
               listNode,
               this.defaultChargeStrength,
-              this.getIconUrl(listNode.data.entityType, true, false)
+              this.getIconUrl(listNode.data.entityType, false, false)
             )
             entityNodes.push(entityNode)
-            links.push(new Link(listNode, entityNode, null, this.defaultLinkDistance, 2))
+            links.push(new Link(listNode, entityNode, null))
           })
         }
         nodes.push(...listNodes, ...entityNodes)
@@ -946,14 +945,14 @@ export default {
             const toAddNode = new Node(nodeType.entityNode, entity.vertex, {
               entityType: expandType,
               entityName: entity.vertex
-            }, node, this.defaultChargeStrength, this.getIconUrl(node.data.entityType, true, false))
+            }, node, this.defaultChargeStrength, this.getIconUrl(node.data.entityType, false, false))
             toAddNodes.push(toAddNode)
 
-            const toAddLink = new Link(node, toAddNode, null, this.defaultLinkDistance)
+            const toAddLink = new Link(node, toAddNode, null)
             toAddLinks.push(toAddLink)
           })
           this.addItems(toAddNodes, toAddLinks)
-          this.rightBox.node = _.cloneDeep(node)
+          this.rightBox.node = node
         } catch (e) {
           console.error(e)
           this.$message.error(this.errorMsgHandler(e))
@@ -986,7 +985,7 @@ export default {
             let listNode = neighbors.targetNodes.find(n => n.data.entityType === expandType)
             if (!listNode) {
               listNode = new Node(nodeType.listNode, `${node.id}__${expandType}-list`, { entityType: expandType }, node, this.defaultChargeStrength, this.getIconUrl(expandType, false, false))
-              const link = new Link(node, listNode, null, this.defaultLinkDistance)
+              const link = new Link(node, listNode, null)
               toAddNodes.push(listNode)
               toAddLinks.push(link)
             }
@@ -994,9 +993,9 @@ export default {
               const entityNode = new Node(nodeType.entityNode, entity.vertex, {
                 entityType: expandType,
                 entityName: entity.vertex
-              }, listNode, this.defaultChargeStrength, this.getIconUrl(expandType, true, false))
+              }, listNode, this.defaultChargeStrength, this.getIconUrl(expandType, false, false))
               toAddNodes.push(entityNode)
-              toAddLinks.push(new Link(listNode, entityNode, null, this.defaultLinkDistance))
+              toAddLinks.push(new Link(listNode, entityNode, null))
             })
             this.addItems(toAddNodes, toAddLinks)
             this.rightBox.node = _.cloneDeep(node)
@@ -1053,10 +1052,12 @@ export default {
       node: null,
       loading: true
     })
+    const clickNode = shallowRef(null)
     return {
       entity,
       rightBox,
-      graph
+      graph,
+      clickNode
     }
   }
 }

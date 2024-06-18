@@ -176,6 +176,7 @@ export default {
     node: {
       deep: true,
       handler (n) {
+        console.info(n)
         this.handleDetailData(n)
       }
     }
@@ -269,6 +270,8 @@ export default {
       return location || '-'
     },
     handleDetailData (node) {
+      console.info(node)
+      console.info(_.get(node, 'data.relatedEntities.ip.list', []))
       const n = node
       const type = _.get(n, 'data.entityType', '')
       switch (type) {
@@ -432,6 +435,7 @@ export default {
           ]
         }
       }
+      console.info(this.relationList)
     }
   }
 }

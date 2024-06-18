@@ -16,6 +16,8 @@ export default class Node {
     this.type = type
     this.vx = 0
     this.vy = 0
+    this.x = null
+    this.y = null
     this.fx = sourceNode ? null : 0// 设置为0，即可固定中心节点。0为中心节点，1为中心节点的子节点，2为第三级节点
     this.fy = sourceNode ? null : 0// 设置为0，即可固定中心节点。0为中心节点，1为中心节点的子节点，2为第三级节点
     this.preDragX = null
@@ -30,6 +32,20 @@ export default class Node {
     }
     this.label = generateLabel(type, id, data, sourceNode)
     this.name = builtTooltip(this)
+
+    // val 值决定鼠标触发 hover 的半径
+    switch (type) {
+      case nodeType.rootNode:
+        this.val = 19
+        break
+      case nodeType.listNode:
+        this.val = 16
+        break
+      case nodeType.entityNode:
+      case nodeType.tempNode:
+        this.val = 10
+        break
+    }
   }
 
   // listNode和entityNode专用，查询实体信息
@@ -99,7 +115,6 @@ export default class Node {
     if (this.data.entityType === entityType.domain && targetEntityType === entityType.domain) {
       _targetEntityType = 'subdomain'
     }
-    console.info(this.data, targetEntityType)
     const url = `${api.entity.entityGraph[`${this.data.entityType}Related${_.upperFirst(_targetEntityType)}`]}?resource=${this.data.entityName}&pageSize=10&pageNo=${this.data.relatedEntities[targetEntityType].pageNo + 1}`
     const response = await axios.get(url).catch(e => {
       console.error(e)
