@@ -16,10 +16,10 @@ export default class Node {
     this.type = type
     this.vx = 0
     this.vy = 0
-    this.x = null
-    this.y = null
-    this.fx = sourceNode ? null : 0// 设置为0，即可固定中心节点。0为中心节点，1为中心节点的子节点，2为第三级节点
-    this.fy = sourceNode ? null : 0// 设置为0，即可固定中心节点。0为中心节点，1为中心节点的子节点，2为第三级节点
+    this.x = data.x || null
+    this.y = data.y || null
+    this.fx = data.fx || (sourceNode ? null : 0) // 设置为0，即可固定中心节点。0为中心节点，1为中心节点的子节点，2为第三级节点
+    this.fy = data.fy || (sourceNode ? null : 0) // 设置为0，即可固定中心节点。0为中心节点，1为中心节点的子节点，2为第三级节点
     this.preDragX = null
     this.preDragY = null
     this.img = img

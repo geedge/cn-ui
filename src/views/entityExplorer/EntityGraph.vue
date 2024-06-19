@@ -51,7 +51,7 @@ import ForceGraph from 'force-graph'
 import { Algorithm } from '@antv/g6'
 import * as d3 from 'd3'
 import Node, { nodeType } from './entityGraph/node'
-import Link, { linkType } from './entityGraph/link'
+import Link, { linkType, linkDistance } from './entityGraph/link'
 import { builtTooltip } from '@/views/entityExplorer/entityGraph/utils'
 import _ from 'lodash'
 
@@ -81,7 +81,6 @@ export default {
       try {
         const initialData = await this.generateInitialData()
         this.initialData = _.cloneDeep(initialData) // 初始化数据
-        console.info(initialData)
         let hoverNode = null
         this.graph = ForceGraph()(document.getElementById('entityGraph'))
           .graphData(initialData)
@@ -381,13 +380,15 @@ export default {
               const nodes = []
               const links = []
               const sourceNode = node.getSourceNode(this.graph.graphData())
+              const k1 = (node.x - sourceNode.x) / linkDistance.normal
+              const k2 = (node.y - sourceNode.y) / linkDistance.normal
               const listNode = new Node(
-                nodeType.listNode,
+                    nodeType.listNode,
                     `${sourceNode.realId}__${node.data.entityType}-list`,
                     {
                       entityType: node.data.entityType,
-                      x: node.x,
-                      y: node.y
+                      fx: sourceNode.x + k1 * linkDistance.entityToList,
+                      fy: sourceNode.y + k2 * linkDistance.entityToList,
                     },
                     sourceNode,
                     this.defaultChargeStrength,
@@ -395,36 +396,48 @@ export default {
               )
               nodes.push(listNode)
               links.push(new Link(sourceNode, listNode))
-
-              // 判断listNode的sourceNode层级，若大于等于10（即第6层listNode），则不继续拓展entity node，并给用户提示。否则拓展entity node
-              const level = this.getNodeLevel(listNode.sourceNode.id)
-              if (level < 10) {
-                this.rightBox.loading = true
-                try {
-                  const entities = await sourceNode.queryRelatedEntities(listNode.data.entityType)
-                  sourceNode.data.relatedEntities[listNode.data.entityType].list.push(...entities.list)
-                  entities.list.forEach(entity => {
-                    const entityNode = new Node(nodeType.entityNode, entity.vertex, {
-                      entityType: listNode.data.entityType,
-                      entityName: entity.vertex,
-                      x: e.x + Math.random() * 100 - 50,
-                      y: e.y + Math.random() * 100 - 50
-                    }, listNode, this.defaultChargeStrength, this.getIconUrl(listNode.data.entityType, false, false))
-                    nodes.push(entityNode)
-                    links.push(new Link(listNode, entityNode))
-                  })
-                } catch (e) {
-                  console.error(e)
-                  this.$message.error(this.errorMsgHandler(e))
-                } finally {
-                  this.rightBox.loading = false
-                }
-              } else {
-                this.$message.warning(this.$t('tip.maxExpandDepth'))
-              }
               this.addItems(nodes, links)
               this.cleanTempItems()
-              // this.graph.layout()
+              this.clickNode = listNode
+              this.rightBox.mode = 'list'
+
+              setTimeout(async () => {
+                // 判断listNode的sourceNode层级，若大于等于10（即第6层listNode），则不继续拓展entity node，并给用户提示。否则拓展entity node
+                const level = this.getNodeLevel(listNode.sourceNode.id)
+                if (level < 10) {
+                  this.rightBox.loading = true
+                  nodes.splice(0, nodes.length)
+                  links.splice(0, links.length)
+                  try {
+                    const entities = await sourceNode.queryRelatedEntities(listNode.data.entityType)
+                    sourceNode.data.relatedEntities[listNode.data.entityType].list.push(...entities.list)
+                    entities.list.forEach(entity => {
+                      const entityNode = new Node(nodeType.entityNode, entity.vertex, {
+                        entityType: listNode.data.entityType,
+                        entityName: entity.vertex,
+                        x: listNode.x,
+                        y: listNode.y
+                      }, listNode, this.defaultChargeStrength, this.getIconUrl(listNode.data.entityType, false, false))
+                      nodes.push(entityNode)
+                      links.push(new Link(listNode, entityNode))
+                    })
+                    this.addItems(nodes, links)
+
+                    setTimeout(() => {
+                      listNode.fx = null
+                      listNode.fy = null
+                      this.rightBox.node = _.cloneDeep(listNode)
+                    }, 100)
+                  } catch (e) {
+                    console.error(e)
+                    this.$message.error(this.errorMsgHandler(e))
+                  } finally {
+                    this.rightBox.loading = false
+                  }
+                } else {
+                  this.$message.warning(this.$t('tip.maxExpandDepth'))
+                }
+              }, 200)
 
               // 手动高亮listNode
               /* const _listNode = this.graph.findById(listNode.id)
@@ -457,9 +470,11 @@ export default {
           .d3Force('link', d3.forceLink().id(link => link.id)
             .distance(link => {
               if (link.source.type === nodeType.rootNode) {
-                return 180
+                return linkDistance.root
+              } else if (link.source.type === nodeType.entityNode && link.target.type === nodeType.listNode) {
+                return linkDistance.entityToList
               }
-              return 90
+              return linkDistance.normal
             })
             .strength(link => {
               return link.strength

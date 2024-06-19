@@ -21,3 +21,9 @@ export const linkType = {
   normal: 'normal',
   temp: 'temp'
 }
+
+export const linkDistance = {
+  root: 180,
+  entityToList: 120,
+  normal: 90
+}
