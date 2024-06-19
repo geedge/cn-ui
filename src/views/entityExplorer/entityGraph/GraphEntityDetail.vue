@@ -8,7 +8,7 @@
         <div class="entity-graph-type">{{entityTypeName}}</div>
         <div class="graph-basic-info">
           <div class="graph-basic-info-name__block">
-            <div class="graph-basic-info-name" :title="$_.get(node, 'id', '')" id="entityName">{{ $_.get(node, 'id', '') }}</div>
+            <div class="graph-basic-info-name" :title="$_.get(node, 'realId', '')" id="entityName">{{ $_.get(node, 'realId', '') }}</div>
             <div class="graph-basic-info-icon" @click="copyEntityName">
               <i class="cn-icon cn-icon-copy"></i>
             </div>

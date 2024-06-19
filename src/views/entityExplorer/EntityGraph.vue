@@ -305,7 +305,7 @@ export default {
             }
           })
           .centerAt(0, 30)// 设置中心节点位置
-          .zoom(1)
+          .zoom(0.9999)
           .onNodeClick(async (node, e) => {
             this.isClicking = true
             this.clickNode = node || null
@@ -457,9 +457,9 @@ export default {
           .d3Force('link', d3.forceLink().id(link => link.id)
             .distance(link => {
               if (link.source.type === nodeType.rootNode) {
-                return 160
+                return 180
               }
-              return 80
+              return 90
             })
             .strength(link => {
               return link.strength
