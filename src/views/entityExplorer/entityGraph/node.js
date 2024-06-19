@@ -11,7 +11,7 @@ export default class Node {
   * cfg: { entityType, entityName }
   * */
   constructor (type, id, data, sourceNode, strength, img) {
-    this.id = id + type
+    this.id = id + data.entityType
     this.realId = id
     this.type = type
     this.vx = 0
