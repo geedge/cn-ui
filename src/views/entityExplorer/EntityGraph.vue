@@ -32,12 +32,12 @@
   </div>
   <div id="toolbarContainer" class="graph-toolbar" style="height:50px;">
     <ul class="toolbar__tools">
-      <li @click="handleToolsbarClick('zoomOut')" title="${this.$t('overall.zoomOut')}"><i class="cn-icon cn-icon-zoom-out"></i></li>
-      <li @click="handleToolsbarClick('zoomIn')" title="${this.$t('overall.zoomIn')}"><i class="cn-icon cn-icon-zoom-in"></i></li>
-      <li @click="handleToolsbarClick('autoZoom')" title="${this.$t('overall.autoZoom')}"><i class="cn-icon cn-icon-reset"></i></li>
-      <li @click="handleToolsbarClick('undo')" title="${this.$t('overall.preStep')}" id="preStep" class="toolbar--unactivated"><i class="cn-icon cn-icon-pre-step"></i></li>
-      <li @click="handleToolsbarClick('redo')" title="${this.$t('overall.nextStep')}" id="nextStep" class="toolbar--unactivated"><i class="cn-icon cn-icon-next-step"></i></li>
-      <li @click="handleToolsbarClick('toDefault')" title="${this.$t('overall.reset')}"><i class="cn-icon cn-icon-to-default"></i></li>
+      <li @click="handleToolsbarClick('zoomOut')" :title="$t('overall.zoomOut')"><i class="cn-icon cn-icon-zoom-out"></i></li>
+      <li @click="handleToolsbarClick('zoomIn')" :title="$t('overall.zoomIn')"><i class="cn-icon cn-icon-zoom-in"></i></li>
+      <li @click="handleToolsbarClick('autoZoom')" :title="$t('overall.autoZoom')"><i class="cn-icon cn-icon-reset"></i></li>
+      <li @click="handleToolsbarClick('undo')" :title="$t('overall.preStep')" id="preStep" class="toolbar--unactivated"><i class="cn-icon cn-icon-pre-step"></i></li>
+      <li @click="handleToolsbarClick('redo')" :title="$t('overall.nextStep')" id="nextStep" class="toolbar--unactivated"><i class="cn-icon cn-icon-next-step"></i></li>
+      <li @click="handleToolsbarClick('toDefault')" :title="$t('overall.reset')"><i class="cn-icon cn-icon-to-default"></i></li>
     </ul>
   </div>
 </template>
