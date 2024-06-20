@@ -20,7 +20,7 @@
       }
 
       &.toolbar--unactivated {
-        cursor: default;
+        cursor: not-allowed;
         i {
           opacity: .4;
         }

@@ -73,7 +73,14 @@ export default {
       defaultLinkDistance: 80,
       defaultMargin: 2, // 图像与箭头的距离
       rootNode: null,
-      isClicking: false
+      isClicking: false,
+      /* 自己实现stack操作 */
+      stackData: {
+        undo: [], // 后退
+        justUndo: false, // 是否刚后退了
+        redo: [], // 前进
+        justRedo: false // 是否刚前进了
+      }
     }
   },
   methods: {
@@ -323,6 +330,7 @@ export default {
                   }
                   const toAddNodes = []
                   const toAddLinks = []
+                  let keyCount = Object.keys(node.data.relatedEntities).length
                   Object.keys(node.data.relatedEntities).forEach((k,i) => {
                     if (node.data.relatedEntities[k].total) {
                       // 若已有同级同类型的listNode，不生成此tempNode
@@ -343,7 +351,7 @@ export default {
                         //临时节点的初始固定坐标为其对应的entity节点坐标，展示直线动画
                         //tempNode.fx = node.x
                         //tempNode.fy = node.y
-                        let tempNodePoint = this.pointOfRotate({x:node.sourceNode.x,y:node.sourceNode.y},{x:node.x,y:node.y},150 + i*60)//临时节点固定角度150度为以entity节点为center，list节点为from，旋转到临时节点的角度
+                        let tempNodePoint = this.pointOfRotate({x:node.sourceNode.x,y:node.sourceNode.y},{x:node.x,y:node.y},this.getTempNodeAngle(keyCount,i))//临时节点固定角度，为以entity节点为center，list节点为from，旋转到临时节点的角度
                         let finalTempNodePoint = this.pointOfLine({x:node.x,y:node.y},tempNodePoint,this.defaultLinkDistance)//start,end,lineLength
                         if(tempNodePoint.x && tempNodePoint.y) {
                           tempNode.fx = (node.x + finalTempNodePoint.x) / 2
@@ -357,7 +365,7 @@ export default {
                     }
                   })
                   if (toAddNodes.length || toAddLinks.length) {
-                    this.addItems(toAddNodes, toAddLinks)
+                    this.addItems(toAddNodes, toAddLinks, false)
                   }
                   this.rightBox.node = node
                   this.rightBox.mode = 'detail'
@@ -379,6 +387,8 @@ export default {
               // 若已达第六层，则只生成listNode，不再展开entityNode
               const nodes = []
               const links = []
+              let stackNodes = []
+              const stackLinks = []
               const sourceNode = node.getSourceNode(this.graph.graphData())
               const k1 = (node.x - sourceNode.x) / linkDistance.normal
               const k2 = (node.y - sourceNode.y) / linkDistance.normal
@@ -396,7 +406,9 @@ export default {
               )
               nodes.push(listNode)
               links.push(new Link(sourceNode, listNode))
-              this.addItems(nodes, links)
+              stackNodes.push(_.cloneDeep(listNode))
+              stackLinks.push(_.cloneDeep(links[0]))
+              this.addItems(nodes, links, false)
               this.cleanTempItems()
               this.clickNode = listNode
               this.rightBox.mode = 'list'
@@ -411,6 +423,7 @@ export default {
                   try {
                     const entities = await sourceNode.queryRelatedEntities(listNode.data.entityType)
                     sourceNode.data.relatedEntities[listNode.data.entityType].list.push(...entities.list)
+                    let curNodes = this.graph.graphData().nodes
                     entities.list.forEach(entity => {
                       const entityNode = new Node(nodeType.entityNode, entity.vertex, {
                         entityType: listNode.data.entityType,
@@ -419,9 +432,16 @@ export default {
                         y: listNode.y
                       }, listNode, this.defaultChargeStrength, this.getIconUrl(listNode.data.entityType, false, false))
                       nodes.push(entityNode)
-                      links.push(new Link(listNode, entityNode))
+                      let link = new Link(listNode, entityNode)
+                      links.push(link)
+                      if(curNodes.findIndex(node => node.id === entityNode.id) === -1) {//过滤掉已有的节点
+                        stackNodes.push(_.cloneDeep(entityNode))
+                      }
+                      stackLinks.push(_.cloneDeep(link))
                     })
-                    this.addItems(nodes, links)
+                    this.addItems(nodes, links, false)
+                    //由于点击临时节点后增加节点分为了2步，所以需要将2步的所有节点一起缓存
+                    this.stackData.undo.push({nodes:stackNodes, links:stackLinks})
 
                     setTimeout(() => {
                       listNode.fx = null
@@ -437,11 +457,6 @@ export default {
                 } else {
                   this.$message.warning(this.$t('tip.maxExpandDepth'))
                 }
-              }, 200)
-
-              // 手动高亮listNode
-              /* const _listNode = this.graph.findById(listNode.id)
-                this.graph.emit('node:click', { item: _listNode, target: _listNode.getKeyShape() })
                 if (this.stackData.justUndo) {
                   this.stackData.justUndo = false
                   this.stackData.redo = []
@@ -449,22 +464,9 @@ export default {
                 if (this.stackData.justRedo) {
                   this.stackData.justRedo = false
                   this.stackData.redo = []
-                } */
-            }
-
-            // this.graph.zoom(1,0)//缩放画布
-
-            /* if(node.type !== nodeType.listNode && node.type !== nodeType.rootNode) {
-                let clickNodeData = await this.generateInitialData(node)
-                node.collapsed = !node.collapsed // toggle collapse state
-                let index = this.initialData.nodes.findIndex(item => item.id === node.id)
-                if (index > -1) {
-                  this.initialData.nodes.splice(index,1)
                 }
-                //clickNodeData.nodes = this.initialData.nodes.concat(clickNodeData.nodes)
-                //clickNodeData.links = this.initialData.links.concat(clickNodeData.links)
-                Graph.graphData(clickNodeData)
-              } */
+              }, 200)
+            }
           })
 
           .d3Force('link', d3.forceLink().id(link => link.id)
@@ -573,10 +575,11 @@ export default {
             if(this.isClicking) {
               const tempNodeGroup = this.graph.graphData().nodes.filter(node => node.type === nodeType.tempNode)
               if(tempNodeGroup.length > 0) {
+                let keyCount = tempNodeGroup.length
                 tempNodeGroup.forEach((tempNode,i) => {
                   let tempNodeSource = tempNode.sourceNode
                   if(tempNodeSource) {
-                    let tempNodePoint = this.pointOfRotate({x:tempNodeSource.sourceNode.x,y:tempNodeSource.sourceNode.y},{x:tempNodeSource.x,y:tempNodeSource.y},150 + i*60)//临时节点固定角度150度为以entity节点为center，list节点为from，旋转到临时节点的角度
+                    let tempNodePoint = this.pointOfRotate({x:tempNodeSource.sourceNode.x,y:tempNodeSource.sourceNode.y},{x:tempNodeSource.x,y:tempNodeSource.y},this.getTempNodeAngle(keyCount,i))//临时节点固定角度，为以entity节点为center，list节点为from，旋转到临时节点的角度
                     let finalTempNodePoint = this.pointOfLine({x:tempNodeSource.x,y:tempNodeSource.y},tempNodePoint,this.defaultLinkDistance)//start,end,lineLength
                     if(tempNodePoint.x && tempNodePoint.y) {
                       tempNode.fx = finalTempNodePoint.x
@@ -593,6 +596,16 @@ export default {
         this.$message.error(this.errorMsgHandler(e))
       } finally {
         this.rightBox.loading = false
+      }
+    },
+    getTempNodeAngle(nodeCount,i) {
+      switch (nodeCount) {
+        case 1:
+          return 180
+        case 2:
+          return 150 + i*60
+        case 3:
+          return 150 + i*30
       }
     },
     //根据3个点坐标，计算节点旋转的角度
@@ -643,41 +656,40 @@ export default {
       return {x:finalX, y:finalY}
     },
     handleToolsbarClick (code) {
-      if (code === 'undo') {
+      if (code === 'undo') {//上一步
         const data = this.stackData.undo.pop()
         this.stackData.justUndo = true
-        data.nodes.forEach(n => {
-          if (n.type === nodeType.listNode) {
-            const listNode = this.graph.findById(n.id)
-            const listNodeEdges = listNode.getEdges()
-            listNodeEdges.forEach(e => {
-              e.setState('mySelected', false)
-            })
-            listNode.setState('mySelected', false)
+        if(data) {
+          const { nodes, links } = this.graph.graphData()
+          data.nodes.forEach(popNode => {
+            const popNodeIndex = nodes.findIndex(item => item.id === popNode.id)
+            if (popNodeIndex > -1) {
+              nodes.splice(popNodeIndex,1)
+            }
+          })
+          data.links.forEach(link => {
+            const linksIndex = links.findIndex(item => item.source.id === link.source && item.target.id === link.target)
+            if (linksIndex > -1) {
+              links.splice(linksIndex,1)
+            }
+          })
+
+          this.stackData.redo.push(data)
+          if (this.stackData.justRedo) {
+            this.stackData.justRedo = false
           }
-          this.graph.removeItem(n.id)
-        })
-        data.edges.forEach(e => {
-          this.graph.removeItem(e.id)
-        })
-        this.stackData.redo.push(data)
-        if (this.stackData.justRedo) {
-          this.stackData.justRedo = false
+          this.onCloseBlock()
         }
-        // this.cleanTempItems()
-        this.graph.layout()
-        this.onCloseBlock()
-      } else if (code === 'redo') {
+      } else if (code === 'redo') {//下一步
         const data = this.stackData.redo.pop()
-        this.stackData.justRedo = true
-        this.addItems(data.nodes, data.edges)
-        // this.stackData.undo.push(data)
-        if (this.stackData.justUndo) {
-          this.stackData.justUndo = false
+        if(data) {
+          this.stackData.justRedo = true
+          this.addItems(data.nodes, data.links)
+          if (this.stackData.justUndo) {
+            this.stackData.justUndo = false
+          }
+          this.onCloseBlock()
         }
-        // this.cleanTempItems()
-        this.graph.layout()
-        this.onCloseBlock()
       } else if (code === 'autoZoom') {
         this.graph.zoom(2)
         this.graph.centerAt(0, 30)
@@ -687,7 +699,13 @@ export default {
         this.graph.zoom(this.graph.zoom() - 0.2)
       } else {
         this.clickNode = this.rootNode
-        this.graph.graphData(this.initialData).centerAt(0, 30)
+        this.stackData = {
+          undo: [],
+          redo: [],
+          justUndo: false,
+          justRedo: false
+        }
+        this.graph.graphData(_.cloneDeep(this.initialData)).centerAt(0, 30)
       }
     },
 
@@ -912,17 +930,21 @@ export default {
         y: cy + cy - sy + Math.random() * 30 - 15
       }
     },
-    addItems (toAddNodes, toAddLinks) {
+    addItems (toAddNodes, toAddLinks,stack = true) {
       if (toAddNodes.length || toAddLinks.length) {
         const { nodes, links } = this.graph.graphData()
         const nodes2 = toAddNodes.filter(n => !nodes.some(n2 => n.id === n2.id))
         nodes.push(...nodes2)
         links.push(...toAddLinks)
         this.graph.graphData({ nodes, links })
+
+        if(stack) {
+          this.stackData.undo.push(_.cloneDeep({nodes:nodes2, links:toAddLinks}))
+        }
       }
     },
-    cleanTempItems () {
-      const { nodes, links } = this.graph.graphData()
+    cleanTempItems (data) {
+      const { nodes, links } = data ? data : this.graph.graphData()
       const newNodes = nodes.filter(n => n.type !== nodeType.tempNode)
       const newLinks = links.filter(l => l.type !== linkType.temp)
       if (newNodes.length !== nodes.length || newLinks.length !== links.length) {
@@ -1103,6 +1125,23 @@ export default {
     }
   },
   watch: {
+    stackData: {
+      deep: true,
+      handler (n) {
+        if (n) {
+          if (n.undo.length > 0) {
+            document.getElementById('preStep').classList.remove('toolbar--unactivated')
+          } else {
+            document.getElementById('preStep').classList.add('toolbar--unactivated')
+          }
+          if (n.redo.length > 0) {
+            document.getElementById('nextStep').classList.remove('toolbar--unactivated')
+          } else {
+            document.getElementById('nextStep').classList.add('toolbar--unactivated')
+          }
+        }
+      }
+    }
   },
   async mounted () {
     if (this.entity.entityType && this.entity.entityName) {
