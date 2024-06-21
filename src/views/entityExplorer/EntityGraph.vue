@@ -89,7 +89,9 @@ export default {
         const initialData = await this.generateInitialData()
         this.initialData = _.cloneDeep(initialData) // 初始化数据
         let hoverNode = null
+        let canvasHeight = document.body.clientHeight - 100
         this.graph = ForceGraph()(document.getElementById('entityGraph'))
+          .height(canvasHeight)
           .graphData(initialData)
           .nodeCanvasObject((node, ctx) => {
             /*
@@ -310,7 +312,7 @@ export default {
               node.name = builtTooltip(node)
             }
           })
-          .centerAt(0, 30)// 设置中心节点位置
+          .centerAt(0, 0)// 设置中心节点位置
           .zoom(0.9999)
           .onNodeClick(async (node, e) => {
             this.isClicking = true
@@ -691,8 +693,7 @@ export default {
           this.onCloseBlock()
         }
       } else if (code === 'autoZoom') {
-        this.graph.zoom(2)
-        this.graph.centerAt(0, 30)
+        this.graph.zoomToFit(100,100)
       } else if (code === 'zoomOut') {
         this.graph.zoom(this.graph.zoom() + 0.2)
       } else if (code === 'zoomIn') {
@@ -705,7 +706,7 @@ export default {
           justUndo: false,
           justRedo: false
         }
-        this.graph.graphData(_.cloneDeep(this.initialData)).centerAt(0, 30)
+        this.graph.graphData(_.cloneDeep(this.initialData)).centerAt(0, 0).zoom(0.9999)
       }
     },
 
