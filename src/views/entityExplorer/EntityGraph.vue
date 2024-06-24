@@ -675,7 +675,7 @@ export default {
               links.splice(linksIndex,1)
             }
           })
-
+          this.cleanTempItems()
           this.stackData.redo.push(data)
           if (this.stackData.justRedo) {
             this.stackData.justRedo = false
@@ -687,6 +687,7 @@ export default {
         if(data) {
           this.stackData.justRedo = true
           this.addItems(data.nodes, data.links)
+          this.cleanTempItems()
           if (this.stackData.justUndo) {
             this.stackData.justUndo = false
           }
@@ -944,8 +945,8 @@ export default {
         }
       }
     },
-    cleanTempItems (data) {
-      const { nodes, links } = data ? data : this.graph.graphData()
+    cleanTempItems () {
+      const { nodes, links } = this.graph.graphData()
       const newNodes = nodes.filter(n => n.type !== nodeType.tempNode)
       const newLinks = links.filter(l => l.type !== linkType.temp)
       if (newNodes.length !== nodes.length || newLinks.length !== links.length) {
