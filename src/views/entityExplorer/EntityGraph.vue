@@ -101,7 +101,7 @@ export default {
             switch (node.type) {
               case nodeType.rootNode: {
                 // 如果是鼠标点击高亮的，最外层加上第三层圆环
-                if (node === this.clickNode) {
+                if (node.id === this.clickNode.id) {
                   ctx.beginPath()
                   ctx.arc(node.x, node.y, nodeStyle.selectedShadowR, 0, 2 * Math.PI, false)
                   ctx.closePath()
@@ -251,7 +251,7 @@ export default {
               color = 'rgba(119,131,145,0.2)' // 虚线颜色
             } else {
               ctx.setLineDash([])
-              if (this.clickNode === link.source || this.clickNode === link.target) {
+              if (this.clickNode.id === link.source.id || this.clickNode.id === link.target.id) {
                 color = 'rgba(119,131,145,0.8)' // 高亮线颜色
               } else {
                 color = 'rgba(119,131,145,0.3)' // 普通线颜色
@@ -708,6 +708,9 @@ export default {
           justRedo: false
         }
         this.graph.graphData(_.cloneDeep(this.initialData)).centerAt(0, 0).zoom(0.9999)
+        this.rightBox.show = true
+        this.rightBox.node = this.rootNode
+        this.rightBox.mode = 'detail'
       }
     },
 
