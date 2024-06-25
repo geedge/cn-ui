@@ -537,9 +537,9 @@ export default {
                   tempLinks.forEach(tempLink => {
                     //找到entity节点
                     const entityNode = nodes.find(normalNode => normalNode.id === tempLink.source.id && normalNode.type === nodeType.entityNode)
-                    let entityNodeX = entityNode.fx ? entityNode.fx : entityNode.x
-                    let entityNodeY = entityNode.fy ? entityNode.fy : entityNode.y
                     if(entityNode) {
+                      let entityNodeX = entityNode.fx ? entityNode.fx : entityNode.x
+                      let entityNodeY = entityNode.fy ? entityNode.fy : entityNode.y
                       let angle = this.angleOfRotate({x:fromX,y:fromY},{x:node.x + translate.x,y:node.y + translate.y},{x:entityNodeX,y:entityNodeY})
                       const tempNodes = nodes.filter(normalNode => normalNode.id === tempLink.target.id && normalNode.type === nodeType.tempNode)//找到临时节点
                       tempNodes.forEach(tempNode => {
@@ -561,7 +561,7 @@ export default {
             node.preDragX = node.x + translate.x
             node.preDragY = node.y + translate.y
           })
-          .cooldownTime(1500)//到时间后，才执行onEngineStop
+          .cooldownTime(2000)//到时间后，才执行onEngineStop
           .onNodeDragEnd((node, translate) => { // 修复拖动节点
             node.fx = node.x
             node.fy = node.y
