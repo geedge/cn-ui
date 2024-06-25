@@ -79,9 +79,9 @@ export default class Node {
     const neighboringTargetLinks = []
     const neighboringSourceLinks = []
     const neighboringLinks = links.filter(l => {
-      if (l.target === this || l.source === this) {
-        neighboringNodes.push(l.target === this ? l.source : l.target)
-        if (l.target === this) {
+      if (l.target.id === this.id || l.source.id === this.id) {
+        neighboringNodes.push(l.target.id === this.id ? l.source : l.target)
+        if (l.target.id === this.id) {
           neighboringSourceNodes.push(l.source)
           neighboringSourceLinks.push(l)
         } else {
