@@ -10,7 +10,7 @@ export default class Node {
   * type: 对应nodeType
   * cfg: { entityType, entityName }
   * */
-  constructor (type, id, data, sourceNode, strength, img) {
+  constructor (type, id, data, sourceNode, img) {
     this.id = id + data.entityType
     this.realId = id
     this.type = type
@@ -23,7 +23,6 @@ export default class Node {
     this.preDragX = null
     this.preDragY = null
     this.img = img
-    this.strength = strength || -10
     this.sourceNode = sourceNode
     this.isSubdomain = sourceNode ? sourceNode.data.entityType === entityType.domain && data.entityType === entityType.domain : false
     this.data = {

@@ -69,7 +69,7 @@ export default {
       nodes: [],
       links: [],
       graph: shallowRef(null),
-      defaultChargeStrength: -20, // 之前的设置-20
+      defaultChargeStrength: -60, // 之前的设置-20
       defaultLinkDistance: 80,
       defaultMargin: 2, // 图像与箭头的距离
       rootNode: null,
@@ -347,7 +347,6 @@ export default {
                                 ...this.generateTempNodeCoordinate(node.getSourceNode(this.graph.graphData()), e)
                               },
                               node,
-                              this.defaultChargeStrength,
                               this.getIconUrl(k, false, false)
                         )
                         //临时节点的初始固定坐标为其对应的entity节点坐标，展示直线动画
@@ -403,7 +402,6 @@ export default {
                       fy: sourceNode.y + k2 * linkDistance.entityToList,
                     },
                     sourceNode,
-                    this.defaultChargeStrength,
                     this.getIconUrl(node.data.entityType, false, false)
               )
               nodes.push(listNode)
@@ -432,7 +430,7 @@ export default {
                         entityName: entity.vertex,
                         x: listNode.x,
                         y: listNode.y
-                      }, listNode, this.defaultChargeStrength, this.getIconUrl(listNode.data.entityType, false, false))
+                      }, listNode, this.getIconUrl(listNode.data.entityType, false, false))
                       nodes.push(entityNode)
                       let link = new Link(listNode, entityNode)
                       links.push(link)
@@ -484,10 +482,7 @@ export default {
               return link.strength
             }))// 设置线对点的力？
           .d3Force('center', d3.forceCenter().strength(0))// 设置力导图点阵中心位置, 向心力设置为0以后，d3.forceCenter(-50,-70)不起作用了
-          .d3Force('charge', d3.forceManyBody().strength(node => { // 电荷力：吸引力或排斥力。forceManyBody使所有元素相互吸引或排斥。可以设置吸引或排斥的强度，.strength()其中正值导致元素相互吸引，而负值将导致元素相互排斥。
-            const strength = node.type === nodeType.rootNode ? -350 : node.strength// 中心节点的排斥力要设置的比较大（-300，-200，-100），这样中心节点的子节点的子节点就会是远离中心节点的状态，进行聚集。
-            return strength
-          }))
+          .d3Force('charge', d3.forceManyBody().strength(this.defaultChargeStrength))
           .onNodeDrag((node, translate) => {
             const { nodes, links } = this.graph.graphData()
             //拖动entity节点时，如果此entity节点有临时节点，则同时移动临时节点
@@ -561,7 +556,7 @@ export default {
             node.preDragX = node.x + translate.x
             node.preDragY = node.y + translate.y
           })
-          .cooldownTime(2000)//到时间后，才执行onEngineStop
+          .cooldownTime(3000)//到时间后，才执行onEngineStop
           .onNodeDragEnd((node, translate) => { // 修复拖动节点
             node.fx = node.x
             node.fy = node.y
@@ -975,7 +970,7 @@ export default {
       const nodes = []
       const links = []
 
-      const rootNode = clickNode || new Node(nodeType.rootNode, this.entity.entityName, this.entity, null, this.defaultChargeStrength, this.getIconUrl(this.entity.entityType, true, true))
+      const rootNode = clickNode || new Node(nodeType.rootNode, this.entity.entityName, this.entity, null, this.getIconUrl(this.entity.entityType, true, true))
       await rootNode.queryDetailData()
       nodes.push(rootNode)
       this.clickNode = rootNode
@@ -995,7 +990,6 @@ export default {
                 entityType: k
               },
               rootNode,
-              this.defaultChargeStrength,
               this.getIconUrl(k, false, false)
             )
             listNodes.push(listNode)
@@ -1016,7 +1010,6 @@ export default {
                 entityName: entity.vertex
               },
               listNode,
-              this.defaultChargeStrength,
               this.getIconUrl(listNode.data.entityType, false, false)
             )
             entityNodes.push(entityNode)
@@ -1050,7 +1043,7 @@ export default {
             const toAddNode = new Node(nodeType.entityNode, entity.vertex, {
               entityType: expandType,
               entityName: entity.vertex
-            }, node, this.defaultChargeStrength, this.getIconUrl(node.data.entityType, false, false))
+            }, node, this.getIconUrl(node.data.entityType, false, false))
             toAddNodes.push(toAddNode)
 
             const toAddLink = new Link(node, toAddNode)
@@ -1089,7 +1082,7 @@ export default {
             const neighbors = node.getNeighbors(this.graph.graphData())
             let listNode = neighbors.targetNodes.find(n => n.data.entityType === expandType)
             if (!listNode) {
-              listNode = new Node(nodeType.listNode, `${node.id}__${expandType}-list`, { entityType: expandType }, node, this.defaultChargeStrength, this.getIconUrl(expandType, false, false))
+              listNode = new Node(nodeType.listNode, `${node.id}__${expandType}-list`, { entityType: expandType }, node, this.getIconUrl(expandType, false, false))
               const link = new Link(node, listNode)
               toAddNodes.push(listNode)
               toAddLinks.push(link)
@@ -1098,7 +1091,7 @@ export default {
               const entityNode = new Node(nodeType.entityNode, entity.vertex, {
                 entityType: expandType,
                 entityName: entity.vertex
-              }, listNode, this.defaultChargeStrength, this.getIconUrl(expandType, false, false))
+              }, listNode, this.getIconUrl(expandType, false, false))
               toAddNodes.push(entityNode)
               toAddLinks.push(new Link(listNode, entityNode))
             })
