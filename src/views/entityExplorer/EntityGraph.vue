@@ -69,7 +69,7 @@ export default {
       nodes: [],
       links: [],
       graph: shallowRef(null),
-      defaultChargeStrength: -60, // 之前的设置-20
+      defaultChargeStrength: -50, // 之前的设置-20
       defaultLinkDistance: 80,
       defaultMargin: 2, // 图像与箭头的距离
       rootNode: null,
@@ -428,8 +428,8 @@ export default {
                       const entityNode = new Node(nodeType.entityNode, entity.vertex, {
                         entityType: listNode.data.entityType,
                         entityName: entity.vertex,
-                        x: listNode.x,
-                        y: listNode.y
+                        x: listNode.x + Math.random() * 10 - 5,
+                        y: listNode.y + Math.random() * 10 - 5
                       }, listNode, this.getIconUrl(listNode.data.entityType, false, false))
                       nodes.push(entityNode)
                       let link = new Link(listNode, entityNode)
@@ -556,7 +556,7 @@ export default {
             node.preDragX = node.x + translate.x
             node.preDragY = node.y + translate.y
           })
-          .cooldownTime(3000)//到时间后，才执行onEngineStop
+          .cooldownTime(2000)//到时间后，才执行onEngineStop
           .onNodeDragEnd((node, translate) => { // 修复拖动节点
             node.fx = node.x
             node.fy = node.y
