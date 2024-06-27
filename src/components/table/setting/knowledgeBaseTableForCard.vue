@@ -464,222 +464,222 @@ export default {
       axios.get(url, { params: params }).then(response => {
         const res = response.data
 
-          if (response.status === 200) {
-            this.isNoDataForPsiphon3 = res.data.result.length === 0
-            this.showErrorForPsiphon3 = false
-            if (!this.isNoDataForPsiphon3) {
-              const chartsData = res.data.result.map(item => {
-                return [getMillisecond(item.statTime), item.count]
-              })
-              if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
-                this.echartsInit(chartsData)
-              }
-            }
-          } else {
-            this.httpError(res)
-          }
-        }).catch(e => {
-          console.error(e)
-          this.httpError(e)
-        }).finally(() => {
-          this.psiphon3Loading = false
-        })
-      },
-      httpError (e) {
-        this.isNoDataForPsiphon3 = false
-        this.showErrorForPsiphon3 = true
-        this.errorMsgForPsiphon3 = this.errorMsgHandler(e)
-      },
-      handleActiveBar () {
-        if (document.querySelector('.psiphon3-bar .bar-value-tabs.is-active')) {
-          const {
-            offsetLeft,
-            clientWidth,
-            clientLeft
-          } = document.querySelector('.psiphon3-bar .bar-value-tabs.is-active')
-          const activeBar = document.querySelector('.psiphon3-bar .bar-value-active')
-          activeBar.style.cssText += `width: ${clientWidth}px; left: ${offsetLeft + this.leftOffset + clientLeft}px;`
-        }
-      },
-      resize () {
-        if (this.myChart) {
-          this.myChart.resize()
-        }
-      },
-      dispatchSelectAction (type, name) {
-        this.myChart && this.myChart.dispatchAction({
-          type: type,
-          name: name
-        })
-      },
-      legendSelectChange (item) {
-        this.dispatchSelectAction('legendSelect', item.name)
-        this.tabs.forEach((t) => {
-          if (t.name !== item.name) {
-            this.dispatchSelectAction('legendUnSelect', t.name)
-          }
-        })
-      },
-      timeChange () {
-        if (this.updateKnowledge.source === 'cn_psiphon3_ip') {
-          this.init()
-        }
-        if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
-          this.$nextTick(() => {
-            this.handleActiveBar()
-          })
-        }
-      },
-      activeChange (item) { // isClick:代表是通过点击操作来的
-        if (item) {
-          this.tabType = item.class
-        }
-        this.legendSelectChange(item)
-        if (this.updateKnowledge.source === 'cn_psiphon3_ip') {
-          this.init()
-        }
-      },
-      mouseenterTab (item) {
-        if (this.isNoDataForPsiphon3) return
-        this.mousemoveCursor = item.class
-        if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
-          this.$nextTick(() => {
-            this.handleActiveBar()
-          })
-        }
-      },
-      mouseleaveTab () {
-        this.mousemoveCursor = ''
-      },
-      fileChange (file, fileList) {
-        // 判断后缀，仅支持.csv
-        if (!_.endsWith(file.name, '.csv')) {
-          this.fileList = []
-          this.$message.error(this.$t('validate.fileTypeLimit', { types: this.fileTypeLimit }))
-        } else if (file.size > this.uploadFileSizeLimit) { // 判断文件大小
-          this.$message.error(this.$t('validate.fileSizeLimit', { size: unitConvert(this.uploadFileSizeLimit, unitTypes.byte).join('') }))
-          this.fileList = []
-        } else {
-          this.fileList = fileList.slice(-1)
-        }
-      },
-      uploadError (error) {
-        let errorMsg
-        if (error.message) {
-          errorMsg = JSON.parse(error.message).message
-        } else {
-          errorMsg = 'error'
-        }
-        this.uploadLoading = false
-        this.$message.error(this.$t('tip.uploadFailed', { msg: errorMsg }))
-      },
-      uploadSuccess (response) {
-        this.uploadLoading = false
-        this.uploaded = true
-        this.$message.success(this.$t('tip.success'))
-        this.showAddUpdateDialog = false
-        this.getCurTabData()
-      },
-      beforeUpload (file) {
-        this.uploadLoading = true
-        this.showConfirmDialog = false
-      },
-      submitConfirm () {
-        this.showConfirmDialog = true
-      },
-      submit () {
-        this.$refs.knowledgeUpload.submit()
-      },
-      cancle () {
-        this.showAddUpdateDialog = false
-      },
-      clickCard (data, event) {
-        if (data.isSelected) { // 原来为选中，当前点击后未选中
-          const index = this.checkList.indexOf(data)
-          if (index > -1) {
-            this.checkList.splice(index, 1)
-          }
-        } else {
-          const index = this.checkList.indexOf(data)
-          if (index === -1) {
-            this.checkList.push(data)
-          }
-        }
-        const val = !data.isSelected
-        data.isSelected = val
-        this.$emit('checkboxStatusChange', val, data)
-      },
-      checkboxStatusChange (val, data) {
-        data.isSelected = val
-        this.$emit('checkboxStatusChange', val, data)
-      },
-      beforeClose (done) {
-        if (this.myChart) {
-          this.myChart.dispose()
-          this.myChart = null
-        }
-        done()
-      },
-      handleClose () {
-        this.showUpdateDialog = false
-        this.showAddUpdateDialog = false
-        this.uploadLoading = false
-      },
-      handleConfirmClose () {
-        this.showConfirmDialog = false
-      },
-      handleUpdateClose () {
-        this.showAddUpdateDialog = false
-      },
-      showUpdate () {
-        this.showUpdateDialog = true
-        this.showAddUpdateDialog = false
-      },
-      async jumpToUpdatePage (data, showEnable) {
-        this.updateKnowledge = data
-        this.showEnable = showEnable
-        await this.getCurTabData()
-        if (data.source === 'cn_psiphon3_ip') {
-          await this.init()
-        }
-        this.showUpdate()
-        if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
-          this.$nextTick(() => {
-            this.handleActiveBar()
-          })
-        }
-      },
-      uploadRecord () {
-        this.showAddUpdateDialog = true
-        this.updateObject.name = this.updateKnowledge.name
-        this.updateObject.label = this.$t(this.updateKnowledge.label)
-        this.updateObject.description = ''
-      },
-      getCurTabData () { // showEnable:true 为psiphon3的知识库，false为其它知识库
-        let params = {
-          pageSize: -1
-        }
-        if (this.showEnable) {
-          if (this.activeTab === knowledgeCardUpdateRecordType.updateRecord) {
-            params = {
-              ...params,
-              opUser: -1
-            }
-          } else if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
-            params = {
-              ...params,
-              opUser: 0
+        if (response.status === 200) {
+          this.isNoDataForPsiphon3 = res.data.result.length === 0
+          this.showErrorForPsiphon3 = false
+          if (!this.isNoDataForPsiphon3) {
+            const chartsData = res.data.result.map(item => {
+              return [getMillisecond(item.statTime), item.count]
+            })
+            if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
+              this.echartsInit(chartsData)
             }
           }
+        } else {
+          this.httpError(res)
         }
-        this.updateLogLoading = true
-        this.updateHistoryList = []
-        axios.get(api.knowledgeBaseLog + '/' + this.updateKnowledge.knowledgeId, { params: params }).then(res => {
-          this.updateHistoryList = res.data.data.list
-          if (this.updateHistoryList[0]) {
-            this.currentVersion = this.updateHistoryList[0].commitVersion + 1
+      }).catch(e => {
+        console.error(e)
+        this.httpError(e)
+      }).finally(() => {
+        this.psiphon3Loading = false
+      })
+    },
+    httpError (e) {
+      this.isNoDataForPsiphon3 = false
+      this.showErrorForPsiphon3 = true
+      this.errorMsgForPsiphon3 = this.errorMsgHandler(e)
+    },
+    handleActiveBar () {
+      if (document.querySelector('.psiphon3-bar .bar-value-tabs.is-active')) {
+        const {
+          offsetLeft,
+          clientWidth,
+          clientLeft
+        } = document.querySelector('.psiphon3-bar .bar-value-tabs.is-active')
+        const activeBar = document.querySelector('.psiphon3-bar .bar-value-active')
+        activeBar.style.cssText += `width: ${clientWidth}px; left: ${offsetLeft + this.leftOffset + clientLeft}px;`
+      }
+    },
+    resize () {
+      if (this.myChart) {
+        this.myChart.resize()
+      }
+    },
+    dispatchSelectAction (type, name) {
+      this.myChart && this.myChart.dispatchAction({
+        type: type,
+        name: name
+      })
+    },
+    legendSelectChange (item) {
+      this.dispatchSelectAction('legendSelect', item.name)
+      this.tabs.forEach((t) => {
+        if (t.name !== item.name) {
+          this.dispatchSelectAction('legendUnSelect', t.name)
+        }
+      })
+    },
+    timeChange () {
+      if (this.updateKnowledge.source === 'cn_psiphon3_ip') {
+        this.init()
+      }
+      if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
+        this.$nextTick(() => {
+          this.handleActiveBar()
+        })
+      }
+    },
+    activeChange (item) { // isClick:代表是通过点击操作来的
+      if (item) {
+        this.tabType = item.class
+      }
+      this.legendSelectChange(item)
+      if (this.updateKnowledge.source === 'cn_psiphon3_ip') {
+        this.init()
+      }
+    },
+    mouseenterTab (item) {
+      if (this.isNoDataForPsiphon3) return
+      this.mousemoveCursor = item.class
+      if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
+        this.$nextTick(() => {
+          this.handleActiveBar()
+        })
+      }
+    },
+    mouseleaveTab () {
+      this.mousemoveCursor = ''
+    },
+    fileChange (file, fileList) {
+      // 判断后缀，仅支持.csv
+      if (!_.endsWith(file.name, '.csv')) {
+        this.fileList = []
+        this.$message.error(this.$t('validate.fileTypeLimit', { types: this.fileTypeLimit }))
+      } else if (file.size > this.uploadFileSizeLimit) { // 判断文件大小
+        this.$message.error(this.$t('validate.fileSizeLimit', { size: unitConvert(this.uploadFileSizeLimit, unitTypes.byte).join('') }))
+        this.fileList = []
+      } else {
+        this.fileList = fileList.slice(-1)
+      }
+    },
+    uploadError (error) {
+      let errorMsg
+      if (error.message) {
+        errorMsg = JSON.parse(error.message).message
+      } else {
+        errorMsg = 'error'
+      }
+      this.uploadLoading = false
+      this.$message.error(this.$t('tip.uploadFailed', { msg: errorMsg }))
+    },
+    uploadSuccess (response) {
+      this.uploadLoading = false
+      this.uploaded = true
+      this.$message.success(this.$t('tip.success'))
+      this.showAddUpdateDialog = false
+      this.getCurTabData()
+    },
+    beforeUpload (file) {
+      this.uploadLoading = true
+      this.showConfirmDialog = false
+    },
+    submitConfirm () {
+      this.showConfirmDialog = true
+    },
+    submit () {
+      this.$refs.knowledgeUpload.submit()
+    },
+    cancle () {
+      this.showAddUpdateDialog = false
+    },
+    clickCard (data, event) {
+      if (data.isSelected) { // 原来为选中，当前点击后未选中
+        const index = this.checkList.indexOf(data)
+        if (index > -1) {
+          this.checkList.splice(index, 1)
+        }
+      } else {
+        const index = this.checkList.indexOf(data)
+        if (index === -1) {
+          this.checkList.push(data)
+        }
+      }
+      const val = !data.isSelected
+      data.isSelected = val
+      this.$emit('checkboxStatusChange', val, data)
+    },
+    checkboxStatusChange (val, data) {
+      data.isSelected = val
+      this.$emit('checkboxStatusChange', val, data)
+    },
+    beforeClose (done) {
+      if (this.myChart) {
+        this.myChart.dispose()
+        this.myChart = null
+      }
+      done()
+    },
+    handleClose () {
+      this.showUpdateDialog = false
+      this.showAddUpdateDialog = false
+      this.uploadLoading = false
+    },
+    handleConfirmClose () {
+      this.showConfirmDialog = false
+    },
+    handleUpdateClose () {
+      this.showAddUpdateDialog = false
+    },
+    showUpdate () {
+      this.showUpdateDialog = true
+      this.showAddUpdateDialog = false
+    },
+    async jumpToUpdatePage (data, showEnable) {
+      this.updateKnowledge = data
+      this.showEnable = showEnable
+      await this.getCurTabData()
+      if (data.source === 'cn_psiphon3_ip') {
+        await this.init()
+      }
+      this.showUpdate()
+      if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
+        this.$nextTick(() => {
+          this.handleActiveBar()
+        })
+      }
+    },
+    uploadRecord () {
+      this.showAddUpdateDialog = true
+      this.updateObject.name = this.updateKnowledge.name
+      this.updateObject.label = this.$t(this.updateKnowledge.label)
+      this.updateObject.description = ''
+    },
+    getCurTabData () { // showEnable:true 为psiphon3的知识库，false为其它知识库
+      let params = {
+        pageSize: -1
+      }
+      if (this.showEnable) {
+        if (this.activeTab === knowledgeCardUpdateRecordType.updateRecord) {
+          params = {
+            ...params,
+            opUser: -1
           }
-          /*
+        } else if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
+          params = {
+            ...params,
+            opUser: 0
+          }
+        }
+      }
+      this.updateLogLoading = true
+      this.updateHistoryList = []
+      axios.get(api.knowledgeBaseLog + '/' + this.updateKnowledge.knowledgeId, { params: params }).then(res => {
+        this.updateHistoryList = res.data.data.list
+        if (this.updateHistoryList[0]) {
+          this.currentVersion = this.updateHistoryList[0].commitVersion + 1
+        }
+        /*
           this.hasUpdatingRecord = false
           this.updateHistoryList.forEach(item => {
             if (item.isUpdating) { // if(item.isUpdating){//????????

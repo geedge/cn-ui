@@ -1228,11 +1228,11 @@ export default {
     async scrollList (e) {
       if (!this.isChecked) {
         const obj = document.getElementById('locationMap-subscriber-scroll')
-        let scrollTop = obj.scrollTop
-        let scroll = scrollTop - this.preScrollTop;
-        this.preScrollTop = scrollTop;
-        //向下滚动才进行加载数据
-        if(scroll >= 0 && (obj.scrollHeight - obj.scrollTop - obj.clientHeight <= 10) &&
+        const scrollTop = obj.scrollTop
+        const scroll = scrollTop - this.preScrollTop
+        this.preScrollTop = scrollTop
+        // 向下滚动才进行加载数据
+        if (scroll >= 0 && (obj.scrollHeight - obj.scrollTop - obj.clientHeight <= 10) &&
             (obj.scrollHeight - obj.scrollTop - obj.clientHeight > 1) &&
             obj.scrollHeight !== 0 &&
             !this.loading.subscriberLoading) {

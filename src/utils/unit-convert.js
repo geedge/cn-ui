@@ -140,8 +140,8 @@ export function getUnitType (column) {
 }
 
 /* 单位转换，返回转换后的[value, unit]，type=time时若value<1ms，返回<1ms，type=percent时若value<0.01%，返回<0.01% */
-export function valueToRangeValue (value, unitType,sourceUnit, targetUnit, dot) {
-  const values = unitConvert(value, unitType,sourceUnit, targetUnit, dot)
+export function valueToRangeValue (value, unitType, sourceUnit, targetUnit, dot) {
+  const values = unitConvert(value, unitType, sourceUnit, targetUnit, dot)
   if (values[0] === '-') {
     return values
   }

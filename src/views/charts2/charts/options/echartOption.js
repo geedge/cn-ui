@@ -838,7 +838,7 @@ export const tagLineChartOption = {
         //   return unitConvert(value, unitTypes.number).join('')
         // }
       },
-      minInterval:1
+      minInterval: 1
     }
   ],
   series: []

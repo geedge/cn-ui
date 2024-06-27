@@ -337,43 +337,43 @@ if (openMock) {
       data: {
         list: [
           {
-            "subscriberId":111,
-            "group": "terrorist",
-            "info": "terrorist leader",
-            "location": "china",
-            "active": 1
+            subscriberId: 111,
+            group: 'terrorist',
+            info: 'terrorist leader',
+            location: 'china',
+            active: 1
           },
           {
-            "subscriberId":444,
-            "group": "terrorist",
-            "info": "terrorist leader",
-            "location": "china",
-            "active": 1
+            subscriberId: 444,
+            group: 'terrorist',
+            info: 'terrorist leader',
+            location: 'china',
+            active: 1
           },
           {
-            "subscriberId":555,
-            "group": "terrorist",
-            "info": "terrorist leader",
-            "location": "china",
-            "active": 0
-          },{
-            "subscriberId":666,
-            "group": "terrorist",
-            "info": "terrorist leader",
-            "location": "china",
-            "active": 1
-          },{
-            "subscriberId":777,
-            "group": "terrorist",
-            "info": "terrorist leader",
-            "location": "china",
-            "active": 0
-          },{
-            "subscriberId":888,
-            "group": "terrorist",
-            "info": "terrorist leader",
-            "location": "china",
-            "active": 1
+            subscriberId: 555,
+            group: 'terrorist',
+            info: 'terrorist leader',
+            location: 'china',
+            active: 0
+          }, {
+            subscriberId: 666,
+            group: 'terrorist',
+            info: 'terrorist leader',
+            location: 'china',
+            active: 1
+          }, {
+            subscriberId: 777,
+            group: 'terrorist',
+            info: 'terrorist leader',
+            location: 'china',
+            active: 0
+          }, {
+            subscriberId: 888,
+            group: 'terrorist',
+            info: 'terrorist leader',
+            location: 'china',
+            active: 1
           }
         ]
       }
@@ -384,53 +384,53 @@ if (openMock) {
       msg: 'success',
       code: 200,
       data: {
-        total:1,
-        pageSize:20,
-        pageNo:1,
-        pages:1,
+        total: 1,
+        pageSize: 20,
+        pageNo: 1,
+        pages: 1,
         list: [
           {
-            "subscriberId":111,
-            "active": 1,
-            "phone_number": 18601680302,
-            "follow": 1
+            subscriberId: 111,
+            active: 1,
+            phone_number: 18601680302,
+            follow: 1
           },
           {
-            "subscriberId":222,
-            "active": 1,
-            "phone_number": 18601680303,
-            "follow": 0
+            subscriberId: 222,
+            active: 1,
+            phone_number: 18601680303,
+            follow: 0
           },
           {
-            "subscriberId":333,
-            "active": 0,
-            "phone_number": 18601680304,
-            "follow": 0
-          },{
-            "subscriberId":444,
-            "active": 1,
-            "phone_number": 18601680305,
-            "follow": 1
-          },{
-            "subscriberId":555,
-            "active": 0,
-            "phone_number": 18601680306,
-            "follow": 1
-          },{
-            "subscriberId":666,
-            "active": 1,
-            "phone_number": 18601680307,
-            "follow": 1
-          },{
-            "subscriberId":777,
-            "active": 1,
-            "phone_number": 18601680308,
-            "follow": 1
-          },{
-            "subscriberId":888,
-            "active": 1,
-            "phone_number": 18601680300,
-            "follow": 1
+            subscriberId: 333,
+            active: 0,
+            phone_number: 18601680304,
+            follow: 0
+          }, {
+            subscriberId: 444,
+            active: 1,
+            phone_number: 18601680305,
+            follow: 1
+          }, {
+            subscriberId: 555,
+            active: 0,
+            phone_number: 18601680306,
+            follow: 1
+          }, {
+            subscriberId: 666,
+            active: 1,
+            phone_number: 18601680307,
+            follow: 1
+          }, {
+            subscriberId: 777,
+            active: 1,
+            phone_number: 18601680308,
+            follow: 1
+          }, {
+            subscriberId: 888,
+            active: 1,
+            phone_number: 18601680300,
+            follow: 1
           }
         ]
       }

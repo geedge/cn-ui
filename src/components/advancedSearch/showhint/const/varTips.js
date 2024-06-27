@@ -1,4 +1,4 @@
-var renderData = [
+const renderData = [
   {
     name: '$LOG_TYPE',
     description: 'A variable is a symbolic representation of data that enables you to access a value without having to enter it manually wherever you need it. You can use $ to reference variables throughout Advanced Search. ',
@@ -34,8 +34,9 @@ function main () {
           <h3> Description: </h3>
           <p> {data.description}</p>
           <h3> Details: </h3>
-          {Object.prototype.toString.call(data.details) === '[object Function]' ?
-            <renderer renderFun={data.details}></renderer> : <p>{data.details} </p>}
+          {Object.prototype.toString.call(data.details) === '[object Function]'
+            ? <renderer renderFun={data.details}></renderer>
+            : <p>{data.details} </p>}
         </div>)
       }
     }

@@ -89,7 +89,7 @@ export default {
         const initialData = await this.generateInitialData()
         this.initialData = _.cloneDeep(initialData) // 初始化数据
         let hoverNode = null
-        let canvasHeight = document.body.clientHeight - 100
+        const canvasHeight = document.body.clientHeight - 100
         this.graph = ForceGraph()(document.getElementById('entityGraph'))
           .height(canvasHeight)
           .graphData(initialData)
@@ -113,9 +113,9 @@ export default {
                 ctx.beginPath()
                 ctx.arc(node.x, node.y, nodeStyle.shadowR, 0, 2 * Math.PI, false)
                 ctx.closePath()
-                ctx.fillStyle = node === this.clickNode || node === hoverNode ?
-                    nodeStyle.hoveredShadowColor :
-                    nodeStyle.shadowColor
+                ctx.fillStyle = node === this.clickNode || node === hoverNode
+                  ? nodeStyle.hoveredShadowColor
+                  : nodeStyle.shadowColor
                 ctx.fill()
                 // 内部挖空
                 ctx.beginPath()
@@ -132,7 +132,7 @@ export default {
                 ctx.strokeStyle = nodeStyle.borderColor
                 ctx.stroke()
                 // 图片
-                ctx.drawImage(node.img, node.x - nodeStyle.iconWidth / 2, node.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight);
+                ctx.drawImage(node.img, node.x - nodeStyle.iconWidth / 2, node.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight)
                 // 文字
                 ctx.font = nodeStyle.font
                 const textWidth = ctx.measureText(node.label).width
@@ -275,7 +275,7 @@ export default {
             ctx.fillStyle = color
             ctx.fill()
             ctx.restore() // 恢复之前保存的状态
-            /*if (link.source.x !== undefined && link.source.y !== undefined && link.target.x !== undefined && link.target.y !== undefined) {
+            /* if (link.source.x !== undefined && link.source.y !== undefined && link.target.x !== undefined && link.target.y !== undefined) {
               const nodeStyle = this.getNodeStyle(link.target.type, link.target.data.entityType)
 
               ctx.lineWidth = 0.5
@@ -303,7 +303,7 @@ export default {
               ctx.fill()
               ctx.closePath()
               ctx.stroke()
-            }*/
+            } */
           })
           .autoPauseRedraw(false) // keep redrawing after engine has stopped如果您有依赖于画布的不断重绘的自定义动态对象，建议关闭此选项。
           .onNodeHover(node => {
@@ -332,8 +332,8 @@ export default {
                   }
                   const toAddNodes = []
                   const toAddLinks = []
-                  let keyCount = Object.keys(node.data.relatedEntities).length
-                  Object.keys(node.data.relatedEntities).forEach((k,i) => {
+                  const keyCount = Object.keys(node.data.relatedEntities).length
+                  Object.keys(node.data.relatedEntities).forEach((k, i) => {
                     if (node.data.relatedEntities[k].total) {
                       // 若已有同级同类型的listNode，不生成此tempNode
                       const neighbors = node.getNeighbors(this.graph.graphData())
@@ -349,12 +349,12 @@ export default {
                               node,
                               this.getIconUrl(k, false, false)
                         )
-                        //临时节点的初始固定坐标为其对应的entity节点坐标，展示直线动画
-                        //tempNode.fx = node.x
-                        //tempNode.fy = node.y
-                        let tempNodePoint = this.pointOfRotate({x:node.sourceNode.x,y:node.sourceNode.y},{x:node.x,y:node.y},this.getTempNodeAngle(keyCount,i))//临时节点固定角度，为以entity节点为center，list节点为from，旋转到临时节点的角度
-                        let finalTempNodePoint = this.pointOfLine({x:node.x,y:node.y},tempNodePoint,this.defaultLinkDistance)//start,end,lineLength
-                        if(tempNodePoint.x && tempNodePoint.y) {
+                        // 临时节点的初始固定坐标为其对应的entity节点坐标，展示直线动画
+                        // tempNode.fx = node.x
+                        // tempNode.fy = node.y
+                        const tempNodePoint = this.pointOfRotate({ x: node.sourceNode.x, y: node.sourceNode.y }, { x: node.x, y: node.y }, this.getTempNodeAngle(keyCount, i))// 临时节点固定角度，为以entity节点为center，list节点为from，旋转到临时节点的角度
+                        const finalTempNodePoint = this.pointOfLine({ x: node.x, y: node.y }, tempNodePoint, this.defaultLinkDistance)// start,end,lineLength
+                        if (tempNodePoint.x && tempNodePoint.y) {
                           tempNode.fx = (node.x + finalTempNodePoint.x) / 2
                           tempNode.fy = (node.y + finalTempNodePoint.y) / 2
                         }
@@ -388,18 +388,18 @@ export default {
               // 若已达第六层，则只生成listNode，不再展开entityNode
               const nodes = []
               const links = []
-              let stackNodes = []
+              const stackNodes = []
               const stackLinks = []
               const sourceNode = node.getSourceNode(this.graph.graphData())
               const k1 = (node.x - sourceNode.x) / linkDistance.normal
               const k2 = (node.y - sourceNode.y) / linkDistance.normal
               const listNode = new Node(
-                    nodeType.listNode,
+                nodeType.listNode,
                     `${sourceNode.realId}__${node.data.entityType}-list`,
                     {
                       entityType: node.data.entityType,
                       fx: sourceNode.x + k1 * linkDistance.entityToList,
-                      fy: sourceNode.y + k2 * linkDistance.entityToList,
+                      fy: sourceNode.y + k2 * linkDistance.entityToList
                     },
                     sourceNode,
                     this.getIconUrl(node.data.entityType, false, false)
@@ -423,7 +423,7 @@ export default {
                   try {
                     const entities = await sourceNode.queryRelatedEntities(listNode.data.entityType)
                     sourceNode.data.relatedEntities[listNode.data.entityType].list.push(...entities.list)
-                    let curNodes = this.graph.graphData().nodes
+                    const curNodes = this.graph.graphData().nodes
                     entities.list.forEach(entity => {
                       const entityNode = new Node(nodeType.entityNode, entity.vertex, {
                         entityType: listNode.data.entityType,
@@ -432,16 +432,16 @@ export default {
                         y: listNode.y + Math.random() * 10 - 5
                       }, listNode, this.getIconUrl(listNode.data.entityType, false, false))
                       nodes.push(entityNode)
-                      let link = new Link(listNode, entityNode)
+                      const link = new Link(listNode, entityNode)
                       links.push(link)
-                      if(curNodes.findIndex(node => node.id === entityNode.id) === -1) {//过滤掉已有的节点
+                      if (curNodes.findIndex(node => node.id === entityNode.id) === -1) { // 过滤掉已有的节点
                         stackNodes.push(_.cloneDeep(entityNode))
                       }
                       stackLinks.push(_.cloneDeep(link))
                     })
                     this.addItems(nodes, links, false)
-                    //由于点击临时节点后增加节点分为了2步，所以需要将2步的所有节点一起缓存
-                    this.stackData.undo.push({nodes:stackNodes, links:stackLinks})
+                    // 由于点击临时节点后增加节点分为了2步，所以需要将2步的所有节点一起缓存
+                    this.stackData.undo.push({ nodes: stackNodes, links: stackLinks })
 
                     setTimeout(() => {
                       listNode.fx = null
@@ -485,65 +485,65 @@ export default {
           .d3Force('charge', d3.forceManyBody().strength(this.defaultChargeStrength))
           .onNodeDrag((node, translate) => {
             const { nodes, links } = this.graph.graphData()
-            //拖动entity节点时，如果此entity节点有临时节点，则同时移动临时节点
-            if(node.type === nodeType.entityNode) {
-              //查询点击entity节点对应的list节点
-              let fromX = node.sourceNode.preDragX ? node.sourceNode.preDragX : node.sourceNode.x
-              let fromY = node.sourceNode.preDragY ? node.sourceNode.preDragY : node.sourceNode.y
-              let from = {x:fromX,y:fromY}
-              let centerX = node.preDragX ? node.preDragX : node.x
-              let centerY = node.preDragY ? node.preDragY : node.y
-              let center = {x:centerX,y:centerY}
+            // 拖动entity节点时，如果此entity节点有临时节点，则同时移动临时节点
+            if (node.type === nodeType.entityNode) {
+              // 查询点击entity节点对应的list节点
+              const fromX = node.sourceNode.preDragX ? node.sourceNode.preDragX : node.sourceNode.x
+              const fromY = node.sourceNode.preDragY ? node.sourceNode.preDragY : node.sourceNode.y
+              const from = { x: fromX, y: fromY }
+              const centerX = node.preDragX ? node.preDragX : node.x
+              const centerY = node.preDragY ? node.preDragY : node.y
+              const center = { x: centerX, y: centerY }
 
               const tempLinks = links.filter(link => link.source.id === node.id && link.type === linkType.temp)
               tempLinks.forEach(link => {
                 const tempNodeGroup = nodes.filter(node => node.id === link.target.id)
                 tempNodeGroup.forEach(tempNode => {
-                  let toX = tempNode.fx ? tempNode.fx : tempNode.x
-                  let toY = tempNode.fy ? tempNode.fy : tempNode.y
-                  let to = {x:toX,y:toY}
-                  if(!tempNode.angle) {//每次拖拽，每个临时节点计算一次角度即可，因为角度不会发生改变
-                    tempNode.angle = this.angleOfRotate(from,to,center)
+                  const toX = tempNode.fx ? tempNode.fx : tempNode.x
+                  const toY = tempNode.fy ? tempNode.fy : tempNode.y
+                  const to = { x: toX, y: toY }
+                  if (!tempNode.angle) { // 每次拖拽，每个临时节点计算一次角度即可，因为角度不会发生改变
+                    tempNode.angle = this.angleOfRotate(from, to, center)
                   }
 
-                  let toPoint = this.pointOfRotate({x: node.sourceNode.x, y: node.sourceNode.y}, {x:node.x + translate.x ,y:node.y + translate.y}, tempNode.angle)
-                  //因为在拖拽的过长中，list节点到entity节点之间的距离是变化的，且我们要求的是，临时节点到entity节点之间的距离不发生变化，所以此处需要再次进行计算转换，得到最终的坐标
-                  //已知2个点的坐标，求从起点开始指定长度线段的终点坐标
-                  if(!tempNode.lineLength) {//每次拖拽，每个临时节点计算一次与实体节点的距离即可，因为距离在当前拖拽中不会发生改变
-                    tempNode.lineLength = Math.sqrt(Math.pow(node.x - tempNode.fx,2) + Math.pow(node.y - tempNode.fy,2))
+                  const toPoint = this.pointOfRotate({ x: node.sourceNode.x, y: node.sourceNode.y }, { x: node.x + translate.x, y: node.y + translate.y }, tempNode.angle)
+                  // 因为在拖拽的过长中，list节点到entity节点之间的距离是变化的，且我们要求的是，临时节点到entity节点之间的距离不发生变化，所以此处需要再次进行计算转换，得到最终的坐标
+                  // 已知2个点的坐标，求从起点开始指定长度线段的终点坐标
+                  if (!tempNode.lineLength) { // 每次拖拽，每个临时节点计算一次与实体节点的距离即可，因为距离在当前拖拽中不会发生改变
+                    tempNode.lineLength = Math.sqrt(Math.pow(node.x - tempNode.fx, 2) + Math.pow(node.y - tempNode.fy, 2))
                   }
-                  let finalTo = this.pointOfLine({x:node.x + translate.x ,y:node.y + translate.y},toPoint,tempNode.lineLength)
+                  const finalTo = this.pointOfLine({ x: node.x + translate.x, y: node.y + translate.y }, toPoint, tempNode.lineLength)
                   tempNode.fx = finalTo.x
                   tempNode.fy = finalTo.y
                 })
               })
             }
 
-            //拖动list节点时，如果此list节点对应的entity节点有临时节点，则同时移动临时节点
-            if(node.type === nodeType.listNode) {
-              //根据list节点，找到list节点连接的线
+            // 拖动list节点时，如果此list节点对应的entity节点有临时节点，则同时移动临时节点
+            if (node.type === nodeType.listNode) {
+              // 根据list节点，找到list节点连接的线
               const listLinks = links.filter(link => link.source.id === node.id)
-              let fromX = node.preDragX ? node.preDragX : node.x
-              let fromY = node.preDragY ? node.preDragY : node.y
+              const fromX = node.preDragX ? node.preDragX : node.x
+              const fromY = node.preDragY ? node.preDragY : node.y
               listLinks.forEach(link => {
-                //找到连接临时节点的虚线
+                // 找到连接临时节点的虚线
                 const tempLinks = links.filter(entityLink => entityLink.source.id === link.target.id && entityLink.type === linkType.temp)
-                if(tempLinks && tempLinks.length > 0) {
+                if (tempLinks && tempLinks.length > 0) {
                   tempLinks.forEach(tempLink => {
-                    //找到entity节点
+                    // 找到entity节点
                     const entityNode = nodes.find(normalNode => normalNode.id === tempLink.source.id && normalNode.type === nodeType.entityNode)
-                    if(entityNode) {
-                      let entityNodeX = entityNode.fx ? entityNode.fx : entityNode.x
-                      let entityNodeY = entityNode.fy ? entityNode.fy : entityNode.y
-                      let angle = this.angleOfRotate({x:fromX,y:fromY},{x:node.x + translate.x,y:node.y + translate.y},{x:entityNodeX,y:entityNodeY})
-                      const tempNodes = nodes.filter(normalNode => normalNode.id === tempLink.target.id && normalNode.type === nodeType.tempNode)//找到临时节点
+                    if (entityNode) {
+                      const entityNodeX = entityNode.fx ? entityNode.fx : entityNode.x
+                      const entityNodeY = entityNode.fy ? entityNode.fy : entityNode.y
+                      const angle = this.angleOfRotate({ x: fromX, y: fromY }, { x: node.x + translate.x, y: node.y + translate.y }, { x: entityNodeX, y: entityNodeY })
+                      const tempNodes = nodes.filter(normalNode => normalNode.id === tempLink.target.id && normalNode.type === nodeType.tempNode)// 找到临时节点
                       tempNodes.forEach(tempNode => {
-                        let tempNodeX = tempNode.fx ? tempNode.fx : tempNode.x
-                        let tempNodeY = tempNode.fy ? tempNode.fy : tempNode.y
-                        let sourceNodeX = tempLink.source.fx ? tempLink.source.fx : tempLink.source.x
-                        let sourceNodeY = tempLink.source.fy ? tempLink.source.fy : tempLink.source.y
-                        //rotate为list节点旋转的角度，根据旋转角度，及临时节点的位置，及entity节点的坐标，得到临时节点旋转后的坐标
-                        let to = this.pointOfRotate({x:tempNodeX, y:tempNodeY}, {x:sourceNodeX,y:sourceNodeY}, angle)
+                        const tempNodeX = tempNode.fx ? tempNode.fx : tempNode.x
+                        const tempNodeY = tempNode.fy ? tempNode.fy : tempNode.y
+                        const sourceNodeX = tempLink.source.fx ? tempLink.source.fx : tempLink.source.x
+                        const sourceNodeY = tempLink.source.fy ? tempLink.source.fy : tempLink.source.y
+                        // rotate为list节点旋转的角度，根据旋转角度，及临时节点的位置，及entity节点的坐标，得到临时节点旋转后的坐标
+                        const to = this.pointOfRotate({ x: tempNodeX, y: tempNodeY }, { x: sourceNodeX, y: sourceNodeY }, angle)
                         tempNode.fx = to.x
                         tempNode.fy = to.y
                       })
@@ -552,33 +552,33 @@ export default {
                 }
               })
             }
-            //记录上次拖拽时节点的坐标，否则计算时出现误差。
+            // 记录上次拖拽时节点的坐标，否则计算时出现误差。
             node.preDragX = node.x + translate.x
             node.preDragY = node.y + translate.y
           })
-          .cooldownTime(2000)//到时间后，才执行onEngineStop
+          .cooldownTime(2000)// 到时间后，才执行onEngineStop
           .onNodeDragEnd((node, translate) => { // 修复拖动节点
             node.fx = node.x
             node.fy = node.y
-            //拖拽结束时，把所有临时节点的的angle置为null,便于拖动其它节点时的计算
+            // 拖拽结束时，把所有临时节点的的angle置为null,便于拖动其它节点时的计算
             this.graph.graphData().nodes.forEach(node => {
-              if(node.type === nodeType.tempNode) {
+              if (node.type === nodeType.tempNode) {
                 node.angle = null
                 node.lineLength = null
               }
             })
           })
           .onEngineTick(() => {
-            if(this.isClicking) {
+            if (this.isClicking) {
               const tempNodeGroup = this.graph.graphData().nodes.filter(node => node.type === nodeType.tempNode)
-              if(tempNodeGroup.length > 0) {
-                let keyCount = tempNodeGroup.length
-                tempNodeGroup.forEach((tempNode,i) => {
-                  let tempNodeSource = tempNode.sourceNode
-                  if(tempNodeSource) {
-                    let tempNodePoint = this.pointOfRotate({x:tempNodeSource.sourceNode.x,y:tempNodeSource.sourceNode.y},{x:tempNodeSource.x,y:tempNodeSource.y},this.getTempNodeAngle(keyCount,i))//临时节点固定角度，为以entity节点为center，list节点为from，旋转到临时节点的角度
-                    let finalTempNodePoint = this.pointOfLine({x:tempNodeSource.x,y:tempNodeSource.y},tempNodePoint,this.defaultLinkDistance)//start,end,lineLength
-                    if(tempNodePoint.x && tempNodePoint.y) {
+              if (tempNodeGroup.length > 0) {
+                const keyCount = tempNodeGroup.length
+                tempNodeGroup.forEach((tempNode, i) => {
+                  const tempNodeSource = tempNode.sourceNode
+                  if (tempNodeSource) {
+                    const tempNodePoint = this.pointOfRotate({ x: tempNodeSource.sourceNode.x, y: tempNodeSource.sourceNode.y }, { x: tempNodeSource.x, y: tempNodeSource.y }, this.getTempNodeAngle(keyCount, i))// 临时节点固定角度，为以entity节点为center，list节点为from，旋转到临时节点的角度
+                    const finalTempNodePoint = this.pointOfLine({ x: tempNodeSource.x, y: tempNodeSource.y }, tempNodePoint, this.defaultLinkDistance)// start,end,lineLength
+                    if (tempNodePoint.x && tempNodePoint.y) {
                       tempNode.fx = finalTempNodePoint.x
                       tempNode.fy = finalTempNodePoint.y
                     }
@@ -595,31 +595,31 @@ export default {
         this.rightBox.loading = false
       }
     },
-    getTempNodeAngle(nodeCount,i) {
+    getTempNodeAngle (nodeCount, i) {
       switch (nodeCount) {
         case 1:
           return 180
         case 2:
-          return 150 + i*60
+          return 150 + i * 60
         case 3:
-          return 150 + i*30
+          return 150 + i * 30
       }
     },
-    //根据3个点坐标，计算节点旋转的角度
-    angleOfRotate(from, to, center) {
-      let ab = {}
-      let ac = {}
+    // 根据3个点坐标，计算节点旋转的角度
+    angleOfRotate (from, to, center) {
+      const ab = {}
+      const ac = {}
       ab.x = from.x - center.x
       ab.y = from.y - center.y
       ac.x = to.x - center.x
       ac.y = to.y - center.y
-      let direct = (ab.x * ac.y) - (ab.y * ac.x)//求节点是顺时针还是逆时针旋转
-      let lengthAb = Math.sqrt(Math.pow(center.x - from.x,2) + Math.pow(center.y - from.y,2)),
-          lengthAc = Math.sqrt(Math.pow(center.x - to.x,2) + Math.pow(center.y - to.y,2)),
-          lengthBc = Math.sqrt(Math.pow(from.x - to.x,2) + Math.pow(from.y - to.y,2))
-      let cosA = (Math.pow(lengthAb,2) + Math.pow(lengthAc,2) - Math.pow(lengthBc,2)) / (2 * lengthAb * lengthAc)//余弦定理求出旋转角
+      const direct = (ab.x * ac.y) - (ab.y * ac.x)// 求节点是顺时针还是逆时针旋转
+      const lengthAb = Math.sqrt(Math.pow(center.x - from.x, 2) + Math.pow(center.y - from.y, 2))
+      const lengthAc = Math.sqrt(Math.pow(center.x - to.x, 2) + Math.pow(center.y - to.y, 2))
+      const lengthBc = Math.sqrt(Math.pow(from.x - to.x, 2) + Math.pow(from.y - to.y, 2))
+      const cosA = (Math.pow(lengthAb, 2) + Math.pow(lengthAc, 2) - Math.pow(lengthBc, 2)) / (2 * lengthAb * lengthAc)// 余弦定理求出旋转角
       let angleA = Math.acos(cosA) * 180 / Math.PI
-      if(direct < 0) {//负数表示逆时针旋转,正数表示顺时针旋转
+      if (direct < 0) { // 负数表示逆时针旋转,正数表示顺时针旋转
         angleA = -angleA
       }
       return angleA
@@ -628,46 +628,46 @@ export default {
     // center: 圆心点;
     // angle: 旋转角度°  -- [angle * M_PI / 180]:将角度换算为弧度
     // 【注意】angle 逆时针为正，顺时针为负
-    pointOfRotate(from,center,angle){
-      var a = center.x
-      var b = center.y
-      var x0 = from.x
-      var y0 = from.y
-      var rx = a + (x0-a) * Math.cos(angle * Math.PI / 180) - (y0-b) * Math.sin(angle * Math.PI / 180)
-      var ry = b + (x0-a) * Math.sin(angle * Math.PI / 180) + (y0-b) * Math.cos(angle * Math.PI / 180)
-      if(rx && ry) {
-        return {x:rx,y:ry}
+    pointOfRotate (from, center, angle) {
+      const a = center.x
+      const b = center.y
+      const x0 = from.x
+      const y0 = from.y
+      const rx = a + (x0 - a) * Math.cos(angle * Math.PI / 180) - (y0 - b) * Math.sin(angle * Math.PI / 180)
+      const ry = b + (x0 - a) * Math.sin(angle * Math.PI / 180) + (y0 - b) * Math.cos(angle * Math.PI / 180)
+      if (rx && ry) {
+        return { x: rx, y: ry }
       } else {
         return from
       }
     },
-    //已知2个点的坐标，求从起点开始指定长度线段的终点坐标
-    pointOfLine(start, end, lineLength) {
+    // 已知2个点的坐标，求从起点开始指定长度线段的终点坐标
+    pointOfLine (start, end, lineLength) {
       // 计算总距离
-      let totalDistance = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2))
-      let cosA = (end.x - start.x)/totalDistance
-      let sinA = (end.y - start.y) / totalDistance
-      let finalX = start.x + cosA * lineLength
-      let finalY = start.y + sinA * lineLength
+      const totalDistance = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2))
+      const cosA = (end.x - start.x) / totalDistance
+      const sinA = (end.y - start.y) / totalDistance
+      const finalX = start.x + cosA * lineLength
+      const finalY = start.y + sinA * lineLength
 
-      return {x:finalX, y:finalY}
+      return { x: finalX, y: finalY }
     },
     handleToolsbarClick (code) {
-      if (code === 'undo') {//上一步
+      if (code === 'undo') { // 上一步
         const data = this.stackData.undo.pop()
         this.stackData.justUndo = true
-        if(data) {
+        if (data) {
           const { nodes, links } = this.graph.graphData()
           data.nodes.forEach(popNode => {
             const popNodeIndex = nodes.findIndex(item => item.id === popNode.id)
             if (popNodeIndex > -1) {
-              nodes.splice(popNodeIndex,1)
+              nodes.splice(popNodeIndex, 1)
             }
           })
           data.links.forEach(link => {
             const linksIndex = links.findIndex(item => item.source.id === link.source && item.target.id === link.target)
             if (linksIndex > -1) {
-              links.splice(linksIndex,1)
+              links.splice(linksIndex, 1)
             }
           })
           this.cleanTempItems()
@@ -677,9 +677,9 @@ export default {
           }
           this.onCloseBlock()
         }
-      } else if (code === 'redo') {//下一步
+      } else if (code === 'redo') { // 下一步
         const data = this.stackData.redo.pop()
-        if(data) {
+        if (data) {
           this.stackData.justRedo = true
           this.addItems(data.nodes, data.links)
           this.cleanTempItems()
@@ -689,7 +689,7 @@ export default {
           this.onCloseBlock()
         }
       } else if (code === 'autoZoom') {
-        this.graph.zoomToFit(100,100)
+        this.graph.zoomToFit(100, 100)
       } else if (code === 'zoomOut') {
         this.graph.zoom(this.graph.zoom() + 0.2)
       } else if (code === 'zoomIn') {
@@ -930,7 +930,7 @@ export default {
         y: cy + cy - sy + Math.random() * 30 - 15
       }
     },
-    addItems (toAddNodes, toAddLinks,stack = true) {
+    addItems (toAddNodes, toAddLinks, stack = true) {
       if (toAddNodes.length || toAddLinks.length) {
         const { nodes, links } = this.graph.graphData()
         const nodes2 = toAddNodes.filter(n => !nodes.some(n2 => n.id === n2.id))
@@ -938,8 +938,8 @@ export default {
         links.push(...toAddLinks)
         this.graph.graphData({ nodes, links })
 
-        if(stack) {
-          this.stackData.undo.push(_.cloneDeep({nodes:nodes2, links:toAddLinks}))
+        if (stack) {
+          this.stackData.undo.push(_.cloneDeep({ nodes: nodes2, links: toAddLinks }))
         }
       }
     },
@@ -950,20 +950,20 @@ export default {
       if (newNodes.length !== nodes.length || newLinks.length !== links.length) {
         this.graph.graphData({ nodes: newNodes, links: newLinks })
       }
-      //清理临时节点时，同时释放临时节点对应的entity节点,不再固定位置
+      // 清理临时节点时，同时释放临时节点对应的entity节点,不再固定位置
       const tempNodes = nodes.filter(n => n.type === nodeType.tempNode)
       tempNodes.forEach(n => {
-        if(n.sourceNode) {
+        if (n.sourceNode) {
           n.sourceNode.fx = null
           n.sourceNode.fy = null
         }
       })
-      //点击节点的时候，把所有list节点的的preDragX和preDragY置为null,便于拖动其它节点时的计算
+      // 点击节点的时候，把所有list节点的的preDragX和preDragY置为null,便于拖动其它节点时的计算
       nodes.forEach(node => {
-        //if(node.type === nodeType.listNode) {
-          node.preDragX = null
-          node.preDragY = null
-        //}
+        // if(node.type === nodeType.listNode) {
+        node.preDragX = null
+        node.preDragY = null
+        // }
       })
     },
     async generateInitialData (clickNode) {
@@ -1033,7 +1033,7 @@ export default {
         return
       }
       if (sourceNode.data.relatedEntities[expandType].list.length < 50) {
-        //this.rightBox.loading = true
+        // this.rightBox.loading = true
         try {
           const entities = await sourceNode.queryRelatedEntities(expandType)
           sourceNode.data.relatedEntities[expandType].list.push(...entities.list)
@@ -1072,7 +1072,7 @@ export default {
           const toAddNodes = []
           const toAddLinks = []
 
-          //this.rightBox.loading = true
+          // this.rightBox.loading = true
           try {
             const entities = await node.queryRelatedEntities(expandType)
             node.data.relatedEntities[expandType].list.push(...entities.list)

@@ -1,25 +1,25 @@
-export default function (CodeMirror,{
+export default function (CodeMirror, {
   cb,
   keyboardUp,
   keyboardDown,
   keyboardEnter
 }) {
-  var HINT_ELEMENT_CLASS = 'CodeMirror-hint'
-  var ACTIVE_HINT_ELEMENT_CLASS = 'CodeMirror-hint-active'
+  const HINT_ELEMENT_CLASS = 'CodeMirror-hint'
+  const ACTIVE_HINT_ELEMENT_CLASS = 'CodeMirror-hint-active'
 
   // This is the old interface, kept around for now to stay
   // backwards-compatible.
   CodeMirror.showHint = function (cm, getHints, options) {
     if (!getHints) return cm.showHint(options)
     if (options && options.async) getHints.async = true
-    var newOpts = { hint: getHints }
-    if (options) for (var prop in options) newOpts[prop] = options[prop]
+    const newOpts = { hint: getHints }
+    if (options) for (const prop in options) newOpts[prop] = options[prop]
     return cm.showHint(newOpts)
   }
 
   CodeMirror.defineExtension('showHint', function (options) {
     options = parseOptions(this, this.getCursor('start'), options)
-    var selections = this.listSelections()
+    const selections = this.listSelections()
     if (selections.length > 1) return
     // By default, don't allow completion when something is selected.
     // A hint function can have a `supportsSelection` property to
@@ -27,7 +27,7 @@ export default function (CodeMirror,{
     if (this.somethingSelected()) {
       if (!options.hint.supportsSelection) return
       // Don't try with cross-line selections
-      for (var i = 0; i < selections.length; i++) {
+      for (let i = 0; i < selections.length; i++) {
         if (selections[i].head.line != selections[i].anchor.line) return
       }
     }
@@ -55,17 +55,17 @@ export default function (CodeMirror,{
     this.startLen = this.cm.getLine(this.startPos.line).length - this.cm.getSelection().length
 
     if (this.options.updateOnCursorActivity) {
-      var self = this
+      const self = this
       cm.on('cursorActivity', this.activityFunc = function () {
         self.cursorActivity()
       })
     }
   }
 
-  var requestAnimationFrame = window.requestAnimationFrame || function (fn) {
+  const requestAnimationFrame = window.requestAnimationFrame || function (fn) {
     return setTimeout(fn, 1000 / 60)
   }
-  var cancelAnimationFrame = window.cancelAnimationFrame || clearTimeout
+  const cancelAnimationFrame = window.cancelAnimationFrame || clearTimeout
 
   Completion.prototype = {
     close: function () {
@@ -116,7 +116,7 @@ export default function (CodeMirror,{
         this.debounce = 0
       }
 
-      var identStart = this.startPos
+      let identStart = this.startPos
       if (this.data) {
         identStart = this.data.from
       }
@@ -127,7 +127,7 @@ export default function (CodeMirror,{
         (!pos.ch || this.options.closeCharacters.test(line.charAt(pos.ch - 1)))) {
         this.close()
       } else {
-        var self = this
+        const self = this
         this.debounce = requestAnimationFrame(function () {
           self.update()
         })
@@ -137,7 +137,7 @@ export default function (CodeMirror,{
 
     update: function (first) {
       if (this.tick == null) return
-      var self = this, myTick = ++this.tick
+      const self = this; const myTick = ++this.tick
       fetchHints(this.options.hint, this.cm, this.options, function (data) {
         if (self.tick == myTick) self.finishUpdate(data, first)
       })
@@ -189,7 +189,7 @@ export default function (CodeMirror,{
   }
 
   function buildKeyMap (completion, handle) {
-    var baseMap = {
+    const baseMap = {
       Up: function () {
         handle.moveFocus(-1)
       },
@@ -215,7 +215,7 @@ export default function (CodeMirror,{
       Esc: handle.close
     }
 
-    var mac = /Mac/.test(navigator.platform)
+    const mac = /Mac/.test(navigator.platform)
 
     if (mac) {
       baseMap['Ctrl-P'] = function () {
@@ -226,11 +226,11 @@ export default function (CodeMirror,{
       }
     }
 
-    var custom = completion.options.customKeys
-    var ourMap = custom ? {} : baseMap
+    const custom = completion.options.customKeys
+    const ourMap = custom ? {} : baseMap
 
     function addBinding (key, val) {
-      var bound
+      let bound
       if (typeof val != 'string') {
         bound = function (cm) {
           return val(cm, handle)
@@ -251,7 +251,7 @@ export default function (CodeMirror,{
         }
       }
     }
-    var extra = completion.options.extraKeys
+    const extra = completion.options.extraKeys
     if (extra) {
       for (var key in extra) {
         if (extra.hasOwnProperty(key)) {
@@ -274,25 +274,25 @@ export default function (CodeMirror,{
     this.completion = completion
     this.data = data
     this.picked = false
-    var widget = this, cm = completion.cm
-    var ownerDocument = cm.getInputField().ownerDocument
-    var parentWindow = ownerDocument.defaultView || ownerDocument.parentWindow
+    const widget = this; const cm = completion.cm
+    const ownerDocument = cm.getInputField().ownerDocument
+    const parentWindow = ownerDocument.defaultView || ownerDocument.parentWindow
 
-    var hints = this.hints = ownerDocument.createElement('ul')
+    const hints = this.hints = ownerDocument.createElement('ul')
     // $(hints).append(`
     //   <h1>lalallalla</h1>
     // `)
     hints.setAttribute('role', 'listbox')
     hints.setAttribute('aria-expanded', 'true')
     hints.id = this.id
-    var theme = completion.cm.options.theme
+    const theme = completion.cm.options.theme
     hints.className = 'CodeMirror-hints ' + theme
     this.selectedHint = data.selectedHint || 0
 
-    var completions = data.list
-    for (var i = 0; i < completions.length; ++i) {
-      var elt = hints.appendChild(ownerDocument.createElement('li')), cur = completions[i]
-      var className = HINT_ELEMENT_CLASS + (i != this.selectedHint ? '' : ' ' + ACTIVE_HINT_ELEMENT_CLASS)
+    const completions = data.list
+    for (let i = 0; i < completions.length; ++i) {
+      const elt = hints.appendChild(ownerDocument.createElement('li')); const cur = completions[i]
+      let className = HINT_ELEMENT_CLASS + (i != this.selectedHint ? '' : ' ' + ACTIVE_HINT_ELEMENT_CLASS)
       if (cur.className != null) className = cur.className + ' ' + className
       elt.className = className
       if (i == this.selectedHint) elt.setAttribute('aria-selected', 'true')
@@ -306,16 +306,16 @@ export default function (CodeMirror,{
       elt.hintId = i
     }
 
-    var container = completion.options.container || ownerDocument.body
-    var pos = cm.cursorCoords(completion.options.alignWithWord ? data.from : null)
-    var left = pos.left, top = pos.bottom, below = true
-    var offsetLeft = 0, offsetTop = 0
+    const container = completion.options.container || ownerDocument.body
+    let pos = cm.cursorCoords(completion.options.alignWithWord ? data.from : null)
+    let left = pos.left; let top = pos.bottom; let below = true
+    let offsetLeft = 0; let offsetTop = 0
     if (container !== ownerDocument.body) {
       // We offset the cursor position because left and top are relative to the offsetParent's top left corner.
-      var isContainerPositioned = ['absolute', 'relative', 'fixed'].indexOf(parentWindow.getComputedStyle(container).position) !== -1
-      var offsetParent = isContainerPositioned ? container : container.offsetParent
-      var offsetParentPosition = offsetParent.getBoundingClientRect()
-      var bodyPosition = ownerDocument.body.getBoundingClientRect()
+      const isContainerPositioned = ['absolute', 'relative', 'fixed'].indexOf(parentWindow.getComputedStyle(container).position) !== -1
+      const offsetParent = isContainerPositioned ? container : container.offsetParent
+      const offsetParentPosition = offsetParent.getBoundingClientRect()
+      const bodyPosition = ownerDocument.body.getBoundingClientRect()
       offsetLeft = (offsetParentPosition.left - bodyPosition.left - offsetParent.scrollLeft)
       offsetTop = (offsetParentPosition.top - bodyPosition.top - offsetParent.scrollTop)
     }
@@ -325,10 +325,10 @@ export default function (CodeMirror,{
     hints.style.display = 'none'
 
     // If we're at the edge of the screen, then we want the menu to appear on the left of the cursor.
-    var winW = parentWindow.innerWidth || Math.max(ownerDocument.body.offsetWidth, ownerDocument.documentElement.offsetWidth)
-    var winH = parentWindow.innerHeight || Math.max(ownerDocument.body.offsetHeight, ownerDocument.documentElement.offsetHeight)
+    const winW = parentWindow.innerWidth || Math.max(ownerDocument.body.offsetWidth, ownerDocument.documentElement.offsetWidth)
+    const winH = parentWindow.innerHeight || Math.max(ownerDocument.body.offsetHeight, ownerDocument.documentElement.offsetHeight)
 
-    //不用默认的DOM 下拉提示
+    // 不用默认的DOM 下拉提示
     // container.appendChild(hints);
     hints.remove()
 
@@ -336,25 +336,25 @@ export default function (CodeMirror,{
     cm.getInputField().setAttribute('aria-owns', this.id)
     cm.getInputField().setAttribute('aria-activedescendant', this.id + '-' + this.selectedHint)
 
-    var box = completion.options.moveOnOverlap ? hints.getBoundingClientRect() : new DOMRect()
-    var scrolls = completion.options.paddingForScrollbar ? hints.scrollHeight > hints.clientHeight + 1 : false
+    let box = completion.options.moveOnOverlap ? hints.getBoundingClientRect() : new DOMRect()
+    const scrolls = completion.options.paddingForScrollbar ? hints.scrollHeight > hints.clientHeight + 1 : false
 
     // Compute in the timeout to avoid reflow on init
-    var startScroll
+    let startScroll
     setTimeout(function () {
       startScroll = cm.getScrollInfo()
     })
 
-    var overlapY = box.bottom - winH
+    const overlapY = box.bottom - winH
     if (overlapY > 0) {
-      var height = box.bottom - box.top, curTop = pos.top - (pos.bottom - box.top)
+      const height = box.bottom - box.top; const curTop = pos.top - (pos.bottom - box.top)
       if (curTop - height > 0) { // Fits above cursor
         hints.style.top = (top = pos.top - height - offsetTop) + 'px'
         below = false
       } else if (height > winH) {
         hints.style.height = (winH - 5) + 'px'
         hints.style.top = (top = pos.bottom - box.top - offsetTop) + 'px'
-        var cursor = cm.getCursor()
+        const cursor = cm.getCursor()
         if (data.from.ch != cursor.ch) {
           pos = cm.cursorCoords(cursor)
           hints.style.left = (left = pos.left - offsetLeft) + 'px'
@@ -362,7 +362,7 @@ export default function (CodeMirror,{
         }
       }
     }
-    var overlapX = box.right - winW
+    let overlapX = box.right - winW
     if (scrolls) overlapX += cm.display.nativeBarWidth
     if (overlapX > 0) {
       if (box.right - box.left > winW) {
@@ -372,7 +372,7 @@ export default function (CodeMirror,{
       hints.style.left = (left = Math.max(pos.left - overlapX - offsetLeft, 0)) + 'px'
     }
     if (scrolls) {
-      for (var node = hints.firstChild; node; node = node.nextSibling) {
+      for (let node = hints.firstChild; node; node = node.nextSibling) {
         node.style.paddingRight = cm.display.nativeBarWidth + 'px'
       }
     }
@@ -400,7 +400,7 @@ export default function (CodeMirror,{
     }))
 
     if (completion.options.closeOnUnfocus) {
-      var closingOnBlur
+      let closingOnBlur
       cm.on('blur', this.onBlur = function () {
         closingOnBlur = setTimeout(function () {
           completion.close()
@@ -412,10 +412,10 @@ export default function (CodeMirror,{
     }
 
     cm.on('scroll', this.onScroll = function () {
-      var curScroll = cm.getScrollInfo(), editor = cm.getWrapperElement().getBoundingClientRect()
+      const curScroll = cm.getScrollInfo(); const editor = cm.getWrapperElement().getBoundingClientRect()
       if (!startScroll) startScroll = cm.getScrollInfo()
-      var newTop = top + startScroll.top - curScroll.top
-      var point = newTop - (parentWindow.pageYOffset || (ownerDocument.documentElement || ownerDocument.body).scrollTop)
+      const newTop = top + startScroll.top - curScroll.top
+      let point = newTop - (parentWindow.pageYOffset || (ownerDocument.documentElement || ownerDocument.body).scrollTop)
       if (!below) point += hints.offsetHeight
       if (point <= editor.top || point >= editor.bottom) return completion.close()
       hints.style.top = newTop + 'px'
@@ -423,7 +423,7 @@ export default function (CodeMirror,{
     })
 
     CodeMirror.on(hints, 'dblclick', function (e) {
-      var t = getHintElement(hints, e.target || e.srcElement)
+      const t = getHintElement(hints, e.target || e.srcElement)
       if (t && t.hintId != null) {
         widget.changeActive(t.hintId)
         widget.pick()
@@ -431,7 +431,7 @@ export default function (CodeMirror,{
     })
 
     CodeMirror.on(hints, 'click', function (e) {
-      var t = getHintElement(hints, e.target || e.srcElement)
+      const t = getHintElement(hints, e.target || e.srcElement)
       if (t && t.hintId != null) {
         widget.changeActive(t.hintId)
         if (completion.options.completeOnSingleClick) widget.pick()
@@ -445,7 +445,7 @@ export default function (CodeMirror,{
     })
 
     // The first hint doesn't need to be scrolled to on init
-    var selectedHintRange = this.getSelectedHintRange()
+    const selectedHintRange = this.getSelectedHintRange()
     if (selectedHintRange.from !== 0 || selectedHintRange.to !== 0) {
       this.scrollToActive()
     }
@@ -460,11 +460,11 @@ export default function (CodeMirror,{
       this.completion.widget = null
       if (this.hints.parentNode) this.hints.parentNode.removeChild(this.hints)
       this.completion.cm.removeKeyMap(this.keyMap)
-      var input = this.completion.cm.getInputField()
+      const input = this.completion.cm.getInputField()
       input.removeAttribute('aria-activedescendant')
       input.removeAttribute('aria-owns')
 
-      var cm = this.completion.cm
+      const cm = this.completion.cm
       if (this.completion.options.closeOnUnfocus) {
         cm.off('blur', this.onBlur)
         cm.off('focus', this.onFocus)
@@ -474,7 +474,7 @@ export default function (CodeMirror,{
 
     disable: function () {
       this.completion.cm.removeKeyMap(this.keyMap)
-      var widget = this
+      const widget = this
       this.keyMap = {
         Enter: function () {
           widget.picked = true
@@ -494,7 +494,7 @@ export default function (CodeMirror,{
         i = avoidWrap ? 0 : this.data.list.length - 1
       }
       if (this.selectedHint == i) return
-      var node = this.hints.childNodes[this.selectedHint]
+      let node = this.hints.childNodes[this.selectedHint]
       if (node) {
         node.className = node.className.replace(' ' + ACTIVE_HINT_ELEMENT_CLASS, '')
         node.removeAttribute('aria-selected')
@@ -508,10 +508,10 @@ export default function (CodeMirror,{
     },
 
     scrollToActive: function () {
-      var selectedHintRange = this.getSelectedHintRange()
-      var node1 = this.hints.childNodes[selectedHintRange.from]
-      var node2 = this.hints.childNodes[selectedHintRange.to]
-      var firstNode = this.hints.firstChild
+      const selectedHintRange = this.getSelectedHintRange()
+      const node1 = this.hints.childNodes[selectedHintRange.from]
+      const node2 = this.hints.childNodes[selectedHintRange.to]
+      const firstNode = this.hints.firstChild
       if (node1.offsetTop < this.hints.scrollTop) {
         this.hints.scrollTop = node1.offsetTop - firstNode.offsetTop
       } else if (node2.offsetTop + node2.offsetHeight > this.hints.scrollTop + this.hints.clientHeight) {
@@ -524,18 +524,18 @@ export default function (CodeMirror,{
     },
 
     getSelectedHintRange: function () {
-      var margin = this.completion.options.scrollMargin || 0
+      const margin = this.completion.options.scrollMargin || 0
       return {
         from: Math.max(0, this.selectedHint - margin),
-        to: Math.min(this.data.list.length - 1, this.selectedHint + margin),
+        to: Math.min(this.data.list.length - 1, this.selectedHint + margin)
       }
     }
   }
 
   function applicableHelpers (cm, helpers) {
     if (!cm.somethingSelected()) return helpers
-    var result = []
-    for (var i = 0; i < helpers.length; i++) {
+    const result = []
+    for (let i = 0; i < helpers.length; i++) {
       if (helpers[i].supportsSelection) result.push(helpers[i])
     }
     return result
@@ -545,7 +545,7 @@ export default function (CodeMirror,{
     if (hint.async) {
       hint(cm, callback, options)
     } else {
-      var result = hint(cm, options)
+      const result = hint(cm, options)
       if (result && result.then) {
         result.then(callback)
       } else {
@@ -555,10 +555,10 @@ export default function (CodeMirror,{
   }
 
   function resolveAutoHints (cm, pos) {
-    var helpers = cm.getHelpers(pos, 'hint'), words
+    const helpers = cm.getHelpers(pos, 'hint'); let words
     if (helpers.length) {
-      var resolved = function (cm, callback, options) {
-        var app = applicableHelpers(cm, helpers)
+      const resolved = function (cm, callback, options) {
+        const app = applicableHelpers(cm, helpers)
 
         function run (i) {
           if (i == app.length) return callback(null)
@@ -595,17 +595,17 @@ export default function (CodeMirror,{
   })
 
   CodeMirror.registerHelper('hint', 'fromList', function (cm, options) {
-    var cur = cm.getCursor(), token = cm.getTokenAt(cur)
-    var term, from = CodeMirror.Pos(cur.line, token.start), to = cur
+    const cur = cm.getCursor(); const token = cm.getTokenAt(cur)
+    let term; let from = CodeMirror.Pos(cur.line, token.start); const to = cur
     if (token.start < cur.ch && /\w/.test(token.string.charAt(cur.ch - token.start - 1))) {
       term = token.string.substr(0, cur.ch - token.start)
     } else {
       term = ''
       from = cur
     }
-    var found = []
-    for (var i = 0; i < options.words.length; i++) {
-      var word = options.words[i]
+    const found = []
+    for (let i = 0; i < options.words.length; i++) {
+      const word = options.words[i]
       if (word.slice(0, term.length) == term) {
         found.push(word)
       }
@@ -620,7 +620,7 @@ export default function (CodeMirror,{
     }
   })
 
-  CodeMirror.commands.autocomplete = CodeMirror.showHint;
+  CodeMirror.commands.autocomplete = CodeMirror.showHint
 
   var defaultOptions = {
     hint: CodeMirror.hint.auto,
@@ -629,7 +629,7 @@ export default function (CodeMirror,{
     closeCharacters: /[\s()\[\]{};:>,]/,
 
     closeOnPick: false,
-    closeOnUnfocus: false,  //阻止提示信息 失焦关闭
+    closeOnUnfocus: false, // 阻止提示信息 失焦关闭
     // closeOnUnfocus: false,
 
     updateOnCursorActivity: true,
@@ -638,8 +638,7 @@ export default function (CodeMirror,{
     customKeys: null,
     extraKeys: null,
     paddingForScrollbar: true,
-    moveOnOverlap: true,
-  };
-  CodeMirror.defineOption("hintOptions", null);
-
+    moveOnOverlap: true
+  }
+  CodeMirror.defineOption('hintOptions', null)
 }

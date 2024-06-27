@@ -12,11 +12,13 @@ export default function createHint (hitType = 'default', CodeMirror, {
   keyboardDown,
   keyboardEnter
 }) {
-  hitType === 'default' ? showHint(CodeMirror) : manualShowHint(CodeMirror, {
-    cb: callback,
-    keyboardUp,
-    keyboardDown,
-    keyboardEnter
-  })
+  hitType === 'default'
+    ? showHint(CodeMirror)
+    : manualShowHint(CodeMirror, {
+      cb: callback,
+      keyboardUp,
+      keyboardDown,
+      keyboardEnter
+    })
   sqlHint(CodeMirror, { dataset, hinthook, keywordshook })
 }

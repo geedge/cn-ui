@@ -59,7 +59,7 @@
 
 <script>
 import indexedDBUtils from '@/indexedDB'
-import { storageKey, dbTableColumnCustomizeConfigPre,dbTableColumnCustomizeConfig } from '@/utils/constants'
+import { storageKey, dbTableColumnCustomizeConfigPre, dbTableColumnCustomizeConfig } from '@/utils/constants'
 export default {
   props: {
     customTableTitle: Array, // 自定义的title
@@ -153,7 +153,7 @@ export default {
       this.$emit('update', this.custom)
       const userId = localStorage.getItem(storageKey.userId)
       const tableName = dbTableColumnCustomizeConfigPre + '-' + this.tableId
-/*
+      /*
       const defaultConfigInDb = await indexedDBUtils.selectTable(tableName).get({ id: userId })
       let fullVersion = ''
       if (defaultConfigInDb && defaultConfigInDb.version) {
@@ -168,8 +168,8 @@ export default {
         fullVersion = BASE_CONFIG.version + '.1'
       }
 */
-      let curTableConfig = dbTableColumnCustomizeConfig.find(item => item.tableName === tableName)
-      if(curTableConfig) {
+      const curTableConfig = dbTableColumnCustomizeConfig.find(item => item.tableName === tableName)
+      if (curTableConfig) {
         await indexedDBUtils.selectTable(tableName).put({
           id: userId,
           version: curTableConfig.version,

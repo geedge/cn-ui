@@ -1,7 +1,7 @@
 export const pieOption = {
   tooltip: {
     trigger: 'item',
-    appendToBody: true//解决提示框被遮挡的问题
+    appendToBody: true// 解决提示框被遮挡的问题
   },
   legend: {
     show: false,

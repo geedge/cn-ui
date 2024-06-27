@@ -92,7 +92,7 @@ export default {
       username: '',
       pin: '',
       language: '',
-      licenseStatus: -1,//-1 未获取后台数据状态；0 获取后台数据且验证成功；1 获取后台数据且验证失败；
+      licenseStatus: -1, // -1 未获取后台数据状态；0 获取后台数据且验证成功；1 获取后台数据且验证失败；
       licenseStatusErrMsg: '',
       downloadC2vUrl: api.downloadLicenseC2v,
       supportID: ''

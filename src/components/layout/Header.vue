@@ -250,7 +250,7 @@ import {
 import { getNowTime, getSecond } from '@/utils/date-util'
 import _ from 'lodash'
 import { useRoute } from 'vue-router'
-import { useDark, useToggle } from '@vueuse/core'
+import { useToggle } from '@vueuse/core'
 
 export default {
   name: 'Header',
@@ -336,8 +336,7 @@ export default {
       wholeScreenRouterMapping,
       logo: 'images/logo-header.svg',
       ZH,
-      EN,
-      // isDark: useDark()
+      EN
     }
   },
   computed: {

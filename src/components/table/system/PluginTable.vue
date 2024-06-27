@@ -111,7 +111,7 @@ export default {
   },
   methods: {
     statusChange (plugin) {
-      let triggerStatus = plugin.triggerStatus
+      const triggerStatus = plugin.triggerStatus
       let statusUrl = triggerStatus === '1' ? api.pluginStatusEnable : api.pluginStatusDisable
       statusUrl = statusUrl.replace('{{id}}', plugin.id)
       axios.post(statusUrl).then(response => {

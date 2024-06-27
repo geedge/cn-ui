@@ -67,7 +67,7 @@ export default {
         dateIssued: '',
         dateExpires: ''
       },
-      loading:false
+      loading: false
     }
   },
   components: {

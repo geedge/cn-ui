@@ -1,4 +1,4 @@
-var renderData = [
+const renderData = [
   {
     name: 'COUNT',
     syntax: 'count(expr)',
@@ -34,7 +34,7 @@ var renderData = [
         code: 'count(distinct client_ip)'
       },
       {
-        purpose: `Counts  the number of different "Server IP" and "Server port" :`,
+        purpose: 'Counts  the number of different "Server IP" and "Server port" :',
         code: 'count(distinct server_ip, server_port)'
       }
     ],
@@ -50,11 +50,11 @@ var renderData = [
     description: 'Aggregate function is used to calculate the arithmetic mean in the specified field. EXPR must be Integer,Float or Decimal and returned value as Float.',
     example: [
       {
-        purpose: `Calculates the average(mean) "Byte sent (sent_bytes)" field:`,
+        purpose: 'Calculates the average(mean) "Byte sent (sent_bytes)" field:',
         code: 'avg(sent_bytes)'
       },
       {
-        purpose: `Calculates the average(mean) "Bytes" , rounded to 2 decimal points:`,
+        purpose: 'Calculates the average(mean) "Bytes" , rounded to 2 decimal points:',
         code: 'round(avg(sent_bytes+received_bytes),2)'
       }
     ],
@@ -70,11 +70,11 @@ var renderData = [
     description: 'Aggregate function is used to sum of the values of the specified field. EXPR must be Integer,Float or Decimal.',
     example: [
       {
-        purpose: `The sum of the "Byte sent (sent_bytes)" field:`,
+        purpose: 'The sum of the "Byte sent (sent_bytes)" field:',
         code: 'sum(sent_bytes)'
       },
       {
-        purpose: `The sum of the "sent_bytes" and "received_bytes" fields , and rename as "Bytes ":`,
+        purpose: 'The sum of the "sent_bytes" and "received_bytes" fields , and rename as "Bytes ":',
         code: 'sum(sent_bytes+received_bytes) as Bytes'
       }
     ],
@@ -89,7 +89,7 @@ var renderData = [
     description: 'Aggregate function is used to return the maximum value of the specified field.',
     example: [
       {
-        purpose: `Returns the maximum value of  the  "Byte sent (sent_bytes)" field:`,
+        purpose: 'Returns the maximum value of  the  "Byte sent (sent_bytes)" field:',
         code: 'max(sent_bytes)'
       }
     ],
@@ -105,7 +105,7 @@ var renderData = [
     description: 'Aggregate function is used to return the minimum value of the specified field.',
     example: [
       {
-        purpose: `Returns the minimum value of  the  "Byte sent (sent_bytes)" field:`,
+        purpose: 'Returns the minimum value of  the  "Byte sent (sent_bytes)" field:',
         code: 'min(sent_bytes)'
       }
     ],
@@ -121,7 +121,7 @@ var renderData = [
     description: 'Rounds down a timestamp, returning it as a new timestamp,optionally from some reference fill, and fills time gaps and impute missing values.',
     example: [
       {
-        purpose: `Round the recv_time  down to a 5 minutes increment and fill time gaps and impute zero value.`,
+        purpose: 'Round the recv_time  down to a 5 minutes increment and fill time gaps and impute zero value.',
         code: 'TIME_FLOOR_WITH_FILL(recv_time,\'PT5M\',\'zero\')'
       }
     ],
@@ -148,21 +148,21 @@ var renderData = [
   },
   {
     name: 'UNIX_TIMESTAMP',
-    syntax: `UNIX_TIMESTAMP(date)`,
-    description: `Returns a Unix timestamp the value of the argument as seconds since '1970-01-01 00:00:00' UTC.`,
+    syntax: 'UNIX_TIMESTAMP(date)',
+    description: 'Returns a Unix timestamp the value of the argument as seconds since \'1970-01-01 00:00:00\' UTC.',
     example: [
       {
-        purpose: `Specify a datetime string "2019-06-06 19:11:12",  calculate the Unix timestamp:`,
+        purpose: 'Specify a datetime string "2019-06-06 19:11:12",  calculate the Unix timestamp:',
         code: 'UNIX_TIMESTAMP(\'2019-06-06 19:11:12\')'
       },
       {
-        purpose: `Specify a ISO8601 datetime string with time zone information  "2019-10-12T14:20:50+08:00",  calculate the Unix timestamp:`,
+        purpose: 'Specify a ISO8601 datetime string with time zone information  "2019-10-12T14:20:50+08:00",  calculate the Unix timestamp:',
         code: 'UNIX_TIMESTAMP(\'2019-10-12T14:20:50+08:00\')'
       },
       {
-        purpose: `Specify a ISO8601 datetime string with UTC+0 time zone information  "2019-10-12T14:20:50Z",  calculate the Unix timestamp:`,
+        purpose: 'Specify a ISO8601 datetime string with UTC+0 time zone information  "2019-10-12T14:20:50Z",  calculate the Unix timestamp:',
         code: 'UNIX_TIMESTAMP(\'2019-10-12T14:20:50Z\')'
-      },
+      }
     ],
     details () {
       // 支持jsx 嵌套写法,万一测试要关键字加重呢
@@ -181,13 +181,13 @@ var renderData = [
   },
   {
     name: 'FROM_UNIXTIME',
-    syntax: `FROM_UNIXTIME(unix_timestamp)`,
-    description: `Returns a representation of unix_timestamp as a datetime or character string value. The value returned is expressed using the UTC+0 time zone.`,
+    syntax: 'FROM_UNIXTIME(unix_timestamp)',
+    description: 'Returns a representation of unix_timestamp as a datetime or character string value. The value returned is expressed using the UTC+0 time zone.',
     example: [
       {
-        purpose: `Specify a Unix Timestamp  "1570881546",  calculate the datetime string:`,
+        purpose: 'Specify a Unix Timestamp  "1570881546",  calculate the datetime string:',
         code: 'FROM_UNIXTIME(1570881546)'
-      },
+      }
     ],
     details () {
       // 支持jsx 嵌套写法,万一测试要关键字加重呢
@@ -198,10 +198,10 @@ var renderData = [
   {
     name: 'DATE_FORMAT',
     syntax: 'DATE_FORMAT(date, format)',
-    description: `Formats the date value according to the format string.`,
+    description: 'Formats the date value according to the format string.',
     example: [
       {
-        purpose: `Specify a Unix Timestamp  "1570881546", calculate the datetime string with format "%Y-%m-%d %H:%i:%s":`,
+        purpose: 'Specify a Unix Timestamp  "1570881546", calculate the datetime string with format "%Y-%m-%d %H:%i:%s":',
         code: 'DATE_FORMAT(FROM_UNIXTIME(1570881546), \'%Y-%m-%d %H:%i:%s\')'
       }
     ],
@@ -233,21 +233,21 @@ var renderData = [
   },
   {
     name: 'CONVERT_TZ',
-    syntax: `CONVERT_TZ(dt, from_tz, to_tz)`,
-    description: `Converts a datetime value dt from the time zone given by from_tz to the time zone given by to_tz and returns the resulting value.`,
+    syntax: 'CONVERT_TZ(dt, from_tz, to_tz)',
+    description: 'Converts a datetime value dt from the time zone given by from_tz to the time zone given by to_tz and returns the resulting value.',
     example: [
       {
-        purpose: `Specify a datetime string "2021-11-11 00:00:00", converted from  GMT(Greenwich Mean Time) to Asia/Shanghai time zone:`,
+        purpose: 'Specify a datetime string "2021-11-11 00:00:00", converted from  GMT(Greenwich Mean Time) to Asia/Shanghai time zone:',
         code: 'CONVERT_TZ(\'2021-11-11 00:00:00\',\'GMT\',\'Asia/Shanghai\')'
       },
       {
-        purpose: `Specify a Unix timestamp "1636588800", converted from  GMT(Greenwich Mean Time) to Asia/Shanghai time zone:`,
+        purpose: 'Specify a Unix timestamp "1636588800", converted from  GMT(Greenwich Mean Time) to Asia/Shanghai time zone:',
         code: 'CONVERT_TZ(FROM_UNIXTIME(1636588800),\'GMT\',\'Asia/Shanghai\')'
       },
       {
-        purpose: `Specify a Unix timestamp "1636588800", converted from  Europe/London to America/New_York time zone:`,
+        purpose: 'Specify a Unix timestamp "1636588800", converted from  Europe/London to America/New_York time zone:',
         code: 'CONVERT_TZ(DATE_FORMAT(FROM_UNIXTIME(1636588800), \'%Y-%m-%d %H:%i:%s\'),\'Europe/London\',\'America/New_York\')'
-      },
+      }
     ],
     details () {
       // 支持jsx 嵌套写法,万一测试要关键字加重呢
@@ -263,11 +263,11 @@ var renderData = [
   },
   {
     name: 'MEDIAN',
-    syntax: `MEDIAN(<expr>)`,
-    description: `Aggregate function is used to calculate median value. expr must be Integer, Float or Decimal.`,
+    syntax: 'MEDIAN(<expr>)',
+    description: 'Aggregate function is used to calculate median value. expr must be Integer, Float or Decimal.',
     example: [
       {
-        purpose: `Calculates the median "TCP Handshake Latency (tcp_handshake_latency_ms)" field:`,
+        purpose: 'Calculates the median "TCP Handshake Latency (tcp_handshake_latency_ms)" field:',
         code: 'MEDIAN(tcp_handshake_latency_ms)'
       }
     ],
@@ -279,11 +279,11 @@ var renderData = [
   },
   {
     name: 'QUANTILE',
-    syntax: `QUANTILE(<expr>[, <level>])`,
-    description: `Aggregate function is used to calculate an approximate quantile of a numeric data sequence.`,
+    syntax: 'QUANTILE(<expr>[, <level>])',
+    description: 'Aggregate function is used to calculate an approximate quantile of a numeric data sequence.',
     example: [
       {
-        purpose: `Calculates the  90th percentile  "TCP Handshake Latency (tcp_handshake_latency_ms)" field:`,
+        purpose: 'Calculates the  90th percentile  "TCP Handshake Latency (tcp_handshake_latency_ms)" field:',
         code: 'QUANTILE(tcp_handshake_latency_ms, 0.9)'
       }
     ],
@@ -300,13 +300,13 @@ var renderData = [
         </ul>
       </div>
     }
-  },
+  }
 ]
 
 function main () {
-  var functionTips = {}
+  const functionTips = {}
   renderData.forEach((item, index) => {
-    var data = item // 这是个闭包
+    const data = item // 这是个闭包
     functionTips[item.name] = {
       name: item.name,
       syntax: item.syntax,
@@ -327,8 +327,9 @@ function main () {
             })}
           </ul>
           <h3> Details: </h3>
-          {Object.prototype.toString.call(data.details) === '[object Function]' ?
-            <renderer renderFun={data.details}></renderer> : <p>{data.details} </p>}
+          {Object.prototype.toString.call(data.details) === '[object Function]'
+            ? <renderer renderFun={data.details}></renderer>
+            : <p>{data.details} </p>}
         </div>)
       }
     }
@@ -337,5 +338,5 @@ function main () {
 }
 
 export const functionList = renderData
-var functionTips = main()
+const functionTips = main()
 export default functionTips

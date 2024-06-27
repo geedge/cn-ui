@@ -233,7 +233,7 @@ export default {
      */
   setup () {
     const { query } = useRoute()
-    /*// 获取url携带的range、startTime、endTime
+    /* // 获取url携带的range、startTime、endTime
     const rangeParam = query.range
     const startTimeParam = query.startTime
     const endTimeParam = query.endTime
@@ -250,7 +250,7 @@ export default {
     } else {
       timeFilter.value.startTime = parseInt(startTimeParam)
       timeFilter.value.endTime = parseInt(endTimeParam)
-    }*/
+    } */
 
     const dateRangeValue = DEFAULT_TIME_FILTER_RANGE.tag.activeEntity || 60
     const timeFilter = ref({ dateRangeValue })
@@ -472,9 +472,9 @@ export default {
             desc = this.$t('tag.observedEntities2')
           }
         }
-        /*if (this.observedCount > 0) {
+        /* if (this.observedCount > 0) {
           desc += `, IP ${this.observedIpCount}, ${this.$t('overall.domain2')} ${this.observedDomainCount}`
-        }*/
+        } */
       } else {
         // 只有单种实体时，单个描述
         if (this.disableToEntity) {

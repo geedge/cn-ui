@@ -1,5 +1,5 @@
 import { tableSort } from '@/utils/tools'
-import { defaultPageSize, fromRoute, position, storageKey, dbTableColumnCustomizeConfigPre,dbTableColumnCustomizeConfig } from '@/utils/constants'
+import { defaultPageSize, fromRoute, position, storageKey, dbTableColumnCustomizeConfigPre, dbTableColumnCustomizeConfig } from '@/utils/constants'
 import _ from 'lodash'
 import { ref } from 'vue'
 import pagination from '@/components/common/Pagination'
@@ -428,11 +428,11 @@ export default {
       localStorageTableTitle = await indexedDBUtils.selectTable(tableName).get({ id: userId })
     }
 
-    let curTableTitles = this.$refs.dataTable && this.$refs.dataTable.tableTitle ? this.$refs.dataTable.tableTitle : []
-    let curTableConfig = dbTableColumnCustomizeConfig.find(item => item.tableName === tableName)
-    if(localStorageTableTitle && curTableConfig &&
+    const curTableTitles = this.$refs.dataTable && this.$refs.dataTable.tableTitle ? this.$refs.dataTable.tableTitle : []
+    const curTableConfig = dbTableColumnCustomizeConfig.find(item => item.tableName === tableName)
+    if (localStorageTableTitle && curTableConfig &&
           localStorageTableTitle.version !== curTableConfig.version && curTableTitles) {
-      if(this.$refs.dataList) {
+      if (this.$refs.dataList) {
         this.$refs.dataList.updateCustomTableTitle(curTableTitles)
       }
       await indexedDBUtils.selectTable(tableName).put({

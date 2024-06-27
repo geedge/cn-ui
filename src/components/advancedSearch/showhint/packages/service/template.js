@@ -1,156 +1,156 @@
 export const dataTemplate = {
-  "doc": {
-    "functions": {
-      "aggregation": [
+  doc: {
+    functions: {
+      aggregation: [
         {
-          "name": "COUNT",
-          "function": "count(expr)",
-          "label": "COUNT"
+          name: 'COUNT',
+          function: 'count(expr)',
+          label: 'COUNT'
         }, {
-          "name": "COUNT_DISTINCT",
-          "function": "count(distinct expr)",
-          "label": "COUNT_DISTINCT"
+          name: 'COUNT_DISTINCT',
+          function: 'count(distinct expr)',
+          label: 'COUNT_DISTINCT'
         }, {
-          "name": "AVG",
-          "function": "avg(expr)",
-          "label": "AVG"
+          name: 'AVG',
+          function: 'avg(expr)',
+          label: 'AVG'
         }, {
-          "name": "SUM",
-          "function": "sum(expr)",
-          "label": "SUM"
+          name: 'SUM',
+          function: 'sum(expr)',
+          label: 'SUM'
         }, {
-          "name": "MAX",
-          "function": "max(expr)",
-          "label": "MAX"
+          name: 'MAX',
+          function: 'max(expr)',
+          label: 'MAX'
         }, {
-          "name": "MIN",
-          "function": "min(expr)",
-          "label": "MIN"
+          name: 'MIN',
+          function: 'min(expr)',
+          label: 'MIN'
         }],
-      "operator": [
+      operator: [
         {
-          "name": "=",
-          "function": "expr = value",
-          "label": "="
+          name: '=',
+          function: 'expr = value',
+          label: '='
         }, {
-          "name": "!=",
-          "function": "expr != value",
-          "label": "!="
+          name: '!=',
+          function: 'expr != value',
+          label: '!='
         }, {
-          "name": ">",
-          "function": "expr > value",
-          "label": ">"
+          name: '>',
+          function: 'expr > value',
+          label: '>'
         }, {
-          "name": "<",
-          "function": "expr < value",
-          "label": "<"
+          name: '<',
+          function: 'expr < value',
+          label: '<'
         }, {
-          "name": ">=",
-          "function": "expr >= value",
-          "label": ">="
+          name: '>=',
+          function: 'expr >= value',
+          label: '>='
         }, {
-          "name": "<=",
-          "function": "expr <= value",
-          "label": "<="
+          name: '<=',
+          function: 'expr <= value',
+          label: '<='
         }, {
-          "name": "has",
-          "function": "has(expr, value)",
-          "label": "HAS"
+          name: 'has',
+          function: 'has(expr, value)',
+          label: 'HAS'
         }, {
-          "name": "in",
-          "function": "expr in (values)",
-          "label": "IN"
+          name: 'in',
+          function: 'expr in (values)',
+          label: 'IN'
         }, {
-          "name": "not in",
-          "function": "expr not in (values)",
-          "label": "NOT IN"
+          name: 'not in',
+          function: 'expr not in (values)',
+          label: 'NOT IN'
         }, {
-          "name": "like",
-          "function": "expr like value",
-          "label": "LIKE"
+          name: 'like',
+          function: 'expr like value',
+          label: 'LIKE'
         }, {
-          "name": "not like",
-          "function": "expr not like value",
-          "label": "NOT LIKE"
+          name: 'not like',
+          function: 'expr not like value',
+          label: 'NOT LIKE'
         }, {
-          "name": "notEmpty",
-          "function": "notEmpty(expr)",
-          "label": "NOT EMPTY"
+          name: 'notEmpty',
+          function: 'notEmpty(expr)',
+          label: 'NOT EMPTY'
         }, {
-          "name": "empty",
-          "function": "empty(expr)",
-          "label": "EMPTY"
+          name: 'empty',
+          function: 'empty(expr)',
+          label: 'EMPTY'
         }]
     },
-    "schema_query": {
-      "references": {
-        "aggregation": [
+    schema_query: {
+      references: {
+        aggregation: [
           {
-            "type": "int",
-            "functions": "COUNT,COUNT_DISTINCT,AVG,SUM,MAX,MIN"
+            type: 'int',
+            functions: 'COUNT,COUNT_DISTINCT,AVG,SUM,MAX,MIN'
           }, {
-            "type": "long",
-            "functions": "COUNT,COUNT_DISTINCT,AVG,SUM,MAX,MIN"
+            type: 'long',
+            functions: 'COUNT,COUNT_DISTINCT,AVG,SUM,MAX,MIN'
           }, {
-            "type": "float",
-            "functions": "COUNT,COUNT_DISTINCT,AVG,SUM,MAX,MIN"
+            type: 'float',
+            functions: 'COUNT,COUNT_DISTINCT,AVG,SUM,MAX,MIN'
           }, {
-            "type": "double",
-            "functions": "COUNT,COUNT_DISTINCT,AVG,SUM,MAX,MIN"
+            type: 'double',
+            functions: 'COUNT,COUNT_DISTINCT,AVG,SUM,MAX,MIN'
           }, {
-            "type": "string",
-            "functions": "COUNT,COUNT_DISTINCT"
+            type: 'string',
+            functions: 'COUNT,COUNT_DISTINCT'
           }, {
-            "type": "date",
-            "functions": "COUNT,COUNT_DISTINCT,MAX,MIN"
+            type: 'date',
+            functions: 'COUNT,COUNT_DISTINCT,MAX,MIN'
           }, {
-            "type": "timestamp",
-            "functions": "COUNT,COUNT_DISTINCT,MAX,MIN"
+            type: 'timestamp',
+            functions: 'COUNT,COUNT_DISTINCT,MAX,MIN'
           }
         ],
-        "operator": [
+        operator: [
           {
-            "type": "int",
-            "functions": "=,!=,>,<,>=,<=,in,not in"
+            type: 'int',
+            functions: '=,!=,>,<,>=,<=,in,not in'
           }, {
-            "type": "long",
-            "functions": "=,!=,>,<,>=,<=,in,not in"
+            type: 'long',
+            functions: '=,!=,>,<,>=,<=,in,not in'
           }, {
-            "type": "float",
-            "functions": "=,!=,>,<,>=,<="
+            type: 'float',
+            functions: '=,!=,>,<,>=,<='
           }, {
-            "type": "double",
-            "functions": "=,!=,>,<,>=,<="
+            type: 'double',
+            functions: '=,!=,>,<,>=,<='
           }, {
-            "type": "string",
-            "functions": "=,!=,in,not in,like,not like,notEmpty,empty"
+            type: 'string',
+            functions: '=,!=,in,not in,like,not like,notEmpty,empty'
           }, {
-            "type": "date",
-            "functions": "=,!=,>,<,>=,<="
+            type: 'date',
+            functions: '=,!=,>,<,>=,<='
           }, {
-            "type": "timestamp",
-            "functions": "=,!=,>,<,>=,<="
+            type: 'timestamp',
+            functions: '=,!=,>,<,>=,<='
           }, {
-            "type": "array",
-            "functions": "has"
+            type: 'array',
+            functions: 'has'
           }]
       }
     }
   },
-  "fields": []
+  fields: []
 }
 
 export const fieldTemplate = {
-  "name": "",
-  "label": "",
-  "doc": {
-    "allow_query": "true",
-    "visibility": null,
-    "constraints": {
-      "type": "tag",
-      "operator_functions": "in,not in"
+  name: '',
+  label: '',
+  doc: {
+    allow_query: 'true',
+    visibility: null,
+    constraints: {
+      type: 'tag',
+      operator_functions: 'in,not in'
     },
-    "data": []
+    data: []
   },
-  "type": "Array"
+  type: 'Array'
 }

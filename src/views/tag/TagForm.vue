@@ -1173,11 +1173,11 @@ export default {
           this.editTagErrorTip = ''
           this.showImportedData[index].isValid = 1
           this.showImportedData[index].msg = this.$t('overall.success')
-          /*if (this.hasErrorImportedData()) {
+          /* if (this.hasErrorImportedData()) {
             this.previewErrorTip = this.$t('validate.pleaseCheckForErrorItem')
           } else {
             this.previewErrorTip = ''
-          }*/
+          } */
         } else {
           this.showImportedData[index].isValid = 0
         }

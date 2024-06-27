@@ -167,10 +167,10 @@ export default {
       })
     },
     resize () {
-      if(this.myChart) {
+      if (this.myChart) {
         this.myChart.resize()
       }
-      if(this.myChart2) {
+      if (this.myChart2) {
         this.myChart2.resize()
       }
     }
