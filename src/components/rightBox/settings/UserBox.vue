@@ -13,7 +13,7 @@
           <el-form-item :label="$t('config.user.name')" prop="name">
             <el-input id="account-input-name" v-model="editObject.name"
                       :disabled="editObject.username==='admin' && editObject.id === 1"
-                      maxlength="64" placeholder="" show-word-limit type="text"></el-input>
+                      maxlength="32" placeholder="" show-word-limit type="text"></el-input>
           </el-form-item>
           <!--username-->
           <el-form-item :label="$t('config.user.username')" prop="username">
@@ -129,30 +129,13 @@ export default {
         callback()
       }
     }
-    const validateName = (rule, value, callback) => {
-      let validate = true
-      // const reg = /^[a-zA-Z0-9\u4e00-\u9fa5\u30a1-\u30f6\u3041-\u3093\uFF00-\uFFFF\u4e00-\u9fa5\u0400-\u04FF\s]{2,64}$/
-      const reg = /^[\u4E00-\u9FA5\a-zA-Z0-9\u3040-\u309F\u0800-\u4e00\u0400-\u04FF\u2000-\u206F\s]{2,64}$/
-      const emptyFlag = value[0] === ' ' || value[value.length - 1] === ' '
-      validate = reg.test(value)
-      if (value.length < 2) {
-        callback(new Error(this.$t('validate.atLeastTwo')))
-      } else if (!validate || value.trim() === '' || emptyFlag) {
-        // 除满足中英日俄、数字空格外，不能全为空格，前后也不可为空格
-        callback(new Error(this.$t('validate.name')))
-      } else {
-        callback()
-      }
-    }
     const validateUserName = (rule, value, callback) => {
       let validate = true
       // const reg = /^[a-zA-Z0-9_\u4e00-\u9fa5\u30a1-\u30f6\u3041-\u3093\uFF00-\uFFFF\u4e00-\u9fa5\u0400-\u04FF\s]{2,64}$/
       // 校验，只允许英文、数字和标点符号
       const reg = /^[A-Za-z0-9~!@#$%^&*_.?]+$/
       validate = reg.test(value)
-      if (value.length < 2) {
-        callback(new Error(this.$t('validate.atLeastTwo')))
-      } else if (!validate) {
+      if (!validate) {
         callback(new Error(this.$t('validate.userName1')))
       } else {
         callback()
@@ -163,11 +146,10 @@ export default {
       loginName: localStorage.getItem(storageKey.username),
       rules: { // 表单校验规则
         name: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
-          { validator: validateName, trigger: 'blur' }
+          { required: true, message: this.$t('validate.nameLength'), trigger: 'blur' }
         ],
         username: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
+          { required: true, message: this.$t('validate.userNameLength'), trigger: 'blur' },
           { validator: validateUserName, trigger: 'blur' }
         ],
         pin: [
@@ -192,11 +174,10 @@ export default {
       },
       rules2: { // 表单校验规则
         name: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
-          { validator: validateName, trigger: 'blur' }
+          { required: true, message: this.$t('validate.nameLength'), trigger: 'blur' }
         ],
         username: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
+          { required: true, message: this.$t('validate.userNameLength'), trigger: 'blur' },
           { validator: validateUserName, trigger: 'blur' }
         ],
         pinChange: [
