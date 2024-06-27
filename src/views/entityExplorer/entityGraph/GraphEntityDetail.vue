@@ -8,7 +8,7 @@
         <div class="entity-graph-type">{{entityTypeName}}</div>
         <div class="graph-basic-info">
           <div class="graph-basic-info-name__block">
-            <div class="graph-basic-info-name" :title="$_.get(node, 'id', '')" id="entityName">{{ $_.get(node, 'id', '') }}</div>
+            <div class="graph-basic-info-name" :title="$_.get(node, 'realId', '')" id="entityName">{{ $_.get(node, 'realId', '') }}</div>
             <div class="graph-basic-info-icon" @click="copyEntityName">
               <i class="cn-icon cn-icon-copy"></i>
             </div>
@@ -75,7 +75,7 @@
   </div>
 
   <!--标签-->
-  <div v-if="$_.get(node, 'myData.tags', []).length > 0" class="digital-certificate graph-basic-info__block">
+  <div v-if="$_.get(node, 'data.tags', []).length > 0" class="digital-certificate graph-basic-info__block">
     <div class="digital-certificate-header padding-b-10">
       <div class="digital-certificate-header__icon graph-header__icon"></div>
       <div class="graph-basic-info__block-title">
@@ -85,7 +85,7 @@
 
     <div class="entity-detail graph-basic-info__block-content">
       <div class="graph-tag-list">
-        <div v-for="ic in $_.get(node, 'myData.tags', [])" :key="ic.value">
+        <div v-for="ic in $_.get(node, 'data.tags', [])" :key="ic.value">
           <div class="entity-tag graph-tag-item" :class="`entity-tag--level-two-${ic.type}`" :style="getTagColor(ic.color)">
             <span>{{ic.value}}</span>
           </div>
@@ -126,13 +126,13 @@ export default {
   computed: {
     iconClass () {
       let className
-      switch (_.get(this.node, 'myData.entityType', '')) {
+      switch (_.get(this.node, 'data.entityType', '')) {
         case ('ip'): {
-          className = 'cn-icon cn-icon-ip2'
+          className = 'cn-icon cn-icon-resolve-ip'
           break
         }
         case ('domain'): {
-          className = 'cn-icon cn-icon-domain2'
+          className = 'cn-icon cn-icon-subdomain'
           break
         }
         case ('app'): {
@@ -145,7 +145,7 @@ export default {
       return className
     },
     entityTypeName () {
-      const type = _.get(this.node, 'myData.entityType', '')
+      const type = _.get(this.node, 'data.entityType', '')
       let entityTypeName = '-'
       switch (type) {
         case ('ip'): {
@@ -270,59 +270,59 @@ export default {
     },
     handleDetailData (node) {
       const n = node
-      const type = _.get(n, 'myData.entityType', '')
+      const type = _.get(n, 'data.entityType', '')
       switch (type) {
         case 'ip': {
           this.detailCards = [
-            { name: 'asn', label: this.$t('entities.asNumber'), value: _.get(n, 'myData.basicInfo.asn.asn', '-') },
+            { name: 'asn', label: this.$t('entities.asNumber'), value: _.get(n, 'data.basicInfo.asn.asn', '-') },
             {
               name: 'asOrg',
               label: this.$t('entities.asOrg'),
-              value: _.get(n.myData, 'basicInfo.asn.organization', '-')
+              value: _.get(n.data, 'basicInfo.asn.organization', '-')
             },
             {
               name: 'isp',
               label: this.$t('entities.graph.isp'),
-              value: _.get(n.myData, 'basicInfo.location.isp', '-')
+              value: _.get(n.data, 'basicInfo.location.isp', '-')
             },
-            { name: 'location', label: this.$t('overall.location'), value: this.location(n.myData) }
+            { name: 'location', label: this.$t('overall.location'), value: this.location(n.data) }
           ]
           this.relationList = [
             {
               icon: 'cn-icon cn-icon-subdomain',
               name: 'domain',
               label: this.$t('entity.graph.resolveDomain'),
-              value: _.get(n.myData, 'relatedEntity.domain.list', []).length,
-              total: _.get(n.myData, 'relatedEntity.domain.total', 0) || 0
+              value: _.get(n.data, 'relatedEntities.domain.list', []).length,
+              total: _.get(n.data, 'relatedEntities.domain.total', 0) || 0
             },
             {
               icon: 'cn-icon cn-icon-app-name',
               name: 'app',
               label: this.$t('entities.tab.relatedApp'),
-              value: _.get(n.myData, 'relatedEntity.app.list', []).length,
-              total: _.get(n.myData, 'relatedEntity.app.total', '0') || 0
+              value: _.get(n.data, 'relatedEntities.app.list', []).length,
+              total: _.get(n.data, 'relatedEntities.app.total', '0') || 0
             }
           ]
           break
         }
         case 'domain': {
-          const expireDate = _.get(n.myData, 'basicInfo.whois.expireDate', '')
-          const createDate = _.get(n.myData, 'basicInfo.whois.createDate', '')
+          const expireDate = _.get(n.data, 'basicInfo.whois.expireDate', '')
+          const createDate = _.get(n.data, 'basicInfo.whois.createDate', '')
           this.detailCards = [
             {
               name: 'categoryName',
               label: this.$t('entities.category'),
-              value: _.get(n.myData, 'basicInfo.category.categoryName', '-')
+              value: _.get(n.data, 'basicInfo.category.categoryName', '-')
             },
             {
               name: 'categoryGroup',
               label: this.$t('entities.group'),
-              value: _.get(n.myData, 'basicInfo.category.categoryGroup', '-')
+              value: _.get(n.data, 'basicInfo.category.categoryGroup', '-')
             },
             {
               name: 'reputationLevel',
               label: this.$t('entities.creditLevel2'),
-              value: _.get(n.myData, 'basicInfo.category.reputationLevel', '-')
+              value: _.get(n.data, 'basicInfo.category.reputationLevel', '-')
             },
             {
               name: 'expireDate',
@@ -332,17 +332,17 @@ export default {
             {
               name: 'registrarName',
               label: this.$t('entities.registrar'),
-              value: _.get(n.myData, 'basicInfo.whois.registrarName', '-')
+              value: _.get(n.data, 'basicInfo.whois.registrarName', '-')
             },
             {
               name: 'registrantOrg',
               label: this.$t('entities.registry'),
-              value: _.get(n.myData, 'basicInfo.whois.registrantOrg', '-')
+              value: _.get(n.data, 'basicInfo.whois.registrantOrg', '-')
             },
             {
               name: 'registrantCountry',
               label: this.$t('entities.registrationCountry'),
-              value: _.get(n.myData, 'basicInfo.whois.registrantCountry', '-')
+              value: _.get(n.data, 'basicInfo.whois.registrantCountry', '-')
             },
             {
               name: 'createDate',
@@ -352,7 +352,7 @@ export default {
             {
               name: 'email',
               label: this.$t('entities.registryEmail'),
-              value: _.get(n.myData, 'basicInfo.whois.email', '-')
+              value: _.get(n.data, 'basicInfo.whois.email', '-')
             }
           ]
           this.relationList = [
@@ -360,22 +360,22 @@ export default {
               icon: 'cn-icon cn-icon-resolve-ip',
               name: 'ip',
               label: this.$t('entities.graph.resolveIp'),
-              value: _.get(n.myData, 'relatedEntity.ip.list', []).length,
-              total: _.get(n.myData, 'relatedEntity.ip.total', '0') || 0
+              value: _.get(n.data, 'relatedEntities.ip.list', []).length,
+              total: _.get(n.data, 'relatedEntities.ip.total', '0') || 0
             },
             {
               icon: 'cn-icon cn-icon-subdomain',
               name: 'domain',
               label: this.$t('entities.subdomain'),
-              value: _.get(n.myData, 'relatedEntity.domain.list', []).length,
-              total: _.get(n.myData, 'relatedEntity.domain.total', '0') || 0
+              value: _.get(n.data, 'relatedEntities.domain.list', []).length,
+              total: _.get(n.data, 'relatedEntities.domain.total', '0') || 0
             },
             {
               icon: 'cn-icon cn-icon-app-name',
               name: 'app',
               label: this.$t('entities.tab.relatedApp'),
-              value: _.get(n.myData, 'relatedEntity.app.list', []).length,
-              total: _.get(n.myData, 'relatedEntity.app.total', 0) || 0
+              value: _.get(n.data, 'relatedEntities.app.list', []).length,
+              total: _.get(n.data, 'relatedEntities.app.total', 0) || 0
             }
           ]
           break
@@ -385,32 +385,32 @@ export default {
             {
               name: 'appCategory',
               label: this.$t('entities.category'),
-              value: _.get(n.myData, 'basicInfo.category.appCategory', '-')
+              value: _.get(n.data, 'basicInfo.category.appCategory', '-')
             },
             {
               name: 'appSubcategory',
               label: this.$t('entities.subcategory'),
-              value: _.get(n.myData, 'basicInfo.category.appSubcategory', '-')
+              value: _.get(n.data, 'basicInfo.category.appSubcategory', '-')
             },
             {
               name: 'appRisk',
               label: this.$t('entities.riskLevel'),
-              value: this.appRisk(_.get(n.myData, 'basicInfo.category.appRisk', '-'))
+              value: this.appRisk(_.get(n.data, 'basicInfo.category.appRisk', '-'))
             },
             {
               name: 'appTechnology',
               label: this.$t('overall.technology'),
-              value: _.get(n.myData, 'basicInfo.category.appTechnology', '-')
+              value: _.get(n.data, 'basicInfo.category.appTechnology', '-')
             },
             {
               name: 'appLongname',
               label: this.$t('overall.appFullName'),
-              value: _.get(n.myData, 'basicInfo.category.appLongname', '-')
+              value: _.get(n.data, 'basicInfo.category.appLongname', '-')
             },
             {
               name: 'appDescription',
               label: this.$t('config.dataSource.description'),
-              value: _.get(n.myData, 'basicInfo.category.appDescription', '-')
+              value: _.get(n.data, 'basicInfo.category.appDescription', '-')
             }
           ]
 
@@ -419,15 +419,15 @@ export default {
               icon: 'cn-icon cn-icon-resolve-ip',
               name: 'ip',
               label: this.$t('entities.tab.relatedIp'),
-              value: _.get(n.myData, 'relatedEntity.ip.list', []).length,
-              total: _.get(n.myData, 'relatedEntity.ip.total', '0') || 0
+              value: _.get(n.data, 'relatedEntities.ip.list', []).length,
+              total: _.get(n.data, 'relatedEntities.ip.total', '0') || 0
             },
             {
               icon: 'cn-icon cn-icon-subdomain',
               name: 'domain',
               label: this.$t('entities.graph.relatedDomain'),
-              value: _.get(n.myData, 'relatedEntity.domain.list', []).length,
-              total: _.get(n.myData, 'relatedEntity.domain.total', '0') || 0
+              value: _.get(n.data, 'relatedEntities.domain.list', []).length,
+              total: _.get(n.data, 'relatedEntities.domain.total', '0') || 0
             }
           ]
         }

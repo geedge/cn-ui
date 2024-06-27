@@ -4,11 +4,11 @@
     <div class="graph-list-header">
       <div>
         <div class="graph-list-header-title">
-          <i class="cn-icon cn-icon-resolve-ip graph-list-header-icon"></i>
+          <i :class="`${iconClass} graph-list-header-icon`"></i>
           <span>{{ title }}</span>
         </div>
         <div class="graph-list-header-number">
-          {{ $t('entity.graph.associatedCount') }}:&nbsp;<span>{{$_.get(node, 'sourceNode.myData.relatedEntity.' + $_.get(node, 'myData.entityType') + '.total', '-')}}</span>
+          {{ $t('entity.graph.associatedCount') }}:&nbsp;<span>{{$_.get(node, 'sourceNode.data.relatedEntities.' + $_.get(node, 'data.entityType') + '.total', '-')}}</span>
         </div>
       </div>
 
@@ -16,10 +16,10 @@
     </div>
 
     <div class="graph-list-expand-btn-block">
-      <div class="graph-list-expand-btn graph-list-expand-btn__display" :class="{ 'graph-list-expand-btn--disabled': expandBtnDisable }" @click="expandList">
+      <span class="graph-list-expand-btn" :class="{ 'graph-list-expand-btn--disabled': expandBtnDisable }" @click="expandList">
           <i class="cn-icon cn-icon-expand-continue graph-expand-continue"></i>
         {{ $t('entity.graph.continueToExpand') }}
-      </div>
+      </span>
     </div>
 
     <div>
@@ -28,14 +28,14 @@
           <div class="digital-certificate-header__icon graph-header__icon"></div>
           <div class="graph-list-content-header ">
             {{ $t('entity.graph.expandedEntityCount') }}:&nbsp
-            <span>{{$_.get(node, 'sourceNode.myData.relatedEntity.' + $_.get(node, 'myData.entityType') + '.list', []).length}}</span>
+            <span>{{$_.get(node, 'sourceNode.data.relatedEntities.' + $_.get(node, 'data.entityType') + '.list', []).length}}</span>
           </div>
         </div>
 
         <div class="graph-list-content">
-          <div v-for="(item, index) in $_.get(node, 'sourceNode.myData.relatedEntity.' + $_.get(node, 'myData.entityType') + '.list', [])" :key="index">
+          <div v-for="(item, index) in $_.get(node, 'sourceNode.data.relatedEntities.' + $_.get(node, 'data.entityType') + '.list', [])" :key="index">
             <div class="graph-list-item-ip"><span @click="expandDetail">{{ item.vertex }}</span></div>
-            <template v-if="$_.get(node, 'myData.entityType', '') === 'ip'">
+            <template v-if="$_.get(node, 'data.entityType', '') === 'ip'">
               <div class="graph-list-item-block">
                 <div class="graph-list-item padding-b-4">
                   <div class="graph-list-item-label">{{ $t('overall.location') }}:</div>
@@ -54,7 +54,7 @@
                 </div>
               </div>
             </template>
-            <template v-else-if="$_.get(node, 'myData.entityType', '') === 'domain'">
+            <template v-else-if="$_.get(node, 'data.entityType', '') === 'domain'">
               <div class="graph-list-item-block">
                 <div class="graph-list-item__app">
                   <div class="graph-list-item-label__app">{{$t('entities.category')}}:</div>
@@ -74,7 +74,7 @@
                 </div>
               </div>
             </template>
-            <template v-else-if="$_.get(node, 'myData.entityType', '') === 'app'">
+            <template v-else-if="$_.get(node, 'data.entityType', '') === 'app'">
               <div class="graph-list-item-block">
                 <div class="graph-list-item__app">
                   <div class="graph-list-item-label__app">APP ID:</div>
@@ -98,7 +98,7 @@
                 </div>
               </div>
             </template>
-            <div class="graph-list-dividing-line" v-if="index !== $_.get(node, 'sourceNode.myData.relatedEntity.' + $_.get(node, 'myData.entityType') + '.list', []).length - 1"></div>
+            <div class="graph-list-dividing-line" v-if="index !== $_.get(node, 'sourceNode.data.relatedEntities.' + $_.get(node, 'data.entityType') + '.list', []).length - 1"></div>
           </div>
         </div>
       </div>
@@ -132,8 +132,8 @@ export default {
   },
   computed: {
     expandBtnDisable () {
-      const loaded = _.get(this.node, 'sourceNode.myData.relatedEntity.' + _.get(this.node, 'myData.entityType') + '.list', []).length
-      const total = _.get(this.node, 'sourceNode.myData.relatedEntity.' + _.get(this.node, 'myData.entityType') + '.total', 0)
+      const loaded = _.get(this.node, 'sourceNode.data.relatedEntities.' + _.get(this.node, 'data.entityType') + '.list', []).length
+      const total = _.get(this.node, 'sourceNode.data.relatedEntities.' + _.get(this.node, 'data.entityType') + '.total', 0)
       return !(loaded < total && total > 10 && (loaded && loaded < 50))
     },
     appRisk () {
@@ -147,9 +147,9 @@ export default {
     title () {
       let title = ''
       if (this.node) {
-        const entityType = _.get(this.node, 'myData.entityType', '')
+        const entityType = _.get(this.node, 'data.entityType', '')
         if (entityType) {
-          const sourceType = _.get(this.node, 'sourceNode.myData.entityType', '')
+          const sourceType = _.get(this.node, 'sourceNode.data.entityType', '')
           switch (entityType) {
             case 'ip': {
               if (sourceType === 'domain') {
@@ -177,6 +177,26 @@ export default {
         }
       }
       return title
+    },
+    iconClass () {
+      let className
+      switch (_.get(this.node, 'data.entityType', '')) {
+        case ('ip'): {
+          className = 'cn-icon cn-icon-resolve-ip'
+          break
+        }
+        case ('domain'): {
+          className = 'cn-icon cn-icon-subdomain'
+          break
+        }
+        case ('app'): {
+          className = 'cn-icon cn-icon-app2'
+          break
+        }
+        default:
+          break
+      }
+      return className
     }
   },
   methods: {

@@ -1,132 +1,126 @@
 import _ from 'lodash'
-import i18n from '@/i18n'
-import axios from 'axios'
-import { api } from '@/utils/api'
-import { entityDefaultColor, intentColor } from '@/utils/constants'
+import { entityDefaultColor, entityType } from '@/utils/constants'
 import { formatTags } from '@/utils/tools'
+import { generateLabel, builtTooltip, queryEntityBasicInfo, queryTags, queryRelatedEntityCount } from '@/views/entityExplorer/entityGraph/utils'
+import { api } from '@/utils/api'
+import axios from 'axios'
 
 export default class Node {
   /*
   * type: 对应nodeType
-  * cfg: { entityType, entityName, x, y, fx, fy }
+  * cfg: { entityType, entityName }
   * */
-  constructor (type, id, cfg, sourceNode) {
+  constructor (type, id, data, sourceNode, img) {
+    this.id = id + data.entityType
+    this.realId = id
     this.type = type
-    this.id = id
-    this.x = _.get(cfg, 'x', null)
-    this.y = _.get(cfg, 'y', null)
-    this.fx = _.get(cfg, 'fx', null)
-    this.fy = _.get(cfg, 'fy', null)
-    this.myData = {
-      entityType: cfg.entityType,
-      entityName: cfg.entityName
+    this.vx = 0
+    this.vy = 0
+    this.x = data.x || null
+    this.y = data.y || null
+    this.fx = data.fx || (sourceNode ? null : 0) // 设置为0，即可固定中心节点。0为中心节点，1为中心节点的子节点，2为第三级节点
+    this.fy = data.fy || (sourceNode ? null : 0) // 设置为0，即可固定中心节点。0为中心节点，1为中心节点的子节点，2为第三级节点
+    this.preDragX = null
+    this.preDragY = null
+    this.img = img
+    this.sourceNode = sourceNode
+    this.isSubdomain = sourceNode ? sourceNode.data.entityType === entityType.domain && data.entityType === entityType.domain : false
+    this.data = {
+      entityType: data.entityType,
+      entityName: data.entityName
     }
-    if (sourceNode) {
-      this.sourceNode = sourceNode
-    }
-    this.label = this.generateLabel()
-  }
+    this.label = generateLabel(type, id, data, sourceNode)
+    this.name = builtTooltip(this)
 
-  generateLabel () {
-    switch (this.type) {
+    // val 值决定鼠标触发 hover 的半径
+    switch (type) {
       case nodeType.rootNode:
-      case nodeType.entityNode: {
-        return this.id
-      }
-      case nodeType.listNode: {
-        return `${this.getLabelText()}(${_.get(this.sourceNode.myData, 'relatedEntity.' + this.myData.entityType + '.total', 0)})`
-      }
-      case nodeType.tempNode: {
-        return this.getLabelText()
-      }
-    }
-    return ''
-  }
-
-  getLabelText () {
-    if (this.myData.entityType === 'ip') {
-      if (this.sourceNode.myData.entityType === 'app') {
-        return i18n.global.t('entities.tab.relatedIp')
-      } else if (this.sourceNode.myData.entityType === 'domain') {
-        return i18n.global.t('entities.graph.resolveIp')
-      }
-    } else if (this.myData.entityType === 'domain') {
-      if (this.sourceNode.myData.entityType === 'ip') {
-        return i18n.global.t('entities.graph.resolvedDomain')
-      } else if (this.sourceNode.myData.entityType === 'app') {
-        return i18n.global.t('entities.graph.relatedDomain')
-      } else if (this.sourceNode.myData.entityType === 'domain') {
-        return i18n.global.t('entities.subdomain')
-      }
-    } else if (this.myData.entityType === 'app') {
-      return i18n.global.t('entities.tab.relatedApp')
-    }
-    return ''
-  }
-
-  isSubdomain () {
-    if (this.sourceNode) {
-      return this.sourceNode.myData.entityType === 'domain' && this.myData.entityType === 'domain'
-    } else {
-      return false
+        this.val = 19
+        break
+      case nodeType.listNode:
+        this.val = 16
+        break
+      case nodeType.entityNode:
+      case nodeType.tempNode:
+        this.val = 10
+        break
     }
   }
 
-  // 查询basicInfo、tags、关联实体数量
+  // listNode和entityNode专用，查询实体信息
   async queryDetailData () {
-    const entityType = this.myData.entityType
-    const entityName = this.myData.entityName
+    const entityType = this.data.entityType
+    const entityName = this.data.entityName
 
-    this.myData.basicInfo = await this.queryEntityBasicInfo(entityType, entityName)
+    this.data.basicInfo = await queryEntityBasicInfo(entityType, entityName)
 
-    const tags = await this.queryTags(entityType, entityName)
+    const tags = await queryTags(entityType, entityName)
     let _tags = []
     formatTags(tags, entityType, _tags)
-    if (_.isArray(tags.tags)) {
-      _tags = _.concat(_tags, tags.tags.map(tag => ({ value: tag.name, color: intentColor[tag.intent] || entityDefaultColor })))
+    if (_.isArray(tags.userDefinedTags)) {
+      _tags = _.concat(_tags, tags.userDefinedTags.map(tag => ({ value: tag.tagValue, color: tag.knowledgeBase ? tag.knowledgeBase.color : entityDefaultColor })))
     }
-    this.myData.tags = _tags
+    this.data.tags = _tags
 
-    const relatedEntityTotalCount = await this.queryRelatedEntityCount(entityType, entityName)
-    this.myData.relatedEntity = {
-      ip: { total: relatedEntityTotalCount.ipCount, list: [] },
-      domain: { total: this.myData.entityType === 'domain' ? relatedEntityTotalCount.subDomainCount : relatedEntityTotalCount.domainCount, list: [] },
-      app: { total: relatedEntityTotalCount.appCount, list: [] }
+    const relatedEntityTotalCount = await queryRelatedEntityCount(entityType, entityName)
+    this.data.relatedEntities = {
+      ip: { total: relatedEntityTotalCount.ipCount, pageNo: 0, list: [] }, //
+      domain: { total: this.data.entityType === 'domain' ? relatedEntityTotalCount.subDomainCount : relatedEntityTotalCount.domainCount, pageNo: 0, list: [] }, // pageNo: 0,
+      app: { total: relatedEntityTotalCount.appCount, pageNo: 0, list: [] }// pageNo: 0,
     }
   }
 
-  async queryEntityBasicInfo (entityType, entityName) {
-    const response = await axios.get(`${api.entity.entityGraph.basicInfo}/${entityType}?resource=${entityName}`).catch(e => {
+  getNeighbors (gData) {
+    const { links } = gData
+    const neighboringNodes = []
+    const neighboringTargetNodes = []
+    const neighboringSourceNodes = []
+    const neighboringTargetLinks = []
+    const neighboringSourceLinks = []
+    const neighboringLinks = links.filter(l => {
+      if (l.target.id === this.id || l.source.id === this.id) {
+        neighboringNodes.push(l.target.id === this.id ? l.source : l.target)
+        if (l.target.id === this.id) {
+          neighboringSourceNodes.push(l.source)
+          neighboringSourceLinks.push(l)
+        } else {
+          neighboringTargetNodes.push(l.target)
+          neighboringTargetLinks.push(l)
+        }
+        return true
+      }
+      return false
+    })
+    return {
+      nodes: neighboringNodes,
+      targetNodes: neighboringTargetNodes,
+      sourceNodes: neighboringSourceNodes,
+      links: neighboringLinks,
+      targetLinks: neighboringTargetLinks,
+      sourceLinks: neighboringSourceLinks
+    }
+  }
+
+  // 获取唯一source，listNode和tempNode专用，因为entityNode的source可能有多个，rootNode无source
+  getSourceNode (gData) {
+    const links = gData.links.filter(l => l.target.id === this.id)
+    const nodes = gData.nodes.filter(n => links.some(l => l.source.id === n.id))
+    return nodes.length > 0 ? nodes[0] : null
+  }
+
+  // listNode和entityNode专用，查询关联实体列表
+  async queryRelatedEntities (targetEntityType) {
+    let _targetEntityType = targetEntityType
+    if (this.data.entityType === entityType.domain && targetEntityType === entityType.domain) {
+      _targetEntityType = 'subdomain'
+    }
+    const url = `${api.entity.entityGraph[`${this.data.entityType}Related${_.upperFirst(_targetEntityType)}`]}?resource=${this.data.entityName}&pageSize=10&pageNo=${this.data.relatedEntities[targetEntityType].pageNo + 1}`
+    const response = await axios.get(url).catch(e => {
       console.error(e)
       throw e
     })
     if (response.data && response.status === 200) {
-      return response.data.data
-    } else {
-      console.error(response)
-      throw response
-    }
-  }
-
-  async queryTags (entityType, entityName) {
-    const response = await axios.get(`${api.entity.entityGraph.tags}/${entityType}?resource=${entityName}`).catch(e => {
-      console.error(e)
-      throw e
-    })
-    if (response.data && response.status === 200) {
-      return response.data.data
-    } else {
-      console.error(response)
-      throw response
-    }
-  }
-
-  async queryRelatedEntityCount (entityType, entityName) {
-    const response = await axios.get(`${api.entity.entityGraph.relatedEntityCount}/${entityType}?resource=${entityName}`).catch(e => {
-      console.error(e)
-      throw e
-    })
-    if (response.data && response.status === 200) {
+      this.data.relatedEntities[targetEntityType].pageNo += 1
       return response.data.data
     } else {
       console.error(response)
@@ -134,29 +128,10 @@ export default class Node {
     }
   }
 }
+
 export const nodeType = {
   rootNode: 'rootNode',
   listNode: 'listNode',
   entityNode: 'entityNode',
   tempNode: 'tempNode'
-}
-export async function queryRelatedEntity (node, targetEntityType) {
-  let _targetEntityType = targetEntityType
-  if (node.myData.entityType === 'domain' && targetEntityType === 'domain') {
-    _targetEntityType = 'subdomain'
-  }
-  let url = `${api.entity.entityGraph[`${node.myData.entityType}Related${_.upperFirst(_targetEntityType)}`]}?resource=${node.myData.entityName}&pageSize=10`
-  const current = node.myData.relatedEntity[targetEntityType].list.length
-  const pageNo = parseInt(current / 10) + 1
-  url += `&pageNo=${pageNo}`
-  const response = await axios.get(url).catch(e => {
-    console.error(e)
-    throw e
-  })
-  if (response.data && response.status === 200) {
-    return response.data.data
-  } else {
-    console.error(response)
-    throw response
-  }
 }
