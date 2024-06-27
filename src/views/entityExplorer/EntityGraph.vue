@@ -230,7 +230,7 @@ export default {
           .linkCanvasObject((link, ctx) => {
             const start = link.source
             const end = link.target
-            const width = 1 // 线宽
+            let width = 1 // 线宽
             const arrowSize = 3 // 箭头大小
             const shortenedLength = 20 // link 末端缩短长度
 
@@ -252,7 +252,8 @@ export default {
             } else {
               ctx.setLineDash([])
               if (this.clickNode.id === link.source.id || this.clickNode.id === link.target.id) {
-                color = 'rgba(119,131,145,0.8)' // 高亮线颜色
+                color = 'rgba(119,131,145,0.9)' // 高亮线颜色
+                width = 1.2
               } else {
                 color = 'rgba(119,131,145,0.3)' // 普通线颜色
               }
