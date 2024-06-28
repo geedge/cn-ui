@@ -232,7 +232,7 @@ export default {
             const end = link.target
             let width = 1 // 线宽
             const arrowSize = 3 // 箭头大小
-            const shortenedLength = 20 // link 末端缩短长度
+            const shortenedLength = end.type === nodeType.rootNode ? 23 : 20 // link 末端缩短长度,root节点特殊处理
 
             // 计算箭头角度
             const dx = end.x - start.x
