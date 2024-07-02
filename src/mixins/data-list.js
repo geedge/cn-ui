@@ -1,4 +1,4 @@
-import { tableSort } from '@/utils/tools'
+import { handleSpecialCode, tableSort } from '@/utils/tools'
 import { defaultPageSize, fromRoute, position, storageKey, dbTableColumnCustomizeConfigPre, dbTableColumnCustomizeConfig } from '@/utils/constants'
 import _ from 'lodash'
 import { ref } from 'vue'
@@ -242,6 +242,9 @@ export default {
         axios.get(`${this.url}/${this.batchDeleteObjs[0].id}`).then(response => {
           if (response.status === 200) {
             this.object = response.data.data
+            if (this.url === '/sys/i18n') {
+              this.object.value = handleSpecialCode(this.object.value)
+            }
             this.rightBox.show = true
           }
         })

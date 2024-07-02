@@ -32,7 +32,8 @@
         <div class="col-resize-area"></div>
       </template>
       <template #default="scope" :column="item">
-        <span>{{scope.row[item.prop] || '-'}}</span>
+        <span v-if="item.prop === 'value'">{{handleSpecialCode(scope.row[item.prop]) || '-'}}</span>
+        <span v-else>{{scope.row[item.prop] || '-'}}</span>
       </template>
     </el-table-column><template v-slot:empty >
     <div class="table-no-data" v-if="isNoData">
@@ -45,6 +46,7 @@
 <script>
 import table from '@/mixins/table'
 import { api } from '@/utils/api'
+import { handleSpecialCode } from '@/utils/tools'
 
 export default {
   name: 'I18nTable',
@@ -91,6 +93,9 @@ export default {
         }
       ]
     }
+  },
+  methods: {
+    handleSpecialCode
   }
 }
 </script>

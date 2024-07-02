@@ -23,12 +23,20 @@
           </el-form-item>
           <!--password-->
           <el-form-item :label="$t('config.user.pin')" prop="pin">
-            <el-input id="account-input-password" v-model="editObject.pin"  maxlength="64" placeholder=""
-                      show-word-limit type="password" @blur="pinBlur" autocomplete="new-password"></el-input>
+            <el-input id="account-input-password" v-model="editObject.pin"  maxlength="16" placeholder=""
+                      show-word-limit type="password" show-password @blur="pinBlur" @input="pinInput" autocomplete="new-password"></el-input>
           </el-form-item>
+          <!--密码强度-->
+          <el-progress
+              :text-inside="true"
+              class="my-progress"
+              :percentage="percentage"
+              :color="customColors" />
+          <!--密码提示-->
+          <div class="password-hint">{{ handleSpecialCode($t('validate.passwordHint')) }}</div>
           <!--pinChange-->
           <el-form-item :label="$t('config.user.confirmPin')" label-width="200px" prop="pinChange">
-            <el-input id="account-input-pinChange" v-model="editObject.pinChange"  maxlength="64" placeholder=""
+            <el-input id="account-input-pinChange" v-model="editObject.pinChange"  maxlength="16" placeholder=""
                       show-word-limit type="password"></el-input>
           </el-form-item>
           <!--email-->
@@ -104,6 +112,7 @@ import axios from 'axios'
 import _ from 'lodash'
 import { themeData, langData, storageKey } from '@/utils/constants'
 import { api } from '@/utils/api'
+import { handleSpecialCode } from '@/utils/tools'
 
 export default {
   name: 'UserBox',
@@ -114,8 +123,8 @@ export default {
       const isValid = value.match(reg) // 返回匹配到的值
       if (value && value.length < 8) {
         callback(new Error(this.$t('validate.atLeastEight')))
-      } else if (!isValid) {
-        callback(new Error(this.$t('validate.passwordError')))
+      } else if (!isValid || this.passwordLevel(this.editObject.pin) === 1) {
+        callback(new Error(handleSpecialCode(this.$t('validate.passwordError'))))
       } else {
         callback()
       }
@@ -197,7 +206,14 @@ export default {
       },
       roleData: [],
       themeData,
-      langData
+      langData,
+      percentage: 0, // 密码强度
+      customColors: [ // 密码强度颜色指标
+        { color: '#d32423', percentage: 26 },
+        { color: '#fdbf12', percentage: 51 },
+        { color: '#99c708', percentage: 76 },
+        { color: '#099407', percentage: 100 }
+      ]
     }
   },
   setup () {
@@ -206,6 +222,7 @@ export default {
     this.getRoleData()
   },
   methods: {
+    handleSpecialCode,
     isCurrentUser (username) {
       return localStorage.getItem(storageKey.username) === username
     },
@@ -284,6 +301,47 @@ export default {
           this.roleData = _.get(response, 'data.data.list', [])
         }
       })
+    },
+    pinInput () {
+      if (this.editObject?.pin.length < 8) {
+        this.percentage = 25
+      } else if (this.editObject?.pin.length < 10) {
+        this.percentage = this.passwordLevel(this.editObject.pin) > 1 ? 2 * 25 : this.passwordLevel(this.editObject.pin) * 25
+      } else if (this.editObject?.pin.length < 12) {
+        this.percentage = this.passwordLevel(this.editObject.pin) === 4 ? 3 * 25 : this.passwordLevel(this.editObject.pin) * 25
+      } else {
+        this.percentage = this.passwordLevel(this.editObject.pin) * 25
+      }
+    },
+    passwordLevel (I) {
+      let H = 0
+      for (let a = 0; a < I.length; a++) {
+        H |= this.CharMode(I.charCodeAt(a))
+      }
+      return this.bitTotal(H)
+    },
+    CharMode (H) {
+      if (H >= 48 && H <= 57) { // 数字
+        return 1
+      }
+      if (H >= 65 && H <= 90) { // 大写
+        return 2
+      }
+      if (H >= 97 && H <= 122) { // 小写
+        return 4
+      } else {
+        return 8
+      }
+    },
+    bitTotal (H) {
+      let I = 0
+      for (let j = 0; j < 4; j++) {
+        if (H & 1) {
+          I++
+        }
+        H >>>= 1
+      }
+      return I
     }
   },
   watch: {

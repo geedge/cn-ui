@@ -1584,3 +1584,10 @@ const tagValueHandler = (value) => {
 export const headerCellClass = (row) => {
   return 'my-header-cell-class'
 }
+
+/**
+ * & 被转译为&amp; 将转义后的值转为 &
+ */
+export const handleSpecialCode = (str) => {
+  return str.indexOf('&amp;') > -1 ? str.replaceAll('&amp;', '&') : str
+}

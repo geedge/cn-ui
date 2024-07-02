@@ -145,6 +145,20 @@ $border-radius-small: 2px;
         width: calc(50% - 10px);
       }
     }
+
+    .my-progress {
+      margin-bottom: 6px;
+
+      .el-progress-bar__innerText {
+        color: rgba(0,0,0,0) !important;
+      }
+    }
+
+    .password-hint {
+      color: var(--el-color-info);
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
   }
 
   .right-box__footer {
