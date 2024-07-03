@@ -124,8 +124,10 @@ export default {
         const isValid = value.match(reg) // 返回匹配到的值
         if (value && value.length < 8) {
           callback(new Error(this.$t('validate.atLeastEight')))
-        } else if (!isValid || this.passwordLevel(this.editObject.pin) === 1) {
+        } else if (!isValid) {
           callback(new Error(handleSpecialCode(this.$t('validate.passwordError'))))
+        } else if (this.passwordLevel(this.editObject.pin) === 1) {
+          callback(new Error(this.$t('validate.passwordTwoTypes')))
         } else {
           callback()
         }
@@ -138,8 +140,10 @@ export default {
         callback()
       } else if (_.isEmpty(value) && !_.isEmpty(this.editObject.pin)) { // 密码有内容，确认密码没内容
         callback(new Error(this.$t('config.user.confirmPin')))
-      } else if (!_.isEmpty(value) && value !== this.editObject.pin) { // 密码有内容，确认密码也有内容，内容不一致
+      } else if (!_.isEmpty(value) && !_.isEmpty(this.editObject.pin) && value !== this.editObject.pin) { // 密码有内容，确认密码也有内容，内容不一致
         callback(new Error(this.$t('config.user.confirmPinErr')))
+      } else if (!_.isEmpty(value) && _.isEmpty(this.editObject.pin)) { // 确认密码有内容，密码没内容
+        callback(new Error(this.$t('config.user.confirmNoPin')))
       } else {
         callback()
       }
@@ -173,7 +177,7 @@ export default {
         ],
         pinChange: [
           { required: true, message: this.$t('validate.required') },
-          { validator: validatePin, trigger: 'blur' },
+          // { validator: validatePin, trigger: 'blur' },
           { validator: validateConfirmPin, trigger: 'blur' }
         ],
         roleIds: [
@@ -199,8 +203,8 @@ export default {
           { validator: validatePin, trigger: 'blur' }
         ],
         pinChange: [
-          { validator: validateConfirmPin, trigger: 'blur' },
-          { validator: validatePin, trigger: 'blur' }
+          { validator: validateConfirmPin, trigger: 'blur' }
+          // { validator: validatePin, trigger: 'blur' }
         ],
         roleIds: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
@@ -238,7 +242,7 @@ export default {
     /* 密码失去焦点 检验确认密码 */
     pinBlur () {
       if (this.editObject.pin && this.editObject.pinChange) {
-        this.$refs.userForm.validateField('pinChange')
+        this.$refs.userForm.validateField('pinChange', () => null) // 没有null，则会报错
       }
     },
     save () {
@@ -312,8 +316,10 @@ export default {
       })
     },
     pinInput () {
-      if (this.editObject?.pin.length < 8) {
+      if (this.editObject?.pin.length < 8 && this.editObject?.pin.length !== 0) {
         this.percentage = 25
+      } else if (this.editObject?.pin.length === 0) {
+        this.percentage = 0
       } else if (this.editObject?.pin.length < 10) {
         this.percentage = this.passwordLevel(this.editObject.pin) > 1 ? 2 * 25 : this.passwordLevel(this.editObject.pin) * 25
       } else if (this.editObject?.pin.length < 12) {
