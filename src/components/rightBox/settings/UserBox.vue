@@ -37,7 +37,7 @@
           <!--pinChange-->
           <el-form-item :label="$t('config.user.confirmPin')" label-width="200px" prop="pinChange">
             <el-input id="account-input-pinChange" v-model="editObject.pinChange"  maxlength="16" placeholder=""
-                      show-word-limit type="password"></el-input>
+                      show-word-limit show-password type="password"></el-input>
           </el-form-item>
           <!--email-->
           <el-form-item label="E-mail" prop="email">
@@ -119,18 +119,24 @@ export default {
   mixins: [rightBoxMixin],
   data () {
     const validatePin = (rule, value, callback) => { // 确认密码
-      const reg = /^[-\d\w/~!@#$%^&*_.?]+$/g
-      const isValid = value.match(reg) // 返回匹配到的值
-      if (value && value.length < 8) {
-        callback(new Error(this.$t('validate.atLeastEight')))
-      } else if (!isValid || this.passwordLevel(this.editObject.pin) === 1) {
-        callback(new Error(handleSpecialCode(this.$t('validate.passwordError'))))
-      } else {
+      if (value) {
+        const reg = /^[-\d\w/~!@#$%^&*_.?]+$/g
+        const isValid = value.match(reg) // 返回匹配到的值
+        if (value && value.length < 8) {
+          callback(new Error(this.$t('validate.atLeastEight')))
+        } else if (!isValid || this.passwordLevel(this.editObject.pin) === 1) {
+          callback(new Error(handleSpecialCode(this.$t('validate.passwordError'))))
+        } else {
+          callback()
+        }
+      } else if (this.editObject.id) { // 编辑时不输入密码则不做校验
         callback()
       }
     }
     const validateConfirmPin = (rule, value, callback) => { // 确认密码的二次校验
-      if (_.isEmpty(value) && !_.isEmpty(this.editObject.pin)) { // 密码有内容，确认密码没内容
+      if (this.editObject.id && _.isEmpty(value) && _.isEmpty(this.editObject.pin)) { // 编辑时，密码和确认密码均没内容则不做校验
+        callback()
+      } else if (_.isEmpty(value) && !_.isEmpty(this.editObject.pin)) { // 密码有内容，确认密码没内容
         callback(new Error(this.$t('config.user.confirmPin')))
       } else if (!_.isEmpty(value) && value !== this.editObject.pin) { // 密码有内容，确认密码也有内容，内容不一致
         callback(new Error(this.$t('config.user.confirmPinErr')))
@@ -188,6 +194,9 @@ export default {
         username: [
           { required: true, message: this.$t('validate.userNameLength'), trigger: 'blur' },
           { validator: validateUserName, trigger: 'blur' }
+        ],
+        pin: [
+          { validator: validatePin, trigger: 'blur' }
         ],
         pinChange: [
           { validator: validateConfirmPin, trigger: 'blur' },
