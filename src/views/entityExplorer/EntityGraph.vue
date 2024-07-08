@@ -1043,7 +1043,9 @@ export default {
           entities.list.forEach(entity => {
             const toAddNode = new Node(nodeType.entityNode, entity.vertex, {
               entityType: expandType,
-              entityName: entity.vertex
+              entityName: entity.vertex,
+              x: node.x + Math.random() * 10 - 5,
+              y: node.y + Math.random() * 10 - 5
             }, node, this.getIconUrl(node.data.entityType, false, false))
             toAddNodes.push(toAddNode)
 
@@ -1091,7 +1093,9 @@ export default {
             entities.list.forEach(entity => {
               const entityNode = new Node(nodeType.entityNode, entity.vertex, {
                 entityType: expandType,
-                entityName: entity.vertex
+                entityName: entity.vertex,
+                x: listNode.x + Math.random() * 10 - 5,
+                y: listNode.y + Math.random() * 10 - 5
               }, listNode, this.getIconUrl(expandType, false, false))
               toAddNodes.push(entityNode)
               toAddLinks.push(new Link(listNode, entityNode))
