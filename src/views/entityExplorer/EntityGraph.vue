@@ -88,9 +88,18 @@ export default {
       try {
         const initialData = await this.generateInitialData()
         this.initialData = _.cloneDeep(initialData) // 初始化数据
-        let hoverNode = null
-        const canvasHeight = document.body.clientHeight - 100
-        this.graph = ForceGraph()(document.getElementById('entityGraph'))
+        this.initForceGraph(initialData) // 初始化拓展图
+      } catch (e) {
+        console.error(e)
+        this.$message.error(this.errorMsgHandler(e))
+      } finally {
+        this.rightBox.loading = false
+      }
+    },
+    initForceGraph(initialData) {
+      let hoverNode = null
+      const canvasHeight = document.body.clientHeight - 100
+      this.graph = ForceGraph()(document.getElementById('entityGraph'))
           .height(canvasHeight)
           .graphData(initialData)
           .nodeCanvasObject((node, ctx) => {
@@ -114,8 +123,8 @@ export default {
                 ctx.arc(node.x, node.y, nodeStyle.shadowR, 0, 2 * Math.PI, false)
                 ctx.closePath()
                 ctx.fillStyle = node === this.clickNode || node === hoverNode
-                  ? nodeStyle.hoveredShadowColor
-                  : nodeStyle.shadowColor
+                    ? nodeStyle.hoveredShadowColor
+                    : nodeStyle.shadowColor
                 ctx.fill()
                 // 内部挖空
                 ctx.beginPath()
@@ -341,14 +350,14 @@ export default {
                       const hasListNode = neighbors.nodes.some(b => b.data.entityType === k)
                       if (!hasListNode) {
                         const tempNode = new Node(
-                          nodeType.tempNode,
-                              `${node.realId}__${k}__temp`,
-                              {
-                                entityType: k,
-                                ...this.generateTempNodeCoordinate(node.getSourceNode(this.graph.graphData()), e)
-                              },
-                              node,
-                              this.getIconUrl(k, false, false)
+                            nodeType.tempNode,
+                            `${node.realId}__${k}__temp`,
+                            {
+                              entityType: k,
+                              ...this.generateTempNodeCoordinate(node.getSourceNode(this.graph.graphData()), e)
+                            },
+                            node,
+                            this.getIconUrl(k, false, false)
                         )
                         // 临时节点的初始固定坐标为其对应的entity节点坐标，展示直线动画
                         // tempNode.fx = node.x
@@ -395,15 +404,15 @@ export default {
               const k1 = (node.x - sourceNode.x) / linkDistance.normal
               const k2 = (node.y - sourceNode.y) / linkDistance.normal
               const listNode = new Node(
-                nodeType.listNode,
-                    `${sourceNode.realId}__${node.data.entityType}-list`,
-                    {
-                      entityType: node.data.entityType,
-                      fx: sourceNode.x + k1 * linkDistance.entityToList,
-                      fy: sourceNode.y + k2 * linkDistance.entityToList
-                    },
-                    sourceNode,
-                    this.getIconUrl(node.data.entityType, false, false)
+                  nodeType.listNode,
+                  `${sourceNode.realId}__${node.data.entityType}-list`,
+                  {
+                    entityType: node.data.entityType,
+                    fx: sourceNode.x + k1 * linkDistance.entityToList,
+                    fy: sourceNode.y + k2 * linkDistance.entityToList
+                  },
+                  sourceNode,
+                  this.getIconUrl(node.data.entityType, false, false)
               )
               nodes.push(listNode)
               links.push(new Link(sourceNode, listNode))
@@ -471,17 +480,17 @@ export default {
           })
 
           .d3Force('link', d3.forceLink().id(link => link.id)
-            .distance(link => {
-              if (link.source.type === nodeType.rootNode) {
-                return linkDistance.root
-              } else if (link.source.type === nodeType.entityNode && link.target.type === nodeType.listNode) {
-                return linkDistance.entityToList
-              }
-              return linkDistance.normal
-            })
-            .strength(link => {
-              return link.strength
-            }))// 设置线对点的力？
+              .distance(link => {
+                if (link.source.type === nodeType.rootNode) {
+                  return linkDistance.root
+                } else if (link.source.type === nodeType.entityNode && link.target.type === nodeType.listNode) {
+                  return linkDistance.entityToList
+                }
+                return linkDistance.normal
+              })
+              .strength(link => {
+                return link.strength
+              }))// 设置线对点的力？
           .d3Force('center', d3.forceCenter().strength(0))// 设置力导图点阵中心位置, 向心力设置为0以后，d3.forceCenter(-50,-70)不起作用了
           .d3Force('charge', d3.forceManyBody().strength(this.defaultChargeStrength))
           .onNodeDrag((node, translate) => {
@@ -589,12 +598,6 @@ export default {
               }
             }
           })
-      } catch (e) {
-        console.error(e)
-        this.$message.error(this.errorMsgHandler(e))
-      } finally {
-        this.rightBox.loading = false
-      }
     },
     getTempNodeAngle (nodeCount, i) {
       switch (nodeCount) {
@@ -703,7 +706,7 @@ export default {
           justUndo: false,
           justRedo: false
         }
-        this.graph.graphData(_.cloneDeep(this.initialData)).centerAt(0, 0).zoom(0.9999)
+        this.initForceGraph(_.cloneDeep(this.initialData)) // 初始化拓展图
         this.rightBox.show = true
         this.rightBox.node = this.rootNode
         this.rightBox.mode = 'detail'
