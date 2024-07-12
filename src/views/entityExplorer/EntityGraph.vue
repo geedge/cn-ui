@@ -300,63 +300,28 @@ export default {
           const dx = end.x - start.x
           const dy = end.y - start.y
           const angle = Math.atan2(dy, dx) // 计算与x轴的角度（弧度）
-          const lineEndX = end.x - shortenedLength * Math.cos(angle)
-          const lineEndY = end.y - shortenedLength * Math.sin(angle)
-          const arrowEndX = lineEndX + arrowSize * Math.cos(angle)
-          const arrowEndY = lineEndY + arrowSize * Math.sin(angle)
+          let lineEndX = end.x - shortenedLength * Math.cos(angle)
+          let lineEndY = end.y - shortenedLength * Math.sin(angle)
+          let arrowEndX = lineEndX + arrowSize * Math.cos(angle)
+          let arrowEndY = lineEndY + arrowSize * Math.sin(angle)
 
           // 绘制线
           let color
           if (link.type === linkType.temp) {
             ctx.setLineDash([2, 2])
             color = 'rgba(119,131,145,0.2)' // 虚线颜色
-            const startX = start.x
-            const startY = start.y
-            ctx.beginPath()
-            ctx.moveTo(startX, startY)
             if (end.realEndX) {
               end.drawEndX = lineEndX
               end.drawEndY = lineEndY
             }
             const nodeCoordinate = this.getCoordinate(start, end)
             if (nodeCoordinate && !this.isDraggingEntityNode) {
-              ctx.lineTo(nodeCoordinate.x, nodeCoordinate.y)// 避免出现线和箭头之间出现空白部分
-              ctx.strokeStyle = color
-              ctx.lineWidth = width
-              ctx.stroke()
-
-              ctx.save() // 保存当前状态以便之后恢复
-              ctx.translate(nodeCoordinate.x + arrowSize * Math.cos(angle), nodeCoordinate.y + arrowSize * Math.sin(angle)) // 将坐标原点移动到箭头末端
-              ctx.rotate(angle) // 根据链接方向旋转坐标系
-              ctx.beginPath()
-              ctx.moveTo(0, 0)
-              ctx.lineTo(-arrowSize, arrowSize) // 绘制箭头的一边
-              ctx.lineTo(-arrowSize, -arrowSize) // 绘制箭头的另一边
-              ctx.closePath()
-              ctx.fillStyle = color
-              ctx.fill()
-              ctx.restore() // 恢复之前保存的状态
-            } else {
-              ctx.lineTo(lineEndX, lineEndY)// 避免出现线和箭头之间出现空白部分
-              ctx.strokeStyle = color
-              ctx.lineWidth = width
-              ctx.stroke()
-
-              ctx.save() // 保存当前状态以便之后恢复
-              ctx.translate(arrowEndX, arrowEndY) // 将坐标原点移动到箭头末端
-              ctx.rotate(angle) // 根据链接方向旋转坐标系
-              ctx.beginPath()
-              ctx.moveTo(0, 0)
-              ctx.lineTo(-arrowSize, arrowSize) // 绘制箭头的一边
-              ctx.lineTo(-arrowSize, -arrowSize) // 绘制箭头的另一边
-              ctx.closePath()
-              ctx.fillStyle = color
-              ctx.fill()
-              ctx.restore() // 恢复之前保存的状态
+              lineEndX = nodeCoordinate.x
+              lineEndY = nodeCoordinate.y
+              arrowEndX = nodeCoordinate.x + arrowSize * Math.cos(angle)
+              arrowEndY = nodeCoordinate.y + arrowSize * Math.sin(angle)
             }
           } else {
-            ctx.beginPath()
-            ctx.moveTo(start.x, start.y)
             ctx.setLineDash([])
             if (this.clickNode.id === link.source.id || this.clickNode.id === link.target.id) {
               color = 'rgba(119,131,145,0.9)' // 高亮线颜色
@@ -364,24 +329,26 @@ export default {
             } else {
               color = 'rgba(119,131,145,0.3)' // 普通线颜色
             }
-
-            ctx.lineTo(lineEndX, lineEndY)
-            ctx.strokeStyle = color
-            ctx.lineWidth = width
-            ctx.stroke()
-
-            ctx.save() // 保存当前状态以便之后恢复
-            ctx.translate(arrowEndX, arrowEndY) // 将坐标原点移动到箭头末端
-            ctx.rotate(angle) // 根据链接方向旋转坐标系
-            ctx.beginPath()
-            ctx.moveTo(0, 0)
-            ctx.lineTo(-arrowSize, arrowSize) // 绘制箭头的一边
-            ctx.lineTo(-arrowSize, -arrowSize) // 绘制箭头的另一边
-            ctx.closePath()
-            ctx.fillStyle = color
-            ctx.fill()
-            ctx.restore() // 恢复之前保存的状态
           }
+
+          ctx.beginPath()
+          ctx.moveTo(start.x, start.y)
+          ctx.lineTo(lineEndX, lineEndY)
+          ctx.strokeStyle = color
+          ctx.lineWidth = width
+          ctx.stroke()
+
+          ctx.save() // 保存当前状态以便之后恢复
+          ctx.translate(arrowEndX, arrowEndY) // 将坐标原点移动到箭头末端
+          ctx.rotate(angle) // 根据链接方向旋转坐标系
+          ctx.beginPath()
+          ctx.moveTo(0, 0)
+          ctx.lineTo(-arrowSize, arrowSize) // 绘制箭头的一边
+          ctx.lineTo(-arrowSize, -arrowSize) // 绘制箭头的另一边
+          ctx.closePath()
+          ctx.fillStyle = color
+          ctx.fill()
+          ctx.restore() // 恢复之前保存的状态
         })
         .autoPauseRedraw(false) // keep redrawing after engine has stopped如果您有依赖于画布的不断重绘的自定义动态对象，建议关闭此选项。
         .onNodeHover(node => {
@@ -682,6 +649,12 @@ export default {
           }
         })
     },
+    /*
+      sleep() {
+        for (let i = 0; i < 1000000000/5; i++) {
+          let num = i + i
+        }
+      }, */
     /*
       * 线性插值: 已知两点坐标，计算已知x或y的C点坐标，且C点在AB连线上
       *
