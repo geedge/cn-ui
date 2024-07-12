@@ -3,28 +3,28 @@
     <div class="entity-graph__chart" id="entityGraph" ></div>
     <div class="entity-graph__right-box">
       <el-drawer
-          v-model="rightBox.show"
-          direction="rtl"
-          class="entity-graph__detail"
-          :close-on-click-modal="true"
-          :modal="false"
-          :size="400"
-          :with-header="false"
-          destroy-on-close>
+              v-model="rightBox.show"
+              direction="rtl"
+              class="entity-graph__detail"
+              :close-on-click-modal="true"
+              :modal="false"
+              :size="400"
+              :with-header="false"
+              destroy-on-close>
         <graph-entity-list
-            v-if="rightBox.mode === 'list'"
-            :node="rightBox.node"
-            :loading="rightBox.loading"
-            @expandList="expandList"
-            @closeBlock="onCloseBlock"
+                v-if="rightBox.mode === 'list'"
+                :node="rightBox.node"
+                :loading="rightBox.loading"
+                @expandList="expandList"
+                @closeBlock="onCloseBlock"
         >
         </graph-entity-list>
         <graph-entity-detail
-            v-else-if="rightBox.mode === 'detail'"
-            :node="rightBox.node"
-            :loading="rightBox.loading"
-            @expandDetailList="expandDetailList"
-            @closeBlock="onCloseBlock"
+                v-else-if="rightBox.mode === 'detail'"
+                :node="rightBox.node"
+                :loading="rightBox.loading"
+                @expandDetailList="expandDetailList"
+                @closeBlock="onCloseBlock"
         >
         </graph-entity-detail>
       </el-drawer>
@@ -74,6 +74,8 @@ export default {
       defaultMargin: 2, // 图像与箭头的距离
       rootNode: null,
       isClicking: false,
+      isDraggingEntityNode: false,
+      defaultArrowSize: 3, // 箭头大小
       /* 自己实现stack操作 */
       stackData: {
         undo: [], // 后退
@@ -96,134 +98,184 @@ export default {
         this.rightBox.loading = false
       }
     },
-    initForceGraph(initialData) {
+    getCoordinate (startNode, endNode) {
+      const startX = startNode.x
+      const startY = startNode.y
+      const endX = endNode.drawEndX
+      const endY = endNode.drawEndY
+      if (endX && startX) {
+        const diffVal = Math.round(Math.sqrt(Math.pow((endX - startX), 2) + Math.pow((endY - startY), 2)))
+        const step = 3
+        const i = endNode.nextI ? endNode.nextI : 0
+        if (i < diffVal / step) {
+          endNode.nextI = i + 1
+          const dx = endX - startX
+          const dy = endY - startY
+          const angle = Math.atan2(dy, dx) // 计算与x轴的角度（弧度）
+          const cx = startX + step * Math.cos(angle) * i
+          const cy = this.linearInterpolate([startX, startY], [endX, endY]).getY(cx)
+          return {
+            x: cx,
+            y: cy
+          }
+        } else {
+          return null
+        }
+      } else {
+        return null
+      }
+    },
+    getShortenedLength (end) {
+      return end.type === nodeType.rootNode ? 23 : 20 // link 末端缩短长度,root节点特殊处理
+    },
+    initForceGraph (initialData) {
       let hoverNode = null
       const canvasHeight = document.body.clientHeight - 100
       this.graph = ForceGraph()(document.getElementById('entityGraph'))
-          .height(canvasHeight)
-          .graphData(initialData)
-          .nodeCanvasObject((node, ctx) => {
-            /*
-            * 共有4种 nodeType，3种 entityType
-            * */
-            const nodeStyle = this.getNodeStyle(node.type, node.data.entityType)
-            switch (node.type) {
-              case nodeType.rootNode: {
-                // 如果是鼠标点击高亮的，最外层加上第三层圆环
-                if (node.id === this.clickNode.id) {
-                  ctx.beginPath()
-                  ctx.arc(node.x, node.y, nodeStyle.selectedShadowR, 0, 2 * Math.PI, false)
-                  ctx.closePath()
-                  ctx.fillStyle = nodeStyle.selectedShadowColor
-                  ctx.fill()
-                }
+        .height(canvasHeight)
+        .graphData(initialData)
+        .nodeCanvasObject((node, ctx) => {
+          /*
+              * 共有4种 nodeType，3种 entityType
+              * */
+          const nodeStyle = this.getNodeStyle(node.type, node.data.entityType)
+          switch (node.type) {
+            case nodeType.rootNode: {
+              // 如果是鼠标点击高亮的，最外层加上第三层圆环
+              if (node.id === this.clickNode.id) {
+                ctx.beginPath()
+                ctx.arc(node.x, node.y, nodeStyle.selectedShadowR, 0, 2 * Math.PI, false)
+                ctx.closePath()
+                ctx.fillStyle = nodeStyle.selectedShadowColor
+                ctx.fill()
+              }
 
-                // 第二层圆环
+              // 第二层圆环
+              ctx.beginPath()
+              ctx.arc(node.x, node.y, nodeStyle.shadowR, 0, 2 * Math.PI, false)
+              ctx.closePath()
+              ctx.fillStyle = node === this.clickNode || node === hoverNode
+                ? nodeStyle.hoveredShadowColor
+                : nodeStyle.shadowColor
+              ctx.fill()
+              // 内部挖空
+              ctx.beginPath()
+              ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
+              ctx.closePath()
+              ctx.fillStyle = nodeStyle.fillStyle
+              ctx.fill()
+
+              // 第一层圆环
+              ctx.beginPath()
+              ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
+              ctx.closePath()
+              ctx.lineWidth = 1
+              ctx.strokeStyle = nodeStyle.borderColor
+              ctx.stroke()
+              // 图片
+              ctx.drawImage(node.img, node.x - nodeStyle.iconWidth / 2, node.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight)
+              // 文字
+              ctx.font = nodeStyle.font
+              const textWidth = ctx.measureText(node.label).width
+              const bckgDimensions = [textWidth, 9].map(n => n + 9 * 0.2)
+              ctx.fillStyle = nodeStyle.fontBgColor
+              ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2 + 31, ...bckgDimensions) // 文字的白底
+
+              ctx.textAlign = 'center'
+              ctx.textBaseline = 'middle'
+              ctx.fillStyle = nodeStyle.fontColor
+              ctx.fillText(node.label, node.x, node.y + 30)
+              break
+            }
+            case nodeType.listNode: {
+              // 如果是鼠标点击或者悬停的，有一层圆环
+              if (node === this.clickNode || node === hoverNode) {
                 ctx.beginPath()
                 ctx.arc(node.x, node.y, nodeStyle.shadowR, 0, 2 * Math.PI, false)
                 ctx.closePath()
-                ctx.fillStyle = node === this.clickNode || node === hoverNode
-                    ? nodeStyle.hoveredShadowColor
-                    : nodeStyle.shadowColor
-                ctx.fill()
-                // 内部挖空
-                ctx.beginPath()
-                ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
-                ctx.closePath()
-                ctx.fillStyle = nodeStyle.fillStyle
-                ctx.fill()
-
-                // 第一层圆环
-                ctx.beginPath()
-                ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
-                ctx.closePath()
-                ctx.lineWidth = 1
-                ctx.strokeStyle = nodeStyle.borderColor
-                ctx.stroke()
-                // 图片
-                ctx.drawImage(node.img, node.x - nodeStyle.iconWidth / 2, node.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight)
-                // 文字
-                ctx.font = nodeStyle.font
-                const textWidth = ctx.measureText(node.label).width
-                const bckgDimensions = [textWidth, 9].map(n => n + 9 * 0.2)
-                ctx.fillStyle = nodeStyle.fontBgColor
-                ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2 + 31, ...bckgDimensions) // 文字的白底
-
-                ctx.textAlign = 'center'
-                ctx.textBaseline = 'middle'
-                ctx.fillStyle = nodeStyle.fontColor
-                ctx.fillText(node.label, node.x, node.y + 30)
-                break
-              }
-              case nodeType.listNode: {
-                // 如果是鼠标点击或者悬停的，有一层圆环
-                if (node === this.clickNode || node === hoverNode) {
-                  ctx.beginPath()
-                  ctx.arc(node.x, node.y, nodeStyle.shadowR, 0, 2 * Math.PI, false)
-                  ctx.closePath()
-                  if (node === this.currentSelectedNode) {
-                    ctx.fillStyle = nodeStyle.selectedShadowColor
-                  } else {
-                    ctx.fillStyle = nodeStyle.hoveredShadowColor
-                  }
-                  ctx.fill()
+                if (node === this.currentSelectedNode) {
+                  ctx.fillStyle = nodeStyle.selectedShadowColor
+                } else {
+                  ctx.fillStyle = nodeStyle.hoveredShadowColor
                 }
-
-                // 内部填白
-                ctx.beginPath()
-                ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
-                ctx.closePath()
-                ctx.fillStyle = nodeStyle.fillStyle
                 ctx.fill()
-
-                // 第一层圆环
-                ctx.beginPath()
-                ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
-                ctx.closePath()
-                ctx.lineWidth = 1
-                ctx.strokeStyle = nodeStyle.borderColor
-                ctx.stroke()
-                // 图片
-                ctx.drawImage(node.img, node.x - nodeStyle.iconWidth / 2, node.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight)
-                // 文字
-                ctx.font = nodeStyle.font
-                const textWidth = ctx.measureText(node.label).width
-                const bckgDimensions = [textWidth, 8].map(n => n + 8 * 0.2)
-                ctx.fillStyle = nodeStyle.fontBgColor
-                ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2 + 24, ...bckgDimensions) // 文字的白底
-
-                ctx.textAlign = 'center'
-                ctx.textBaseline = 'middle'
-                ctx.fillStyle = nodeStyle.fontColor
-                ctx.fillText(node.label, node.x, node.y + 24)
-                break
               }
-              case nodeType.entityNode: {
-                // 先画个白底圆环，避免 link 穿过不好看
+
+              // 内部填白
+              ctx.beginPath()
+              ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
+              ctx.closePath()
+              ctx.fillStyle = nodeStyle.fillStyle
+              ctx.fill()
+
+              // 第一层圆环
+              ctx.beginPath()
+              ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
+              ctx.closePath()
+              ctx.lineWidth = 1
+              ctx.strokeStyle = nodeStyle.borderColor
+              ctx.stroke()
+              // 图片
+              ctx.drawImage(node.img, node.x - nodeStyle.iconWidth / 2, node.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight)
+              // 文字
+              ctx.font = nodeStyle.font
+              const textWidth = ctx.measureText(node.label).width
+              const bckgDimensions = [textWidth, 8].map(n => n + 8 * 0.2)
+              ctx.fillStyle = nodeStyle.fontBgColor
+              ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2 + 24, ...bckgDimensions) // 文字的白底
+
+              ctx.textAlign = 'center'
+              ctx.textBaseline = 'middle'
+              ctx.fillStyle = nodeStyle.fontColor
+              ctx.fillText(node.label, node.x, node.y + 24)
+              break
+            }
+            case nodeType.entityNode: {
+              // 先画个白底圆环，避免 link 穿过不好看
+              ctx.beginPath()
+              ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
+              ctx.closePath()
+              ctx.fillStyle = nodeStyle.fillStyle
+              ctx.fill()
+              // 如果是鼠标点击或者悬停的，有一层圆环
+              if (node === this.clickNode || node === hoverNode) {
                 ctx.beginPath()
-                ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
+                ctx.arc(node.x, node.y, nodeStyle.shadowR, 0, 2 * Math.PI, false)
                 ctx.closePath()
-                ctx.fillStyle = nodeStyle.fillStyle
-                ctx.fill()
-                // 如果是鼠标点击或者悬停的，有一层圆环
-                if (node === this.clickNode || node === hoverNode) {
-                  ctx.beginPath()
-                  ctx.arc(node.x, node.y, nodeStyle.shadowR, 0, 2 * Math.PI, false)
-                  ctx.closePath()
-                  if (node === this.clickNode) {
-                    ctx.fillStyle = nodeStyle.selectedShadowColor
-                  } else {
-                    ctx.fillStyle = nodeStyle.hoveredShadowColor
-                  }
-                  ctx.fill()
+                if (node === this.clickNode) {
+                  ctx.fillStyle = nodeStyle.selectedShadowColor
+                } else {
+                  ctx.fillStyle = nodeStyle.hoveredShadowColor
                 }
-                // 图片
-                ctx.drawImage(node.img, node.x - nodeStyle.iconWidth / 2, node.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight)
-                break
+                ctx.fill()
               }
-              case nodeType.tempNode: {
-                // 先画个白底圆环，避免 link 穿过不好看
-                ctx.beginPath()
+              // 图片
+              ctx.drawImage(node.img, node.x - nodeStyle.iconWidth / 2, node.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight)
+              break
+            }
+            case nodeType.tempNode: {
+              // 先画个白底圆环，避免 link 穿过不好看
+              ctx.beginPath()
+              const tempNodeDistance = this.getShortenedLength(node)// 临时节点展示动画时临时节点的初始位置距离entity节点的距离
+              // 计算箭头角度
+              const dx = node.x - node.sourceNode.x
+              const dy = node.y - node.sourceNode.y
+              const angle = Math.atan2(dy, dx) // 计算与x轴的角度（弧度）
+              const startNodeX = node.sourceNode.x + tempNodeDistance * Math.cos(angle)
+              const startNodeY = node.sourceNode.y + tempNodeDistance * Math.sin(angle)
+              node.drawEndX = node.realEndX
+              node.drawEndY = node.realEndY
+              const nodeCoordinate = this.getCoordinate({ x: startNodeX, y: startNodeY }, node)
+              if (nodeCoordinate && !this.isDraggingEntityNode) {
+                ctx.arc(nodeCoordinate.x, nodeCoordinate.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
+                ctx.closePath()
+                ctx.fillStyle = nodeStyle.fillStyle
+                ctx.fill()
+                // 画透明度0.7的图标
+                ctx.globalAlpha = 0.7
+                ctx.drawImage(node.img, nodeCoordinate.x - nodeStyle.iconWidth / 2, nodeCoordinate.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight)
+                ctx.globalAlpha = 1
+              } else {
                 ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
                 ctx.closePath()
                 ctx.fillStyle = nodeStyle.fillStyle
@@ -232,48 +284,92 @@ export default {
                 ctx.globalAlpha = 0.7
                 ctx.drawImage(node.img, node.x - nodeStyle.iconWidth / 2, node.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight)
                 ctx.globalAlpha = 1
-                break
               }
+              break
             }
-          })
-          .linkCanvasObject((link, ctx) => {
-            const start = link.source
-            const end = link.target
-            let width = 1 // 线宽
-            const arrowSize = 3 // 箭头大小
-            const shortenedLength = end.type === nodeType.rootNode ? 23 : 20 // link 末端缩短长度,root节点特殊处理
+          }
+        })
+        .linkCanvasObject((link, ctx) => {
+          const start = link.source
+          const end = link.target
+          let width = 1 // 线宽
+          const arrowSize = this.defaultArrowSize // 箭头大小
+          const shortenedLength = this.getShortenedLength(end) // link 末端缩短长度,root节点特殊处理
 
-            // 计算箭头角度
-            const dx = end.x - start.x
-            const dy = end.y - start.y
-            const angle = Math.atan2(dy, dx) // 计算与x轴的角度（弧度）
-            const lineEndX = end.x - shortenedLength * Math.cos(angle)
-            const lineEndY = end.y - shortenedLength * Math.sin(angle)
-            const arrowEndX = lineEndX + arrowSize * Math.cos(angle)
-            const arrowEndY = lineEndY + arrowSize * Math.sin(angle)
+          // 计算箭头角度
+          const dx = end.x - start.x
+          const dy = end.y - start.y
+          const angle = Math.atan2(dy, dx) // 计算与x轴的角度（弧度）
+          const lineEndX = end.x - shortenedLength * Math.cos(angle)
+          const lineEndY = end.y - shortenedLength * Math.sin(angle)
+          const arrowEndX = lineEndX + arrowSize * Math.cos(angle)
+          const arrowEndY = lineEndY + arrowSize * Math.sin(angle)
 
-            // 绘制线
-            let color
+          // 绘制线
+          let color
+          if (link.type === linkType.temp) {
+            ctx.setLineDash([2, 2])
+            color = 'rgba(119,131,145,0.2)' // 虚线颜色
+            const startX = start.x
+            const startY = start.y
             ctx.beginPath()
-            if (link.type === linkType.temp) {
-              ctx.setLineDash([2, 2])
-              color = 'rgba(119,131,145,0.2)' // 虚线颜色
-            } else {
-              ctx.setLineDash([])
-              if (this.clickNode.id === link.source.id || this.clickNode.id === link.target.id) {
-                color = 'rgba(119,131,145,0.9)' // 高亮线颜色
-                width = 1.2
-              } else {
-                color = 'rgba(119,131,145,0.3)' // 普通线颜色
-              }
+            ctx.moveTo(startX, startY)
+            if (end.realEndX) {
+              end.drawEndX = lineEndX
+              end.drawEndY = lineEndY
             }
+            const nodeCoordinate = this.getCoordinate(start, end)
+            if (nodeCoordinate && !this.isDraggingEntityNode) {
+              ctx.lineTo(nodeCoordinate.x, nodeCoordinate.y)// 避免出现线和箭头之间出现空白部分
+              ctx.strokeStyle = color
+              ctx.lineWidth = width
+              ctx.stroke()
+
+              ctx.save() // 保存当前状态以便之后恢复
+              ctx.translate(nodeCoordinate.x + arrowSize * Math.cos(angle), nodeCoordinate.y + arrowSize * Math.sin(angle)) // 将坐标原点移动到箭头末端
+              ctx.rotate(angle) // 根据链接方向旋转坐标系
+              ctx.beginPath()
+              ctx.moveTo(0, 0)
+              ctx.lineTo(-arrowSize, arrowSize) // 绘制箭头的一边
+              ctx.lineTo(-arrowSize, -arrowSize) // 绘制箭头的另一边
+              ctx.closePath()
+              ctx.fillStyle = color
+              ctx.fill()
+              ctx.restore() // 恢复之前保存的状态
+            } else {
+              ctx.lineTo(lineEndX, lineEndY)// 避免出现线和箭头之间出现空白部分
+              ctx.strokeStyle = color
+              ctx.lineWidth = width
+              ctx.stroke()
+
+              ctx.save() // 保存当前状态以便之后恢复
+              ctx.translate(arrowEndX, arrowEndY) // 将坐标原点移动到箭头末端
+              ctx.rotate(angle) // 根据链接方向旋转坐标系
+              ctx.beginPath()
+              ctx.moveTo(0, 0)
+              ctx.lineTo(-arrowSize, arrowSize) // 绘制箭头的一边
+              ctx.lineTo(-arrowSize, -arrowSize) // 绘制箭头的另一边
+              ctx.closePath()
+              ctx.fillStyle = color
+              ctx.fill()
+              ctx.restore() // 恢复之前保存的状态
+            }
+          } else {
+            ctx.beginPath()
             ctx.moveTo(start.x, start.y)
+            ctx.setLineDash([])
+            if (this.clickNode.id === link.source.id || this.clickNode.id === link.target.id) {
+              color = 'rgba(119,131,145,0.9)' // 高亮线颜色
+              width = 1.2
+            } else {
+              color = 'rgba(119,131,145,0.3)' // 普通线颜色
+            }
+
             ctx.lineTo(lineEndX, lineEndY)
             ctx.strokeStyle = color
             ctx.lineWidth = width
             ctx.stroke()
 
-            // 绘制箭头
             ctx.save() // 保存当前状态以便之后恢复
             ctx.translate(arrowEndX, arrowEndY) // 将坐标原点移动到箭头末端
             ctx.rotate(angle) // 根据链接方向旋转坐标系
@@ -285,319 +381,317 @@ export default {
             ctx.fillStyle = color
             ctx.fill()
             ctx.restore() // 恢复之前保存的状态
-            /* if (link.source.x !== undefined && link.source.y !== undefined && link.target.x !== undefined && link.target.y !== undefined) {
-              const nodeStyle = this.getNodeStyle(link.target.type, link.target.data.entityType)
-
-              ctx.lineWidth = 0.5
-              ctx.beginPath()
-              if (this.clickNode && (this.clickNode.id === link.source.id || this.clickNode.id === link.target.id)) {
-                ctx.strokeStyle = link.clickColor
-              } else {
-                ctx.strokeStyle = link.color
-              }
-
-              const lineDash = link.target.type === nodeType.tempNode ? [2, 2] : []
-              ctx.setLineDash(lineDash)
-              ctx.moveTo(link.source.x, link.source.y)
-              const xy = this.findCircleLineIntersection(link.target.x, link.target.y, nodeStyle.innerR / 2, link.source.x, link.source.y)
-              ctx.lineTo(xy[0].x, xy[0].y)
-              this.drawArrow(ctx, link.source.x, link.source.y, xy[0].x, xy[0].y, 40, 3)
-
-              // 圆角三角形
-              if (this.clickNode && (this.clickNode.id === link.source.id || this.clickNode.id === link.target.id)) {
-                ctx.fillStyle = link.clickColor
-              } else {
-                ctx.fillStyle = link.color
-              }
-
-              ctx.fill()
-              ctx.closePath()
-              ctx.stroke()
-            } */
-          })
-          .autoPauseRedraw(false) // keep redrawing after engine has stopped如果您有依赖于画布的不断重绘的自定义动态对象，建议关闭此选项。
-          .onNodeHover(node => {
-            hoverNode = node || null
-            if (node) {
-              node.name = builtTooltip(node)
-            }
-          })
-          .centerAt(0, 0)// 设置中心节点位置
-          .zoom(0.9999)
-          .onNodeClick(async (node, e) => {
-            this.isClicking = true
-            this.clickNode = node || null
-            if (node.type !== 'tempNode') {
-              this.rightBox.show = true
-              this.cleanTempItems()
-              // 点击entityNode，查询数据，并根据数据生成tempNode
-              if (node.type === nodeType.entityNode) {
-                node.fx = node.x
-                node.fy = node.y
-                this.rightBox.loading = true
-                try {
-                  // 若已查过数据，不重复查询
-                  if (!node.data.relatedEntities) {
-                    await node.queryDetailData()
+          }
+        })
+        .autoPauseRedraw(false) // keep redrawing after engine has stopped如果您有依赖于画布的不断重绘的自定义动态对象，建议关闭此选项。
+        .onNodeHover(node => {
+          hoverNode = node || null
+          if (node) {
+            node.name = builtTooltip(node)
+          }
+        })
+        .centerAt(0, 0)// 设置中心节点位置
+        .zoom(0.9999)
+        .onNodeClick(async (node, e) => {
+          this.isClicking = true
+          this.clickNode = node || null
+          if (node.type !== 'tempNode') {
+            this.rightBox.show = true
+            this.cleanTempItems()
+            // 点击entityNode，查询数据，并根据数据生成tempNode
+            if (node.type === nodeType.entityNode) {
+              node.fx = node.x
+              node.fy = node.y
+              this.rightBox.loading = true
+              try {
+                // 若已查过数据，不重复查询
+                if (!node.data.relatedEntities) {
+                  await node.queryDetailData()
+                }
+                const toAddNodes = []
+                const toAddLinks = []
+                let keyCount = 0
+                Object.keys(node.data.relatedEntities).forEach((k, i) => {
+                  if (node.data.relatedEntities[k].total) {
+                    keyCount++
                   }
-                  const toAddNodes = []
-                  const toAddLinks = []
-                  const keyCount = Object.keys(node.data.relatedEntities).length
-                  Object.keys(node.data.relatedEntities).forEach((k, i) => {
-                    if (node.data.relatedEntities[k].total) {
-                      // 若已有同级同类型的listNode，不生成此tempNode
-                      const neighbors = node.getNeighbors(this.graph.graphData())
-                      const hasListNode = neighbors.nodes.some(b => b.data.entityType === k)
-                      if (!hasListNode) {
-                        const tempNode = new Node(
-                            nodeType.tempNode,
-                            `${node.realId}__${k}__temp`,
-                            {
-                              entityType: k,
-                              ...this.generateTempNodeCoordinate(node.getSourceNode(this.graph.graphData()), e)
-                            },
-                            node,
-                            this.getIconUrl(k, false, false)
-                        )
-                        // 临时节点的初始固定坐标为其对应的entity节点坐标，展示直线动画
-                        // tempNode.fx = node.x
-                        // tempNode.fy = node.y
-                        const tempNodePoint = this.pointOfRotate({ x: node.sourceNode.x, y: node.sourceNode.y }, { x: node.x, y: node.y }, this.getTempNodeAngle(keyCount, i))// 临时节点固定角度，为以entity节点为center，list节点为from，旋转到临时节点的角度
-                        const finalTempNodePoint = this.pointOfLine({ x: node.x, y: node.y }, tempNodePoint, this.defaultLinkDistance)// start,end,lineLength
-                        if (tempNodePoint.x && tempNodePoint.y) {
-                          tempNode.fx = (node.x + finalTempNodePoint.x) / 2
-                          tempNode.fy = (node.y + finalTempNodePoint.y) / 2
-                        }
+                })
+                let nodeIndex = 0// 临时节点（需要total大于0的，所以不可以用循环中的i）角度计算index
+                Object.keys(node.data.relatedEntities).forEach((k) => {
+                  if (node.data.relatedEntities[k].total) {
+                    // 若已有同级同类型的listNode，不生成此tempNode
+                    const neighbors = node.getNeighbors(this.graph.graphData())
+                    const hasListNode = neighbors.nodes.some(b => b.data.entityType === k)
+                    if (!hasListNode) {
+                      const tempNode = new Node(
+                        nodeType.tempNode,
+                              `${node.realId}__${k}__temp`,
+                              {
+                                entityType: k,
+                                ...this.generateTempNodeCoordinate(node.getSourceNode(this.graph.graphData()), e)
+                              },
+                              node,
+                              this.getIconUrl(k, false, false)
+                      )
+                      // 临时节点的初始固定坐标为其对应的entity节点坐标，展示直线动画
+                      const tempNodePoint = this.pointOfRotate({ x: node.sourceNode.x, y: node.sourceNode.y }, { x: node.x, y: node.y }, this.getTempNodeAngle(keyCount, nodeIndex++))// 临时节点固定角度，为以entity节点为center，list节点为from，旋转到临时节点的角度
+                      const finalTempNodePoint = this.pointOfLine({ x: node.x, y: node.y }, tempNodePoint, this.defaultLinkDistance)// start,end,lineLength
 
-                        const tempLink = new Link(node, tempNode, linkType.temp)
-                        toAddNodes.push(tempNode)
-                        toAddLinks.push(tempLink)
+                      if (tempNodePoint.x && tempNodePoint.y) {
+                        const tempNodeDistance = this.getShortenedLength(tempNode) + this.defaultArrowSize// 临时节点展示动画时临时节点的初始位置距离entity节点的距离
+                        // 计算箭头角度
+                        const dx = finalTempNodePoint.x - node.x
+                        const dy = finalTempNodePoint.y - node.y
+                        const angle = Math.atan2(dy, dx) // 计算与x轴的角度（弧度）
+                        tempNode.fx = node.x + tempNodeDistance * Math.cos(angle)
+                        tempNode.fy = node.y + tempNodeDistance * Math.sin(angle)
+                        tempNode.realEndX = finalTempNodePoint.x
+                        tempNode.realEndY = finalTempNodePoint.y
                       }
+                      const tempLink = new Link(node, tempNode, linkType.temp)
+                      toAddNodes.push(tempNode)
+                      toAddLinks.push(tempLink)
                     }
-                  })
-                  if (toAddNodes.length || toAddLinks.length) {
-                    this.addItems(toAddNodes, toAddLinks, false)
                   }
-                  this.rightBox.node = node
-                  this.rightBox.mode = 'detail'
+                })
+                if (toAddNodes.length || toAddLinks.length) {
+                  this.addItems(toAddNodes, toAddLinks, false)
+                }
+                this.rightBox.node = node
+                this.rightBox.mode = 'detail'
+              } catch (e) {
+                console.error(e)
+                this.$message.error(this.errorMsgHandler(e))
+              } finally {
+                this.rightBox.loading = false
+              }
+            } else if (node.type === nodeType.listNode) {
+              this.rightBox.node = node
+              this.rightBox.mode = 'list'
+            } else if (node.type === nodeType.rootNode) {
+              this.rightBox.node = node
+              this.rightBox.mode = 'detail'
+            }
+          } else {
+            // 点击tempNode，根据source生成listNode和entityNode以及对应的edge。查完entityNode的接口再删除临时node和edge。
+            // 若已达第六层，则只生成listNode，不再展开entityNode
+            const nodes = []
+            const links = []
+            const stackNodes = []
+            const stackLinks = []
+            const sourceNode = node.getSourceNode(this.graph.graphData())
+            const k1 = (node.x - sourceNode.x) / linkDistance.normal
+            const k2 = (node.y - sourceNode.y) / linkDistance.normal
+            const listNode = new Node(
+              nodeType.listNode,
+                    `${sourceNode.realId}__${node.data.entityType}-list`,
+                    {
+                      entityType: node.data.entityType,
+                      fx: sourceNode.x + k1 * linkDistance.entityToList,
+                      fy: sourceNode.y + k2 * linkDistance.entityToList
+                    },
+                    sourceNode,
+                    this.getIconUrl(node.data.entityType, false, false)
+            )
+            nodes.push(listNode)
+            links.push(new Link(sourceNode, listNode))
+            stackNodes.push(_.cloneDeep(listNode))
+            stackLinks.push(_.cloneDeep(links[0]))
+            this.addItems(nodes, links, false)
+            this.cleanTempItems()
+            this.clickNode = listNode
+            this.rightBox.mode = 'list'
+
+            setTimeout(async () => {
+              // 判断listNode的sourceNode层级，若大于等于10（即第6层listNode），则不继续拓展entity node，并给用户提示。否则拓展entity node
+              const level = this.getNodeLevel(listNode.sourceNode.id)
+              if (level < 10) {
+                this.rightBox.loading = true
+                nodes.splice(0, nodes.length)
+                links.splice(0, links.length)
+                try {
+                  const entities = await sourceNode.queryRelatedEntities(listNode.data.entityType)
+                  sourceNode.data.relatedEntities[listNode.data.entityType].list.push(...entities.list)
+                  const curNodes = this.graph.graphData().nodes
+                  entities.list.forEach(entity => {
+                    const entityNode = new Node(nodeType.entityNode, entity.vertex, {
+                      entityType: listNode.data.entityType,
+                      entityName: entity.vertex,
+                      x: listNode.x + Math.random() * 10 - 5,
+                      y: listNode.y + Math.random() * 10 - 5
+                    }, listNode, this.getIconUrl(listNode.data.entityType, false, false))
+                    nodes.push(entityNode)
+                    const link = new Link(listNode, entityNode)
+                    links.push(link)
+                    if (curNodes.findIndex(node => node.id === entityNode.id) === -1) { // 过滤掉已有的节点
+                      stackNodes.push(_.cloneDeep(entityNode))
+                    }
+                    stackLinks.push(_.cloneDeep(link))
+                  })
+                  this.addItems(nodes, links, false)
+                  // 由于点击临时节点后增加节点分为了2步，所以需要将2步的所有节点一起缓存
+                  this.stackData.undo.push({ nodes: stackNodes, links: stackLinks })
+
+                  setTimeout(() => {
+                    listNode.fx = null
+                    listNode.fy = null
+                    this.rightBox.node = _.cloneDeep(listNode)
+                  }, 100)
                 } catch (e) {
                   console.error(e)
                   this.$message.error(this.errorMsgHandler(e))
                 } finally {
                   this.rightBox.loading = false
                 }
-              } else if (node.type === nodeType.listNode) {
-                this.rightBox.node = node
-                this.rightBox.mode = 'list'
-              } else if (node.type === nodeType.rootNode) {
-                this.rightBox.node = node
-                this.rightBox.mode = 'detail'
+              } else {
+                this.$message.warning(this.$t('tip.maxExpandDepth'))
               }
-            } else {
-              // 点击tempNode，根据source生成listNode和entityNode以及对应的edge。查完entityNode的接口再删除临时node和edge。
-              // 若已达第六层，则只生成listNode，不再展开entityNode
-              const nodes = []
-              const links = []
-              const stackNodes = []
-              const stackLinks = []
-              const sourceNode = node.getSourceNode(this.graph.graphData())
-              const k1 = (node.x - sourceNode.x) / linkDistance.normal
-              const k2 = (node.y - sourceNode.y) / linkDistance.normal
-              const listNode = new Node(
-                  nodeType.listNode,
-                  `${sourceNode.realId}__${node.data.entityType}-list`,
-                  {
-                    entityType: node.data.entityType,
-                    fx: sourceNode.x + k1 * linkDistance.entityToList,
-                    fy: sourceNode.y + k2 * linkDistance.entityToList
-                  },
-                  sourceNode,
-                  this.getIconUrl(node.data.entityType, false, false)
-              )
-              nodes.push(listNode)
-              links.push(new Link(sourceNode, listNode))
-              stackNodes.push(_.cloneDeep(listNode))
-              stackLinks.push(_.cloneDeep(links[0]))
-              this.addItems(nodes, links, false)
-              this.cleanTempItems()
-              this.clickNode = listNode
-              this.rightBox.mode = 'list'
+              if (this.stackData.justUndo) {
+                this.stackData.justUndo = false
+                this.stackData.redo = []
+              }
+              if (this.stackData.justRedo) {
+                this.stackData.justRedo = false
+                this.stackData.redo = []
+              }
+            }, 200)
+          }
+        })
+        .d3Force('link', d3.forceLink().id(link => link.id)
+          .distance(link => {
+            if (link.source.type === nodeType.rootNode) {
+              return linkDistance.root
+            } else if (link.source.type === nodeType.entityNode && link.target.type === nodeType.listNode) {
+              return linkDistance.entityToList
+            }
+            return linkDistance.normal
+          })
+          .strength(link => {
+            return link.strength
+          }))// 设置线对点的力？
+        .d3Force('center', d3.forceCenter().strength(0))// 设置力导图点阵中心位置, 向心力设置为0以后，d3.forceCenter(-50,-70)不起作用了
+        .d3Force('charge', d3.forceManyBody().strength(this.defaultChargeStrength))
+        .onNodeDrag((node, translate) => {
+          const { nodes, links } = this.graph.graphData()
+          // 拖动entity节点时，如果此entity节点有临时节点，则同时移动临时节点
+          if (node.type === nodeType.entityNode) {
+            this.isDraggingEntityNode = true
+            // 查询点击entity节点对应的list节点
+            const fromX = node.sourceNode.preDragX ? node.sourceNode.preDragX : node.sourceNode.x
+            const fromY = node.sourceNode.preDragY ? node.sourceNode.preDragY : node.sourceNode.y
+            const from = { x: fromX, y: fromY }
+            const centerX = node.preDragX ? node.preDragX : node.x
+            const centerY = node.preDragY ? node.preDragY : node.y
+            const center = { x: centerX, y: centerY }
 
-              setTimeout(async () => {
-                // 判断listNode的sourceNode层级，若大于等于10（即第6层listNode），则不继续拓展entity node，并给用户提示。否则拓展entity node
-                const level = this.getNodeLevel(listNode.sourceNode.id)
-                if (level < 10) {
-                  this.rightBox.loading = true
-                  nodes.splice(0, nodes.length)
-                  links.splice(0, links.length)
-                  try {
-                    const entities = await sourceNode.queryRelatedEntities(listNode.data.entityType)
-                    sourceNode.data.relatedEntities[listNode.data.entityType].list.push(...entities.list)
-                    const curNodes = this.graph.graphData().nodes
-                    entities.list.forEach(entity => {
-                      const entityNode = new Node(nodeType.entityNode, entity.vertex, {
-                        entityType: listNode.data.entityType,
-                        entityName: entity.vertex,
-                        x: listNode.x + Math.random() * 10 - 5,
-                        y: listNode.y + Math.random() * 10 - 5
-                      }, listNode, this.getIconUrl(listNode.data.entityType, false, false))
-                      nodes.push(entityNode)
-                      const link = new Link(listNode, entityNode)
-                      links.push(link)
-                      if (curNodes.findIndex(node => node.id === entityNode.id) === -1) { // 过滤掉已有的节点
-                        stackNodes.push(_.cloneDeep(entityNode))
-                      }
-                      stackLinks.push(_.cloneDeep(link))
+            const tempLinks = links.filter(link => link.source.id === node.id && link.type === linkType.temp)
+            tempLinks.forEach(link => {
+              const tempNodeGroup = nodes.filter(node => node.id === link.target.id)
+              tempNodeGroup.forEach(tempNode => {
+                const toX = tempNode.fx ? tempNode.fx : tempNode.x
+                const toY = tempNode.fy ? tempNode.fy : tempNode.y
+                const to = { x: toX, y: toY }
+                if (!tempNode.angle) { // 每次拖拽，每个临时节点计算一次角度即可，因为角度不会发生改变
+                  tempNode.angle = this.angleOfRotate(from, to, center)
+                }
+
+                const toPoint = this.pointOfRotate({ x: node.sourceNode.x, y: node.sourceNode.y }, { x: node.x + translate.x, y: node.y + translate.y }, tempNode.angle)
+                // 因为在拖拽的过长中，list节点到entity节点之间的距离是变化的，且我们要求的是，临时节点到entity节点之间的距离不发生变化，所以此处需要再次进行计算转换，得到最终的坐标
+                // 已知2个点的坐标，求从起点开始指定长度线段的终点坐标
+                if (!tempNode.lineLength) { // 每次拖拽，每个临时节点计算一次与实体节点的距离即可，因为距离在当前拖拽中不会发生改变
+                  tempNode.lineLength = Math.sqrt(Math.pow(node.x - tempNode.fx, 2) + Math.pow(node.y - tempNode.fy, 2))
+                }
+                const finalTo = this.pointOfLine({ x: node.x + translate.x, y: node.y + translate.y }, toPoint, tempNode.lineLength)
+                tempNode.fx = finalTo.x
+                tempNode.fy = finalTo.y
+              })
+            })
+          }
+
+          // 拖动list节点时，如果此list节点对应的entity节点有临时节点，则同时移动临时节点
+          if (node.type === nodeType.listNode) {
+            // 根据list节点，找到list节点连接的线
+            const listLinks = links.filter(link => link.source.id === node.id)
+            const fromX = node.preDragX ? node.preDragX : node.x
+            const fromY = node.preDragY ? node.preDragY : node.y
+            listLinks.forEach(link => {
+              // 找到连接临时节点的虚线
+              const tempLinks = links.filter(entityLink => entityLink.source.id === link.target.id && entityLink.type === linkType.temp)
+              if (tempLinks && tempLinks.length > 0) {
+                tempLinks.forEach(tempLink => {
+                  // 找到entity节点
+                  const entityNode = nodes.find(normalNode => normalNode.id === tempLink.source.id && normalNode.type === nodeType.entityNode)
+                  if (entityNode) {
+                    const entityNodeX = entityNode.fx ? entityNode.fx : entityNode.x
+                    const entityNodeY = entityNode.fy ? entityNode.fy : entityNode.y
+                    const angle = this.angleOfRotate({ x: fromX, y: fromY }, { x: node.x + translate.x, y: node.y + translate.y }, { x: entityNodeX, y: entityNodeY })
+                    const tempNodes = nodes.filter(normalNode => normalNode.id === tempLink.target.id && normalNode.type === nodeType.tempNode)// 找到临时节点
+                    tempNodes.forEach(tempNode => {
+                      const tempNodeX = tempNode.fx ? tempNode.fx : tempNode.x
+                      const tempNodeY = tempNode.fy ? tempNode.fy : tempNode.y
+                      const sourceNodeX = tempLink.source.fx ? tempLink.source.fx : tempLink.source.x
+                      const sourceNodeY = tempLink.source.fy ? tempLink.source.fy : tempLink.source.y
+                      // rotate为list节点旋转的角度，根据旋转角度，及临时节点的位置，及entity节点的坐标，得到临时节点旋转后的坐标
+                      const to = this.pointOfRotate({ x: tempNodeX, y: tempNodeY }, { x: sourceNodeX, y: sourceNodeY }, angle)
+                      tempNode.fx = to.x
+                      tempNode.fy = to.y
                     })
-                    this.addItems(nodes, links, false)
-                    // 由于点击临时节点后增加节点分为了2步，所以需要将2步的所有节点一起缓存
-                    this.stackData.undo.push({ nodes: stackNodes, links: stackLinks })
-
-                    setTimeout(() => {
-                      listNode.fx = null
-                      listNode.fy = null
-                      this.rightBox.node = _.cloneDeep(listNode)
-                    }, 100)
-                  } catch (e) {
-                    console.error(e)
-                    this.$message.error(this.errorMsgHandler(e))
-                  } finally {
-                    this.rightBox.loading = false
                   }
-                } else {
-                  this.$message.warning(this.$t('tip.maxExpandDepth'))
-                }
-                if (this.stackData.justUndo) {
-                  this.stackData.justUndo = false
-                  this.stackData.redo = []
-                }
-                if (this.stackData.justRedo) {
-                  this.stackData.justRedo = false
-                  this.stackData.redo = []
-                }
-              }, 200)
-            }
-          })
-
-          .d3Force('link', d3.forceLink().id(link => link.id)
-              .distance(link => {
-                if (link.source.type === nodeType.rootNode) {
-                  return linkDistance.root
-                } else if (link.source.type === nodeType.entityNode && link.target.type === nodeType.listNode) {
-                  return linkDistance.entityToList
-                }
-                return linkDistance.normal
-              })
-              .strength(link => {
-                return link.strength
-              }))// 设置线对点的力？
-          .d3Force('center', d3.forceCenter().strength(0))// 设置力导图点阵中心位置, 向心力设置为0以后，d3.forceCenter(-50,-70)不起作用了
-          .d3Force('charge', d3.forceManyBody().strength(this.defaultChargeStrength))
-          .onNodeDrag((node, translate) => {
-            const { nodes, links } = this.graph.graphData()
-            // 拖动entity节点时，如果此entity节点有临时节点，则同时移动临时节点
-            if (node.type === nodeType.entityNode) {
-              // 查询点击entity节点对应的list节点
-              const fromX = node.sourceNode.preDragX ? node.sourceNode.preDragX : node.sourceNode.x
-              const fromY = node.sourceNode.preDragY ? node.sourceNode.preDragY : node.sourceNode.y
-              const from = { x: fromX, y: fromY }
-              const centerX = node.preDragX ? node.preDragX : node.x
-              const centerY = node.preDragY ? node.preDragY : node.y
-              const center = { x: centerX, y: centerY }
-
-              const tempLinks = links.filter(link => link.source.id === node.id && link.type === linkType.temp)
-              tempLinks.forEach(link => {
-                const tempNodeGroup = nodes.filter(node => node.id === link.target.id)
-                tempNodeGroup.forEach(tempNode => {
-                  const toX = tempNode.fx ? tempNode.fx : tempNode.x
-                  const toY = tempNode.fy ? tempNode.fy : tempNode.y
-                  const to = { x: toX, y: toY }
-                  if (!tempNode.angle) { // 每次拖拽，每个临时节点计算一次角度即可，因为角度不会发生改变
-                    tempNode.angle = this.angleOfRotate(from, to, center)
-                  }
-
-                  const toPoint = this.pointOfRotate({ x: node.sourceNode.x, y: node.sourceNode.y }, { x: node.x + translate.x, y: node.y + translate.y }, tempNode.angle)
-                  // 因为在拖拽的过长中，list节点到entity节点之间的距离是变化的，且我们要求的是，临时节点到entity节点之间的距离不发生变化，所以此处需要再次进行计算转换，得到最终的坐标
-                  // 已知2个点的坐标，求从起点开始指定长度线段的终点坐标
-                  if (!tempNode.lineLength) { // 每次拖拽，每个临时节点计算一次与实体节点的距离即可，因为距离在当前拖拽中不会发生改变
-                    tempNode.lineLength = Math.sqrt(Math.pow(node.x - tempNode.fx, 2) + Math.pow(node.y - tempNode.fy, 2))
-                  }
-                  const finalTo = this.pointOfLine({ x: node.x + translate.x, y: node.y + translate.y }, toPoint, tempNode.lineLength)
-                  tempNode.fx = finalTo.x
-                  tempNode.fy = finalTo.y
                 })
-              })
-            }
-
-            // 拖动list节点时，如果此list节点对应的entity节点有临时节点，则同时移动临时节点
-            if (node.type === nodeType.listNode) {
-              // 根据list节点，找到list节点连接的线
-              const listLinks = links.filter(link => link.source.id === node.id)
-              const fromX = node.preDragX ? node.preDragX : node.x
-              const fromY = node.preDragY ? node.preDragY : node.y
-              listLinks.forEach(link => {
-                // 找到连接临时节点的虚线
-                const tempLinks = links.filter(entityLink => entityLink.source.id === link.target.id && entityLink.type === linkType.temp)
-                if (tempLinks && tempLinks.length > 0) {
-                  tempLinks.forEach(tempLink => {
-                    // 找到entity节点
-                    const entityNode = nodes.find(normalNode => normalNode.id === tempLink.source.id && normalNode.type === nodeType.entityNode)
-                    if (entityNode) {
-                      const entityNodeX = entityNode.fx ? entityNode.fx : entityNode.x
-                      const entityNodeY = entityNode.fy ? entityNode.fy : entityNode.y
-                      const angle = this.angleOfRotate({ x: fromX, y: fromY }, { x: node.x + translate.x, y: node.y + translate.y }, { x: entityNodeX, y: entityNodeY })
-                      const tempNodes = nodes.filter(normalNode => normalNode.id === tempLink.target.id && normalNode.type === nodeType.tempNode)// 找到临时节点
-                      tempNodes.forEach(tempNode => {
-                        const tempNodeX = tempNode.fx ? tempNode.fx : tempNode.x
-                        const tempNodeY = tempNode.fy ? tempNode.fy : tempNode.y
-                        const sourceNodeX = tempLink.source.fx ? tempLink.source.fx : tempLink.source.x
-                        const sourceNodeY = tempLink.source.fy ? tempLink.source.fy : tempLink.source.y
-                        // rotate为list节点旋转的角度，根据旋转角度，及临时节点的位置，及entity节点的坐标，得到临时节点旋转后的坐标
-                        const to = this.pointOfRotate({ x: tempNodeX, y: tempNodeY }, { x: sourceNodeX, y: sourceNodeY }, angle)
-                        tempNode.fx = to.x
-                        tempNode.fy = to.y
-                      })
-                    }
-                  })
-                }
-              })
-            }
-            // 记录上次拖拽时节点的坐标，否则计算时出现误差。
-            node.preDragX = node.x + translate.x
-            node.preDragY = node.y + translate.y
-          })
-          .cooldownTime(2000)// 到时间后，才执行onEngineStop
-          .onNodeDragEnd((node, translate) => { // 修复拖动节点
-            node.fx = node.x
-            node.fy = node.y
-            // 拖拽结束时，把所有临时节点的的angle置为null,便于拖动其它节点时的计算
-            this.graph.graphData().nodes.forEach(node => {
-              if (node.type === nodeType.tempNode) {
-                node.angle = null
-                node.lineLength = null
               }
             })
-          })
-          .onEngineTick(() => {
-            if (this.isClicking) {
-              const tempNodeGroup = this.graph.graphData().nodes.filter(node => node.type === nodeType.tempNode)
-              if (tempNodeGroup.length > 0) {
-                const keyCount = tempNodeGroup.length
-                tempNodeGroup.forEach((tempNode, i) => {
-                  const tempNodeSource = tempNode.sourceNode
-                  if (tempNodeSource) {
-                    const tempNodePoint = this.pointOfRotate({ x: tempNodeSource.sourceNode.x, y: tempNodeSource.sourceNode.y }, { x: tempNodeSource.x, y: tempNodeSource.y }, this.getTempNodeAngle(keyCount, i))// 临时节点固定角度，为以entity节点为center，list节点为from，旋转到临时节点的角度
-                    const finalTempNodePoint = this.pointOfLine({ x: tempNodeSource.x, y: tempNodeSource.y }, tempNodePoint, this.defaultLinkDistance)// start,end,lineLength
-                    if (tempNodePoint.x && tempNodePoint.y) {
-                      tempNode.fx = finalTempNodePoint.x
-                      tempNode.fy = finalTempNodePoint.y
-                    }
-                  }
-                })
-                this.isClicking = false
-              }
+          }
+          // 记录上次拖拽时节点的坐标，否则计算时出现误差。
+          node.preDragX = node.x + translate.x
+          node.preDragY = node.y + translate.y
+        })
+        .cooldownTime(2000)// 到时间后，才执行onEngineStop
+        .onNodeDragEnd((node, translate) => { // 修复拖动节点
+          this.isDraggingEntityNode = false
+          node.fx = node.x
+          node.fy = node.y
+          // 拖拽结束时，把所有临时节点的的angle置为null,便于拖动其它节点时的计算
+          this.graph.graphData().nodes.forEach(node => {
+            if (node.type === nodeType.tempNode) {
+              node.angle = null
+              node.lineLength = null
             }
           })
+        })
+        .onEngineTick(() => {
+          if (this.isClicking) {
+            const tempNodeGroup = this.graph.graphData().nodes.filter(node => node.type === nodeType.tempNode)
+            if (tempNodeGroup.length > 0) {
+              const keyCount = tempNodeGroup.length
+              let nodeIndex = 0// 临时节点（需要total大于0的，所以不可以用循环中的i）角度计算index
+              tempNodeGroup.forEach((tempNode) => {
+                const tempNodeSource = tempNode.sourceNode
+                if (tempNodeSource) {
+                  const tempNodePoint = this.pointOfRotate({ x: tempNodeSource.sourceNode.x, y: tempNodeSource.sourceNode.y }, { x: tempNodeSource.x, y: tempNodeSource.y }, this.getTempNodeAngle(keyCount, nodeIndex++))// 临时节点固定角度，为以entity节点为center，list节点为from，旋转到临时节点的角度
+                  // const finalTempNodePoint = this.pointOfLine({ x: tempNodeSource.x, y: tempNodeSource.y }, tempNodePoint, this.defaultLinkDistance)// start,end,lineLength
+                  if (tempNodePoint.x && tempNodePoint.y) {
+                    // tempNode.fx = finalTempNodePoint.x
+                    // tempNode.fy = finalTempNodePoint.y
+                    tempNode.fx = tempNode.realEndX
+                    tempNode.fy = tempNode.realEndY
+                  }
+                }
+              })
+              this.isClicking = false
+            }
+          }
+        })
+    },
+    /*
+      * 线性插值: 已知两点坐标，计算已知x或y的C点坐标，且C点在AB连线上
+      *
+      * */
+    linearInterpolate (coord1, coord2) {
+      const scale = (coord1[0] - coord2[0]) / (coord1[1] - coord2[1])
+      return {
+        getY: (x) => (x - coord1[0]) / scale + coord1[1],
+        getX: (y) => (y - coord1[1]) / scale + coord1[0]
+      }
     },
     getTempNodeAngle (nodeCount, i) {
       switch (nodeCount) {
@@ -850,10 +944,10 @@ export default {
       }
     },
     /**
-     * 求直线与圆的交点坐标
-     * 圆：x2, y2, r
-     * 线段： x1, y1, x2, y2
-     * */
+       * 求直线与圆的交点坐标
+       * 圆：x2, y2, r
+       * 线段： x1, y1, x2, y2
+       * */
     findCircleLineIntersection (x2, y2, r, x1, y1) {
       r = r + +this.defaultMargin
       const xx = x1 - x2
@@ -879,14 +973,14 @@ export default {
       return [{ x, y }]
     },
     /**
-     ctx ：Canvas绘图环境
-     fromX, fromY ：起点坐标（也可以换成 p1 ，只不过它是一个数组）
-     toX, toY ：终点坐标 (也可以换成 p2 ，只不过它是一个数组)
-     theta ：三角斜边一直线夹角
-     headlen ：三角斜边长度
-     width ：箭头线宽度
-     color ：箭头颜色
-     */
+       ctx ：Canvas绘图环境
+       fromX, fromY ：起点坐标（也可以换成 p1 ，只不过它是一个数组）
+       toX, toY ：终点坐标 (也可以换成 p2 ，只不过它是一个数组)
+       theta ：三角斜边一直线夹角
+       headlen ：三角斜边长度
+       width ：箭头线宽度
+       color ：箭头颜色
+       */
     drawArrow (ctx, fromX, fromY, toX, toY, theta, headlen) {
       theta = typeof (theta) != 'undefined' ? theta : 30
       headlen = typeof (theta) != 'undefined' ? headlen : 10
@@ -989,12 +1083,12 @@ export default {
           if (rootNode.data.relatedEntities[k].total) {
             const listNode = new Node(
               nodeType.listNode,
-              `${rootNode.realId}__${k}-list`,
-              {
-                entityType: k
-              },
-              rootNode,
-              this.getIconUrl(k, false, false)
+                  `${rootNode.realId}__${k}-list`,
+                  {
+                    entityType: k
+                  },
+                  rootNode,
+                  this.getIconUrl(k, false, false)
             )
             listNodes.push(listNode)
             links.push(new Link(rootNode, listNode))
