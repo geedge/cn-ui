@@ -82,6 +82,10 @@ export default {
         justUndo: false, // 是否刚后退了
         redo: [], // 前进
         justRedo: false // 是否刚前进了
+      },
+      centerPonit:{
+        x:200,
+        y:0
       }
     }
   },
@@ -105,7 +109,7 @@ export default {
       const endY = endNode.drawEndY
       if (endX && startX) {
         const diffVal = Math.round(Math.sqrt(Math.pow((endX - startX), 2) + Math.pow((endY - startY), 2)))
-        const step = 3
+        const step = 5
         const i = endNode.nextI ? endNode.nextI : 0
         if (i < diffVal / step) {
           endNode.nextI = i + 1
@@ -131,10 +135,28 @@ export default {
     initForceGraph (initialData) {
       let hoverNode = null
       const canvasHeight = document.body.clientHeight - 100
+      //const canvasWidth = document.body.clientWidth - 400
       this.graph = ForceGraph()(document.getElementById('entityGraph'))
         .height(canvasHeight)
+        //.width(canvasWidth)
         .graphData(initialData)
         .nodeCanvasObject((node, ctx) => {
+          if(node.type === nodeType.entityNode) {
+            let sourceNode = node.sourceNode
+            if(node.x === null && sourceNode && sourceNode.fx !== null) {
+              const sourceNodeNeighbors = sourceNode.getNeighbors(this.graph.graphData())
+              sourceNode.childCount = sourceNodeNeighbors.targetNodes.length//设置每个list节点的子节点个数
+              if(!sourceNode.currentChildIndex) {
+                sourceNode.currentChildIndex = 0
+              }
+              let angle = this.getEntityNodeAngle(sourceNode.childCount, sourceNode.currentChildIndex++)
+              const entityFirstPoint = this.pointOfLine({ x: sourceNode.sourceNode.x, y: sourceNode.sourceNode.y}, {x:sourceNode.fx,y:sourceNode.fy}, linkDistance.normal + linkDistance.root)// start,end,lineLength
+              const toPoint = this.pointOfRotate({x:entityFirstPoint.x,y:entityFirstPoint.y},{x:sourceNode.fx,y:sourceNode.fy},angle)//y如果设置为0，则展示的位置不对，所以设置一个较小的y为1
+              node.x =  toPoint.x
+              node.y =  toPoint.y
+            }
+          }
+
           /*
               * 共有4种 nodeType，3种 entityType
               * */
@@ -357,7 +379,7 @@ export default {
             node.name = builtTooltip(node)
           }
         })
-        .centerAt(0, 0)// 设置中心节点位置
+        .centerAt(this.centerPonit.x, this.centerPonit.y)// 设置中心节点位置
         .zoom(0.9999)
         .onNodeClick(async (node, e) => {
           this.isClicking = true
@@ -635,10 +657,7 @@ export default {
                 const tempNodeSource = tempNode.sourceNode
                 if (tempNodeSource) {
                   const tempNodePoint = this.pointOfRotate({ x: tempNodeSource.sourceNode.x, y: tempNodeSource.sourceNode.y }, { x: tempNodeSource.x, y: tempNodeSource.y }, this.getTempNodeAngle(keyCount, nodeIndex++))// 临时节点固定角度，为以entity节点为center，list节点为from，旋转到临时节点的角度
-                  // const finalTempNodePoint = this.pointOfLine({ x: tempNodeSource.x, y: tempNodeSource.y }, tempNodePoint, this.defaultLinkDistance)// start,end,lineLength
                   if (tempNodePoint.x && tempNodePoint.y) {
-                    // tempNode.fx = finalTempNodePoint.x
-                    // tempNode.fy = finalTempNodePoint.y
                     tempNode.fx = tempNode.realEndX
                     tempNode.fy = tempNode.realEndY
                   }
@@ -674,6 +693,27 @@ export default {
           return 150 + i * 60
         case 3:
           return 150 + i * 30
+      }
+    },
+    getEntityNodeAngle (nodeCount, i) {
+      let defaultAngle = 15
+      let remainder = i%2
+      if(i === 0) {
+        return 0
+      } else if(remainder === 0) {
+        return i/2 * defaultAngle * -1
+      } else {
+        return (i+1)/2 * defaultAngle
+      }
+    },
+    getListNodeAngle (nodeCount, i) {
+      switch (nodeCount) {
+        case 1:
+          return 0
+        case 2:
+          return i * 140 * -1
+        case 3:
+          return i * 120
       }
     },
     // 根据3个点坐标，计算节点旋转的角度
@@ -1052,13 +1092,25 @@ export default {
         // listNode
         const listNodes = []
         const keys = Object.keys(rootNode.data.relatedEntities)
+        let keyCount = 0
+        keys.forEach((k, i) => {//确定root节点有几个分支
+          if (rootNode.data.relatedEntities[k].total) {
+            keyCount++
+          }
+        })
+        let nodeIndex = 0// list节点（需要total大于0的，所以不可以用循环中的i）角度计算index
+
         keys.forEach(k => {
           if (rootNode.data.relatedEntities[k].total) {
+            let angle = this.getListNodeAngle(keyCount, nodeIndex++)
+            const toPoint = this.pointOfRotate({x:linkDistance.root,y:1},{x:0,y:0},angle)//y如果设置为0，则展示的位置不对，所以设置一个较小的y为1
             const listNode = new Node(
               nodeType.listNode,
                   `${rootNode.realId}__${k}-list`,
                   {
-                    entityType: k
+                    entityType: k,
+                    fx: toPoint.x,
+                    fy: toPoint.y
                   },
                   rootNode,
                   this.getIconUrl(k, false, false)
@@ -1088,6 +1140,15 @@ export default {
           })
         }
         nodes.push(...listNodes, ...entityNodes)
+
+        setTimeout(() => {
+          // 释放list节点,不再固定位置
+          const listNodes = nodes.filter(n => n.type === nodeType.listNode)
+          listNodes.forEach(n => {
+            n.fx = null
+            n.fy = null
+          })
+        }, 100)
       }
       this.rightBox.node = rootNode
       return {
