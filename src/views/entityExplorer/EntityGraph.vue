@@ -813,7 +813,9 @@ export default {
           justUndo: false,
           justRedo: false
         }
-        this.initForceGraph(_.cloneDeep(this.initialData)) // 初始化拓展图
+        let initData = _.cloneDeep(this.initialData)
+        this.releaseNodes(initData.nodes,nodeType.listNode)
+        this.initForceGraph(initData) // 初始化拓展图
         this.rightBox.show = true
         this.rightBox.node = this.rootNode
         this.rightBox.mode = 'detail'
@@ -1141,20 +1143,24 @@ export default {
         }
         nodes.push(...listNodes, ...entityNodes)
 
-        setTimeout(() => {
-          // 释放list节点,不再固定位置
-          const listNodes = nodes.filter(n => n.type === nodeType.listNode)
-          listNodes.forEach(n => {
-            n.fx = null
-            n.fy = null
-          })
-        }, 100)
+        this.releaseNodes(nodes,nodeType.listNode)
       }
       this.rightBox.node = rootNode
       return {
         nodes,
         links
       }
+    },
+    //释放节点
+    releaseNodes(allNodes,nodeType) {
+      setTimeout(() => {
+        // 释放list节点,不再固定位置
+        const filterNodes = allNodes.filter(n => n.type === nodeType)
+        filterNodes.forEach(n => {
+          n.fx = null
+          n.fy = null
+        })
+      }, 100)
     },
     async expandList (nodeId) {
       const { nodes } = this.graph.graphData()
