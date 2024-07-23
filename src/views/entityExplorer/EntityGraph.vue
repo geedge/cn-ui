@@ -1,14 +1,14 @@
 <template>
   <div class="entity-graph">
     <div class="entity-graph__chart" id="entityGraph" ></div>
-    <div class="entity-graph__right-box">
+    <div class="entity-graph__right-box" id="rightBox">
       <el-drawer
               v-model="rightBox.show"
               direction="rtl"
               class="entity-graph__detail"
               :close-on-click-modal="true"
               :modal="false"
-              :size="400"
+              :size="rightBoxWidth"
               :with-header="false"
               destroy-on-close>
         <graph-entity-list
@@ -86,7 +86,8 @@ export default {
       centerPonit:{
         x:200,
         y:0
-      }
+      },
+      rightBoxWidth: 400
     }
   },
   methods: {
@@ -135,7 +136,7 @@ export default {
     initForceGraph (initialData) {
       let hoverNode = null
       const canvasHeight = document.body.clientHeight - 100
-      //const canvasWidth = document.body.clientWidth - 400
+      //const canvasWidth = document.body.clientWidth - this.rightBoxWidth
       this.graph = ForceGraph()(document.getElementById('entityGraph'))
         .height(canvasHeight)
         //.width(canvasWidth)
@@ -143,7 +144,7 @@ export default {
         .nodeCanvasObject((node, ctx) => {
           if(node.type === nodeType.entityNode) {
             let sourceNode = node.sourceNode
-            if(node.x === null && sourceNode && sourceNode.fx !== null) {
+            if(!node.isInit && sourceNode && sourceNode.fx !== null) {
               const sourceNodeNeighbors = sourceNode.getNeighbors(this.graph.graphData())
               sourceNode.childCount = sourceNodeNeighbors.targetNodes.length//设置每个list节点的子节点个数
               if(!sourceNode.currentChildIndex) {
@@ -154,7 +155,13 @@ export default {
               const toPoint = this.pointOfRotate({x:entityFirstPoint.x,y:entityFirstPoint.y},{x:sourceNode.fx,y:sourceNode.fy},angle)//y如果设置为0，则展示的位置不对，所以设置一个较小的y为1
               node.x =  toPoint.x
               node.y =  toPoint.y
+              node.isInit = true
             }
+            /*else if(node.x === null){
+              console.log('node.x === null ========================'+node.isInit)
+            } else if(!node.isInit && sourceNode.fx === null){ //如果节点离list节点太远的话，也进行重新处理
+              console.log('未初始化，list节点的fx为null**********'+sourceNode)
+            }*/
           }
 
           /*
@@ -280,8 +287,8 @@ export default {
               ctx.beginPath()
               const tempNodeDistance = this.getShortenedLength(node)// 临时节点展示动画时临时节点的初始位置距离entity节点的距离
               // 计算箭头角度
-              const dx = node.x - node.sourceNode.x
-              const dy = node.y - node.sourceNode.y
+              const dx = node.fx - node.sourceNode.x
+              const dy = node.fy - node.sourceNode.y
               const angle = Math.atan2(dy, dx) // 计算与x轴的角度（弧度）
               const startNodeX = node.sourceNode.x + tempNodeDistance * Math.cos(angle)
               const startNodeY = node.sourceNode.y + tempNodeDistance * Math.sin(angle)
@@ -647,6 +654,9 @@ export default {
             }
           })
         })
+        .onEngineStop(() => {
+          this.releaseNodes(this.graph.graphData().nodes,nodeType.listNode)
+        })
         .onEngineTick(() => {
           if (this.isClicking) {
             const tempNodeGroup = this.graph.graphData().nodes.filter(node => node.type === nodeType.tempNode)
@@ -669,11 +679,11 @@ export default {
         })
     },
     /*
-      sleep() {
-        for (let i = 0; i < 1000000000/5; i++) {
-          let num = i + i
-        }
-      }, */
+    sleep() {
+      for (let i = 0; i < 100000000*2; i++) {
+        let num = i + i
+      }
+    },*/
     /*
       * 线性插值: 已知两点坐标，计算已知x或y的C点坐标，且C点在AB连线上
       *
@@ -763,7 +773,7 @@ export default {
 
       return { x: finalX, y: finalY }
     },
-    handleToolsbarClick (code) {
+    async handleToolsbarClick (code) {
       if (code === 'undo') { // 上一步
         const data = this.stackData.undo.pop()
         this.stackData.justUndo = true
@@ -801,6 +811,11 @@ export default {
         }
       } else if (code === 'autoZoom') {
         this.graph.zoomToFit(100, 100)
+        if(this.rightBox.show) {
+          this.graph.width(document.body.clientWidth - this.rightBoxWidth)
+        } else {
+          this.graph.width(document.body.clientWidth)
+        }
       } else if (code === 'zoomOut') {
         this.graph.zoom(this.graph.zoom() + 0.2)
       } else if (code === 'zoomIn') {
@@ -814,7 +829,13 @@ export default {
           justRedo: false
         }
         let initData = _.cloneDeep(this.initialData)
-        this.releaseNodes(initData.nodes,nodeType.listNode)
+        /*
+        initData.nodes.forEach(node => {
+          if(node.type === nodeType.entityNode) {
+            node.x = null
+            node.y = null
+          }
+        })*/
         this.initForceGraph(initData) // 初始化拓展图
         this.rightBox.show = true
         this.rightBox.node = this.rootNode
@@ -1279,6 +1300,14 @@ export default {
           } else {
             document.getElementById('nextStep').classList.add('toolbar--unactivated')
           }
+        }
+      }
+    },
+    'rightBox.show' : {
+      handler (n) {
+        if(!n) {
+          const canvasWidth = document.body.clientWidth
+          this.graph.width(canvasWidth)
         }
       }
     }
