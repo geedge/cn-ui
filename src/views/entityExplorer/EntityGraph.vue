@@ -22,6 +22,8 @@
         <graph-entity-detail
                 v-else-if="rightBox.mode === 'detail'"
                 :node="rightBox.node"
+                :currentEntityType="entity.entityType"
+                :title="entity.entityName"
                 :loading="rightBox.loading"
                 @expandDetailList="expandDetailList"
                 @closeBlock="onCloseBlock"

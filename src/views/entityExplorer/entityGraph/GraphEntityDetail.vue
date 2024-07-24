@@ -5,10 +5,10 @@
       <div class="graph-detail__icon"><i :class="iconClass"></i></div>
 
       <div class="graph-detail-header">
-        <div class="entity-graph-type">{{entityTypeName}}</div>
+        <div class="entity-graph-type">{{currentEntityType}}</div>
         <div class="graph-basic-info">
           <div class="graph-basic-info-name__block">
-            <div class="graph-basic-info-name" :title="$_.get(node, 'realId', '')" id="entityName">{{ $_.get(node, 'realId', '') }}</div>
+            <div class="graph-basic-info-name" :title="title" id="entityName">{{title}}</div>
             <div class="graph-basic-info-icon" @click="copyEntityName">
               <i class="cn-icon cn-icon-copy"></i>
             </div>
@@ -110,6 +110,12 @@ export default {
     node: {
       type: Object
     },
+    currentEntityType: {
+      type: String
+    },
+    title: {
+      type: String
+    },
     loading: {
       type: Boolean
     }
@@ -126,7 +132,7 @@ export default {
   computed: {
     iconClass () {
       let className
-      switch (_.get(this.node, 'data.entityType', '')) {
+      switch (this.currentEntityType) {
         case ('ip'): {
           className = 'cn-icon cn-icon-resolve-ip'
           break
@@ -145,9 +151,8 @@ export default {
       return className
     },
     entityTypeName () {
-      const type = _.get(this.node, 'data.entityType', '')
       let entityTypeName = '-'
-      switch (type) {
+      switch (this.entityType) {
         case ('ip'): {
           entityTypeName = 'IP'
           break
