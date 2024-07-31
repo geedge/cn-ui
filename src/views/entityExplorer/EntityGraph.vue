@@ -147,23 +147,23 @@ export default {
           if(node.type === nodeType.entityNode) {
             let sourceNode = node.sourceNode
             if(!node.isInit && sourceNode && sourceNode.fx !== null) {
-              const sourceNodeNeighbors = sourceNode.getNeighbors(this.graph.graphData())
-              sourceNode.childCount = sourceNodeNeighbors.targetNodes.length//设置每个list节点的子节点个数
-              if(!sourceNode.currentChildIndex) {
-                sourceNode.currentChildIndex = 0
+              const level = this.getNodeLevel(node.id)
+              if(level === 2) {//level为2，只针对重置操作
+                const sourceNodeNeighbors = sourceNode.getNeighbors(this.graph.graphData())
+                sourceNode.childCount = sourceNodeNeighbors.targetNodes.length//设置每个list节点的子节点个数
+                if(!sourceNode.currentChildIndex) {
+                  sourceNode.currentChildIndex = 0
+                }
+                let angle = this.getEntityNodeAngle(sourceNode.childCount, sourceNode.currentChildIndex++)
+                const entityFirstPoint = this.pointOfLine({ x: sourceNode.sourceNode.x, y: sourceNode.sourceNode.y}, {x:sourceNode.fx,y:sourceNode.fy}, linkDistance.normal + linkDistance.root)// start,end,lineLength
+                const toPoint = this.pointOfRotate({x:entityFirstPoint.x,y:entityFirstPoint.y},{x:sourceNode.fx,y:sourceNode.fy},angle)//y如果设置为0，则展示的位置不对，所以设置一个较小的y为1
+                node.x =  toPoint.x
+                node.y =  toPoint.y
+                node.vx = 1
+                node.vy = 1
+                node.isInit = true
               }
-              let angle = this.getEntityNodeAngle(sourceNode.childCount, sourceNode.currentChildIndex++)
-              const entityFirstPoint = this.pointOfLine({ x: sourceNode.sourceNode.x, y: sourceNode.sourceNode.y}, {x:sourceNode.fx,y:sourceNode.fy}, linkDistance.normal + linkDistance.root)// start,end,lineLength
-              const toPoint = this.pointOfRotate({x:entityFirstPoint.x,y:entityFirstPoint.y},{x:sourceNode.fx,y:sourceNode.fy},angle)//y如果设置为0，则展示的位置不对，所以设置一个较小的y为1
-              node.x =  toPoint.x
-              node.y =  toPoint.y
-              node.isInit = true
             }
-            /*else if(node.x === null){
-              console.log('node.x === null ========================'+node.isInit)
-            } else if(!node.isInit && sourceNode.fx === null){ //如果节点离list节点太远的话，也进行重新处理
-              console.log('未初始化，list节点的fx为null**********'+sourceNode)
-            }*/
           }
 
           /*
@@ -219,46 +219,48 @@ export default {
               break
             }
             case nodeType.listNode: {
-              // 如果是鼠标点击或者悬停的，有一层圆环
-              if (node === this.clickNode || node === hoverNode) {
-                ctx.beginPath()
-                ctx.arc(node.x, node.y, nodeStyle.shadowR, 0, 2 * Math.PI, false)
-                ctx.closePath()
-                if (node === this.currentSelectedNode) {
-                  ctx.fillStyle = nodeStyle.selectedShadowColor
-                } else {
-                  ctx.fillStyle = nodeStyle.hoveredShadowColor
+              if(node.x && node.y) {
+                // 如果是鼠标点击或者悬停的，有一层圆环
+                if (node === this.clickNode || node === hoverNode) {
+                  ctx.beginPath()
+                  ctx.arc(node.x, node.y, nodeStyle.shadowR, 0, 2 * Math.PI, false)
+                  ctx.closePath()
+                  if (node === this.currentSelectedNode) {
+                    ctx.fillStyle = nodeStyle.selectedShadowColor
+                  } else {
+                    ctx.fillStyle = nodeStyle.hoveredShadowColor
+                  }
+                  ctx.fill()
                 }
+
+                // 内部填白
+                ctx.beginPath()
+                ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
+                ctx.closePath()
+                ctx.fillStyle = nodeStyle.fillStyle
                 ctx.fill()
+
+                // 第一层圆环
+                ctx.beginPath()
+                ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
+                ctx.closePath()
+                ctx.lineWidth = 1
+                ctx.strokeStyle = nodeStyle.borderColor
+                ctx.stroke()
+                // 图片
+                ctx.drawImage(node.img, node.x - nodeStyle.iconWidth / 2, node.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight)
+                // 文字
+                ctx.font = nodeStyle.font
+                const textWidth = ctx.measureText(node.label).width
+                const bckgDimensions = [textWidth, 8].map(n => n + 8 * 0.2)
+                ctx.fillStyle = nodeStyle.fontBgColor
+                ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2 + 24, ...bckgDimensions) // 文字的白底
+
+                ctx.textAlign = 'center'
+                ctx.textBaseline = 'middle'
+                ctx.fillStyle = nodeStyle.fontColor
+                ctx.fillText(node.label, node.x, node.y + 24)
               }
-
-              // 内部填白
-              ctx.beginPath()
-              ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
-              ctx.closePath()
-              ctx.fillStyle = nodeStyle.fillStyle
-              ctx.fill()
-
-              // 第一层圆环
-              ctx.beginPath()
-              ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
-              ctx.closePath()
-              ctx.lineWidth = 1
-              ctx.strokeStyle = nodeStyle.borderColor
-              ctx.stroke()
-              // 图片
-              ctx.drawImage(node.img, node.x - nodeStyle.iconWidth / 2, node.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight)
-              // 文字
-              ctx.font = nodeStyle.font
-              const textWidth = ctx.measureText(node.label).width
-              const bckgDimensions = [textWidth, 8].map(n => n + 8 * 0.2)
-              ctx.fillStyle = nodeStyle.fontBgColor
-              ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2 + 24, ...bckgDimensions) // 文字的白底
-
-              ctx.textAlign = 'center'
-              ctx.textBaseline = 'middle'
-              ctx.fillStyle = nodeStyle.fontColor
-              ctx.fillText(node.label, node.x, node.y + 24)
               break
             }
             case nodeType.entityNode: {
@@ -289,8 +291,8 @@ export default {
               ctx.beginPath()
               const tempNodeDistance = this.getShortenedLength(node)// 临时节点展示动画时临时节点的初始位置距离entity节点的距离
               // 计算箭头角度
-              const dx = node.fx - node.sourceNode.x
-              const dy = node.fy - node.sourceNode.y
+              const dx = node.x - node.sourceNode.x
+              const dy = node.y - node.sourceNode.y
               const angle = Math.atan2(dy, dx) // 计算与x轴的角度（弧度）
               const startNodeX = node.sourceNode.x + tempNodeDistance * Math.cos(angle)
               const startNodeY = node.sourceNode.y + tempNodeDistance * Math.sin(angle)
@@ -326,7 +328,30 @@ export default {
           let width = 1 // 线宽
           const arrowSize = this.defaultArrowSize // 箭头大小
           const shortenedLength = this.getShortenedLength(end) // link 末端缩短长度,root节点特殊处理
-
+          if(end.type === nodeType.entityNode) {
+            const entityNode = this.graph.graphData().nodes.find(node => node.id === end.id)
+            if (entityNode) {
+              let sourceNode = entityNode.sourceNode
+              if(!end.isInit && sourceNode && sourceNode.fx !== null) {
+                const level = this.getNodeLevel(end.id)
+                if(level === 2) {//level为2，只针对重置操作
+                  const sourceNodeNeighbors = sourceNode.getNeighbors(this.graph.graphData())
+                  sourceNode.childCount = sourceNodeNeighbors.targetNodes.length//设置每个list节点的子节点个数
+                  if(!sourceNode.currentChildIndex) {
+                    sourceNode.currentChildIndex = 0
+                  }
+                  let angle = this.getEntityNodeAngle(sourceNode.childCount, sourceNode.currentChildIndex++)
+                  const entityFirstPoint = this.pointOfLine({ x: sourceNode.sourceNode.x, y: sourceNode.sourceNode.y}, {x:sourceNode.fx,y:sourceNode.fy}, linkDistance.normal + linkDistance.root)// start,end,lineLength
+                  const toPoint = this.pointOfRotate({x:entityFirstPoint.x,y:entityFirstPoint.y},{x:sourceNode.fx,y:sourceNode.fy},angle)//y如果设置为0，则展示的位置不对，所以设置一个较小的y为1
+                  end.x=  toPoint.x
+                  end.y =  toPoint.y
+                  end.vx=  1
+                  end.vy =  1
+                  end.isInit = true
+                }
+              }
+            }
+          }
           // 计算箭头角度
           const dx = end.x - start.x
           const dy = end.y - start.y
@@ -1045,15 +1070,14 @@ export default {
       ctx.lineTo(toX + topX, toY + topY)
     },
     getNodeLevel (id) {
-      return 5
       const { findShortestPath } = Algorithm
       const { nodes, links } = this.graph.graphData()
-      const g6FormatData = { nodes: _.cloneDeep(nodes), edges: _.cloneDeep(links) }
-      g6FormatData.edges.forEach(l => {
+      const forceGraphFormatData = { nodes: _.cloneDeep(nodes), edges: _.cloneDeep(links) }
+      forceGraphFormatData.edges.forEach(l => {
         l.source = l.source.id
         l.target = l.target.id
       })
-      const info = findShortestPath(g6FormatData, this.entity.entityName, id)
+      const info = findShortestPath(forceGraphFormatData, this.entity.entityName+this.entity.entityType, id)
       return info.length
     },
     generateTempNodeCoordinate (sourceNode, event) {
@@ -1108,7 +1132,6 @@ export default {
 
       const rootNode = clickNode || new Node(nodeType.rootNode, this.entity.entityName, this.entity, null, this.getIconUrl(this.entity.entityType, true, true))
       await rootNode.queryDetailData()
-      nodes.push(rootNode)
       this.clickNode = rootNode
       this.rootNode = rootNode
 
@@ -1165,7 +1188,7 @@ export default {
           })
         }
         nodes.push(...listNodes, ...entityNodes)
-
+        nodes.push(rootNode)
         this.releaseNodes(nodes,nodeType.listNode)
       }
       this.rightBox.node = rootNode
