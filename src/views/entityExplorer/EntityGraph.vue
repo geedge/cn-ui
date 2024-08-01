@@ -112,7 +112,7 @@ export default {
       const endY = endNode.drawEndY
       if (endX && startX) {
         const diffVal = Math.round(Math.sqrt(Math.pow((endX - startX), 2) + Math.pow((endY - startY), 2)))
-        const step = 5
+        const step = 5//控制临时节点的动画速度，值越大，速度越快
         const i = endNode.nextI ? endNode.nextI : 0
         if (i < diffVal / step) {
           endNode.nextI = i + 1
@@ -145,10 +145,11 @@ export default {
         .graphData(initialData)
         .nodeCanvasObject((node, ctx) => {
           if(node.type === nodeType.entityNode) {
-            let sourceNode = node.sourceNode
-            if(!node.isInit && sourceNode && sourceNode.fx !== null) {
-              const level = this.getNodeLevel(node.id)
-              if(level === 2) {//level为2，只针对重置操作
+            const parentNode = this.graph.graphData().nodes.find(n => n.id === node.sourceNode.id)
+            const grandParentNode = this.graph.graphData().nodes.find(n => n.id === parentNode.sourceNode.id)
+            if(grandParentNode.type === nodeType.rootNode) {//只针对重置操作(第2层节点)
+              let sourceNode = node.sourceNode
+              if(!node.isInit && sourceNode && sourceNode.fx !== null) {
                 const sourceNodeNeighbors = sourceNode.getNeighbors(this.graph.graphData())
                 sourceNode.childCount = sourceNodeNeighbors.targetNodes.length//设置每个list节点的子节点个数
                 if(!sourceNode.currentChildIndex) {
@@ -219,48 +220,46 @@ export default {
               break
             }
             case nodeType.listNode: {
-              if(node.x && node.y) {
-                // 如果是鼠标点击或者悬停的，有一层圆环
-                if (node === this.clickNode || node === hoverNode) {
-                  ctx.beginPath()
-                  ctx.arc(node.x, node.y, nodeStyle.shadowR, 0, 2 * Math.PI, false)
-                  ctx.closePath()
-                  if (node === this.currentSelectedNode) {
-                    ctx.fillStyle = nodeStyle.selectedShadowColor
-                  } else {
-                    ctx.fillStyle = nodeStyle.hoveredShadowColor
-                  }
-                  ctx.fill()
+              // 如果是鼠标点击或者悬停的，有一层圆环
+              if (node === this.clickNode || node === hoverNode) {
+                ctx.beginPath()
+                ctx.arc(node.x, node.y, nodeStyle.shadowR, 0, 2 * Math.PI, false)
+                ctx.closePath()
+                if (node === this.currentSelectedNode) {
+                  ctx.fillStyle = nodeStyle.selectedShadowColor
+                } else {
+                  ctx.fillStyle = nodeStyle.hoveredShadowColor
                 }
-
-                // 内部填白
-                ctx.beginPath()
-                ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
-                ctx.closePath()
-                ctx.fillStyle = nodeStyle.fillStyle
                 ctx.fill()
-
-                // 第一层圆环
-                ctx.beginPath()
-                ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
-                ctx.closePath()
-                ctx.lineWidth = 1
-                ctx.strokeStyle = nodeStyle.borderColor
-                ctx.stroke()
-                // 图片
-                ctx.drawImage(node.img, node.x - nodeStyle.iconWidth / 2, node.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight)
-                // 文字
-                ctx.font = nodeStyle.font
-                const textWidth = ctx.measureText(node.label).width
-                const bckgDimensions = [textWidth, 8].map(n => n + 8 * 0.2)
-                ctx.fillStyle = nodeStyle.fontBgColor
-                ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2 + 24, ...bckgDimensions) // 文字的白底
-
-                ctx.textAlign = 'center'
-                ctx.textBaseline = 'middle'
-                ctx.fillStyle = nodeStyle.fontColor
-                ctx.fillText(node.label, node.x, node.y + 24)
               }
+
+              // 内部填白
+              ctx.beginPath()
+              ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
+              ctx.closePath()
+              ctx.fillStyle = nodeStyle.fillStyle
+              ctx.fill()
+
+              // 第一层圆环
+              ctx.beginPath()
+              ctx.arc(node.x, node.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
+              ctx.closePath()
+              ctx.lineWidth = 1
+              ctx.strokeStyle = nodeStyle.borderColor
+              ctx.stroke()
+              // 图片
+              ctx.drawImage(node.img, node.x - nodeStyle.iconWidth / 2, node.y - nodeStyle.iconHeight / 2, nodeStyle.iconWidth, nodeStyle.iconHeight)
+              // 文字
+              ctx.font = nodeStyle.font
+              const textWidth = ctx.measureText(node.label).width
+              const bckgDimensions = [textWidth, 8].map(n => n + 8 * 0.2)
+              ctx.fillStyle = nodeStyle.fontBgColor
+              ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2 + 24, ...bckgDimensions) // 文字的白底
+
+              ctx.textAlign = 'center'
+              ctx.textBaseline = 'middle'
+              ctx.fillStyle = nodeStyle.fontColor
+              ctx.fillText(node.label, node.x, node.y + 24)
               break
             }
             case nodeType.entityNode: {
@@ -329,12 +328,13 @@ export default {
           const arrowSize = this.defaultArrowSize // 箭头大小
           const shortenedLength = this.getShortenedLength(end) // link 末端缩短长度,root节点特殊处理
           if(end.type === nodeType.entityNode) {
-            const entityNode = this.graph.graphData().nodes.find(node => node.id === end.id)
-            if (entityNode) {
-              let sourceNode = entityNode.sourceNode
-              if(!end.isInit && sourceNode && sourceNode.fx !== null) {
-                const level = this.getNodeLevel(end.id)
-                if(level === 2) {//level为2，只针对重置操作
+            const parentNode = this.graph.graphData().nodes.find(node => node.id === start.id)
+            const grandParentNode = this.graph.graphData().nodes.find(node => node.id === parentNode.sourceNode.id)
+            if(grandParentNode.type === nodeType.rootNode) {//只针对重置操作(第2层节点)
+              const entityNode = this.graph.graphData().nodes.find(node => node.id === end.id)
+              if (entityNode) {
+                let sourceNode = entityNode.sourceNode
+                if(!end.isInit && sourceNode && sourceNode.fx !== null) {
                   const sourceNodeNeighbors = sourceNode.getNeighbors(this.graph.graphData())
                   sourceNode.childCount = sourceNodeNeighbors.targetNodes.length//设置每个list节点的子节点个数
                   if(!sourceNode.currentChildIndex) {
@@ -1132,6 +1132,7 @@ export default {
 
       const rootNode = clickNode || new Node(nodeType.rootNode, this.entity.entityName, this.entity, null, this.getIconUrl(this.entity.entityType, true, true))
       await rootNode.queryDetailData()
+      nodes.push(rootNode)
       this.clickNode = rootNode
       this.rootNode = rootNode
 
@@ -1188,7 +1189,6 @@ export default {
           })
         }
         nodes.push(...listNodes, ...entityNodes)
-        nodes.push(rootNode)
         this.releaseNodes(nodes,nodeType.listNode)
       }
       this.rightBox.node = rootNode
