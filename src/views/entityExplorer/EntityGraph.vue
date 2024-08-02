@@ -146,8 +146,8 @@ export default {
         .nodeCanvasObject((node, ctx) => {
           if(node.type === nodeType.entityNode) {
             const parentNode = this.graph.graphData().nodes.find(n => n.id === node.sourceNode.id)
-            const grandParentNode = this.graph.graphData().nodes.find(n => n.id === parentNode.sourceNode.id)
-            if(grandParentNode.type === nodeType.rootNode) {//只针对重置操作(第2层节点)
+            const grandParentNode = this.graph.graphData().nodes.find(n => parentNode && parentNode.sourceNode && n.id === parentNode.sourceNode.id)
+            if(grandParentNode && grandParentNode.type === nodeType.rootNode) {//只针对重置操作(第2层节点)
               let sourceNode = node.sourceNode
               if(!node.isInit && sourceNode && sourceNode.fx !== null) {
                 const sourceNodeNeighbors = sourceNode.getNeighbors(this.graph.graphData())
@@ -290,8 +290,8 @@ export default {
               ctx.beginPath()
               const tempNodeDistance = this.getShortenedLength(node)// 临时节点展示动画时临时节点的初始位置距离entity节点的距离
               // 计算箭头角度
-              const dx = node.x - node.sourceNode.x
-              const dy = node.y - node.sourceNode.y
+              const dx = node.fx - node.sourceNode.x
+              const dy = node.fy - node.sourceNode.y
               const angle = Math.atan2(dy, dx) // 计算与x轴的角度（弧度）
               const startNodeX = node.sourceNode.x + tempNodeDistance * Math.cos(angle)
               const startNodeY = node.sourceNode.y + tempNodeDistance * Math.sin(angle)
@@ -329,8 +329,8 @@ export default {
           const shortenedLength = this.getShortenedLength(end) // link 末端缩短长度,root节点特殊处理
           if(end.type === nodeType.entityNode) {
             const parentNode = this.graph.graphData().nodes.find(node => node.id === start.id)
-            const grandParentNode = this.graph.graphData().nodes.find(node => node.id === parentNode.sourceNode.id)
-            if(grandParentNode.type === nodeType.rootNode) {//只针对重置操作(第2层节点)
+            const grandParentNode = this.graph.graphData().nodes.find(node => parentNode && parentNode.sourceNode && node.id === parentNode.sourceNode.id)
+            if(grandParentNode && grandParentNode.type === nodeType.rootNode) {//只针对重置操作(第2层节点)
               const entityNode = this.graph.graphData().nodes.find(node => node.id === end.id)
               if (entityNode) {
                 let sourceNode = entityNode.sourceNode
@@ -417,6 +417,7 @@ export default {
         .zoom(0.9999)
         .onNodeClick(async (node, e) => {
           this.isClicking = true
+          let lastClickNode = _.cloneDeep(this.clickNode)
           this.clickNode = node || null
           if (node.type !== 'tempNode') {
             this.rightBox.show = true
@@ -425,6 +426,10 @@ export default {
             if (node.type === nodeType.entityNode) {
               node.fx = node.x
               node.fy = node.y
+              if(node.sourceNode) {
+                node.sourceNode.fx = node.sourceNode.x
+                node.sourceNode.fy = node.sourceNode.y
+              }
               this.rightBox.loading = true
               try {
                 // 若已查过数据，不重复查询
@@ -491,6 +496,9 @@ export default {
             } else if (node.type === nodeType.listNode) {
               this.rightBox.node = node
               this.rightBox.mode = 'list'
+              if(lastClickNode.id === node.id) {
+                node.isFixed = true
+              }
             } else if (node.type === nodeType.rootNode) {
               this.rightBox.node = node
               this.rightBox.mode = 'detail'
@@ -673,6 +681,7 @@ export default {
           this.isDraggingEntityNode = false
           node.fx = node.x
           node.fy = node.y
+          node.isFixed = true
           // 拖拽结束时，把所有临时节点的的angle置为null,便于拖动其它节点时的计算
           this.graph.graphData().nodes.forEach(node => {
             if (node.type === nodeType.tempNode) {
@@ -682,7 +691,7 @@ export default {
           })
         })
         .onEngineStop(() => {
-          this.releaseNodes(this.graph.graphData().nodes,nodeType.listNode)
+          //this.releaseNodes(this.graph.graphData().nodes,nodeType.listNode)//此处释放节点，会导致有一段时间，list节点为固定状态
         })
         .onEngineTick(() => {
           if (this.isClicking) {
@@ -863,6 +872,7 @@ export default {
             node.y = null
           }
         })*/
+        this.releaseNodes(initData.nodes,nodeType.listNode)
         this.initForceGraph(initData) // 初始化拓展图
         this.rightBox.show = true
         this.rightBox.node = this.rootNode
@@ -1113,7 +1123,7 @@ export default {
       // 清理临时节点时，同时释放临时节点对应的entity节点,不再固定位置
       const tempNodes = nodes.filter(n => n.type === nodeType.tempNode)
       tempNodes.forEach(n => {
-        if (n.sourceNode) {
+        if (n.sourceNode && !n.sourceNode.isFixed) {
           n.sourceNode.fx = null
           n.sourceNode.fy = null
         }
@@ -1132,6 +1142,7 @@ export default {
 
       const rootNode = clickNode || new Node(nodeType.rootNode, this.entity.entityName, this.entity, null, this.getIconUrl(this.entity.entityType, true, true))
       await rootNode.queryDetailData()
+      rootNode.isFixed = true
       nodes.push(rootNode)
       this.clickNode = rootNode
       this.rootNode = rootNode
@@ -1197,14 +1208,21 @@ export default {
         links
       }
     },
-    //释放节点
+    /*释放节点:主要针对动画的展示，若节点本身为固定节点，则不进行释放：针对固定节点，增加一个标识isFixed
+        1.所有节点：拖拽后节点为固定节点；
+        2.root初始化为固定节点；
+        3.list节点：再次点击当前选中的list节点后，list节点为固定节点（一次点击list节点代表选中操作，所以不固定list节点）；
+        4.entity节点：一次点击没有临时节点的entity节点后，entity节点为固定节点；
+    */
     releaseNodes(allNodes,nodeType) {
       setTimeout(() => {
-        // 释放list节点,不再固定位置
+        // 释放节点,不再固定位置
         const filterNodes = allNodes.filter(n => n.type === nodeType)
         filterNodes.forEach(n => {
-          n.fx = null
-          n.fy = null
+          if(!n.isFixed) {
+            n.fx = null
+            n.fy = null
+          }
         })
       }, 100)
     },
