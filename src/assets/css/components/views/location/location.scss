@@ -37,6 +37,10 @@ $color-highlight: #CC4444;
     }
   }
 
+  .follow-cursor {
+    cursor: pointer;
+  }
+
   svg {
     fill: $color-white;
   }
@@ -81,6 +85,19 @@ $color-highlight: #CC4444;
 
     .panel__time {
       display: flex;
+      .follow {
+        padding-left:6px;
+        padding-right:6px;
+      }
+      .divider {
+        display: flex;
+        align-items: center;
+        .el-divider--vertical {
+          height: 20px;
+          margin-left: 10px;
+          margin-right: 10px;
+        }
+      }
     }
   }
 
