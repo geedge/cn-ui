@@ -76,7 +76,7 @@ export default {
       defaultMargin: 2, // 图像与箭头的距离
       rootNode: null,
       isClicking: false,
-      isDraggingEntityNode: false,
+      isDraggingNode: false,
       defaultArrowSize: 3, // 箭头大小
       /* 自己实现stack操作 */
       stackData: {
@@ -105,7 +105,8 @@ export default {
         this.rightBox.loading = false
       }
     },
-    getCoordinate (startNode, endNode) {
+    //获取临时节点展示动画过程中每一帧的坐标
+    getTempNodeCoordinate (startNode, endNode) {
       const startX = startNode.x
       const startY = startNode.y
       const endX = endNode.drawEndX
@@ -288,17 +289,19 @@ export default {
             case nodeType.tempNode: {
               // 先画个白底圆环，避免 link 穿过不好看
               ctx.beginPath()
-              const tempNodeDistance = this.getShortenedLength(node)// 临时节点展示动画时临时节点的初始位置距离entity节点的距离
+              const tempNodeDistance = this.getShortenedLength(node)// 临时节点展示动画时, 临时节点的初始位置距离entity节点的距离
               // 计算箭头角度
               const dx = node.fx - node.sourceNode.x
               const dy = node.fy - node.sourceNode.y
               const angle = Math.atan2(dy, dx) // 计算与x轴的角度（弧度）
+              // 临时节点展示动画时, 临时节点初始位置的坐标
               const startNodeX = node.sourceNode.x + tempNodeDistance * Math.cos(angle)
               const startNodeY = node.sourceNode.y + tempNodeDistance * Math.sin(angle)
+              // 临时节点展示动画时, 临时节点最终位置的坐标
               node.drawEndX = node.realEndX
               node.drawEndY = node.realEndY
-              const nodeCoordinate = this.getCoordinate({ x: startNodeX, y: startNodeY }, node)
-              if (nodeCoordinate && !this.isDraggingEntityNode) {
+              const nodeCoordinate = this.getTempNodeCoordinate({ x: startNodeX, y: startNodeY }, node)//获取临时节点展示动画过程中每一帧的坐标
+              if (nodeCoordinate && !this.isDraggingNode) {
                 ctx.arc(nodeCoordinate.x, nodeCoordinate.y, nodeStyle.innerR, 0, 2 * Math.PI, false)
                 ctx.closePath()
                 ctx.fillStyle = nodeStyle.fillStyle
@@ -370,8 +373,8 @@ export default {
               end.drawEndX = lineEndX
               end.drawEndY = lineEndY
             }
-            const nodeCoordinate = this.getCoordinate(start, end)
-            if (nodeCoordinate && !this.isDraggingEntityNode) {
+            const nodeCoordinate = this.getTempNodeCoordinate(start, end)
+            if (nodeCoordinate && !this.isDraggingNode) {
               lineEndX = nodeCoordinate.x
               lineEndY = nodeCoordinate.y
               arrowEndX = nodeCoordinate.x + arrowSize * Math.cos(angle)
@@ -426,10 +429,15 @@ export default {
             if (node.type === nodeType.entityNode) {
               node.fx = node.x
               node.fy = node.y
-              if(node.sourceNode) {
+              /*//如果list和entity的坐标改变可以做到联动到临时节点，此处就不需要了
+              if(node.sourceNode) {//拓展临时节点时，固定住对于的list节点，不然list节点总动，导致角度不对，过一会再释放
                 node.sourceNode.fx = node.sourceNode.x
                 node.sourceNode.fy = node.sourceNode.y
-              }
+                setTimeout(() => {
+                  node.sourceNode.fx = null
+                  node.sourceNode.fy = null
+                }, 100)
+              }*/
               this.rightBox.loading = true
               try {
                 // 若已查过数据，不重复查询
@@ -604,9 +612,9 @@ export default {
         .d3Force('charge', d3.forceManyBody().strength(this.defaultChargeStrength))
         .onNodeDrag((node, translate) => {
           const { nodes, links } = this.graph.graphData()
+          this.isDraggingNode = true
           // 拖动entity节点时，如果此entity节点有临时节点，则同时移动临时节点
           if (node.type === nodeType.entityNode) {
-            this.isDraggingEntityNode = true
             // 查询点击entity节点对应的list节点
             const fromX = node.sourceNode.preDragX ? node.sourceNode.preDragX : node.sourceNode.x
             const fromY = node.sourceNode.preDragY ? node.sourceNode.preDragY : node.sourceNode.y
@@ -678,7 +686,7 @@ export default {
         })
         .cooldownTime(2000)// 到时间后，才执行onEngineStop
         .onNodeDragEnd((node, translate) => { // 修复拖动节点
-          this.isDraggingEntityNode = false
+          this.isDraggingNode = false
           node.fx = node.x
           node.fy = node.y
           node.isFixed = true
