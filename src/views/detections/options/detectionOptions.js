@@ -383,3 +383,36 @@ export const metricOption = {
     }
   ]
 }
+export const lineOption = {
+  xAxis: {
+    type: 'time',
+    data: [],
+    axisTick: {
+      show: false
+    },
+    axisLine: {
+      show: false
+    },
+    axisLabel: {
+      formatter: xAxisTimeFormatter,
+      rich: xAxisTimeRich
+    }
+  },
+  yAxis: {
+    max: 100
+  },
+  grid: {
+    top: '12px',
+    left: '30px',
+    bottom: '30px',
+    right: '20px'
+  },
+  series: [
+    {
+      data: [],
+      type: 'line',
+      color: '#ff9a79',
+      symbol: 'none'
+    }
+  ]
+}

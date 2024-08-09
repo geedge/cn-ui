@@ -5,18 +5,38 @@
       <div class="detection-list--list">
         <div class="no-data" v-if="myListData.length===0">{{ $t('npm.noData') }}</div>
         <div v-if="!isCollapse" @click="collapse" class="cn-detection__shadow new-cn-detection__shadow"></div>
-        <detection-row
-            class="detection-border margin-b-10"
-            v-for="(data, index) in myListData"
-            :detection="data"
-            :page-type="pageType"
-            :timeFilter="timeFilter"
-            :key="index"
-            :pageObj="pageObj"
-            :ref="`detectionRow${index}`"
-            :index="index"
-            @switchCollapse="switchCollapse"
-        ></detection-row>
+        <template v-if="eventFlag===detectionEventType.single">
+          <detection-row
+              class="detection-border margin-b-10"
+              v-for="(data, index) in myListData"
+              :detection="data"
+              :page-type="pageType"
+              :timeFilter="timeFilter"
+              :key="index"
+              :pageObj="pageObj"
+              :eventFlag="eventFlag"
+              :ref="`detectionRow${index}`"
+              :index="index"
+              @switchCollapse="switchCollapse"
+              :q="q"
+          ></detection-row>
+        </template>
+        <template v-if="eventFlag===detectionEventType.aggregation">
+          <detection-row-events
+              class="detection-border margin-b-10"
+              v-for="(data, index) in myListData"
+              :detection="data"
+              :page-type="pageType"
+              :timeFilter="timeFilter"
+              :eventFlag="eventFlag"
+              :key="index"
+              :pageObj="pageObj"
+              :ref="`detectionRow${index}`"
+              :index="index"
+              :q="q"
+              @switchCollapse="switchCollapse"
+          ></detection-row-events>
+        </template>
       </div>
     </div>
   </div>
@@ -27,11 +47,14 @@ import DetectionRow from '@/views/detections/DetectionRow'
 import Loading from '@/components/common/Loading'
 import axios from 'axios'
 import { api } from '@/utils/api'
+import DetectionRowEvents from '@/views/detections/DetectionRowEvents'
+import { detectionEventType } from '@/utils/constants'
 export default {
   name: 'DetectionList',
   components: {
     Loading,
-    DetectionRow
+    DetectionRow,
+    DetectionRowEvents
   },
   props: {
     listData: Array,
@@ -39,7 +62,9 @@ export default {
     pageObj: Object,
     loading: Boolean,
     timeFilter: Object,
-    pageType: String // 安全事件、服务质量
+    pageType: String, // 安全事件、服务质量
+    eventFlag: String, // 事件标识，单独/聚合
+    q: String
   },
   data () {
     return {
@@ -51,7 +76,8 @@ export default {
       tableId: 'detectionList',
       listDataCopy: [],
       noData: true,
-      myListData: [] // listData的克隆，避免因为修改listData里的malWareName而触发watch监听
+      myListData: [], // listData的克隆，避免因为修改listData里的malWareName而触发watch监听
+      detectionEventType
     }
   },
   mounted () {

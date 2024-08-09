@@ -4,10 +4,6 @@
     <div class="explorer-top-tools explorer-detection-top-tools">
       <div class="explorer-top-tools-title">{{$t('overall.detections')}}</div>
       <div style="display: flex">
-        <div class="explorer-top-tools-block" @click="jumpNewDetetion" v-if="hasPermission('detectionPolicy')">
-          <i class="cn-icon cn-icon-configure-policies detection-icon-setting"></i>
-          <span>{{$t('config.detections.configurePolicies')}}</span>
-        </div>
         <DateTimeRange
             class="date-time-range"
             :start-time="timeFilter.startTime"
@@ -21,16 +17,25 @@
             :end-time="timeFilter.endTime"/>
       </div>
     </div>
-    <div style="width: 100%; padding-bottom: 50px;">
-      <chart-tabs :data="tabsData" router></chart-tabs>
-    </div>
 
     <!-- 搜索组件 -->
-    <detection-search
-        ref="search"
-        :page-type="pageType"
-        @search="search"
-    ></detection-search>
+    <div class="detections__search">
+      <div class="detections__search__btns">
+        <div @click="clickEventFlag(detectionEventType.single)" :class="eventFlag===detectionEventType.single ? 'active__btn' : ''">
+          <i class="cn-icon cn-icon-danfenxi"></i>
+        </div>
+        <div @click="clickEventFlag(detectionEventType.aggregation)" :class="eventFlag===detectionEventType.aggregation ? 'active__btn' : ''">
+          <i class="cn-icon cn-icon-fuhe"></i>
+        </div>
+      </div>
+      <detection-search
+          style="width: calc(100% - 92px);"
+          ref="search"
+          :page-type="pageType"
+          @search="search"
+      ></detection-search>
+    </div>
+
     <!-- 内容区 -->
     <div class="detections__container">
       <loading :loading="loading"></loading>
@@ -44,17 +49,29 @@
       <div style="display: flex; flex-grow: 1; height: 100%;">
         <detection-filter
             class="detection-border"
-            :filter-data="filterData[pageType]"
+            :filter-data="filterData"
             :q="q"
             :time-filter="timeFilter"
             @filter="getFilter"
+            :event-flag="eventFlag"
         ></detection-filter>
 
         <div class="detection__list">
           <div class="detection__list-statistics detection-border">
+            <div class="statistics__category">
+              <div class="chart-header">
+                <div class="chart-header__title">{{$t('detection.eventType')}}</div>
+              </div>
+              <template v-if="isStatisticsCategoryNoData">
+                <div class="no-data chart-content" >{{ $t('npm.noData') }}</div>
+              </template>
+              <template v-else>
+                <div class="chart-content" :id="`detectionCategoryPer${pageType}`"></div>
+              </template>
+            </div>
             <div class="statistics__severity">
               <div class="chart-header">
-                <div class="chart-header__title">{{$t('detections.severity')}}</div>
+                <div class="chart-header__title">{{$t('detections.eventName')}}</div>
               </div>
               <template v-if="isStatisticsSeverityNoData">
                 <div class="no-data chart-content" >{{ $t('npm.noData') }}</div>
@@ -64,20 +81,9 @@
               </template>
 
             </div>
-            <div class="statistics__category">
-              <div class="chart-header">
-                <div class="chart-header__title">{{$t('detections.eventType')}}</div>
-              </div>
-              <template v-if="isStatisticsCategoryNoData">
-                <div class="no-data chart-content" >{{ $t('npm.noData') }}</div>
-              </template>
-              <template v-else>
-                <div class="chart-content" :id="`detectionCategoryPer${pageType}`"></div>
-              </template>
-            </div>
             <div class="statistics__active-attack">
               <div class="chart-header">
-                <div class="chart-header__title">{{pageType === detectionPageType.securityEvent ? $t('detection.activeOffender') : $t('detections.activeEntity')}}</div>
+                <div class="chart-header__title">Key</div>
               </div>
               <template v-if="isStatisticsActiveAttackNoData">
                 <div class="no-data chart-content" >{{ $t('npm.noData') }}</div>
@@ -92,6 +98,8 @@
               :pageObj="pageObj"
               :time-filter="timeFilter"
               :page-type="pageType"
+              :event-flag="eventFlag"
+              :q="q"
               @pageSize="pageSize"
               @pageNo="pageNo"
               :loading="listLoading"
@@ -120,7 +128,7 @@ import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 import DetectionFilter from '@/views/detections/DetectionFilter'
 import DetectionList from '@/views/detections/DetectionList'
 import Pagination from '@/components/common/Pagination'
-import { defaultPageSize, detectionPageType } from '@/utils/constants'
+import { defaultPageSize, detectionPageType, detectionEventType } from '@/utils/constants'
 import { getNowTime, getSecond, getMillisecond } from '@/utils/date-util'
 import { ref, shallowRef } from 'vue'
 import * as echarts from 'echarts'
@@ -136,7 +144,6 @@ import axios from 'axios'
 import { urlParamsHandler, overwriteUrl, extensionEchartY, reverseSortBy, changeI18nOfSeverity } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import Loading from '@/components/common/Loading'
-import ChartTabs from '@/components/common/ChartTabs'
 import { useStore } from 'vuex'
 import { format } from 'echarts'
 import Parser from '@/components/advancedSearch/meta/parser'
@@ -151,8 +158,7 @@ export default {
     TimeRefresh,
     DetectionFilter,
     DetectionList,
-    Pagination,
-    ChartTabs
+    Pagination
   },
   data () {
     return {
@@ -162,98 +168,57 @@ export default {
           path: '/detection/securityEvent',
           icon: 'cn-icon cn-icon-a-SecurityEvent'
         }
-        // {
-        //   i18n: 'entities.regulatoryRiskEvents',
-        //   path: '/detection/securityEvent',
-        //   icon: 'cn-icon cn-icon-a-RegulatoryRiskEvent',
-        //   disable: true
-        // },
-        // {
-        //   i18n: 'overall.performanceEvents',
-        //   path: '/detection/performanceEvent',
-        //   icon: 'cn-icon cn-icon-a-PerformanceEvent'
-        // }
       ],
       chartInit: [],
-      // pageObj: {
-      //   pageNo: 1,
-      //   pageSize: defaultPageSize,
-      //   total: 0,
-      //   resetPageNo: true
-      // },
       q: '',
       detectionPageType,
-      filterData: {
-        securityEvent: [
-          {
-            title: this.$t('overall.status'),
-            column: 'status',
-            topColumn: 'status',
-            collapse: false,
-            value: [], // value之间是or的关系
-            showMore: false,
-            data: [] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
-          },
-          {
-            title: this.$t('detections.severity'),
-            column: 'severity',
-            topColumn: 'severity',
-            collapse: false,
-            value: [], // value之间是or的关系
-            showMore: false,
-            data: [] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
-          },
-          {
-            title: this.$t('detections.eventType'),
-            column: 'eventType',
-            topColumn: 'event_type',
-            collapse: false,
-            value: [],
-            showMore: true,
-            showDisabled: true,
-            showIndex: 5, // index作为showMore分割，从1开始而非0
-            data: [] // 从接口动态获取
-          },
-          {
-            title: this.$t('detections.victimIp'),
-            column: 'victimIP',
-            topColumn: 'victim_ip',
-            collapse: false,
-            value: [],
-            showMore: true,
-            showDisabled: true,
-            showIndex: 5,
-            data: [] // 从接口动态获取
-          },
-          {
-            title: this.$t('detections.offenderIp'),
-            column: 'offenderIP',
-            topColumn: 'offender_ip',
-            collapse: false,
-            value: [],
-            showMore: true,
-            showDisabled: true,
-            showIndex: 5,
-            data: [] // 从接口动态获取
-          }
-        ],
-        performanceEvent: [
-          {
-            title: this.$t('detections.eventSeverity'),
-            column: 'eventSeverity',
-            collapse: false,
-            value: [], // value之间是or的关系
-            data: [] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
-          },
-          {
-            title: this.$t('detections.eventType'),
-            column: 'eventType',
-            collapse: false,
-            value: [],
-            data: [] // 从接口动态获取
-          }
-        ]
-      },
+      filterData: [
+        {
+          title: this.$t('detection.eventType'),
+          column: 'eventType',
+          topColumn: 'event_type',
+          collapse: false,
+          value: [],
+          showMore: true,
+          showDisabled: true,
+          show: true,
+          showIndex: 5, // index作为showMore分割，从1开始而非0
+          data: []
+        },
+        {
+          title: this.$t('detections.eventName'),
+          column: 'eventName',
+          topColumn: 'event_name',
+          collapse: false,
+          value: [],
+          showMore: false,
+          showDisabled: true,
+          show: true,
+          data: []
+        },
+        {
+          title: 'Key',
+          column: 'keyFields',
+          topColumn: 'key_fields,key_values',
+          collapse: false,
+          value: [],
+          showMore: true,
+          showDisabled: true,
+          showIndex: 5,
+          show: true,
+          data: [] // 从接口动态获取
+        },
+        {
+          title: this.$t('overall.status'),
+          column: 'status',
+          topColumn: 'status',
+          collapse: false,
+          value: [], // value之间是or的关系
+          showMore: false,
+          show: true,
+          data: [] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
+        }
+      ],
       listData: [],
       listLoading: false,
       severityPerOption: null,
@@ -273,12 +238,13 @@ export default {
       loading: false,
       oldActiveEntitySearchValue: '',
       initFlag: true, // 初始化标识，初始化时保证mounted执行
-      detectionChart: shallowRef(null)
+      detectionChart: shallowRef(null),
+      detectionEventType
     }
   },
   methods: {
     initStatusData (params) {
-      axios.get(api.detection[this.pageType].statusStatistics, { params }).then(res => {
+      axios.get(api.detection.event.statusStatistics, { params }).then(res => {
         if (res.status === 200) {
           const data = res.data.data.result
           if (data && data.length > 0) {
@@ -286,7 +252,7 @@ export default {
               return Number(b.count) - Number(a.count)
             })
           }
-          this.filterData[this.pageType][0].data = data.map(r => {
+          this.filterData[3].data = data.map(r => {
             let label = ''
             if (r.status === '0' || r.status === 0) {
               label = this.$t('detections.active')
@@ -295,18 +261,18 @@ export default {
             }
             return { label, value: r.status, count: r.count }
           })
-          this.isCheckFilterByQ(params, 0)
+          this.isCheckFilterByQ(params, 3)
         }
       }).catch(e => {
         console.error(e)
-        this.filterData[this.pageType][0].data = []
+        this.filterData[3].data = []
         this.$message.error(this.errorMsgHandler(e))
       })
     },
     /** 初始化顶部大柱状图 */
-    initEventSeverityTrendData (params) {
+    initTimeDistribution (params) {
       this.loading = true
-      axios.get(api.detection[this.pageType].timeDistribution, { params }).then(res => {
+      axios.get(api.detection.event.timeDistribution, { params }).then(res => {
         const data = res.data.data.result
         this.eventSeverityData = data
         if (!this.$_.isEmpty(data)) {
@@ -394,8 +360,8 @@ export default {
       })
     },
     /** 初始化左侧事件严重等级和第一个小饼图 */
-    initEventSeverityData (params) {
-      axios.get(api.detection[this.pageType].severityStatistics, { params }).then(res => {
+    initEventNameData (params) {
+      axios.get(api.detection.event.nameStatistics, { params }).then(res => {
         const data = res.data.data.result
         if (data && data.length > 0) {
           data.sort((a, b) => {
@@ -404,11 +370,11 @@ export default {
         }
         this.statisticsSeverityData = data
         if (!this.$_.isEmpty(data)) {
-          this.filterData[this.pageType][1].data = data.map(r => ({ label: changeI18nOfSeverity(r.severity), value: r.severity, count: r.count }))
+          this.filterData[1].data = data.map(r => ({ label: changeI18nOfSeverity(r.eventName), value: r.eventName, count: r.count }))
           this.isCheckFilterByQ(params, 1)
           const eventSeverityOption = this.$_.cloneDeep(pieForSeverity)
           eventSeverityOption.series[0].data = data.map(d => {
-            return { value: d.count, name: changeI18nOfSeverity(d.severity), itemStyle: { color: getSeverityColor(d.severity) } }
+            return { value: d.count, name: changeI18nOfSeverity(d.eventName), itemStyle: { color: getSeverityColor(d.eventName) } }
           })
           const chartDom = document.getElementById(`eventSeverityPie${this.pageType}`)
           let detectionChart = echarts.getInstanceByDom(chartDom)
@@ -421,88 +387,32 @@ export default {
           const vm = this
           detectionChart.off('click')
           detectionChart.on('click', e => {
-            if (this.pageType === 'performanceEvent') {
-              vm.filterData.performanceEvent[0].value = vm.triggerFilterDataValue(vm.filterData.performanceEvent[0].value, e.data.name)
-            } else if (this.pageType === 'securityEvent') {
-              this.getFilter(e.data.name, vm.filterData.securityEvent[1].column)
-              vm.filterData.securityEvent[1].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[1].value, e.data.name)
-            }
+            this.getFilter(e.data.name, vm.filterData[1].column)
+            vm.filterData[1].value = vm.triggerFilterDataValue(vm.filterData[1].value, e.data.name)
           })
         }
       }).catch(e => {
         console.error(e)
-        this.filterData[this.pageType][1].data = []
-        this.$message.error(this.errorMsgHandler(e))
-      })
-    },
-    initEventTypeData (params) {
-      axios.get(api.detection[this.pageType].eventType, { params }).then(res => {
-        const data = res.data.data.result
-        this.statisticsCategoryData = data
-        if (!this.$_.isEmpty(data)) {
-          this.filterData[this.pageType][2].data = data.map(r => ({
-            label: r.eventType,
-            value: r.eventType,
-            count: r.count
-          }))
-          const { showMore, showIndex, showDisabled } = this.computeFilterPage(this.filterData[this.pageType][2].data)
-          this.filterData[this.pageType][2].showMore = showMore
-          this.filterData[this.pageType][2].showIndex = showIndex
-          this.filterData[this.pageType][2].showDisabled = showDisabled
-
-          const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
-          let detectionChart = echarts.getInstanceByDom(chartDom)
-          if (detectionChart) {
-            echarts.dispose(detectionChart)
-          }
-          detectionChart = echarts.init(chartDom)
-          this.chartInit.push(shallowRef(detectionChart))
-          const securityTypeOption = this.$_.cloneDeep(pieForSeverity)
-          securityTypeOption.series[0].data = data.map(d => {
-            return { value: d.count, name: d.eventType }
-          })
-          if (chartDom) {
-            let oneColumnWidth = (chartDom.clientWidth * 0.56) - 30
-            if (data.length > 6) {
-              oneColumnWidth = (chartDom.clientWidth * 0.56) / 2 - 30
-            }
-            securityTypeOption.legend.formatter = function (name) {
-              return format.truncateText(name, oneColumnWidth, '12px')
-            }
-          }
-          detectionChart.setOption(securityTypeOption)
-
-          const vm = this
-          detectionChart.off('click')
-          detectionChart.on('click', e => {
-            vm.filterData.performanceEvent[1].value = vm.triggerFilterDataValue(vm.filterData.performanceEvent[1].value, e.data.name)
-          })
-        }
-      }).catch(e => {
-        console.error(e)
-        this.filterData[this.pageType][2].data = []
-        this.filterData[this.pageType][2].showMore = false
-        this.filterData[this.pageType][2].showIndex = 5
-        this.filterData[this.pageType][2].showDisabled = true
+        this.filterData[1].data = []
         this.$message.error(this.errorMsgHandler(e))
       })
     },
     /** 第二个饼图和左侧filter的eventType */
-    initSecurityTypeData (params) {
-      axios.get(api.detection[this.pageType].eventTypeStatistics, { params }).then(res => {
+    initEventTypeData (params) {
+      axios.get(api.detection.event.typeStatistics, { params }).then(res => {
         const data = res.data.data.result
         this.statisticsCategoryData = data
         if (!this.$_.isEmpty(data)) {
-          this.filterData[this.pageType][2].data = data.map(r => ({
+          this.filterData[0].data = data.map(r => ({
             label: r.eventType,
             value: r.eventType,
             count: r.count
           }))
-          this.isCheckFilterByQ(params, 2)
-          const { showMore, showIndex, showDisabled } = this.computeFilterPage(this.filterData[this.pageType][2].data)
-          this.filterData[this.pageType][2].showMore = showMore
-          this.filterData[this.pageType][2].showIndex = showIndex
-          this.filterData[this.pageType][2].showDisabled = showDisabled
+          this.isCheckFilterByQ(params, 0)
+          const { showMore, showIndex, showDisabled } = this.computeFilterPage(this.filterData[0].data)
+          this.filterData[0].showMore = showMore
+          this.filterData[0].showIndex = showIndex
+          this.filterData[0].showDisabled = showDisabled
           const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
           this.detectionChart = echarts.getInstanceByDom(chartDom)
           if (this.detectionChart) {
@@ -528,35 +438,35 @@ export default {
           const vm = this
           this.detectionChart.off('click')
           this.detectionChart.on('click', e => {
-            this.getFilter(e.data.name, vm.filterData.securityEvent[2].column)
-            vm.filterData.securityEvent[2].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[2].value, e.data.name)
+            this.getFilter(e.data.name, vm.filterData[0].column)
+            vm.filterData[0].value = vm.triggerFilterDataValue(vm.filterData[0].value, e.data.name)
           })
         }
       }).catch(e => {
         console.error(e)
-        this.filterData[this.pageType][2].data = []
-        this.filterData[this.pageType][2].showMore = false
-        this.filterData[this.pageType][2].showIndex = 5
-        this.filterData[this.pageType][2].showDisabled = true
+        this.filterData[0].data = []
+        this.filterData[0].showMore = false
+        this.filterData[0].showIndex = 5
+        this.filterData[0].showDisabled = true
         this.$message.error(this.errorMsgHandler(e))
       })
     },
-    /** 横向柱状图和左侧filter的offenderIp */
-    initOffenderIpData (params) {
-      axios.get(api.detection[this.pageType].offenderIpStatistics, { params }).then(res => {
+    /** 横向柱状图和左侧filter的key */
+    initKeyData (params) {
+      axios.get(api.detection.event.keyStatistics, { params }).then(res => {
         let data = res.data.data.result
         this.statisticsActiveAttackData = data
         if (!this.$_.isEmpty(data)) {
-          this.filterData[this.pageType][4].data = data.map(r => ({
-            label: r.offenderIp,
-            value: r.offenderIp,
+          this.filterData[2].data = data.map(r => ({
+            label: `${r.keyFields},${r.keyValues}`,
+            value: r.keyFields,
             count: r.count
           }))
-          this.isCheckFilterByQ(params, 4)
-          const { showMore, showIndex, showDisabled } = this.computeFilterPage(this.filterData[this.pageType][4].data)
-          this.filterData[this.pageType][4].showMore = showMore
-          this.filterData[this.pageType][4].showIndex = showIndex
-          this.filterData[this.pageType][4].showDisabled = showDisabled
+          this.isCheckFilterByQ(params, 2)
+          const { showMore, showIndex, showDisabled } = this.computeFilterPage(this.filterData[2].data)
+          this.filterData[2].showMore = showMore
+          this.filterData[2].showIndex = showIndex
+          this.filterData[2].showDisabled = showDisabled
 
           const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
           let detectionChart = echarts.getInstanceByDom(chartDom)
@@ -569,7 +479,7 @@ export default {
           data.sort(reverseSortBy('count'))
           data = data.slice(0, 5)
           offenderIpOption.series[0].data = data.map(d => {
-            return [d.count, d.offenderIp]
+            return [d.count, d.keyFields]
           }).reverse()
           detectionChart.setOption(offenderIpOption)
 
@@ -577,102 +487,18 @@ export default {
           detectionChart.off('click')
           detectionChart.on('click', e => {
             if (e.data) {
-              vm.getFilter(e.data[1], vm.filterData.securityEvent[4].column)
-              vm.filterData.securityEvent[4].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[4].value, e.data[1])
+              vm.getFilter(e.data[1], vm.filterData[2].column)
+              vm.filterData[2].value = vm.triggerFilterDataValue(vm.filterData[2].value, e.data[1])
             }
           })
         }
       }).catch(e => {
         console.error(e)
-        this.filterData[this.pageType][4].data = []
-        this.filterData[this.pageType][4].showMore = false
-        this.filterData[this.pageType][4].showIndex = 5
-        this.filterData[this.pageType][4].showDisabled = true
+        this.filterData[2].data = []
+        this.filterData[2].showMore = false
+        this.filterData[2].showIndex = 5
+        this.filterData[2].showDisabled = true
         this.$message.error(this.errorMsgHandler(e))
-      })
-    },
-
-    initVictimIpData (params) {
-      axios.get(api.detection[this.pageType].victimIpStatistics, { params }).then(res => {
-        const data = res.data.data.result
-        this.filterData[this.pageType][3].data = data.map(r => ({ label: r.victimIp, value: r.victimIp, count: r.count }))
-        this.isCheckFilterByQ(params, 3)
-        const { showMore, showIndex, showDisabled } = this.computeFilterPage(this.filterData[this.pageType][3].data)
-        this.filterData[this.pageType][3].showMore = showMore
-        this.filterData[this.pageType][3].showIndex = showIndex
-        this.filterData[this.pageType][3].showDisabled = showDisabled
-      }).catch(e => {
-        console.error(e)
-        this.filterData[this.pageType][3].data = []
-        this.filterData[this.pageType][3].showMore = false
-        this.filterData[this.pageType][3].showIndex = 5
-        this.filterData[this.pageType][3].showDisabled = true
-        this.$message.error(this.errorMsgHandler(e))
-      })
-    },
-    initActiveEntity (params) {
-      axios.get(api.detection[this.pageType].activeEntity, { params }).then(res => {
-        let data = res.data.data.result
-        this.statisticsActiveAttackData = data
-        if (!this.$_.isEmpty(data)) {
-          const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
-          let detectionChart = echarts.getInstanceByDom(chartDom)
-          if (detectionChart) {
-            echarts.dispose(detectionChart)
-          }
-          detectionChart = echarts.init(chartDom)
-          this.chartInit.push(shallowRef(detectionChart))
-          const option = this.$_.cloneDeep(activeAttackBar)
-          data.sort(reverseSortBy('count'))
-          data = data.slice(0, 5)
-          option.series[0].data = data.map(d => {
-            return [d.count, d.name, d.entityType]
-          }).reverse()
-          detectionChart.setOption(option)
-          extensionEchartY(detectionChart)// y轴标签过长时，鼠标悬浮，显示所有内容
-
-          const vm = this
-          detectionChart.off('click')
-          detectionChart.on('click', e => {
-            const entityType = e.data[2]
-            let column = ''
-            if (entityType) {
-              switch (entityType) {
-                case 'app': {
-                  column = 'app_name'
-                  break
-                }
-                case 'domain': {
-                  column = 'domain'
-                  break
-                }
-                case 'ip': {
-                  column = 'server_ip'
-                  break
-                }
-                default: {
-                  break
-                }
-              }
-              if (column) {
-                // 点击的name和上次的name一致，则清空该项条件
-                if (vm.oldActiveEntitySearchValue === e.data[1]) {
-                  vm.$refs.search.changeParams({ column: column, oldValue: [vm.oldActiveEntitySearchValue], newValue: [] })
-                  vm.$nextTick(() => {
-                    vm.oldActiveEntitySearchValue = ''
-                  })
-                } else {
-                  vm.$refs.search.changeParams({ column: column, oldValue: vm.oldActiveEntitySearchValue ? [vm.oldActiveEntitySearchValue] : [], newValue: [e.data[1]] })
-                  vm.$nextTick(() => {
-                    vm.oldActiveEntitySearchValue = e.data[1]
-                  })
-                }
-              }
-            }
-          })
-        }
-      }).catch(error => {
-        console.error(error)
       })
     },
     triggerFilterDataValue (array, value) {
@@ -698,16 +524,17 @@ export default {
         endTime: getSecond(this.timeFilter.endTime),
         resource: q,
         pageSize: this.pageObj.pageSize,
-        pageNo: this.pageObj.pageNo
+        pageNo: this.pageObj.pageNo,
+        isGroup: this.eventFlag === detectionEventType.single ? 0 : 1
       }
-      axios.get(api.detection[this.pageType].securityList, { params }).then(response => {
+      axios.get(api.detection.event.list, { params }).then(response => {
         if (response.status === 200) {
           const data = response.data.data.result
           if (data.length > 0) {
-            data.forEach(item => {
-              item.eventInfoObj = JSON.parse(item.eventInfo)
-              item.startTime = parseFloat(item.startTime)
-            })
+            // data.forEach(item => {
+            //   item.eventInfoObj = JSON.parse(item.eventInfo)
+            //   item.startTime = parseFloat(item.startTime)
+            // })
             this.listData = data
           } else {
             this.listData = []
@@ -718,7 +545,9 @@ export default {
           this.$message.error(response.data.message)
         }
       })
-      axios.get(api.detection[this.pageType].securityCount, { params }).then(res => {
+      delete params.pageSize
+      delete params.pageNo
+      axios.get(api.detection.event.count, { params }).then(res => {
         this.pageObj.total = parseInt(this.$_.get(res, 'data.data.result', 0))
       }).catch(error => {
         console.error(error)
@@ -800,10 +629,7 @@ export default {
       this.queryList(this.q)
     },
     resetFilterData () {
-      this.filterData.securityEvent.forEach(d => {
-        d.data = []
-      })
-      this.filterData.performanceEvent.forEach(d => {
+      this.filterData.forEach(d => {
         d.data = []
       })
     },
@@ -814,16 +640,12 @@ export default {
         endTime: getSecond(this.timeFilter.endTime),
         resource: q
       }
-      this.initStatusData(params)
-      this.initEventSeverityTrendData(params)
-      this.initEventSeverityData(params)
-      if (this.pageType === detectionPageType.securityEvent) {
-        this.initOffenderIpData(params)
-        this.initVictimIpData(params)
-        this.initSecurityTypeData(params)
-      } else if (this.pageType === detectionPageType.performanceEvent) {
-        this.initActiveEntity(params)
-        this.initEventTypeData(params)
+      this.initTimeDistribution(params) // 顶部柱状图
+      this.initEventTypeData(params) // 左侧filter的eventType，右侧的第一个饼图
+      this.initEventNameData(params) // 左侧filter的eventName，右侧的第二个饼图
+      this.initKeyData(params) // 左侧filter的key，右侧的横向柱状图
+      if (this.eventFlag === detectionEventType.single) {
+        this.initStatusData(params) // 左侧filter的status，在聚合事件下不显示
       }
     },
     pageSize (val) {
@@ -891,20 +713,20 @@ export default {
       if (params.resource) {
         let obj
         if (index === 0) {
-          obj = this.filterData[this.pageType][index].data.find(d => params.resource.indexOf(d.value) > -1 && params.resource.indexOf('status') > -1)
+          obj = this.filterData[index].data.find(d => params.resource.indexOf(d.value) > -1 && params.resource.indexOf('status') > -1)
         } else {
-          obj = this.filterData[this.pageType][index].data.find(d => params.resource.indexOf(d.value) > -1)
+          obj = this.filterData[index].data.find(d => params.resource.indexOf(d.value) > -1)
         }
         if (obj) {
-          this.filterData[this.pageType][index].value = [obj.value]
-          this.filterData[this.pageType][index].flag = true
+          this.filterData[index].value = [obj.value]
+          this.filterData[index].flag = true
         } else {
-          this.filterData[this.pageType][index].value = []
-          this.filterData[this.pageType][index].flag = true
+          this.filterData[index].value = []
+          this.filterData[index].flag = true
         }
       } else {
-        this.filterData[this.pageType][index].value = []
-        this.filterData[this.pageType][index].flag = true
+        this.filterData[index].value = []
+        this.filterData[index].flag = true
       }
     },
     getFilter (name, topColumn) {
@@ -915,6 +737,17 @@ export default {
           value: name
         }
         this.$refs.search.changeParams([params])
+      } else if (topColumn === 'keyFields') {
+        const nameList = name.split(',')
+        const columnList = this.filterData[2].topColumn.split(',')
+        nameList.forEach((item, index) => {
+          const params = {
+            column: columnList[index],
+            operator: '=',
+            value: item
+          }
+          this.$refs.search.changeParams([params])
+        })
       } else {
         const params = {
           column: topColumn,
@@ -926,6 +759,17 @@ export default {
       this.$nextTick(() => {
         this.emitter.emit('advanced-search')
       })
+    },
+    clickEventFlag (e) {
+      this.eventFlag = e
+      const { query } = this.$route
+      const newUrl = urlParamsHandler(window.location.href, query, {
+        eventFlag: e
+      })
+      overwriteUrl(newUrl)
+      this.filterData[3].show = e === detectionEventType.single
+      this.queryFilter(this.q)
+      this.queryList(this.q)
     }
   },
   mounted () {
@@ -945,6 +789,7 @@ export default {
     }
     const parser = new Parser(schemaDetectionSecurity)
     q = parser.conversionEnum(q)
+    this.q = q
     this.queryFilter(q)
     if (this.initFlag) {
       this.timer = setTimeout(() => {
@@ -1039,6 +884,7 @@ export default {
       overwriteUrl(newUrl)
     }
     const pageType = path.replace('/detection/', '')
+    const eventFlag = ref(query.eventFlag || detectionEventType.single)
     // 获取url携带的range、startTime、endTime
     const rangeParam = query.range
     const startTimeParam = query.startTime
@@ -1049,12 +895,15 @@ export default {
     if (!startTimeParam || !endTimeParam) {
       const { startTime, endTime } = getNowTime(dateRangeValue)
       timeFilter.value.startTime = getSecond(startTime)
+      // todo 目前有数据的时间，开发时切换过来
+      // timeFilter.value.startTime = 1722928331
       timeFilter.value.endTime = getSecond(endTime)
       // 如果没有时间参数，就将参数写入url
       const newUrl = urlParamsHandler(window.location.href, useRoute().query, { startTime: timeFilter.value.startTime, endTime: timeFilter.value.endTime, range: dateRangeValue })
       overwriteUrl(newUrl)
     } else {
-      timeFilter.value.startTime = parseInt(startTimeParam)
+      // timeFilter.value.startTime = parseInt(startTimeParam)
+      timeFilter.value.startTime = 1722928331
       timeFilter.value.endTime = parseInt(endTimeParam)
     }
     const pageObj = ref({
@@ -1067,7 +916,8 @@ export default {
     return {
       timeFilter,
       pageType,
-      pageObj
+      pageObj,
+      eventFlag
     }
   }
 }

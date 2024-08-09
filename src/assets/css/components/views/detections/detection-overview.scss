@@ -58,6 +58,11 @@ $color-regular: var(--el-text-color-regular);
         width: 80px;
       }
 
+      .row__content__charts {
+        width: 600px;
+        height: 220px;
+      }
+
       .row__content--metric {
         display: flex;
         flex-wrap: nowrap;
@@ -114,7 +119,19 @@ $color-regular: var(--el-text-color-regular);
       .row__content1 {
         display: block;
         padding-right: 50px;
+
+        .charts__visual__map {
+          width: 490px;
+          height: 32px;
+          margin: 12px 0 10px 60px;
+          background: linear-gradient(to right, #d7c668, #ffdd4a, #ffb65a, #ff9a79, #d84c4c);
+        }
       }
+    }
+
+    .overview__row__display {
+      display: flex;
+      flex-direction: column;
     }
   }
 }

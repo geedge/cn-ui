@@ -12,6 +12,38 @@
     width: 100%;
   }
 
+  .detections__search {
+    display: flex;
+
+    .detections__search__btns {
+      width: 80px;
+      height: 40px;
+      border: 1px solid var(--el-border-color-light);
+      margin-right: 10px;
+      border-radius: 2px;
+      display: flex;
+
+      div {
+        width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--el-fill-color);
+        cursor: pointer;
+
+        i {
+          color: var(--el-text-color-primary);
+        }
+      }
+      .active__btn {
+        i {
+          color: var(--el-color-primary) !important;
+        }
+        background-color: var(--el-bg-color) !important;
+      }
+    }
+  }
+
   .detections__container {
     display: flex;
     flex-direction: column;

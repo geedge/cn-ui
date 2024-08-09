@@ -147,6 +147,272 @@ if (openMock) {
       data: data
     }
   })
+  Mock.mock(new RegExp(urlAndVersion + '/detection/event/keyFields/statistics.*'), 'get', function (requestObj) {
+    const data = {
+      resultType: 'table',
+      result: [
+        { key: '192.168.1.1, test.com', count: 25 },
+        { key: 'baidu.com,app', count: 23 },
+        { key: '192.168.2.33, app', count: 15 },
+        { key: '192.168.8.8, test.com', count: 12 },
+        { key: 'baidu.com, test.com', count: 8 },
+        { key: '192.168.1.101, test.cn', count: 5 },
+        { key: 'jd.com, app', count: 25 }
+      ]
+    }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: data
+    }
+  })
+  Mock.mock(new RegExp(urlAndVersion + '/detection/event/list.*'), 'get', function (requestObj) {
+    const data = {
+      resultType: 'table',
+      result: [
+        {
+          eventId: 1212,
+          eventType: 'Anonymity',
+          eventName: 'Tor',
+          matchIds: '1, 2',
+          keyFields: 'ip, domain',
+          keyValues: '192.168.1.1, test.com',
+          ruleId: 2,
+          ruleVersion: '1',
+          ruleType: 'indicator_match',
+          isBuiltin: 1,
+          status: 1,
+          startTime: 1697092617,
+          endTime: 1697092777,
+          durationS: 30
+        },
+        {
+          eventId: 1213,
+          eventType: 'Anonymity',
+          eventName: 'Tor',
+          matchIds: '3, 4',
+          keyFields: 'ip, domain',
+          keyValues: '192.168.1.1, test.com',
+          ruleId: 3,
+          ruleVersion: '1',
+          ruleType: 'threshold',
+          isBuiltin: 1,
+          status: 1,
+          startTime: 1697092617,
+          endTime: 1697092777,
+          durationS: 30
+        },
+        {
+          eventId: 1214,
+          eventType: 'Anonymity',
+          eventName: 'Tor',
+          matchIds: '5, 6',
+          keyFields: 'ip, domain',
+          keyValues: '192.168.1.1, test.com',
+          ruleId: 3,
+          ruleVersion: '1',
+          ruleType: 'sequence/unordered_sequence',
+          isBuiltin: 1,
+          status: 0,
+          startTime: 1697092617,
+          endTime: 1697092777,
+          durationS: 30
+        }
+      ]
+    }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: data
+    }
+  })
+  Mock.mock(new RegExp(urlAndVersion + '/detection/event/name/statistics.*'), 'get', function (requestObj) {
+    const data = {
+      resultType: 'table',
+      result: [
+        {
+          eventName: 'event1',
+          count: 25
+        },
+        {
+          eventName: 'event2',
+          count: 23
+        },
+        {
+          eventName: 'event3',
+          count: 15
+        },
+        {
+          eventName: 'event4',
+          count: 12
+        }
+      ]
+    }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: data
+    }
+  })
+  Mock.mock(new RegExp(urlAndVersion + '/detection/event/count.*'), 'get', function (requestObj) {
+    const data = {
+      resultType: 'single',
+      result: 3
+    }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: data
+    }
+  })
+  Mock.mock(new RegExp(urlAndVersion + '/detection/security/event/timedistribution.*'), 'get', function (requestObj) {
+    const data = {
+      resultType: 'table',
+      result: [
+        {
+          statTime: 1722565322,
+          severity: 'critical',
+          count: 25
+        },
+        {
+          statTime: 1722565502,
+          severity: 'info',
+          count: 25
+        },
+        {
+          statTime: 1722566702,
+          severity: 'critical',
+          count: 25
+        },
+        {
+          statTime: 1722568322,
+          severity: 'critical',
+          count: 25
+        }
+      ]
+    }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: data
+    }
+  })
+  Mock.mock(new RegExp(urlAndVersion + '/detection/security/event/detail.*'), 'get', function (requestObj) {
+    const data = {
+      eventIds: [1, 2, 3, 4, 5],
+      indicatorMatchs: [],
+      thresholdMatchs: [
+        {
+          matchId: 2,
+          ruleId: 2,
+          ruleType: 'threshold',
+          eventType: 'Command and Control',
+          eventName: 'event2',
+          severity: 'high',
+          keyFields: 'domain',
+          keyValues: 'test.com',
+          thresholdNum: 3,
+          recordsNum: 5,
+          reset: 60,
+          startTime: 169780543432,
+          endTime: 169790486213
+        }
+      ],
+      sequenceMatchs: [
+        {
+          matchId: 3,
+          ruleId: 3,
+          ruleType: 'sequence/unordered_sequence',
+          eventType: 'Command and Control',
+          eventName: 'event3',
+          severity: 'low',
+          eventInfo: '[{"stage_id":"A","recv_time":10000000,"client_ip":"192.168.1.1"},{"stage_id":"B","recv_time":10000001,"client_ip":"192.168.1.2",...}]'
+        }
+      ]
+    }
+    const indicatorMatchObj = {
+      matchId: 1,
+      ruleId: 1,
+      ruleType: 'indicator_match',
+      eventType: 'Anonymity',
+      eventName: 'event1',
+      severity: 'critical',
+      matchNum: 20,
+      indicatorFields: 'ip,domain',
+      indicatorValues: '192.168.1.1,test.com',
+      reset: 60,
+      clientIp: '192.168.1.1',
+      client_country_region: 'china',
+      client_super_admin_area: 'beijing',
+      client_admin_area: 'beijing',
+      client_longitude: '116.30',
+      client_latitude: '40.50',
+      serverIp: '192.168.1.2',
+      server_country_region: 'china',
+      server_super_admin_area: 'beijing',
+      server_admin_area: 'beijing',
+      server_longitude: '116.30',
+      server_latitude: '40.50',
+      domain: 'test.com',
+      app: 'test',
+      matchTime: 1722503700000
+    }
+
+    for (let i = 0; i < 10; i++) {
+      data.indicatorMatchs.push(JSON.parse(JSON.stringify(indicatorMatchObj)))
+      indicatorMatchObj.matchId += 1
+      indicatorMatchObj.ruleId += 2
+      indicatorMatchObj.matchTime += 900000
+      indicatorMatchObj.matchNum = Math.floor((Math.random() * 100) + 1)
+    }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: data
+    }
+  })
+  Mock.mock(new RegExp(urlAndVersion + '/detection/event/status/statistics.*'), 'get', function (requestObj) {
+    const data = {
+      resultType: 'table',
+      result: [
+        {
+          status: 1,
+          count: 25
+        },
+        {
+          status: 0,
+          count: 23
+        }
+      ]
+    }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: data
+    }
+  })
+  Mock.mock(new RegExp(urlAndVersion + '/detection/event/type/statistics.*'), 'get', function (requestObj) {
+    const data = {
+      resultType: 'table',
+      result: [
+        { eventType: 'Anonymity', count: 25 },
+        { eventType: 'Command and Control', count: 13 }
+      ]
+    }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: data
+    }
+  })
 }
 
 const getLastValue = (url) => {

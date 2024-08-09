@@ -176,6 +176,17 @@ export const api = {
     create: {
       topKeys: apiVersion + '/detection/topKeys', // topKeys列表
       create: apiVersion + '/rule/detection'
+    },
+    event: {
+      keyStatistics: apiVersion + '/detection/event/keyFields/statistics', // 事件key统计
+      nameStatistics: apiVersion + '/detection/event/name/statistics', // 事件名称统计
+      statusStatistics: apiVersion + '/detection/event/status/statistics', // 状态统计
+      typeStatistics: apiVersion + '/detection/event/type/statistics', // 事件类型统计
+      list: apiVersion + '/detection/event/list', // 事件列表
+      count: apiVersion + '/detection/event/count', // 事件总数
+      timeDistribution: apiVersion + '/detection/event/timedistribution', // 事件等级分布
+      detail: apiVersion + '/detection/event/detail', // 事件详情
+      detailTimeDistribution: apiVersion + '/detection/event/detail/timedistribution' // 事件详情分布统计
     }
   },
   // Dashboard

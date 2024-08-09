@@ -9,51 +9,23 @@
       </div>
     </div>
     <div class="cn-detection__case">
-      <div class="cn-detection__icon" :style="`background-color: ${eventSeverityColor[detection.severity]}`"></div>
       <div class="cn-detection__row">
-        <div class="cn-detection__header" v-if="pageType === detectionPageType.securityEvent">
-          <span
-              class="detection-event-severity-color-block"
-              :style="`background-color: ${eventSeverityColor[detection.eventSeverity]}`">
-          </span>
-          <span class="detection-event-severity-block">{{ detection.eventName || '-' }}</span>
-          <i class="cn-icon cn-icon-attacker detection-list-icon" ></i>{{detection.offenderIp || '-'}}
-          <div v-if="detection.domain" class="domain">{{detection.domain}}</div>
-          <span class="line">-------</span>
-          <span class="circle"></span>
-          <i class="cn-icon cn-icon-attacked detection-list-icon" ></i>{{detection.victimIp || '-'}}
+        <div class="cn-detection__header">
+          <span class="detection-event-severity-block" style="margin-left: 16px;">{{ detection.eventName || '-' }}</span>
+          <div v-for="(item, index) in myDetection.keyList" :key="index">
+            <span class="detection-event-name">{{item.key}}</span>
+            <span class="detection-event-key">({{ item.type }})</span>
+            <span v-if="index < myDetection.keyList.length - 1" class="detection-event-line"></span>
+          </div>
         </div>
-        <div class="cn-detection__header" v-else-if="pageType === detectionPageType.performanceEvent">
-          <div class="cn-entity__icon"><i :class="iconClass"></i></div>
-          <div style="padding-left: 3px;">{{detection.serverIp || detection.domain || detection.appName || 'Unknown'}}</div>
-        </div>
+
         <div class="cn-detection__body">
           <div class="body__basic-info">
             <div class="basic-info">
-              <div class="basic-info__item" v-if="detection.severity">
-                <i class="cn-icon cn-icon-severity-level"></i>
-                <span>{{$t('detection.list.security')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{changeI18nOfSeverity(detection.severity)}}</span>
-              </div>
-              <div class="basic-info__item" v-if="detection.eventSeverity">
-                <i class="cn-icon cn-icon-severity-level"></i>
-                <span>{{$t('detections.severity')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{detection.eventSeverity || '-'}}</span>
-              </div>
-              <div class="basic-info__item" v-if="detection.eventType">
+              <div class="basic-info__item" style="margin-left: 16px;" v-if="detection.eventType">
                 <i class="cn-icon cn-icon-event-type"></i>
                 <span>{{$t('detections.eventType')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>{{detection.eventType || '-'}}</span>
-              </div>
-              <div class="basic-info__item" v-if="detection.malware">
-                <i class="cn-icon cn-icon-trojan"></i>
-                <span>{{$t('detection.list.malwareName')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{ $_.get(detection, 'malware.malwareName', '-') || '-' }}</span>
-              </div>
-              <div class="basic-info__item" v-if="detection.darkweb">
-                <i class="cn-icon cn-icon-trojan"></i>
-                <span>{{$t('detection.nodeType')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{ $_.get(detection, 'darkweb.nodeType', '-') || '-' }}</span>
               </div>
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-time2"></i>
@@ -61,10 +33,14 @@
                 <span>{{dateFormatByAppearance(detection.startTime) || '-'}}</span>
               </div>
               <div class="basic-info__item">
+                <i class="cn-icon cn-icon-time2"></i>
+                <span>{{$t('detection.list.endTime')}}&nbsp;:&nbsp;&nbsp;</span>
+                <span>{{dateFormatByAppearance(detection.endTime) || '-'}}</span>
+              </div>
+              <div class="basic-info__item">
                 <i class="cn-icon cn-icon-duration"></i>
                 <span>{{$t('overall.duration')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>
-                  {{ detection.matchTimes || '-'}} {{ $t('detection.list.times') }} /
                   {{unitConvert(parseInt(detection.durationS), 'time', 's', null, 0).join(' ') || '-'}}
                 </span>
                 <div v-if="parseInt(detection.status) === 0" class="margin-l-10 detection-row-active">{{$t('detections.active')}}</div>
@@ -76,32 +52,27 @@
       <el-collapse-transition>
         <div class="cn-detection__detail-overview" v-if="!isCollapse">
           <el-divider></el-divider>
-          <detection-security-event-overview
-              v-if="pageType === detectionPageType.securityEvent"
+          <indicator-match-overview
+              v-if="detection.ruleType===detectionRuleType.indicator.key"
               :detection="detection"
               :time-filter="timeFilter"
               :pageObj="pageObj"
-          ></detection-security-event-overview>
-          <template v-else>
-            <detection-performance-event-ip-overview
-                v-if="detection.entityType === entityType.ip.toLowerCase()"
-                :detection="detection"
-                :time-filter="timeFilter"
-                :pageObj="pageObj"
-            ></detection-performance-event-ip-overview>
-            <detection-performance-event-domain-overview
-                v-else-if="detection.entityType === entityType.domain.toLowerCase()"
-                :detection="detection"
-                :time-filter="timeFilter"
-                :pageObj="pageObj"
-            ></detection-performance-event-domain-overview>
-            <detection-performance-event-app-overview
-                v-else-if="detection.entityType === entityType.app.toLowerCase()"
-                :detection="detection"
-                :time-filter="timeFilter"
-                :pageObj="pageObj"
-            ></detection-performance-event-app-overview>
-          </template>
+              :q="q"
+          ></indicator-match-overview>
+          <threshold-overview
+              v-if="detection.ruleType===detectionRuleType.threshold.key"
+              :detection="detection"
+              :time-filter="timeFilter"
+              :pageObj="pageObj"
+              :q="q"
+          ></threshold-overview>
+          <sequence-overview
+              v-if="detection.ruleType===detectionRuleType.sequence.key || detection.ruleType===detectionRuleType.unordered.key"
+              :detection="detection"
+              :time-filter="timeFilter"
+              :pageObj="pageObj"
+              :q="q"
+          ></sequence-overview>
         </div>
       </el-collapse-transition>
     </div>
@@ -109,38 +80,41 @@
 </template>
 
 <script>
-import { eventSeverityColor, detectionPageType, entityType } from '@/utils/constants'
+import { eventSeverityColor, detectionPageType, entityType, detectionRuleType } from '@/utils/constants'
 import { getMillisecond, dateFormatByAppearance } from '@/utils/date-util'
 import unitConvert from '@/utils/unit-convert'
-import DetectionSecurityEventOverview from '@/views/detections/overview/DetectionSecurityEventOverview'
-import DetectionPerformanceEventIpOverview from '@/views/detections/overview/DetectionPerformanceEventIpOverview'
-import DetectionPerformanceEventAppOverview from '@/views/detections/overview/DetectionPerformanceEventAppOverview'
-import DetectionPerformanceEventDomainOverview from '@/views/detections/overview/DetectionPerformanceEventDomainOverview'
 import { overwriteUrl, urlParamsHandler, changeI18nOfSeverity } from '@/utils/tools'
+import IndicatorMatchOverview from '@/views/detections/overview/IndicatorMatchOverview'
+import ThresholdOverview from '@/views/detections/overview/ThresholdOverview'
+import SequenceOverview from '@/views/detections/overview/SequenceOverview'
+
 export default {
   name: 'DetectionRow',
   components: {
-    DetectionSecurityEventOverview,
-    DetectionPerformanceEventIpOverview,
-    DetectionPerformanceEventAppOverview,
-    DetectionPerformanceEventDomainOverview
+    IndicatorMatchOverview,
+    ThresholdOverview,
+    SequenceOverview
   },
   props: {
     index: Number,
     timeFilter: Object,
     detection: Object,
     pageType: String, // 安全事件、服务质量
-    pageObj: Object
+    pageObj: Object,
+    q: String
   },
   data () {
     return {
       entityType,
       detectionPageType,
       isCollapse: true, // 是否是折叠状态, true为折叠，false为展开
-      eventSeverityColor
+      eventSeverityColor,
+      detectionRuleType,
+      myDetection: {}
     }
   },
   mounted () {
+    this.initKeyInfo()
     this.initExpendTab()
   },
   computed: {
@@ -244,6 +218,17 @@ export default {
           this.$emit('switchCollapse', this.isCollapse, this.index)
         }
       }
+    },
+    initKeyInfo () {
+      let keyValues = this.detection.keyValues
+      let keyFields = this.detection.keyFields
+      keyValues = keyValues.split(',')
+      keyFields = keyFields.split(',')
+      const keyList = []
+      keyValues.forEach((item, index) => {
+        keyList.push({ key: item, type: keyFields[index] })
+      })
+      this.myDetection.keyList = keyList
     }
   }
 }
