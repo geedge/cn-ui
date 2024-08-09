@@ -136,8 +136,8 @@ import {
   activeAttackBar,
   getAttackColor,
   getSeverityColor,
-  multipleBarOption,
-  pieForSeverity
+  barOption,
+  pieForSeverity, multipleBarOption
 } from '@/views/detections/options/detectionOptions'
 import { api } from '@/utils/api'
 import axios from 'axios'
@@ -276,68 +276,30 @@ export default {
         const data = res.data.data.result
         this.eventSeverityData = data
         if (!this.$_.isEmpty(data)) {
-          const dataMap = new Map()
-          data.forEach(item => {
-            if (changeI18nOfSeverity(item.severity)) {
-              if (!dataMap.has(changeI18nOfSeverity(item.severity))) {
-                const count = [[getMillisecond(parseFloat(item.statTime)), item.count]]
-                dataMap.set(changeI18nOfSeverity(item.severity), count)
-              } else {
-                dataMap.get(changeI18nOfSeverity(item.severity)).push([getMillisecond(parseFloat(item.statTime)), item.count])
-              }
-            }
-          })
-
+          /* 24.08 去掉了严重程度，只剩数量 */
           // const chartDom = document.getElementById(`eventSeverityTrendBar${this.pageType}`)
           const chartDom = this.$refs.eventSeverityTrendBarsecurityEvent
-          const eventSeverityTrendOption = this.$_.cloneDeep(multipleBarOption)
+          const eventSeverityTrendOption = this.$_.cloneDeep(barOption)
 
-          const key = changeI18nOfSeverity(data[0].severity)
-          const len = dataMap.get(key).length
           // 将时间转为毫秒，并分为100个间隔值，如有100条数据，则不分割，如48不满100，按52分割，保证有数据的时间点不受无数据时间点影响
-          const diffTime = ((params.endTime - params.startTime) * 1000) / (len > 100 ? 100 : (100 - len))
+          const diffTime = ((params.endTime - params.startTime) * 1000) / (data.length > 100 ? 100 : (100 - data.length))
           const timeList = []
           for (let i = (params.startTime * 1000); i < (params.endTime * 1000);) {
             i = i + diffTime
             timeList.push([parseInt(i.toFixed(0)), 0])
           }
+          let dataList = data.map(d => [getMillisecond(parseFloat(d.statTime)), d.count])
           // 将100个时间间隔与柱状图数据合并并排序
-          dataMap.forEach(function (value, index) {
-            value = value.concat(timeList)
-            value.sort((a, b) => a[0] - b[0])
-            dataMap.set(index, value)
-          })
+          dataList = dataList.concat(timeList)
+          dataList.sort((a, b) => a[0] - b[0])
           const xData = []
-          dataMap.forEach(function (value) {
-            // eventSeverityTrendOption.series[Number(getSeriesIndex(key))].data = value.map(v => Number(v[1]))
-            value.forEach(item => {
-              if (xData.indexOf(item[0]) < 0) {
-                xData.push(item[0])
-              }
-            })
+          dataList.forEach(item => {
+            if (xData.indexOf(item[0]) < 0) {
+              xData.push(item[0])
+            }
           })
 
-          eventSeverityTrendOption.series.forEach(serie => {
-            serie.name = changeI18nOfSeverity(serie.name)
-            const seriesData = []
-            xData.forEach(item => {
-              if (dataMap.has(serie.name)) {
-                // eslint-disable-next-line array-callback-return
-                const hasX = dataMap.get(serie.name).some(function (v) {
-                  if (item === v[0]) {
-                    seriesData.push([item, Number(v[1])])
-                    return true
-                  }
-                })
-                if (!hasX) {
-                  seriesData.push([item, 0])
-                }
-              } else {
-                seriesData.push([item, 0])
-              }
-            })
-            serie.data = seriesData
-          })
+          eventSeverityTrendOption.series[0].data = dataList
 
           let detectionChart = echarts.getInstanceByDom(chartDom)
           if (detectionChart) {

@@ -176,6 +176,74 @@ export const multipleBarOption = {
     }
   ]
 }
+export const barOption = {
+  legend: {
+    show: false
+  },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'shadow'
+    }
+  },
+  xAxis: [{
+    type: 'time',
+    axisTick: { show: false },
+    axisLine: {
+      show: true,
+      lineStyle: {
+        color: '#eaedef'
+      }
+    },
+    axisLabel: {
+      formatter: xAxisTimeFormatter,
+      rich: xAxisTimeRich,
+      color: '#737373',
+      interval: 'auto'
+    },
+    splitNumber: 8,
+    splitLine: {
+      show: false
+    }
+  }],
+  yAxis: {
+    axisTick: { show: false },
+    axisLine: {
+      show: true,
+      lineStyle: {
+        color: '#eaedef'
+      }
+    },
+    axisLabel: {
+      color: '#737373'
+    },
+    splitLine: {
+      show: false
+    },
+    minInterval: 1
+  },
+  grid: {
+    top: 30,
+    left: 25,
+    right: 40,
+    bottom: 20,
+    containLabel: true
+  },
+  series: [
+    {
+      name: 'event',
+      type: 'bar',
+      emphasis: {
+        focus: 'none'
+      },
+      barWidth: 15,
+      seriesLayoutBy: 'row',
+      itemStyle: {
+        color: '#43a3cf'
+      }
+    }
+  ]
+}
 export const pieForSeverity = {
   tooltip: {
     appendToBody: true
