@@ -13,7 +13,7 @@
             :api="url"
     >
       <template #top-tool-left>
-        <button id="cancleFollows" class="business-button business-button--light margin-r-10" style="width:fit-content;"
+        <button id="cancleFollows" class="business-button business-button--light margin-r-10" 
                 :disabled="disableCancle" @click="cancleFollowBatch">
           <span>{{ $t('location.cancleFollow') }}</span>
         </button>
