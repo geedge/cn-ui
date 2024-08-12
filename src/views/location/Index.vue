@@ -280,7 +280,7 @@
         <div class="header__content">
           <template v-if="tooltip.type === tooltipType.hexagon">{{currentPolygon.hexId}}</template>
           <template v-else-if="tooltip.type === tooltipType.human">{{currentSubscriber.phoneNumber || '-'}}</template>
-          <template v-else-if="tooltip.type === tooltipType.baseStation">0xxa8805</template>
+          <template v-else-if="tooltip.type === tooltipType.baseStation">{{currentBaseStation.cid}}</template>
         </div>
       </div>
       <div class="hexagon-tooltip__body">
@@ -328,19 +328,19 @@
         <template v-else-if="tooltip.type === tooltipType.baseStation">
           <div class="body__item">
             <div class="item__label">{{ $t('location.locationAreaCode') }}</div>
-            <div class="item__value">12</div>
+            <div class="item__value">{{currentBaseStation.areaCode}}</div>
           </div>
           <div class="body__item">
             <div class="item__label">{{ $t('location.mobileNetworkCode') }}</div>
-            <div class="item__value">1</div>
+            <div class="item__value">{{currentBaseStation.networkCode}}</div>
           </div>
           <div class="body__item">
             <div class="item__label">{{ $t('location.communicationType') }}</div>
-            <div class="item__value">4G</div>
+            <div class="item__value">{{currentBaseStation.communicationType}}</div>
           </div>
           <div class="body__item">
             <div class="item__label">{{$t('overall.location')}}</div>
-            <div class="item__value">China, Shanghai</div>
+            <div class="item__value">{{currentBaseStation.location}}</div>
           </div>
         </template>
       </div>
@@ -632,28 +632,58 @@ export default {
         // const response = await axios.get(api.location.baseStation)
         const response = [
           {
+            cid: '000448',
             longitude: 116.38,
-            latitude: 39.9
+            latitude: 39.9,
+            areaCode: 100001,
+            networkCode: 1885,
+            communicationType: '5G',
+            location: 'China, Beijing'
           },
           {
+            cid: '000051',
             longitude: 116.39,
-            latitude: 39.9
+            latitude: 39.9,
+            areaCode: 100004,
+            networkCode: 1885,
+            communicationType: '5G',
+            location: 'China, Beijing'
           },
           {
+            cid: '000079',
             longitude: 116.383,
-            latitude: 39.886
+            latitude: 39.886,
+            areaCode: 100002,
+            networkCode: 1885,
+            communicationType: '5G',
+            location: 'China, Beijing'
           },
           {
+            cid: '000080',
             longitude: 116.378,
-            latitude: 39.902
+            latitude: 39.902,
+            areaCode: 100003,
+            networkCode: 1885,
+            communicationType: '5G',
+            location: 'China, Beijing'
           },
           {
+            cid: '006605',
             longitude: 116.369,
-            latitude: 39.91
+            latitude: 39.91,
+            areaCode: 100027,
+            networkCode: 1885,
+            communicationType: '4G',
+            location: 'China, Beijing'
           },
           {
+            cid: '006606',
             longitude: 116.38,
-            latitude: 39.91
+            latitude: 39.91,
+            areaCode: 100005,
+            networkCode: 1885,
+            communicationType: '4G',
+            location: 'China, Beijing'
           }
         ]
         return response // response.data.data.list
