@@ -46,7 +46,7 @@ export default {
             this.timeData = res.data.data.result
           }
         }).catch(e => {
-          //
+          this.$message.error(this.errorMsgHandler(e))
         })
       } else {
         this.isGroup = 0
@@ -56,8 +56,8 @@ export default {
         this.myChart.dispose()
       }
       const params = {
-        startTime: this.timeFilter.startTime,
-        endTime: this.timeFilter.endTime,
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
         eventId: this.detection.eventId,
         ruleType: this.detection.ruleType,
         resource: this.q,
@@ -76,12 +76,14 @@ export default {
             this.myChart.setOption(this.lineOption)
           } else {
             const detailData = res.data.data.result.pop()
-            if (detailData.eventInfo) {
+            if (detailData?.eventInfo) {
               detailData.eventInfoList = JSON.parse(detailData.eventInfo)
             }
-            this.myDetection = detailData
+            this.myDetection = { ...detailData, ...this.detection }
           }
         }
+      }).catch(e => {
+        this.$message.error(this.errorMsgHandler(e))
       })
     },
     changeTimeline (e) {
@@ -99,8 +101,10 @@ export default {
           if (detailData.eventInfo) {
             detailData.eventInfoList = JSON.parse(detailData.eventInfo)
           }
-          this.myDetection = detailData
+          this.myDetection = { ...this.myDetection, ...detailData }
         }
+      }).catch(e => {
+        this.$message.error(this.errorMsgHandler(e))
       })
     }
   }

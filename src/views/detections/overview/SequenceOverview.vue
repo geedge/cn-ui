@@ -40,7 +40,7 @@
       </div>
 
       <div v-if="eventFlag===detectionEventType.aggregation">
-        <div class="overview__title" style="margin: 10px 0;">{{ $t('detection.timeOfOccurrences') }}</div>
+        <div class="overview__title overview__title__margin">{{ $t('detection.timeOfOccurrences') }}</div>
         <div class="overview__row">
           <div class="row__content1">
             <events-timeline :timeFilter="timeFilter" :timeData="timeData" @change="changeTimeline"></events-timeline>

@@ -35,6 +35,11 @@ $color-regular: var(--el-text-color-regular);
       }
     }
 
+    .overview__title__margin {
+      margin: 10px 0;
+    }
+
+
     .overview__row {
       display: flex;
       flex-direction: row;
