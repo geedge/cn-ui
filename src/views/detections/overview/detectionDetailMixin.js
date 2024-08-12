@@ -2,7 +2,7 @@ import { detectionEventType, detectionRuleType } from '@/utils/constants'
 import { getMillisecond, getSecond } from '@/utils/date-util'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { getSeverityColor, lineOption } from '@/views/detections/options/detectionOptions'
+import { getSeverityNumberColor, lineOption } from '@/views/detections/options/detectionOptions'
 import { markRaw } from 'vue'
 import * as echarts from 'echarts'
 
@@ -73,7 +73,7 @@ export default {
               seriesData.push([getMillisecond(JSON.parse(item.statTime)), item.recordsNums])
             })
             this.lineOption.series[0].data = seriesData
-            this.lineOption.series[0].color = getSeverityColor(res.data.data.result[0].severity) || '#ff9a79'
+            this.lineOption.series[0].color = getSeverityNumberColor(res.data.data.result[0].severity) || '#ff9a79'
 
             this.seriesDataNum = seriesData.length
             if (this.seriesDataNum <= 1) {

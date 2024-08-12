@@ -30,10 +30,10 @@
         <div class="row__label">{{ $t('npm.clientLocation') }}</div>
         <div class="row__content">
           <div>
-            <img v-if="myDetection.client_country_region===countryNameIdMapping.Unknown || !countryNameIdMapping[myDetection.client_country_region]" src="../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
-            <img v-else :src="require(`../../../../public/images/flag/${countryNameIdMapping[myDetection.client_country_region]}.png`)" class="filter-country-flag" >
+            <img v-if="myDetection.clientCountryRegion===countryNameIdMapping.Unknown || !countryNameIdMapping[myDetection.clientCountryRegion]" src="../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
+            <img v-else :src="require(`../../../../public/images/flag/${countryNameIdMapping[myDetection.clientCountryRegion]}.png`)" class="filter-country-flag" >
           </div>
-          {{ myDetection.client_country_region || '-' }}, {{ myDetection.client_super_admin_area || '-' }}
+          {{ myDetection.clientCountryRegion || '-' }}, {{ myDetection.clientSuperAdminArea || '-' }}
         </div>
       </div>
       <div class="overview__row">
@@ -44,10 +44,10 @@
         <div class="row__label">{{ $t('detection.detail.serverLocation') }}</div>
         <div class="row__content">
           <div>
-            <img v-if="myDetection.server_country_region===countryNameIdMapping.Unknown || !countryNameIdMapping[myDetection.server_country_region]" src="../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
-            <img v-else :src="require(`../../../../public/images/flag/${countryNameIdMapping[myDetection.server_country_region]}.png`)" class="filter-country-flag" >
+            <img v-if="myDetection.serverCountryRegion===countryNameIdMapping.Unknown || !countryNameIdMapping[myDetection.serverCountryRegion]" src="../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
+            <img v-else :src="require(`../../../../public/images/flag/${countryNameIdMapping[myDetection.serverCountryRegion]}.png`)" class="filter-country-flag" >
           </div>
-          {{ myDetection.server_country_region || '-' }}, {{ myDetection.server_super_admin_area || '-' }}
+          {{ myDetection.serverCountryRegion || '-' }}, {{ myDetection.serverSuperAdminArea || '-' }}
         </div>
       </div>
       <div class="overview__row">

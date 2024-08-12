@@ -41,9 +41,21 @@ const severityColorMappings = [
   { value: 'low', color: '#ffdd4a' },
   { value: 'info', color: '#d7c668' }
 ]
+const severityNumberColorMappings = [
+  { value: 5, color: '#d84c4c' },
+  { value: 4, color: '#ff9a79' },
+  { value: 3, color: '#ffb65a' },
+  { value: 2, color: '#ffdd4a' },
+  { value: 1, color: '#d7c668' }
+]
 
 export function getSeverityColor (type) {
   const mapping = severityColorMappings.find(m => m.value === type)
+  return mapping && mapping.color ? _.cloneDeep(mapping.color) : null
+}
+
+export function getSeverityNumberColor (type) {
+  const mapping = severityNumberColorMappings.find(m => m.value === type)
   return mapping && mapping.color ? _.cloneDeep(mapping.color) : null
 }
 
