@@ -6,6 +6,9 @@
   &>div {
     height: 100%;
   }
+  &:focus-visible {
+    outline: none;
+  }
   overflow-y: auto;
 }
 
