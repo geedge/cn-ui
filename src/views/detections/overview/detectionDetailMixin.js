@@ -2,7 +2,7 @@ import { detectionEventType, detectionRuleType } from '@/utils/constants'
 import { getMillisecond, getSecond } from '@/utils/date-util'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { lineOption } from '@/views/detections/options/detectionOptions'
+import { getSeverityColor, lineOption } from '@/views/detections/options/detectionOptions'
 import { markRaw } from 'vue'
 import * as echarts from 'echarts'
 
@@ -21,7 +21,8 @@ export default {
       timeData: [],
       isGroup: 0,
       myChart: null,
-      lineOption: lineOption
+      lineOption: lineOption,
+      seriesDataNum: 0
     }
   },
   mounted () {
@@ -72,6 +73,16 @@ export default {
               seriesData.push([getMillisecond(JSON.parse(item.statTime)), item.recordsNums])
             })
             this.lineOption.series[0].data = seriesData
+            this.lineOption.series[0].color = getSeverityColor(res.data.data.result[0].severity) || '#ff9a79'
+
+            this.seriesDataNum = seriesData.length
+            if (this.seriesDataNum <= 1) {
+              this.lineOption.series[0].symbol = 'circle'
+              this.lineOption.series[0].symbolSize = 9
+            } else {
+              this.lineOption.series[0].symbol = 'none'
+            }
+
             this.myChart = markRaw(echarts.init(document.getElementById('myChart' + this.detection.eventId)))
             this.myChart.setOption(this.lineOption)
           } else {

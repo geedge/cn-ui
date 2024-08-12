@@ -467,7 +467,7 @@ export const lineOption = {
     }
   },
   yAxis: {
-    max: 100
+    // max: 100
   },
   grid: {
     top: '12px',
@@ -482,5 +482,8 @@ export const lineOption = {
       color: '#ff9a79',
       symbol: 'none'
     }
-  ]
+  ],
+  tooltip: {
+    trigger: 'axis'
+  }
 }

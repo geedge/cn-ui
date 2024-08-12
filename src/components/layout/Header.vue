@@ -500,12 +500,15 @@ export default {
     generateBreadcrumb (breadcrumb, menus, tab) {
       const menu = menus.find(m => m.route === this.route)
       if (menu) {
-        breadcrumb.unshift({
-          code: menu.code,
-          value: menu.i18n ? this.$t(menu.i18n) : menu.name,
-          route: menu.route,
-          type: menu.type
-        })
+        if (menu.code !== 'securityEvents') {
+          breadcrumb.unshift({
+            code: menu.code,
+            value: menu.i18n ? this.$t(menu.i18n) : menu.name,
+            route: menu.route,
+            type: menu.type
+          })
+        }
+
         return true
       } else {
         for (let i = 0; i < menus.length; i++) {

@@ -12,7 +12,7 @@
         <div class="row__content1">
           <div class="row__content__charts" :id="`myChart${detection.eventId}`"></div>
         </div>
-        <div class="row__content1">
+        <div class="row__content1" v-if="seriesDataNum>1">
           <div class="charts__visual__map"></div>
         </div>
       </div>

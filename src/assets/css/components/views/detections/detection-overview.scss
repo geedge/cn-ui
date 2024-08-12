@@ -57,6 +57,9 @@ $color-regular: var(--el-text-color-regular);
         line-height: 14px;
         word-break: normal;
       }
+      .row__label__capitalize {
+        text-transform: capitalize;
+      }
 
       .row__charts {
         height: 20px;

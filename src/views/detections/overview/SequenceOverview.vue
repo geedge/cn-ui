@@ -8,34 +8,20 @@
         </div>
       </div>
 
-      <div class="overview__title">{{ $t('detection.detail.stage') }}1</div>
-      <div class="overview__row">
-        <div class="row__label">Dns_query</div>
-        <div class="row__content">{{ $_.get(myDetection, 'eventInfoList[0].domain', '-') || '-' }}</div>
-      </div>
-      <div class="overview__row">
-        <div class="row__label">Time</div>
-        <div class="row__content">
-          <i class="cn-icon cn-icon-time2 row__content__icon"></i>
-          {{ myDetection.startTime ? dateFormatByAppearance(myDetection.startTime) : '-' }}
+      <div v-for="(obj, index) in myDetection.eventInfoList" :key="obj.stage_id">
+        <div class="overview__title margin-t-18">{{ $t('detection.detail.stage') }}{{ index + 1 }}</div>
+        <div v-for="(item, fields) in obj" :key="fields">
+          <div class="overview__row" v-if="fields !== 'stage_id'">
+            <div class="row__label row__label__capitalize">{{ fields }}</div>
+            <div class="row__content">{{ item || '-' }}</div>
+          </div>
         </div>
-      </div>
-      <div class="overview__title">{{ $t('detection.detail.stage') }}2</div>
-      <div class="overview__row">
-        <div class="row__label">Decoded_as</div>
-        <div class="row__content">{{ $_.get(myDetection, 'eventInfoList[1].client_ip', '-') || '-' }}</div>
-      </div>
-
-      <div class="overview__row">
-        <div class="row__label">APP</div>
-        <div class="row__content">{{ $_.get(myDetection, 'eventInfoList[1].app_transition', '-') || '-' }}</div>
-      </div>
-
-      <div class="overview__row">
-        <div class="row__label">Time</div>
-        <div class="row__content">
-          <i class="cn-icon cn-icon-time2 row__content__icon"></i>
-          {{ myDetection.startTime ? dateFormatByAppearance(myDetection.startTime) : '-' }}
+        <div class="overview__row">
+          <div class="row__label">Time</div>
+          <div class="row__content">
+            <i class="cn-icon cn-icon-time2 row__content__icon"></i>
+            {{ myDetection.startTime ? dateFormatByAppearance(myDetection.startTime) : '-' }}
+          </div>
         </div>
       </div>
 
