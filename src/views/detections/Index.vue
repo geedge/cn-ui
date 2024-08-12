@@ -137,11 +137,11 @@ import {
   getAttackColor,
   getSeverityColor,
   barOption,
-  pieForSeverity, multipleBarOption
+  pieForSeverity
 } from '@/views/detections/options/detectionOptions'
 import { api } from '@/utils/api'
 import axios from 'axios'
-import { urlParamsHandler, overwriteUrl, extensionEchartY, reverseSortBy, changeI18nOfSeverity } from '@/utils/tools'
+import { urlParamsHandler, overwriteUrl, reverseSortBy, changeI18nOfSeverity } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import Loading from '@/components/common/Loading'
 import { useStore } from 'vuex'
@@ -199,7 +199,7 @@ export default {
         {
           title: 'Key',
           column: 'keyFields',
-          topColumn: 'key_fields,key_values',
+          topColumn: 'keyFields,keyValues',
           collapse: false,
           value: [],
           showMore: true,
@@ -441,7 +441,7 @@ export default {
           data.sort(reverseSortBy('count'))
           data = data.slice(0, 5)
           offenderIpOption.series[0].data = data.map(d => {
-            return [d.count, d.keyFields]
+            return [d.count, `${d.keyFields},${d.keyValues}`]
           }).reverse()
           detectionChart.setOption(offenderIpOption)
 
