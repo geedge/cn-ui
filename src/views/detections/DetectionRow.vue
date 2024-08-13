@@ -22,7 +22,7 @@
         <div class="cn-detection__body">
           <div class="body__basic-info">
             <div class="basic-info">
-              <div class="basic-info__item" style="margin-left: 16px;" v-if="detection.eventType">
+              <div class="basic-info__item margin-l" style="margin-left: 16px;" v-if="detection.eventType">
                 <i class="cn-icon cn-icon-event-type"></i>
                 <span>{{$t('detections.eventType')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>{{detection.eventType || '-'}}</span>

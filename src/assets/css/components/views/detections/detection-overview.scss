@@ -142,6 +142,9 @@ $color-regular: var(--el-text-color-regular);
       flex-direction: column;
     }
   }
+  .overview__left-new {
+    flex: 0 0 100%;
+  }
 }
 .overview__row-timeline {
   display: flex;

@@ -249,6 +249,10 @@ $bg-color-page: var(--el-bg-color-page);
             }
           }
 
+          .new__basic-info {
+            padding: 0 16px;
+          }
+
           .show-detail {
             flex-shrink: 0;
             padding: 0 30px;

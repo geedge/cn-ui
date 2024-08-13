@@ -489,6 +489,7 @@ export const lineOption = {
   },
   series: [
     {
+      name: 'event',
       data: [],
       type: 'line',
       color: '#ff9a79',

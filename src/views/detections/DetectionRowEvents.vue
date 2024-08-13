@@ -13,8 +13,8 @@
 
         <div class="cn-detection__body">
           <div class="body__basic-info">
-            <div class="basic-info">
-              <div class="basic-info__item" style="margin-left: 16px;">
+            <div class="basic-info new__basic-info">
+              <div class="basic-info__item">
                 <span v-for="(item, index) in myDetection.keyList" :key="index">
                   <span class="item__key">{{item.key}}</span>
                   <span class="item__key__type">({{ item.type }})</span>

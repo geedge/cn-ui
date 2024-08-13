@@ -1,4 +1,4 @@
-import { detectionEventType, detectionRuleType } from '@/utils/constants'
+import { detectionEventType, detectionRuleType, EN, storageKey, ZH } from '@/utils/constants'
 import { getMillisecond, getSecond } from '@/utils/date-util'
 import axios from 'axios'
 import { api } from '@/utils/api'
@@ -23,6 +23,48 @@ export default {
       myChart: null,
       lineOption: lineOption,
       seriesDataNum: 0
+    }
+  },
+  computed: {
+    // 下拉详情的描述
+    handleDescription () {
+      const language = localStorage.getItem(storageKey.language) || EN
+      const valuesList = this.detection.keyValues.split(',')
+      // const fieldsList = this.detection.keyFields.split(',')
+      // const obj = {}
+      // valuesList.forEach((item, index) => {
+      //   obj[fieldsList[index]] = item
+      // })
+      if (language === EN) {
+        switch (this.detection.ruleType) {
+          case detectionRuleType.indicator.key: {
+            // return `${obj.client_ip} communicated with ${obj.server_ip} that was associated with the indicator of ${obj.server_ip_tags}.`
+            return `<span>${valuesList[0]}</span>  communicated with <span>${valuesList[1]}</span> that was associated with the indicator of <span>${valuesList[2]}</span>.`
+          }
+          case detectionRuleType.threshold.key: {
+            // return `${obj.http_host} experienced exceptions exceeding the threshold number of times.`
+            return `<span>${valuesList[0]}</span> experienced exceptions exceeding the threshold number of times.`
+          }
+          case detectionRuleType.sequence.key:
+          case detectionRuleType.unordered.key: {
+            // return `${obj.client_ip} experienced ${this.detection.eventName} exception event.`
+            return `<span>${valuesList[0]}</span> experienced <span>${this.detection.eventName}</span> exception event.`
+          }
+        }
+      } else if (language === ZH) {
+        switch (this.detection.ruleType) {
+          case detectionRuleType.indicator.key: {
+            return `<span>${valuesList[0]}</span>与<span>${valuesList[1]}</span>进行了通信，后者与<span>${valuesList[2]}</span>的指标相关联。`
+          }
+          case detectionRuleType.threshold.key: {
+            return `<span>${valuesList[0]}</sapn> 发生异常的次数超出阈值。`
+          }
+          case detectionRuleType.sequence.key:
+          case detectionRuleType.unordered.key: {
+            return `<span>${valuesList[0]}</span>发生了<span>${this.detection.eventName}</span>异常事件。`
+          }
+        }
+      }
     }
   },
   mounted () {
@@ -99,8 +141,8 @@ export default {
     },
     changeTimeline (e) {
       const params = {
-        startTime: this.timeFilter.startTime,
-        endTime: this.timeFilter.endTime,
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
         eventId: e,
         ruleType: this.detection.ruleType,
         resource: this.q,

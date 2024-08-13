@@ -1,10 +1,10 @@
 <template>
   <div class="detection-detail-overview">
-    <div class="overview__left">
+    <div class="overview__left overview__left-new">
       <div class="overview__title">{{ $t('overall.remark') }}</div>
       <div class="overview__row">
         <div class="row__content1">
-          ${key} experienced exceptions exceeding the threshold number of times.
+          <div v-html="handleDescription"></div>
         </div>
       </div>
       <div class="overview__title">{{ $t('overall.fields') }}</div>
