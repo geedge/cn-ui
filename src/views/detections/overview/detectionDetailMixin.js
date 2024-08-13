@@ -110,29 +110,35 @@ export default {
         if (res.status === 200) {
           // 类型为Threshold时处理折线图
           if (this.detection.ruleType === detectionRuleType.threshold.key) {
-            const seriesData = []
-            res.data.data.result.forEach(item => {
-              seriesData.push([getMillisecond(JSON.parse(item.statTime)), item.recordsNums])
-            })
-            this.lineOption.series[0].data = seriesData
-            this.lineOption.series[0].color = getSeverityNumberColor(res.data.data.result[0].severity) || '#ff9a79'
+            const data = res.data.data.result
+            if (data && data.length > 0) {
+              const seriesData = []
+              data.forEach(item => {
+                seriesData.push([getMillisecond(JSON.parse(item.statTime)), item.recordsNums])
+              })
+              this.lineOption.series[0].data = seriesData
+              this.lineOption.series[0].color = getSeverityNumberColor(res.data.data.result[0].severity) || '#ff9a79'
 
-            this.seriesDataNum = seriesData.length
-            if (this.seriesDataNum <= 1) {
-              this.lineOption.series[0].symbol = 'circle'
-              this.lineOption.series[0].symbolSize = 9
-            } else {
-              this.lineOption.series[0].symbol = 'none'
+              this.seriesDataNum = seriesData.length
+              if (this.seriesDataNum <= 1) {
+                this.lineOption.series[0].symbol = 'circle'
+                this.lineOption.series[0].symbolSize = 9
+              } else {
+                this.lineOption.series[0].symbol = 'none'
+              }
+
+              this.myChart = markRaw(echarts.init(document.getElementById('myChart' + this.detection.eventId)))
+              this.myChart.setOption(this.lineOption)
             }
-
-            this.myChart = markRaw(echarts.init(document.getElementById('myChart' + this.detection.eventId)))
-            this.myChart.setOption(this.lineOption)
           } else {
-            const detailData = res.data.data.result.pop()
-            if (detailData?.eventInfo) {
-              detailData.eventInfoList = JSON.parse(detailData.eventInfo)
+            const data = res.data.data.result
+            if (data && data.length > 0) {
+              const detailData = res.data.data.result.pop()
+              if (detailData?.eventInfo) {
+                detailData.eventInfoList = JSON.parse(detailData.eventInfo)
+              }
+              this.myDetection = { ...detailData, ...this.detection }
             }
-            this.myDetection = { ...detailData, ...this.detection }
           }
         }
       }).catch(e => {
@@ -150,11 +156,14 @@ export default {
       }
       axios.get(api.detection.event.detail, { params }).then(res => {
         if (res.status === 200) {
-          const detailData = res.data.data.result[0]
-          if (detailData.eventInfo) {
-            detailData.eventInfoList = JSON.parse(detailData.eventInfo)
+          const data = res.data.data.result
+          if (data && data.length > 0) {
+            const detailData = data[0]
+            if (detailData.eventInfo) {
+              detailData.eventInfoList = JSON.parse(detailData.eventInfo)
+            }
+            this.myDetection = { ...this.myDetection, ...detailData }
           }
-          this.myDetection = { ...this.myDetection, ...detailData }
         }
       }).catch(e => {
         this.$message.error(this.errorMsgHandler(e))

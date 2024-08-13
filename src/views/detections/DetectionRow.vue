@@ -11,7 +11,7 @@
     <div class="cn-detection__case">
       <div class="cn-detection__row">
         <div class="cn-detection__header">
-          <span class="detection-event-severity-block" style="margin-left: 16px;">{{ detection.eventName || '-' }}</span>
+          <span class="detection-event-severity-block margin-l-16">{{ detection.eventName || '-' }}</span>
           <div v-for="(item, index) in myDetection.keyList" :key="index">
             <span class="detection-event-name">{{item.key}}</span>
             <span class="detection-event-key">({{ item.type }})</span>
@@ -22,7 +22,7 @@
         <div class="cn-detection__body">
           <div class="body__basic-info">
             <div class="basic-info">
-              <div class="basic-info__item margin-l" style="margin-left: 16px;" v-if="detection.eventType">
+              <div class="basic-info__item margin-l-16" v-if="detection.eventType">
                 <i class="cn-icon cn-icon-event-type"></i>
                 <span>{{$t('detections.eventType')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>{{detection.eventType || '-'}}</span>

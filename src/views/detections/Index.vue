@@ -701,10 +701,24 @@ export default {
         this.$refs.search.changeParams([params])
       } else if (topColumn === 'keyFields') {
         const nameList = name.split(',')
+
+        // 多个keyField、keyValues时进行拆分匹配
+        const mid = Math.ceil(nameList.length / 2)
+        const fieldsList = nameList.slice(0, mid)
+        const valuesList = nameList.slice(mid)
+
         const columnList = this.filterData[2].topColumn.split(',')
-        nameList.forEach((item, index) => {
+        fieldsList.forEach(item => {
           const params = {
-            column: columnList[index],
+            column: columnList[0],
+            operator: '=',
+            value: item
+          }
+          this.$refs.search.changeParams([params])
+        })
+        valuesList.forEach(item => {
+          const params = {
+            column: columnList[1],
             operator: '=',
             value: item
           }
