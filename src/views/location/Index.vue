@@ -638,7 +638,7 @@ export default {
             areaCode: 100001,
             networkCode: 1885,
             communicationType: '5G',
-            location: 'China, Beijing'
+            location: 'China, Beijing, Beijing'
           },
           {
             cid: '000051',
@@ -647,7 +647,7 @@ export default {
             areaCode: 100004,
             networkCode: 1885,
             communicationType: '5G',
-            location: 'China, Beijing'
+            location: 'China, Beijing, Beijing'
           },
           {
             cid: '000079',
@@ -656,7 +656,7 @@ export default {
             areaCode: 100002,
             networkCode: 1885,
             communicationType: '5G',
-            location: 'China, Beijing'
+            location: 'China, Beijing, Beijing'
           },
           {
             cid: '000080',
@@ -665,7 +665,7 @@ export default {
             areaCode: 100003,
             networkCode: 1885,
             communicationType: '5G',
-            location: 'China, Beijing'
+            location: 'China, Beijing, Beijing'
           },
           {
             cid: '006605',
@@ -674,7 +674,7 @@ export default {
             areaCode: 100027,
             networkCode: 1885,
             communicationType: '4G',
-            location: 'China, Beijing'
+            location: 'China, Beijing, Beijing'
           },
           {
             cid: '006606',
@@ -683,7 +683,7 @@ export default {
             areaCode: 100005,
             networkCode: 1885,
             communicationType: '4G',
-            location: 'China, Beijing'
+            location: 'China, Beijing, Beijing'
           }
         ]
         return response // response.data.data.list
