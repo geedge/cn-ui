@@ -194,6 +194,7 @@ export default {
           showMore: false,
           showDisabled: true,
           show: true,
+          showIndex: 5,
           data: []
         },
         {
@@ -335,6 +336,10 @@ export default {
         if (!this.$_.isEmpty(data)) {
           this.filterData[1].data = data.map(r => ({ label: changeI18nOfSeverity(r.eventName), value: r.eventName, count: r.count }))
           this.isCheckFilterByQ(params, 1)
+          const { showMore, showIndex, showDisabled } = this.computeFilterPage(this.filterData[1].data)
+          this.filterData[1].showMore = showMore
+          this.filterData[1].showIndex = showIndex
+          this.filterData[1].showDisabled = showDisabled
           const eventSeverityOption = this.$_.cloneDeep(pieForSeverity)
           eventSeverityOption.series[0].data = data.map(d => {
             return { value: d.count, name: changeI18nOfSeverity(d.eventName), itemStyle: { color: getSeverityColor(d.eventName) } }
