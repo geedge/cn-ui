@@ -422,7 +422,9 @@ export default {
           this.filterData[2].data = data.map(r => ({
             label: `${r.keyFields},${r.keyValues}`,
             value: r.keyFields,
-            count: r.count
+            count: r.count,
+            fields: r.keyFields,
+            values: r.keyValues
           }))
           this.isCheckFilterByQ(params, 2)
           const { showMore, showIndex, showDisabled } = this.computeFilterPage(this.filterData[2].data)
@@ -700,30 +702,28 @@ export default {
         }
         this.$refs.search.changeParams([params])
       } else if (topColumn === 'keyFields') {
-        const nameList = name.split(',')
-
-        // 多个keyField、keyValues时进行拆分匹配
-        const mid = Math.ceil(nameList.length / 2)
-        const fieldsList = nameList.slice(0, mid)
-        const valuesList = nameList.slice(mid)
-
-        const columnList = this.filterData[2].topColumn.split(',')
-        fieldsList.forEach(item => {
-          const params = {
-            column: columnList[0],
-            operator: '=',
-            value: item
+        // 多个keyFields和keyValues不作拆分，逗号分隔的多个keyFields组合为一个字符串，算一个整体搜索
+        const dataList = JSON.parse(JSON.stringify(this.filterData[2].data))
+        const obj = dataList.find(d => d.label === name)
+        if (obj) {
+          const columnList = this.filterData[2].topColumn.split(',')
+          if (obj.fields) {
+            const params = {
+              column: columnList[0],
+              operator: '=',
+              value: obj.fields
+            }
+            this.$refs.search.changeParams([params])
           }
-          this.$refs.search.changeParams([params])
-        })
-        valuesList.forEach(item => {
-          const params = {
-            column: columnList[1],
-            operator: '=',
-            value: item
+          if (obj.values) {
+            const params = {
+              column: columnList[1],
+              operator: '=',
+              value: obj.values
+            }
+            this.$refs.search.changeParams([params])
           }
-          this.$refs.search.changeParams([params])
-        })
+        }
       } else {
         const params = {
           column: topColumn,
