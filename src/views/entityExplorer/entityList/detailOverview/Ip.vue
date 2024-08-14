@@ -6,10 +6,10 @@
         <div class="row__label row__label--width130">{{$t('overall.location')}}</div>
         <div class="row__content">
           <div v-if="entity.location" class="row__content-display">
-            <div v-if="entity.location.country">
+            <span v-if="entity.location.country">
               <img v-if="entity.location.country===countryNameIdMapping.Unknown || !countryNameIdMapping[entity.location.country]" src="../../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
               <img v-else :src="require(`../../../../../public/images/flag/${countryNameIdMapping[entity.location.country]}.png`)" class="filter-country-flag" >
-            </div>
+            </span>
             <span v-high-light="keywordList" class="high-location">{{ ipLocationRegion(entity.location) }}</span>
           </div>
           <div v-else>-</div>

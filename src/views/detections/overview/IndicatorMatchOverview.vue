@@ -27,14 +27,15 @@
         <div class="row__content">{{ myDetection.clientIp || '-' }}</div>
       </div>
       <div class="overview__row">
-        <div class="row__label">{{ $t('npm.clientLocation') }}</div>
-        <div class="row__content">
-          <div>
+        <div class="row__label">{{ $t('detection.clientLocation') }}</div>
+        <div class="row__content" v-if="myDetection.clientCountryRegion">
+          <span>
             <img v-if="myDetection.clientCountryRegion===countryNameIdMapping.Unknown || !countryNameIdMapping[myDetection.clientCountryRegion]" src="../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
             <img v-else :src="require(`../../../../public/images/flag/${countryNameIdMapping[myDetection.clientCountryRegion]}.png`)" class="filter-country-flag" >
-          </div>
+          </span>
           {{ myDetection.clientCountryRegion || '-' }}, {{ myDetection.clientSuperAdminArea || '-' }}
         </div>
+        <div class="row__content" v-else>-</div>
       </div>
       <div class="overview__row">
         <div class="row__label">{{ $t('overall.serverIp') }}</div>
@@ -42,13 +43,14 @@
       </div>
       <div class="overview__row">
         <div class="row__label">{{ $t('detection.detail.serverLocation') }}</div>
-        <div class="row__content">
-          <div>
+        <div class="row__content" v-if="myDetection.serverCountryRegion">
+          <span>
             <img v-if="myDetection.serverCountryRegion===countryNameIdMapping.Unknown || !countryNameIdMapping[myDetection.serverCountryRegion]" src="../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
             <img v-else :src="require(`../../../../public/images/flag/${countryNameIdMapping[myDetection.serverCountryRegion]}.png`)" class="filter-country-flag" >
-          </div>
+          </span>
           {{ myDetection.serverCountryRegion || '-' }}, {{ myDetection.serverSuperAdminArea || '-' }}
         </div>
+        <div class="row__content">-</div>
       </div>
       <div class="overview__row">
         <div class="row__label">{{ $t('detection.detail.indicatorValues') }}</div>

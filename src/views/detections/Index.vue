@@ -871,8 +871,6 @@ export default {
     if (!startTimeParam || !endTimeParam) {
       const { startTime, endTime } = getNowTime(dateRangeValue)
       timeFilter.value.startTime = getSecond(startTime)
-      // todo 目前有数据的时间，开发时切换过来
-      // timeFilter.value.startTime = 1722928331
       timeFilter.value.endTime = getSecond(endTime)
       // 如果没有时间参数，就将参数写入url
       const newUrl = urlParamsHandler(window.location.href, useRoute().query, { startTime: timeFilter.value.startTime, endTime: timeFilter.value.endTime, range: dateRangeValue })
