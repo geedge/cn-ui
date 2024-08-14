@@ -882,8 +882,7 @@ export default {
       const newUrl = urlParamsHandler(window.location.href, useRoute().query, { startTime: timeFilter.value.startTime, endTime: timeFilter.value.endTime, range: dateRangeValue })
       overwriteUrl(newUrl)
     } else {
-      // timeFilter.value.startTime = parseInt(startTimeParam)
-      timeFilter.value.startTime = 1722928331
+      timeFilter.value.startTime = parseInt(startTimeParam)
       timeFilter.value.endTime = parseInt(endTimeParam)
     }
     const pageObj = ref({
