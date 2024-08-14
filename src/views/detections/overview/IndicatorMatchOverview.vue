@@ -28,14 +28,16 @@
       </div>
       <div class="overview__row">
         <div class="row__label">{{ $t('detection.clientLocation') }}</div>
-        <div class="row__content" v-if="myDetection.clientCountryRegion">
-          <span>
-            <img v-if="myDetection.clientCountryRegion===countryNameIdMapping.Unknown || !countryNameIdMapping[myDetection.clientCountryRegion]" src="../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
-            <img v-else :src="require(`../../../../public/images/flag/${countryNameIdMapping[myDetection.clientCountryRegion]}.png`)" class="filter-country-flag" >
-          </span>
-          {{ myDetection.clientCountryRegion || '-' }}, {{ myDetection.clientSuperAdminArea || '-' }}
+        <div class="row__content">
+          <div v-if="myDetection.clientCountryRegion">
+            <div>
+              <img v-if="myDetection.clientCountryRegion===countryNameIdMapping.Unknown || !countryNameIdMapping[myDetection.clientCountryRegion]" src="../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
+              <img v-else :src="require(`../../../../public/images/flag/${countryNameIdMapping[myDetection.clientCountryRegion]}.png`)" class="filter-country-flag" >
+            </div>
+            {{ myDetection.clientCountryRegion || '-' }}, {{ myDetection.clientSuperAdminArea || '-' }}
+          </div>
+          <div v-else>-</div>
         </div>
-        <div class="row__content" v-else>-</div>
       </div>
       <div class="overview__row">
         <div class="row__label">{{ $t('overall.serverIp') }}</div>
@@ -43,14 +45,16 @@
       </div>
       <div class="overview__row">
         <div class="row__label">{{ $t('detection.detail.serverLocation') }}</div>
-        <div class="row__content" v-if="myDetection.serverCountryRegion">
-          <span>
-            <img v-if="myDetection.serverCountryRegion===countryNameIdMapping.Unknown || !countryNameIdMapping[myDetection.serverCountryRegion]" src="../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
-            <img v-else :src="require(`../../../../public/images/flag/${countryNameIdMapping[myDetection.serverCountryRegion]}.png`)" class="filter-country-flag" >
-          </span>
-          {{ myDetection.serverCountryRegion || '-' }}, {{ myDetection.serverSuperAdminArea || '-' }}
+        <div class="row__content">
+          <div v-if="myDetection.serverCountryRegion">
+            <span>
+              <img v-if="myDetection.serverCountryRegion===countryNameIdMapping.Unknown || !countryNameIdMapping[myDetection.serverCountryRegion]" src="../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
+              <img v-else :src="require(`../../../../public/images/flag/${countryNameIdMapping[myDetection.serverCountryRegion]}.png`)" class="filter-country-flag" >
+            </span>
+            {{ myDetection.serverCountryRegion || '-' }}, {{ myDetection.serverSuperAdminArea || '-' }}
+          </div>
+          <div v-else>-</div>
         </div>
-        <div class="row__content">-</div>
       </div>
       <div class="overview__row">
         <div class="row__label">{{ $t('detection.detail.indicatorValues') }}</div>
