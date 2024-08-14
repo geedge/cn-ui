@@ -292,13 +292,14 @@ export default {
           // 将100个时间间隔与柱状图数据合并并排序
           dataList = dataList.concat(timeList)
           dataList.sort((a, b) => a[0] - b[0])
-          const xData = []
-          dataList.forEach(item => {
-            if (xData.indexOf(item[0]) < 0) {
-              xData.push(item[0])
+          dataList = dataList.filter((d, i) => {
+            if (i > 0 && i < dataList.length - 1) {
+              if (d[1] === 0) {
+                return false
+              }
             }
+            return true
           })
-
           eventSeverityTrendOption.series[0].data = dataList
 
           let detectionChart = echarts.getInstanceByDom(chartDom)
