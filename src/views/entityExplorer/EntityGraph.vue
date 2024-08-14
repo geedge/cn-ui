@@ -512,6 +512,9 @@ export default {
               this.rightBox.mode = 'detail'
             }
           } else {
+            //20240809 添加：点击临时节点时，先固定list节点，渲染之后再进行list节点的释放，否则点击临时节点时，list节点会移动较多（且带着entity节点一起移动）
+            this.fixNode(nodeType.listNode)
+
             // 点击tempNode，根据source生成listNode和entityNode以及对应的edge。查完entityNode的接口再删除临时node和edge。
             // 若已达第六层，则只生成listNode，不再展开entityNode
             const nodes = []
@@ -699,7 +702,7 @@ export default {
           })
         })
         .onEngineStop(() => {
-          //this.releaseNodes(this.graph.graphData().nodes,nodeType.listNode)//此处释放节点，会导致有一段时间，list节点为固定状态
+          this.releaseNodes(this.graph.graphData().nodes,nodeType.listNode)//此处释放节点，会导致有一段时间，list节点为固定状态
         })
         .onEngineTick(() => {
           if (this.isClicking) {
@@ -721,6 +724,19 @@ export default {
             }
           }
         })
+    },
+    //临时固定节点，之后会释放
+    fixNode(nodeType) {
+      let listNodeGroup = this.graph.graphData().nodes.filter(n => n.type === nodeType)
+      if(listNodeGroup && listNodeGroup.length > 0) {
+        listNodeGroup.forEach(listNode => {
+          listNode.fx = listNode.x
+          listNode.fy = listNode.y
+        })
+        setTimeout(() => {
+          //this.releaseNodes(this.graph.graphData().nodes,nodeType.listNode)
+        }, 300)
+      }
     },
     /*
     sleep() {
@@ -835,6 +851,8 @@ export default {
               links.splice(linksIndex, 1)
             }
           })
+          this.graph.graphData({nodes:nodes,links:links})
+
           this.cleanTempItems()
           this.stackData.redo.push(data)
           if (this.stackData.justRedo) {
@@ -854,12 +872,12 @@ export default {
           this.onCloseBlock()
         }
       } else if (code === 'autoZoom') {
-        this.graph.zoomToFit(100, 100)
         if(this.rightBox.show) {
           this.graph.width(document.body.clientWidth - this.rightBoxWidth)
         } else {
           this.graph.width(document.body.clientWidth)
         }
+        this.graph.zoomToFit(100, 30)
       } else if (code === 'zoomOut') {
         this.graph.zoom(this.graph.zoom() + 0.2)
       } else if (code === 'zoomIn') {
@@ -1235,6 +1253,9 @@ export default {
       }, 100)
     },
     async expandList (nodeId) {
+      //20240809 添加：点击临时节点时，先固定list节点，渲染之后再进行list节点的释放，否则点击临时节点时，list节点会移动较多（且带着entity节点一起移动）
+      this.fixNode(nodeType.listNode)
+
       const { nodes } = this.graph.graphData()
       const node = nodes.find(n => n.id === nodeId)
       const sourceNode = nodes.find(n => n.id === node.sourceNode.id)
