@@ -450,7 +450,7 @@ export default {
           data.sort(reverseSortBy('count'))
           data = data.slice(0, 5)
           offenderIpOption.series[0].data = data.map(d => {
-            return [d.count, `${d.keyFields},${d.keyValues}`]
+            return [d.count, `${d.keyValues},${d.keyFields}`, d.keyValues, d.keyFields]
           }).reverse()
           detectionChart.setOption(offenderIpOption)
 

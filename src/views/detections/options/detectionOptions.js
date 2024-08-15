@@ -306,7 +306,7 @@ export const activeAttackBar = {
       overflow: 'truncate'
     },
     formatter: function (param, index, callback) {
-      return `${param.name}: ${unitConvert(param.value[0], 'number').join(' ')}`
+      return `${param.value[3]},${param.value[2]}: ${unitConvert(param.value[0], 'number').join(' ')}`
     },
     show: true,
     className: 'nz-chart-tooltip',
