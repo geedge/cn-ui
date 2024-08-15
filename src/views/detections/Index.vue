@@ -430,7 +430,8 @@ export default {
             value: r.keyFields,
             count: r.count,
             fields: r.keyFields,
-            values: r.keyValues
+            values: r.keyValues,
+            unDisabled: true
           }))
           this.isCheckFilterByQ(params, 2)
           const { showMore, showIndex, showDisabled } = this.computeFilterPage(this.filterData[2].data)

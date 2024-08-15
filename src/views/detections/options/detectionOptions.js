@@ -310,7 +310,7 @@ export const activeAttackBar = {
     },
     show: true,
     className: 'nz-chart-tooltip',
-    extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 400px !important'
+    extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);'
   },
   xAxis: {
     axisTick: { show: false },

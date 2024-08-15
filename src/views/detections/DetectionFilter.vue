@@ -14,9 +14,10 @@
             <div class="filter__body-item-left">
               <div class="filter__body-item-left-index">{{ i+1 }}</div>
               <div class="filter__body-item-left-label">
-                <el-tooltip :content="data.label" placement="top" effect="light" :disabled="disabledLabel">
+                <el-tooltip :content="data.label" placement="top" effect="light" :disabled="disabledLabel && !data.unDisabled">
                     <span @mouseenter="handleMouse(`filter${index}${i}`)" :id="`filter${index}${i}`">
-                      <span>{{ data.label }}</span>
+                      <span v-if="data.values">{{ data.values }}</span>
+                      <span v-else>{{ data.label }}</span>
                     </span>
                 </el-tooltip>
               </div>

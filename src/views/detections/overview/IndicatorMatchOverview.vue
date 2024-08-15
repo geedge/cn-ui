@@ -15,11 +15,18 @@
           {{ myDetection.startTime ? dateFormatByAppearance(myDetection.startTime) : '-' }}
         </div>
       </div>
-      <div class="overview__row">
-        <div class="row__label">{{ $t('detection.detail.matchTime') }}</div>
+      <div class="overview__row" v-if="myDetection.endTime">
+        <div class="row__label">{{ $t('detection.list.endTime') }}</div>
         <div class="row__content">
           <i class="cn-icon cn-icon-time2 row__content__icon"></i>
-          {{ myDetection.matchTime ? dateFormatByAppearance(myDetection.matchTime) : '-' }}
+          {{ myDetection.endTime ? dateFormatByAppearance(myDetection.endTime) : '-' }}
+        </div>
+      </div>
+      <div class="overview__row">
+        <div class="row__label">{{ $t('overall.duration') }}</div>
+        <div class="row__content">
+          <i class="cn-icon cn-icon-time2 row__content__icon"></i>
+          {{ unitConvert(parseInt(detection.durationS), 'time', 's', null, 0).join(' ') || '-' }}
         </div>
       </div>
       <div class="overview__row">
@@ -87,6 +94,7 @@ import { dateFormatByAppearance } from '@/utils/date-util'
 import detectionDetailMixin from '@/views/detections/overview/detectionDetailMixin'
 import { countryNameIdMapping } from '@/utils/constants'
 import EventsTimeline from '@/views/detections/overview/EventsTimeline'
+import unitConvert from '@/utils/unit-convert'
 export default {
   name: 'IndicatorMatchOverview',
   mixins: [detectionDetailMixin],
@@ -104,7 +112,8 @@ export default {
     }
   },
   methods: {
-    dateFormatByAppearance
+    dateFormatByAppearance,
+    unitConvert
   }
 }
 </script>
