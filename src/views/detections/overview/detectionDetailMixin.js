@@ -87,9 +87,6 @@ export default {
         this.isGroup = 0
       }
 
-      if (this.myChart) {
-        this.myChart.dispose()
-      }
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
@@ -104,23 +101,7 @@ export default {
           if (this.detection.ruleType === detectionRuleType.threshold.key) {
             const data = res.data.data.result
             if (data && data.length > 0) {
-              const seriesData = []
-              data.forEach(item => {
-                seriesData.push([getMillisecond(JSON.parse(item.statTime)), item.recordsNums])
-              })
-              this.lineOption.series[0].data = seriesData
-              this.lineOption.series[0].color = getSeverityNumberColor(res.data.data.result[0].severity) || '#ff9a79'
-
-              this.seriesDataNum = seriesData.length
-              if (this.seriesDataNum <= 1) {
-                this.lineOption.series[0].symbol = 'circle'
-                this.lineOption.series[0].symbolSize = 9
-              } else {
-                this.lineOption.series[0].symbol = 'none'
-              }
-
-              this.myChart = markRaw(echarts.init(document.getElementById('myChart' + this.detection.eventId)))
-              this.myChart.setOption(this.lineOption)
+              this.handleLineChart(data)
             }
           } else {
             const data = res.data.data.result
@@ -150,6 +131,9 @@ export default {
         if (res.status === 200) {
           const data = res.data.data.result
           if (data && data.length > 0) {
+            if (this.detection.ruleType === detectionRuleType.threshold.key) {
+              this.handleLineChart(data)
+            }
             const detailData = data[0]
             if (detailData.eventInfo) {
               detailData.eventInfoList = JSON.parse(detailData.eventInfo)
@@ -160,6 +144,29 @@ export default {
       }).catch(e => {
         this.$message.error(this.errorMsgHandler(e))
       })
+    },
+    // 挂载echarts折线图
+    handleLineChart (data) {
+      if (this.myChart) {
+        this.myChart.dispose()
+      }
+      const seriesData = []
+      data.forEach(item => {
+        seriesData.push([getMillisecond(JSON.parse(item.statTime)), item.recordsNums])
+      })
+      this.lineOption.series[0].data = seriesData
+      this.lineOption.series[0].color = getSeverityNumberColor(data[0].severity) || '#ff9a79'
+
+      this.seriesDataNum = seriesData.length
+      if (this.seriesDataNum <= 1) {
+        this.lineOption.series[0].symbol = 'circle'
+        this.lineOption.series[0].symbolSize = 9
+      } else {
+        this.lineOption.series[0].symbol = 'none'
+      }
+
+      this.myChart = markRaw(echarts.init(document.getElementById('myChart' + this.detection.eventId)))
+      this.myChart.setOption(this.lineOption)
     }
   }
 }
