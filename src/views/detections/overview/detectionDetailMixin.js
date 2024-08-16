@@ -115,6 +115,7 @@ export default {
           }
         }
       }).catch(e => {
+        console.error(e)
         this.$message.error(this.errorMsgHandler(e))
       })
     },
@@ -142,6 +143,7 @@ export default {
           }
         }
       }).catch(e => {
+        console.error(e)
         this.$message.error(this.errorMsgHandler(e))
       })
     },
@@ -152,7 +154,7 @@ export default {
       }
       const seriesData = []
       data.forEach(item => {
-        seriesData.push([getMillisecond(JSON.parse(item.statTime)), item.recordsNums])
+        seriesData.push([getMillisecond(JSON.parse(item.startTime)), item.recordsNum])
       })
       this.lineOption.series[0].data = seriesData
       this.lineOption.series[0].color = getSeverityNumberColor(data[0].severity) || '#ff9a79'

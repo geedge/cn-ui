@@ -30,6 +30,10 @@
         </div>
       </div>
       <div class="overview__row">
+        <div class="row__label">{{ $t('detection.list.eventSecurity') }}</div>
+        <div class="row__content">{{ getSeverityByCode(myDetection.severity) || '-' }}</div>
+      </div>
+      <div class="overview__row">
         <div class="row__label">{{ $t('overall.clientIp') }}</div>
         <div class="row__content">{{ myDetection.clientIp || '-' }}</div>
       </div>
@@ -95,6 +99,7 @@ import detectionDetailMixin from '@/views/detections/overview/detectionDetailMix
 import { countryNameIdMapping } from '@/utils/constants'
 import EventsTimeline from '@/views/detections/overview/EventsTimeline'
 import unitConvert from '@/utils/unit-convert'
+import { getSeverityByCode } from '@/utils/tools'
 export default {
   name: 'IndicatorMatchOverview',
   mixins: [detectionDetailMixin],
@@ -113,7 +118,8 @@ export default {
   },
   methods: {
     dateFormatByAppearance,
-    unitConvert
+    unitConvert,
+    getSeverityByCode
   }
 }
 </script>

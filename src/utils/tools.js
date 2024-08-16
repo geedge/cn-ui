@@ -1591,3 +1591,33 @@ export const headerCellClass = (row) => {
 export const handleSpecialCode = (str) => {
   return str.indexOf('&amp;') > -1 ? str.replaceAll('&amp;', '&') : str
 }
+
+/**
+ * 严重程度code和字符转换
+ * @param code
+ * @returns {string}
+ */
+export const getSeverityByCode = (code) => {
+  switch (code) {
+    case 5:
+    case '5': {
+      return 'Critical'
+    }
+    case 4:
+    case '4': {
+      return 'High'
+    }
+    case 3:
+    case '3': {
+      return 'Medium'
+    }
+    case 2:
+    case '2': {
+      return 'Low'
+    }
+    case 1:
+    case '1': {
+      return 'Info'
+    }
+  }
+}

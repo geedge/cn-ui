@@ -7,6 +7,11 @@
           <div v-html="handleDescription"></div>
         </div>
       </div>
+      <div class="overview__title">{{ $t('overall.fields') }}</div>
+      <div class="overview__row">
+        <div class="row__label">{{ $t('detection.list.eventSecurity') }}</div>
+        <div class="row__content">{{ getSeverityByCode(myDetection.severity) || '-' }}</div>
+      </div>
 
       <div v-for="(obj, index) in myDetection.eventInfoList" :key="obj.stage_id">
         <div class="overview__title margin-t-18">{{ $t('detection.detail.stage') }}{{ index + 1 }}</div>
@@ -41,6 +46,7 @@
 import { dateFormatByAppearance } from '@/utils/date-util'
 import EventsTimeline from './EventsTimeline'
 import detectionDetailMixin from '@/views/detections/overview/detectionDetailMixin'
+import { getSeverityByCode } from '@/utils/tools'
 
 export default {
   name: 'SequenceOverview',
@@ -59,7 +65,8 @@ export default {
     return {}
   },
   methods: {
-    dateFormatByAppearance
+    dateFormatByAppearance,
+    getSeverityByCode
   }
 }
 </script>
