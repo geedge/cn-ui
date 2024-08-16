@@ -458,7 +458,7 @@ export default {
           detectionChart.off('click')
           detectionChart.on('click', e => {
             if (e.data) {
-              vm.getFilter(e.data[1], vm.filterData[2].column)
+              vm.getFilter(`${e.data[3]},${e.data[2]}`, vm.filterData[2].column)
               vm.filterData[2].value = vm.triggerFilterDataValue(vm.filterData[2].value, e.data[1])
             }
           })
