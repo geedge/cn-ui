@@ -471,7 +471,7 @@ export const lineOption = {
       show: false
     },
     axisLine: {
-      show: false
+      show: true
     },
     axisLabel: {
       formatter: xAxisTimeFormatter,
@@ -479,7 +479,9 @@ export const lineOption = {
     }
   },
   yAxis: {
-    // max: 100
+    splitLine: {
+      show: false
+    }
   },
   grid: {
     top: '12px',
@@ -493,7 +495,18 @@ export const lineOption = {
       data: [],
       type: 'line',
       color: '#ff9a79',
-      symbol: 'none'
+      symbol: 'none',
+      markLine: {
+        silent: true,
+        symbol: 'none',
+        lineStyle: {
+          color: ''
+        },
+        label: {
+          position: 'insideStartTop'
+        },
+        data: []
+      }
     }
   ],
   tooltip: {

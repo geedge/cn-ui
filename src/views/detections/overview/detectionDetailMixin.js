@@ -1,10 +1,11 @@
-import { detectionEventType, detectionRuleType, EN, storageKey, ZH } from '@/utils/constants'
+import { detectionEventType, detectionRuleType, EN, storageKey, unitTypes, ZH } from '@/utils/constants'
 import { getMillisecond, getSecond } from '@/utils/date-util'
 import axios from 'axios'
 import { api } from '@/utils/api'
 import { getSeverityNumberColor, lineOption } from '@/views/detections/options/detectionOptions'
 import { markRaw } from 'vue'
 import * as echarts from 'echarts'
+import { getSeverityByCode } from '@/utils/tools'
 
 export default {
   props: {
@@ -153,8 +154,13 @@ export default {
         this.myChart.dispose()
       }
       const seriesData = []
+      const markLineData = []
       data.forEach(item => {
         seriesData.push([getMillisecond(JSON.parse(item.startTime)), item.recordsNum])
+        const obj = markLineData.find(d => d.yAxis === item.thresholdNum)
+        if (!obj) {
+          markLineData.push({ yAxis: item.thresholdNum })
+        }
       })
       this.lineOption.series[0].data = seriesData
       this.lineOption.series[0].color = getSeverityNumberColor(data[0].severity) || '#ff9a79'
@@ -165,6 +171,15 @@ export default {
         this.lineOption.series[0].symbolSize = 9
       } else {
         this.lineOption.series[0].symbol = 'none'
+      }
+      this.lineOption.series[0].markLine.data = markLineData
+      this.lineOption.series[0].markLine.lineStyle.color = getSeverityNumberColor(data[0].severity)
+      this.lineOption.series[0].markLine.label = {
+        position: 'insideStartTop',
+        color: '#999',
+        formatter (params) {
+          return `${getSeverityByCode(data[0].severity)}: ${params.value}`
+        }
       }
 
       this.myChart = markRaw(echarts.init(document.getElementById('myChart' + this.detection.eventId)))

@@ -2,16 +2,18 @@
   <div class="events-timeline">
     <div class="timeline__circle">
       <div v-for="(item, index) in myTimeData" :key="index">
-        <div
-            :class="index===activeCircle ? 'circle__item-active' : 'circle__item'"
-            :style="`margin-left: ${item.marginLeft};`"
-            @click="onChange(item, index)"></div>
+        <el-tooltip :content="changeTimestampToTime(item.statTime)" placement="top" effect="light">
+          <div
+              :class="index===activeCircle ? 'circle__item-active' : 'circle__item'"
+              :style="`margin-left: ${item.marginLeft};`"
+              @click="onChange(item, index)"></div>
+        </el-tooltip>
       </div>
     </div>
     <div class="timeline__line"></div>
-    <div class="timeline-container">
+    <div class="timeline-container" id="timeline-container">
       <div v-for="(item, index) in timeLine" :key="index">
-        <div v-if="item.showFlag" style="color: #666;font-size: 12px;">{{ item.time }}</div>
+        <div v-if="item.showFlag" :class="isTransform ? 'timeline-item__transform' : 'timeline-item'">{{ item.time }}</div>
       </div>
     </div>
   </div>
@@ -46,7 +48,9 @@ export default {
         { eventId: '555', lastTime: 1722392580, startTime: 1722392580 },
         { eventId: '666', lastTime: 1722392880, startTime: 1722392880 }
       ],
-      activeCircle: 0
+      activeCircle: 0,
+      lineWidth: 550, // 时间轴宽度
+      isTransform: false // 时间轴label是否旋转标识，文字高度超出16即为换行，将文字旋转角度
     }
   },
   watch: {
@@ -71,6 +75,7 @@ export default {
     this.initDate('init')
   },
   methods: {
+    changeTimestampToTime,
     initDate (e) {
       // 切换页面进来时，timeFilter时间戳为秒而非毫秒
       const timeFilter = {
@@ -122,7 +127,8 @@ export default {
         const month = date.getMonth() + 1
         const day = date.getDate()
         const obj = {
-          time: `${date.getFullYear()}-${month < 10 ? ('0' + month) : month}-${day < 10 ? ('0' + day) : day}`,
+          // time: `${date.getFullYear()}-${month < 10 ? ('0' + month) : month}-${day < 10 ? ('0' + day) : day}`,
+          time: `${month < 10 ? ('0' + month) : month}-${day < 10 ? ('0' + day) : day}`,
           time1: changeTimestampToTime(timestamp).substring(0, changeTimestampToTime(timestamp).length - 3),
           showFlag: false
         }
@@ -254,15 +260,24 @@ export default {
         item.itemDiffTime = (timeFilter.endTime - item.lastTime) / 1000
 
         if (index === 0) {
-          let marginLeft = 500 - ((item.itemDiffTime / item.diffTime) * 500)
+          let marginLeft = this.lineWidth - ((item.itemDiffTime / item.diffTime) * this.lineWidth)
           marginLeft = Math.round(marginLeft) + 8 + 'px'
           item.marginLeft = marginLeft
         } else {
-          let marginLeft = ((this.myTimeData[index - 1].itemDiffTime - item.itemDiffTime) / item.diffTime) * 500
+          let marginLeft = ((this.myTimeData[index - 1].itemDiffTime - item.itemDiffTime) / item.diffTime) * this.lineWidth
           marginLeft = (Math.round(marginLeft) - 13) + 'px'
           item.marginLeft = marginLeft
         }
       })
+      this.handleTimelineLabel()
+    },
+    /** 判断文字过长，旋转角度显示 */
+    handleTimelineLabel () {
+      const dom = document.getElementById('timeline-container')
+      if (dom) {
+        const height = dom.clientHeight
+        this.isTransform = height > 20
+      }
     }
   }
 }
@@ -270,7 +285,7 @@ export default {
 
 <style lang="scss">
 .events-timeline {
-  width: 500px;
+  width: 580px;
 
   .timeline__circle {
     display: flex;
@@ -299,6 +314,20 @@ export default {
     background-color: rgba(255, 255, 255, 0.50);
     display: flex;
     justify-content: space-between;
+
+    .timeline-item {
+      font-size: 12px;
+      color: var(--el-text-color-regular);
+    }
+
+    .timeline-item__transform {
+      font-size: 12px;
+      color: var(--el-text-color-regular);
+      transform: rotate(-40deg);
+      transform-origin: 20px 20px;
+      margin-left: -25px;
+      margin-bottom: 12px;
+    }
   }
 }
 </style>
