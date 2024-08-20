@@ -28,12 +28,12 @@
           <div class="digital-certificate-header__icon graph-header__icon"></div>
           <div class="graph-list-content-header ">
             {{ $t('entity.graph.expandedEntityCount') }}:&nbsp
-            <span>{{$_.get(node, 'sourceNode.data.relatedEntities.' + $_.get(node, 'data.entityType') + '.list', []).length}}</span>
+            <span>{{showDataNum}}</span>
           </div>
         </div>
 
         <div class="graph-list-content">
-          <div v-for="(item, index) in $_.get(node, 'sourceNode.data.relatedEntities.' + $_.get(node, 'data.entityType') + '.list', [])" :key="index">
+          <div v-for="(item, index) in showList" :key="index">
             <div class="graph-list-item-ip"><span @click="expandDetail">{{ item.vertex }}</span></div>
             <template v-if="$_.get(node, 'data.entityType', '') === 'ip'">
               <div class="graph-list-item-block">
@@ -197,6 +197,15 @@ export default {
           break
       }
       return className
+    },
+    showList() {
+      let allDataList = this.getAllData()
+      let showPageNo = this.getShowPageNo()
+      return showPageNo ? allDataList.slice(0,showPageNo * 10) : allDataList
+    },
+    showDataNum() {
+      let showPageNo = this.getShowPageNo()
+      return showPageNo ? showPageNo * 10 : this.getAllData().length
     }
   },
   methods: {
@@ -212,6 +221,13 @@ export default {
     },
     getCountry (detail) {
       return this.$_.get(detail, 'location.country') || 'Unknown'
+    },
+    getAllData() {
+      return this.$_.get(this.node, 'sourceNode.data.relatedEntities.' + this.$_.get(this.node, 'data.entityType') + '.list', [])
+    },
+    getShowPageNo () {
+      let showPageNo = this.$_.get(this.node, 'sourceNode.data.relatedEntities.' + this.$_.get(this.node, 'data.entityType') + '.showPageNo', null)
+      return showPageNo ? showPageNo : null
     }
   },
   mounted () {

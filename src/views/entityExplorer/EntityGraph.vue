@@ -13,6 +13,7 @@
               destroy-on-close>
         <graph-entity-list
                 v-if="rightBox.mode === 'list'"
+                ref="graphEntityList"
                 :node="rightBox.node"
                 :loading="rightBox.loading"
                 @expandList="expandList"
@@ -553,7 +554,7 @@ export default {
                 links.splice(0, links.length)
                 try {
                   const entities = await sourceNode.queryRelatedEntities(listNode.data.entityType)
-                  sourceNode.data.relatedEntities[listNode.data.entityType].list.push(...entities.list)
+                  sourceNode.data.relatedEntities[listNode.data.entityType].list = entities.list//点击临时节点的拓展操作，是初始化前10个节点，因为有上一步操作，所以这里不能用push，不然会出现数据错误，需要用=
                   const curNodes = this.graph.graphData().nodes
                   entities.list.forEach(entity => {
                     const entityNode = new Node(nodeType.entityNode, entity.vertex, {
@@ -578,6 +579,7 @@ export default {
                     listNode.fx = null
                     listNode.fy = null
                     this.rightBox.node = _.cloneDeep(listNode)
+                    this.rightBox.node.sourceNode.data.relatedEntities[listNode.data.entityType].list = entities.list//点击临时节点拓展entity节点，要初始化为新查询的10个节点，之前的entity节点直接被覆盖掉了
                   }, 100)
                 } catch (e) {
                   console.error(e)
@@ -853,12 +855,54 @@ export default {
           })
           this.graph.graphData({nodes:nodes,links:links})
 
+          //上一步操作，需要同时更新右侧列表的拓展数及列表内容
+          if(data.nodes.length > 0) {
+            let entityType = data.nodes[0].data.entityType
+            //特殊情况：
+            // 1. data.nodes可能只有一个节点，且这个节点是之前有的节点，所有就没有nodes[1]了，只有nodes[0]就是list节点
+            // 2. 上一步操作对应的list及周边的entity节点，和当前右侧显示的节点可能没有关系，不涉及到上一步修改的相关拓展数据。
+            let undoNodeType = data.nodes[0].type
+            let grandParentNodeId = null
+            let listNode = null
+            if(undoNodeType === nodeType.listNode) {
+              grandParentNodeId = data.nodes[0].sourceNode.id
+              listNode = data.nodes[0]
+            } else if(undoNodeType === nodeType.entityNode) {//rootNode节点呢？不需要处理，没有上一步操作
+              grandParentNodeId = data.nodes[0].sourceNode.sourceNode.id
+              listNode = data.nodes[0].sourceNode
+            }
+
+            if(grandParentNodeId) {
+              const grandParentNode = nodes.find(item => item.id === grandParentNodeId)//entity节点
+              if(grandParentNode && grandParentNode.data.relatedEntities) {
+                let relatedEntityData = grandParentNode.data.relatedEntities[entityType]
+                relatedEntityData.showPageNo = relatedEntityData.showPageNo ? relatedEntityData.showPageNo - 1 : relatedEntityData.pageNo - 1//用于界面右侧展示列表的页数和拓展图展示的节点数据
+                if(relatedEntityData.showPageNo < 1) {//当前list节点没有数据了，隐藏右侧列表
+                  relatedEntityData.showPageNo = null
+                  //上一步操作对应的list及周边的entity节点，和当前右侧显示的节点可能没有关系，不涉及到上一步修改的相关拓展数据。若无关，则不需要隐藏右侧box。所以要查询下右侧box节点是否再graph的nodes里，没有了，则隐藏
+                  const rightBoxNode = nodes.find(item => item.id === this.rightBox.node.id)
+                  if(!rightBoxNode) {
+                    this.onCloseBlock()
+                  }
+                  if(this.rightBox.node && this.rightBox.node.id === listNode.id) {
+                    this.rightBox.node.sourceNode.data.relatedEntities[entityType].showPageNo = null
+                  }
+                } else {
+                  //|| this.rightBox.node.id === grandParentNodeId
+                  if(this.rightBox.node && this.rightBox.node.id === listNode.id) {//entity页面或者entity对应list页面，都有实体数显示
+                    this.rightBox.node.sourceNode.data.relatedEntities[entityType].showPageNo = relatedEntityData.showPageNo
+                  }
+                }
+              }
+            }
+          }
+
           this.cleanTempItems()
           this.stackData.redo.push(data)
           if (this.stackData.justRedo) {
             this.stackData.justRedo = false
           }
-          this.onCloseBlock()
+          //this.onCloseBlock()
         }
       } else if (code === 'redo') { // 下一步
         const data = this.stackData.redo.pop()
@@ -869,7 +913,7 @@ export default {
           if (this.stackData.justUndo) {
             this.stackData.justUndo = false
           }
-          this.onCloseBlock()
+          //this.onCloseBlock()
         }
       } else if (code === 'autoZoom') {
         if(this.rightBox.show) {
