@@ -159,7 +159,23 @@ export default {
         seriesData.push([getMillisecond(JSON.parse(item.startTime)), item.recordsNum])
         const obj = markLineData.find(d => d.yAxis === item.thresholdNum)
         if (!obj) {
-          markLineData.push({ yAxis: item.thresholdNum })
+          markLineData.push({
+            yAxis: item.thresholdNum,
+            itemStyle: { color: getSeverityNumberColor(item.severity) },
+            label: getSeverityByCode(item.severity)
+          })
+          this.lineOption.series[0].markLine = {
+            silent: true,
+            symbol: 'none',
+            data: markLineData,
+            label: {
+              position: 'insideStartTop',
+              color: '#999',
+              formatter (params) {
+                return `${params.data.label}: ${params.value}`
+              }
+            }
+          }
         }
       })
       this.lineOption.series[0].data = seriesData
@@ -172,16 +188,6 @@ export default {
       } else {
         this.lineOption.series[0].symbol = 'none'
       }
-      this.lineOption.series[0].markLine.data = markLineData
-      this.lineOption.series[0].markLine.lineStyle.color = getSeverityNumberColor(data[0].severity)
-      this.lineOption.series[0].markLine.label = {
-        position: 'insideStartTop',
-        color: '#999',
-        formatter (params) {
-          return `${getSeverityByCode(data[0].severity)}: ${params.value}`
-        }
-      }
-
       this.myChart = markRaw(echarts.init(document.getElementById('myChart' + this.detection.eventId)))
       this.myChart.setOption(this.lineOption)
     }

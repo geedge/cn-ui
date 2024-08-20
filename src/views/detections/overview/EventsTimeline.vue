@@ -10,10 +10,10 @@
         </el-tooltip>
       </div>
     </div>
-    <div class="timeline__line"></div>
-    <div class="timeline-container" id="timeline-container">
-      <div v-for="(item, index) in timeLine" :key="index">
-        <div v-if="item.showFlag" :class="isTransform ? 'timeline-item__transform' : 'timeline-item'">{{ item.time }}</div>
+    <div class="timeline__line margin-l-30"></div>
+    <div class="timeline-container margin-l-30" id="timeline-container">
+      <div v-for="(item, index) in timeLine" :key="index" :style="{width: item.isYear ? '5px' : 'auto'}">
+        <div v-if="item.showFlag" :class="handleTransformClass(item.isYear)">{{ item.time }}</div>
       </div>
     </div>
   </div>
@@ -49,7 +49,7 @@ export default {
         { eventId: '666', lastTime: 1722392880, startTime: 1722392880 }
       ],
       activeCircle: 0,
-      lineWidth: 550, // 时间轴宽度
+      lineWidth: 520, // 时间轴宽度
       isTransform: false // 时间轴label是否旋转标识，文字高度超出16即为换行，将文字旋转角度
     }
   },
@@ -106,7 +106,7 @@ export default {
       for (let i = startTime; i <= timeFilter.endTime; i += showTimeInterval * 60 * 1000) {
         const obj = this.formatTime(i, showTimeInterval, timeInterval)
         if (obj) {
-          myTimeRange.push({ time: obj.time, time1: obj.time1, stamp: new Date(obj.time1).getTime(), lastStamp: new Date(obj.time1).getTime() - showTimeInterval * 60 * 1000, showFlag: obj.showFlag })
+          myTimeRange.push({ time: obj.time, time1: obj.time1, stamp: new Date(obj.time1).getTime(), lastStamp: new Date(obj.time1).getTime() - showTimeInterval * 60 * 1000, showFlag: obj.showFlag, isYear: obj.isYear })
         }
       }
 
@@ -127,10 +127,10 @@ export default {
         const month = date.getMonth() + 1
         const day = date.getDate()
         const obj = {
-          // time: `${date.getFullYear()}-${month < 10 ? ('0' + month) : month}-${day < 10 ? ('0' + day) : day}`,
-          time: `${month < 10 ? ('0' + month) : month}-${day < 10 ? ('0' + day) : day}`,
+          time: `${date.getFullYear()}-${month < 10 ? ('0' + month) : month}-${day < 10 ? ('0' + day) : day}`,
           time1: changeTimestampToTime(timestamp).substring(0, changeTimestampToTime(timestamp).length - 3),
-          showFlag: false
+          showFlag: false,
+          isYear: true
         }
         if (remainder1 === 0) {
           obj.showFlag = true
@@ -261,11 +261,11 @@ export default {
 
         if (index === 0) {
           let marginLeft = this.lineWidth - ((item.itemDiffTime / item.diffTime) * this.lineWidth)
-          marginLeft = Math.round(marginLeft) + 8 + 'px'
+          marginLeft = Math.round(marginLeft) + 38 + 'px' // 30px的左边距+小球半径8px
           item.marginLeft = marginLeft
         } else {
           let marginLeft = ((this.myTimeData[index - 1].itemDiffTime - item.itemDiffTime) / item.diffTime) * this.lineWidth
-          marginLeft = (Math.round(marginLeft) - 13) + 'px'
+          marginLeft = (Math.round(marginLeft) - 43) + 'px'
           item.marginLeft = marginLeft
         }
       })
@@ -278,6 +278,15 @@ export default {
         const height = dom.clientHeight
         this.isTransform = height > 20
       }
+    },
+    handleTransformClass (flag) {
+      if (flag) {
+        return 'timeline-item__transform-year'
+      } else if (this.isTransform) {
+        return 'timeline-item__transform'
+      } else {
+        return 'timeline-item'
+      }
     }
   }
 }
@@ -285,7 +294,7 @@ export default {
 
 <style lang="scss">
 .events-timeline {
-  width: 580px;
+  width: 550px;
 
   .timeline__circle {
     display: flex;
@@ -320,7 +329,7 @@ export default {
       color: var(--el-text-color-regular);
     }
 
-    .timeline-item__transform {
+    .timeline-item__transform, .timeline-item__transform-year {
       font-size: 12px;
       color: var(--el-text-color-regular);
       transform: rotate(-40deg);
@@ -328,6 +337,16 @@ export default {
       margin-left: -25px;
       margin-bottom: 12px;
     }
+
+    .timeline-item__transform-year {
+      width: 100px;
+      transform-origin: 38px 60px;
+      margin-bottom: 36px;
+    }
+  }
+
+  .margin-l-30 {
+    margin-left: 30px;
   }
 }
 </style>
