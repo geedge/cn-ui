@@ -137,7 +137,7 @@ export default {
               this.handleLineChart(data)
             }
             const detailData = data[0]
-            if (detailData.eventInfo) {
+            if (detailData?.eventInfo) {
               detailData.eventInfoList = JSON.parse(detailData.eventInfo)
             }
             this.myDetection = { ...this.myDetection, ...detailData }

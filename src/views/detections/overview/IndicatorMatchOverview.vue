@@ -30,7 +30,7 @@
         </div>
       </div>
       <div class="overview__row">
-        <div class="row__label">{{ $t('detection.list.eventSecurity') }}</div>
+        <div class="row__label">{{ $t('detection.list.eventSeverity') }}</div>
         <div class="row__content">{{ getSeverityByCode(myDetection.severity) || '-' }}</div>
       </div>
       <div class="overview__row">
@@ -41,10 +41,10 @@
         <div class="row__label">{{ $t('detection.clientLocation') }}</div>
         <div class="row__content">
           <div v-if="myDetection.clientCountryRegion">
-            <div>
+            <span>
               <img v-if="myDetection.clientCountryRegion===countryNameIdMapping.Unknown || !countryNameIdMapping[myDetection.clientCountryRegion]" src="../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
               <img v-else :src="require(`../../../../public/images/flag/${countryNameIdMapping[myDetection.clientCountryRegion]}.png`)" class="filter-country-flag" >
-            </div>
+            </span>
             {{ myDetection.clientCountryRegion || '-' }}, {{ myDetection.clientSuperAdminArea || '-' }}
           </div>
           <div v-else>-</div>

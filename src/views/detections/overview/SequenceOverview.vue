@@ -9,7 +9,7 @@
       </div>
       <div class="overview__title">{{ $t('overall.fields') }}</div>
       <div class="overview__row">
-        <div class="row__label">{{ $t('detection.list.eventSecurity') }}</div>
+        <div class="row__label">{{ $t('detection.list.eventSeverity') }}</div>
         <div class="row__content">{{ getSeverityByCode(myDetection.severity) || '-' }}</div>
       </div>
 
@@ -18,7 +18,17 @@
         <div v-for="(item, fields) in obj" :key="fields">
           <div class="overview__row" v-if="fields !== 'stage_id'">
             <div class="row__label row__label__capitalize">{{ fields }}</div>
-            <div class="row__content">{{ item || '-' }}</div>
+            <div class="row__content" v-if="item">
+              <div v-if="$_.isNumber(item)">
+                <div v-if="item > 1000000000">
+                  <i class="cn-icon cn-icon-time2 row__content__icon"></i>
+                  {{ dateFormatByAppearance(item) }}
+                </div>
+                <div v-else>{{ item }}</div>
+              </div>
+              <div v-else>{{ item }}</div>
+            </div>
+            <div class="row__content" v-else>-</div>
           </div>
         </div>
         <div class="overview__row">
