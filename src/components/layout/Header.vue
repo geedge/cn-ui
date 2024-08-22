@@ -151,14 +151,14 @@
           <div class="middle-menus__header">{{ $t('overall.networkAnalytics') }}</div>
           <div class="middle-menus__body" v-if="networkAnalyticsMenu && networkAnalyticsMenu.children">
             <div style="width: 260px;">
-              <template v-for="(menu, index) in networkAnalyticsMenu.children" :key="index">
+              <template v-for="(menu, index) in networkAnalyticsMenu.children" :key="menu.name">
                 <div class="middle-menu" v-if="index < 5" @click="jump(menu.route,'','',2)">
                   {{ $t(menu.i18n || menu.name) }}
                 </div>
               </template>
             </div>
             <div>
-              <template v-for="(menu, index) in networkAnalyticsMenu.children" :key="index">
+              <template v-for="(menu, index) in networkAnalyticsMenu.children" :key="menu.name">
                 <div class="middle-menu" v-if="index >= 5 && index < 10" @click="jump(menu.route,'','',2)">
                   {{ $t(menu.i18n || menu.name) }}
                 </div>
@@ -170,14 +170,14 @@
           <div class="middle-menus__header">{{ $t('overall.locationIntelligence') }}</div>
           <div class="middle-menus__body" v-if="locationIntelligenceMenu && locationIntelligenceMenu.children">
             <div style="width: 260px;">
-              <template v-for="(menu, index) in locationIntelligenceMenu.children" :key="index">
+              <template v-for="(menu, index) in locationIntelligenceMenu.children" :key="menu.name">
                 <div class="middle-menu" v-if="index < 5" @click="jump(menu.route,'','',2)">
                   {{ $t(menu.i18n || menu.name) }}
                 </div>
               </template>
             </div>
             <div>
-              <template v-for="(menu, index) in locationIntelligenceMenu.children" :key="index">
+              <template v-for="(menu, index) in locationIntelligenceMenu.children" :key="menu.name">
                 <div class="middle-menu" v-if="index >= 5 && index < 10" @click="jump(menu.route,'','',2)">
                   {{ $t(menu.i18n || menu.name) }}
                 </div>

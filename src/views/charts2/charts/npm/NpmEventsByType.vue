@@ -11,7 +11,7 @@
         <div class="npm-event-pie-legends">
           <div class="npm-event-pie-legend">
             <div class="npm-event-pie-legend-title" v-if="chartData.length > 0">{{ $t('overall.type') }}</div>
-            <template v-for="(legend, index) in chartData" :key="index">
+            <template v-for="(legend, index) in chartData" :key="legend.name">
               <div class="npm-event-pie-legend-type">
                 <div :style="`width: 9px;height: 9px;background-color: ${legend.color};margin-right: 5px;`"></div>
                 <div class="npm-event-pie-legend-type-severity" :test-id="`testNode${index}`">{{legend.name}}</div>
@@ -20,7 +20,7 @@
           </div>
           <div class="npm-event-pie-legend">
             <div class="npm-event-pie-legend-title" v-if="chartData.length > 0">{{ $t('network.total') }}</div>
-            <template v-for="(legend, index) in chartData" :key="index">
+            <template v-for="(legend, index) in chartData" :key="legend.name">
               <div class="npm-event-pie-legend-total" :test-id="`total${index}`">{{legend.value}}</div>
             </template>
           </div>

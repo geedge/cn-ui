@@ -1,7 +1,7 @@
 <template>
   <div class="events-timeline">
     <div class="timeline__circle">
-      <div v-for="(item, index) in myTimeData" :key="index">
+      <div v-for="(item, index) in myTimeData" :key="item.statTime">
         <el-tooltip :content="changeTimestampToTime(item.statTime)" placement="top" effect="light">
           <div
               :class="index===activeCircle ? 'circle__item-active' : 'circle__item'"
@@ -12,7 +12,7 @@
     </div>
     <div class="timeline__line margin-l-30"></div>
     <div class="timeline-container margin-l-30" id="timeline-container">
-      <div v-for="(item, index) in timeLine" :key="index" :style="{width: item.isYear ? '5px' : 'auto'}">
+      <div v-for="item in timeLine" :key="item.time" :style="{width: item.isYear ? '5px' : 'auto'}">
         <div v-if="item.showFlag" :class="handleTransformClass(item.isYear)">{{ item.time }}</div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 <template>
   <div class="HintInfo" id="myHint" @mouseenter="onMouseenter">
     <ul style="padding-left: 0;margin: -10px 0 0 0;min-width: calc(100% - 12px)">
-      <template v-for="(item,index) in hintList" :key="index">
+      <template v-for="(item,index) in hintList" :key="item.displayText">
         <li :ref="'hint_'+index" class="relative-item CodeMirror-hint"
             style="margin-bottom: 2px"
             @click="handleSelect(item,index,hintList)"

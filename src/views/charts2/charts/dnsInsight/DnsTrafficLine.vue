@@ -9,7 +9,7 @@
                v-show="item.show"
                :class=" {'is-active': lineTab === item.class, 'mousemove-cursor': mousemoveCursor === item.class}"
                v-for="(item, index) in tabs"
-               :key="index"
+               :key="item.name"
                @mouseenter="mouseenter(item)"
                @mouseleave="mouseleave(item)"
                @click="activeChange(item, index,true)">

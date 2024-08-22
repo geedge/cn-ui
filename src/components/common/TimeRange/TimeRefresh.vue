@@ -11,7 +11,7 @@
     </span>
     <transition name="el-zoom-in-top">
       <div v-if="dropdownShow" class="refresh-list">
-        <div v-for="(item, index) in refreshArr" :key="index" @click="setRefresh(item)" class="refresh-list-item" :class="item.value==interval ? 'active' : ''">
+        <div v-for="item in refreshArr" :key="item.label" @click="setRefresh(item)" class="refresh-list-item" :class="item.value==interval ? 'active' : ''">
           {{ item.label }}
           <i v-if="item.value===interval" class="cn-icon cn-icon-check"></i>
         </div>

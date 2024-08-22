@@ -12,7 +12,7 @@
       <div class="cn-detection__row">
         <div class="cn-detection__header">
           <span class="detection-event-severity-block margin-l-16">{{ detection.eventName || '-' }}</span>
-          <div v-for="(item, index) in myDetection.keyList" :key="index">
+          <div v-for="(item, index) in myDetection.keyList" :key="item.key">
             <span class="detection-event-name">{{item.key}}</span>
             <span class="detection-event-key">({{ item.type }})</span>
             <span v-if="index < myDetection.keyList.length - 1" class="detection-event-line"></span>

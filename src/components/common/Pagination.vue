@@ -17,7 +17,7 @@
         <el-select v-model="pageSize" :placeholder="pageSize+$t('pageSize')" size="small"
                    :teleported="appendToBody" class="pagination-size-select" @change="size"
                    :popper-class="popClass" @visible-change="popperVisible">
-          <el-option v-for="(item, index) in pageSizes" :key="index" :label="item.label" :value="item.value"></el-option>
+          <el-option v-for="item in pageSizes" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
 
       </el-pagination>

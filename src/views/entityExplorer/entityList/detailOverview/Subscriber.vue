@@ -65,7 +65,7 @@
             <loading :loading="loadingRelationshipOne" size="small" style="left: 1rem;"></loading>
           </div>
 
-          <div class="data-item high-light-block" v-high-light="keywordList" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
+          <div class="data-item high-light-block" v-high-light="keywordList" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="item.value">
             {{item.value}}
           </div>
           <div v-if="relationshipDataOne.length===0 && !loadingRelationshipOne">-</div>
@@ -73,7 +73,7 @@
           <div v-if="relationshipShowOne">
             <div class="data-item show-more-related" id="related-app-more" @click.stop="showMoreApp" style="position: relative">...</div>
             <div v-if="isShowMoreApp" class="app-popover_block" id="showRelatedApp">
-              <div class="popover-content" v-for="(item, index) in relationshipDataOne" :key="index">
+              <div class="popover-content" v-for="(item, index) in relationshipDataOne" :key="item.value">
                 <span v-if="!item.show" class="high-light-block" v-high-light="keywordList">{{item.value}}</span>
               </div>
             </div>

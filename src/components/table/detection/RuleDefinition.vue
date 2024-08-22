@@ -20,7 +20,7 @@
         <div class="form-setting__block margin-b-20">
           <div class="block-title">{{ $t('detection.create.dimensions') }}</div>
           <div class="block-dimension">
-            <div class="block-dimension-tag" v-for="(ite, ind) in dimensionList" :key="ind">{{ ite.label }}</div>
+            <div class="block-dimension-tag" v-for="ite in dimensionList" :key="ite.label">{{ ite.label }}</div>
           </div>
         </div>
 
@@ -37,7 +37,7 @@
         <div class="form-setting__block margin-b-20">
           <div class="block-title1">{{ $t('detections.filters') }}</div>
           <div class="definition-filter-block" v-if="showFilter">
-            <div class="definition-filter-item" v-for="(item, index) in thresholdRuleObj.filterList" :key="index">
+            <div class="definition-filter-item" v-for="(item, index) in thresholdRuleObj.filterList" :key="item.filter">
               <el-select class="filter-item__select margin-r-8" v-model="item.filter" placeholder=" ">
                 <el-option
                     v-for="item in selectList"
@@ -68,7 +68,7 @@
           <div class="block-title">{{ $t('detection.create.condition') }}</div>
 
           <el-form ref="form2" :model="thresholdRuleObj" label-position="top">
-          <div class="definition-condition-block" v-for="(item, index) in thresholdRuleObj.conditionData" :key="index">
+          <div class="definition-condition-block" v-for="(item, index) in thresholdRuleObj.conditionData" :key="item.level">
             <el-form-item :label="$t('detection.level')" :prop="`conditionData.${index}.level`" :rules="rules.level">
               <el-select class="condition__select margin-b-20" v-model="item.level" placeholder=" ">
                 <template #prefix>

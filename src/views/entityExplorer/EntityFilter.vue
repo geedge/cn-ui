@@ -3,7 +3,7 @@
     <div class="filter-case__header">{{ $t('entities.filter1') }}</div>
 
     <div v-if="filterDataLength>0">
-      <div class="entity-filter" v-for="(item, index) in myFilterData" :key="index">
+      <div class="entity-filter" v-for="(item, index) in myFilterData" :key="item.title">
         <div v-if="item.data.length>0">
           <div class="filter__header">
             <i :class="item.icon"></i>

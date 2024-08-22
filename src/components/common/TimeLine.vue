@@ -4,7 +4,7 @@
       <el-slider v-model="currentTime" @change="onChange" :step="1" :max="timeLine.length>0?timeLine.length-1:99" :format-tooltip="formatTooltip"/>
     </div>
     <div class="time-line-container">
-      <div v-for="(item, index) in timeLine" :key="index">
+      <div v-for="item in timeLine" :key="item.time">
         <div v-if="item.showFlag" style="color: #666;">{{ item.time }}</div>
       </div>
     </div>

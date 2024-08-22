@@ -12,7 +12,7 @@
         </div>
       </div>
 
-      <div v-for="(item, index) in infoList" :key="index" class="margin-t-20">
+      <div v-for="item in infoList" :key="item.name" class="margin-t-20">
         <div class="digital-certificate-body">
           <div class="digital-certificate-body-tags">
             <div :class="item.flag === '0' ? 'entity-tag entity-tag--level-two-negative-no-background' : 'entity-tag entity-tag--level-two-positive-no-background'">{{ this.$t(getTrusted(item.flag)) }}</div>
@@ -20,7 +20,7 @@
 
           <div class="digital-certificate-body-content">
             <div class="certificate-list-list">
-              <div v-for="(item1, index1) in item.data" :key="index1" class="certificate-list-item">
+              <div v-for="item1 in item.data" :key="item1.label" class="certificate-list-item">
                 <div class="certificate-list-item__label">{{ item1.label }}</div>
                 <div v-if="item1.type" :class="'entity-tag entity-tag--small entity-tag--level-one-' + item1.type">{{ item1.value }}</div>
                 <div v-else class="certificate-list-item__value">

@@ -5,7 +5,7 @@
   <div v-if="!isNoData && !showError" class="entity-detail-event-block" style="height: 100%;width: 100%;position: relative;">
     <div class="behavior-pattern" >
       <div class="behavior-pattern-legend" >
-          <div class="behavior-pattern-legend__item" v-for="(data, index) in tableData" :key="index">
+          <div class="behavior-pattern-legend__item" v-for="(data, index) in tableData" :key="data.name">
             <div class="legend-icon" :style="`background:${chartColorForBehaviorPattern[index%10]};`"></div>
             <div class="legend-name">{{data.name}}</div>
             <div class="legend-value" >{{ valueToRangeValue(data.value, unitTypes.number).join('')}}</div>

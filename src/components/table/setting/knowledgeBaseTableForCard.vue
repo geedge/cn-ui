@@ -137,7 +137,7 @@
               <div class="bar-header-left">
                 <div class="bar-value-active"></div>
                 <div class="bar-value">
-                  <template v-for="(item, index) in tabs" :key="index">
+                  <template v-for="(item, index) in tabs" :key="item.name">
                     <div class="bar-value-tabs"
                          :class=" {'is-active': tabType === item.class, 'mousemove-cursor': mousemoveCursor === item.class}"
                          @mouseenter="mouseenterTab(item)"

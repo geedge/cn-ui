@@ -33,7 +33,7 @@
             <div class="expand">
               <loading :loading="loadingDown"></loading>
               <chart-no-data v-if="downDataList.length === 0 && !loadingDown"></chart-no-data>
-              <div class="expand-cell" v-for="(item, index) in downDataList" :key="index">
+              <div class="expand-cell" v-for="item in downDataList" :key="item.id">
                 <div class="expand-right">
                   <div class="demo-progress">
                     <el-progress :stroke-width="10" type="circle" :percentage="computePercent(item)"

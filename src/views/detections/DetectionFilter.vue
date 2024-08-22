@@ -2,7 +2,7 @@
   <div class="detection-filter-case">
     <div class="filter-case__header">{{$t('detections.filters')}}</div>
     <div class="no-data" v-if="isNoData">{{ $t('npm.noData') }}</div>
-    <template v-for="(filter, index) in filterData" :key="index">
+    <template v-for="(filter, index) in filterData" :key="filter.title">
       <div class="detection-filter" v-show="filter.data.length > 0 && filter.show">
         <div class="filter__header">{{filter.title}}</div>
 

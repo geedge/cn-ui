@@ -13,7 +13,7 @@
               :listMode="listMode"
               :keywordList="keywordList"
               :timeFilter="timeFilter"
-              :key="index"
+              :key="data.entityValue"
               :ref="`entityRow${index}`"
               :index="index"
               @switchCollapse="switchCollapse"
@@ -30,7 +30,7 @@
               :index="index"
               :listMode="listMode"
               :timeFilter="timeFilter"
-              :key="index"
+              :key="data.entityValue"
           ></entity-card>
         </div>
       </template>

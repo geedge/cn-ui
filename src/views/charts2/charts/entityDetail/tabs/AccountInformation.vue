@@ -10,7 +10,7 @@
           <span class="type-title-word">{{ $t('entities.tab.email') }}</span>({{ mailList.length }})
         </div>
         <div class="type-content">
-          <div v-for="(mail, index) in mailList.slice(0,showMailListInfo.num)" :key="index" class="data-item">
+          <div v-for="mail in mailList.slice(0,showMailListInfo.num)" :key="mail" class="data-item">
             {{ mail }}
           </div>
         </div>
@@ -27,7 +27,7 @@
           <span class="type-title-word">{{ $t('entities.tab.wetchat') }}</span>({{ wetchatList.length }})
         </div>
         <div class="type-content">
-          <div v-for="(wetchat, index) in wetchatList.slice(0,showWetchatListInfo.num)" :key="index" class="data-item">
+          <div v-for="(wetchat, index) in wetchatList.slice(0,showWetchatListInfo.num)" :key="wetchat" class="data-item">
             {{ wetchat }}
           </div>
         </div>

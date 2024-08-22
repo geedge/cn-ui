@@ -9,7 +9,7 @@
             <div class="line-value-tabs"
                  :class=" {'is-active': lineTab === item.class, 'mousemove-cursor': mousemoveCursor === item.class}"
                  v-if="item.show"
-                 :key="index"
+                 :key="item.name"
                  @mouseenter="mouseenter(item)"
                  @mouseleave="mouseleave(item)"
                  @click="activeChange(item, index,true)"

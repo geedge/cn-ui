@@ -110,7 +110,7 @@
                 <template #append>{{$t('report.week')}}</template>
               </el-input>-->
               <el-checkbox-group v-model="editObject.config.schedulerConfig.weekDates">
-                <el-checkbox v-for="(item, index) in weekdayList" :key="index" :label="item.value">{{$t(item.name)}}</el-checkbox>
+                <el-checkbox v-for="item in weekdayList" :key="item.value" :label="item.value">{{$t(item.name)}}</el-checkbox>
               </el-checkbox-group>
             </div>
             <!-- 月 -->
@@ -134,7 +134,7 @@
                   <div class="enable-month-all">
                     <el-checkbox v-model="monthCheckedAll" class="enable-month-all-months" :indeterminate="monthIsIndeterminate" @change="monthCheckAllChange" :label="$t('report.allMonths')"/>
                     <el-checkbox-group v-model="editObject.config.schedulerConfig.months" @change="monthCheckChange">
-                      <el-checkbox v-for="(item, index) in monthList" :key="index" :label="item.value">{{$t(item.name)}}</el-checkbox>
+                      <el-checkbox v-for="item in monthList" :key="item.value" :label="item.value">{{$t(item.name)}}</el-checkbox>
                     </el-checkbox-group>
                   </div>
                 </template>
@@ -163,7 +163,7 @@
                   <div class="enable-month-week">
                     <el-checkbox v-model="monthWeekdayCheckedAll" class="enable-month-week-all" :label="$t('report.all')" :indeterminate="monthWeekdayIsIndeterminate" @change="monthWeekdayCheckAllChange" size="large"/>
                     <el-checkbox-group v-model="editObject.config.schedulerConfig.weekDates" @change="monthWeekdayCheckChange">
-                      <el-checkbox v-for="(item, index) in weekdayList" :key="index" :label="item.value">{{$t(item.name)}}</el-checkbox>
+                      <el-checkbox v-for="item in weekdayList" :key="item.value" :label="item.value">{{$t(item.name)}}</el-checkbox>
                     </el-checkbox-group>
                   </div>
                 </template>
@@ -219,7 +219,7 @@
 <!--            <el-input v-model="param.value" placeholder=" " v-for="(param, index) in editObject.categoryParams" :key="index" size="small" style="vertical-align: unset;" :disabled="!!editObject.id">
               <template #prepend>{{param.key}}</template>
             </el-input-number>-->
-            <template v-for="(param, index) in editObject.categoryParams" :key="index">
+            <template v-for="param in editObject.categoryParams" :key="param.key">
               <el-input-number v-if="param.labelType === 'input'" v-model="param.value" placeholder=" " class="report__params-vertical" :disabled="!!editObject.id">
                 <template #prepend>{{param.key}}</template>
               </el-input-number>

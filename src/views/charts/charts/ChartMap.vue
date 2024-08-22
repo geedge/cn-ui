@@ -7,7 +7,7 @@
           class="map-chart__legend"
           :class="`${currentLegendIndex === index ? 'map-chart__legend--active' : ''}`"
           v-for="(legend, index) in legends"
-          :key="index"
+          :key="item.name"
           @click="changeLegend(index)"
       >
         <div

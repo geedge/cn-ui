@@ -33,7 +33,7 @@
         </div>
 
         <div class="graph-list-content">
-          <div v-for="(item, index) in showList" :key="index">
+          <div v-for="(item, index) in showList" :key="item.vertex">
             <div class="graph-list-item-ip"><span @click="expandDetail">{{ item.vertex }}</span></div>
             <template v-if="$_.get(node, 'data.entityType', '') === 'ip'">
               <div class="graph-list-item-block">

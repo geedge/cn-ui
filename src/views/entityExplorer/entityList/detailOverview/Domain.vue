@@ -97,7 +97,7 @@
             <loading :loading="loadingRelationshipOne" size="small" class="one__loading"></loading>
           </div>
 
-          <div class="data-item high-light-block" v-high-light="keywordList" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
+          <div class="data-item high-light-block" v-high-light="keywordList" v-show="item.show" v-for="item in relationshipDataOne" :key="item.value">
             {{item.value}}
           </div>
           <div v-if="relationshipDataOne.length===0 && !loadingRelationshipOne">-</div>
@@ -105,7 +105,7 @@
           <div v-if="relationshipShowOne">
             <div class="data-item show-more-related" id="related-app-more" @click.stop="showMoreApp">...</div>
             <div v-if="isShowMoreApp" class="app-popover_block" id="showRelatedApp">
-              <div class="popover-content" v-for="(item, index) in relationshipDataOne" :key="index">
+              <div class="popover-content" v-for="item in relationshipDataOne" :key="item.value">
                 <span v-if="!item.show" class="high-light-block" v-high-light="keywordList">{{item.value}}</span>
               </div>
             </div>
@@ -119,7 +119,7 @@
           <div v-if="loadingRelationshipTwo" class="relationship-two__loading">
             <loading :loading="loadingRelationshipTwo" size="small" class="one__loading"></loading>
           </div>
-          <div class="data-item high-light-block" v-high-light="keywordList" v-show="item.show" v-for="(item, index) in relationshipDataTwo" :key="index">
+          <div class="data-item high-light-block" v-high-light="keywordList" v-show="item.show" v-for="item in relationshipDataTwo" :key="item.value">
             {{item.value}}
           </div>
           <div v-if="relationshipDataTwo.length===0 && !loadingRelationshipTwo">-</div>
@@ -127,7 +127,7 @@
           <div v-if="relationshipShowTwo">
             <div class="data-item show-more-related" id="related-domain-more" @click.stop="showMoreDomain">...</div>
             <div v-if="isShowMoreDomain" class="domain-popover_block" id="showRelatedDomain">
-              <div v-for="(item, index) in relationshipDataTwo" :key="index">
+              <div v-for="item in relationshipDataTwo" :key="item.value">
                 <span v-if="!item.show" class="high-light-block" v-high-light="keywordList">{{item.value}}</span>
               </div>
             </div>
@@ -148,7 +148,7 @@
         <div class="row__label row__label--width130">{{$t('entities.recentAlert')}}</div>
         <div class="row__content">{{entityData.performanceNum}}</div>
       </div>
-      <div class="overview__row overview__row--small-font" v-for="(performance, index) in entityData.performanceList" :key="index">
+      <div class="overview__row overview__row--small-font" v-for="performance in entityData.performanceList" :key="performance.startTime">
         <div class="row__label row__label--width130">{{performance.startTime ? dateFormatByAppearance(Number(performance.startTime)) : '-'}}</div>
         <div class="row__content row__content--width90">
           <div class="alert-level-tag" :class="`alert-level-tag--${iconClass(performance)}`">{{performance.eventSeverity}}</div>

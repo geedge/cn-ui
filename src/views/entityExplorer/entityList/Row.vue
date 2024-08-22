@@ -28,8 +28,8 @@
             </el-popover>
           </span>
           <span class="entity-detail entity-row-tag" :style="{'margin-top' : entityData.isRelated ? '4px':'1px'}">
-            <span v-for="(item, index) in levelTwoTags"
-                  :key="index"
+            <span v-for="item in levelTwoTags"
+                  :key="item.value"
                   class="entity-tag entity-tag--small margin-r-10 margin-b-10"
                   :class="`entity-tag--level-two-${item.type}`"
                   :style="getTagColor(item.color)">

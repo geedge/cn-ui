@@ -8,7 +8,7 @@
         :row-class-name="rowClassName"
         empty-text=""
     >
-      <template v-for="(item, index) in customTableTitles" :key="index">
+      <template v-for="(item, index) in customTableTitles" :key="item.label">
         <el-table-column class="data-column" :min-width="columnWidth(index)">
           <template #header>
             <span class="data-column__span">{{ $t(item.label) }}</span>

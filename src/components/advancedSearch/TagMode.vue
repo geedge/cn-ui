@@ -26,8 +26,8 @@
                 @change="(value) => selectColumn(value, meta)"
             >
               <el-option
-                  v-for="(column, index) in columnList"
-                  :key="index"
+                  v-for="column in columnList"
+                  :key="column.label"
                   :label="column.label"
                   :value="column.label"
               ></el-option>
@@ -57,8 +57,8 @@
                 @change="(value) => selectValue(value, meta)"
             >
               <el-option
-                  v-for="(code, i) in meta.doc.data"
-                  :key="i"
+                  v-for="code in meta.doc.data"
+                  :key="code.code"
                   :label="code.code"
                   :value="code.code"
               ></el-option>
@@ -116,8 +116,8 @@
         <div class="condition__operation-select" v-if="meta.operator.show && meta.operator.isEditing">
           <div
               class="condition__operation"
-              v-for="(operator, index) in operatorList"
-              :key="index"
+              v-for="operator in operatorList"
+              :key="operator"
               @click.stop="selectOperator(operator, meta)"
           >{{operator}}</div>
         </div>

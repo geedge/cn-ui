@@ -10,7 +10,7 @@
           <span class="type-title-word">{{ $t('entities.tab.device') }}</span>({{ deviceList.length }})
         </div>
         <div class="type-content">
-          <div v-for="(device, index) in deviceList.slice(0,showDeviceListInfo.num)" :key="index" class="data-item">
+          <div v-for="(device, index) in deviceList.slice(0,showDeviceListInfo.num)" :key="device" class="data-item">
             {{ device }}
           </div>
         </div>

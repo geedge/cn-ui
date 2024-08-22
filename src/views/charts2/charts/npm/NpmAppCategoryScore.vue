@@ -4,13 +4,13 @@
 
     <div class="npm-app-left" v-if="!showError">
       <div class="npm-app-letter" :class="{'npm-app-letter-no-data': isNoData}">
-        <div v-for="(letter, index) in colorPatchData" :key="index">
+        <div v-for="letter in colorPatchData" :key="letter.letter">
           {{letter.letter}}
         </div>
       </div>
       <chart-no-data v-if="isNoData"></chart-no-data>
       <div class="npm-app-body" v-else>
-        <div class="npm-app-body-patch" v-for="(data, index) in tableData" :key="index">
+        <div class="npm-app-body-patch" v-for="(data, index) in tableData" :key="data.icon">
           <div class="npm-app-body-icon"><span><i :class="data.icon" :test-id="`iconContent${index}`"></i></span></div>
           <div class="npm-app-body-color" v-for="index2 in 6" :key="index2" :class="{'score-color': data.score >= index2}"></div>
         </div>
@@ -24,7 +24,7 @@
         height="100%"
         empty-text=" "
         v-if="!showError">
-      <template v-for="(item, index) in customTableTitles" :key="index">
+      <template v-for="item in customTableTitles" :key="item.label">
         <el-table-column class="data-column">
           <template #header>
             <span class="data-column__span" style="margin-left: -2px;">{{$t(item.label)}}</span>

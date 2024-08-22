@@ -12,7 +12,7 @@
         :class="{'npm-recent-table-ten': tableData.length === 10}"
         empty-text=""
     >
-      <template v-for="(item, index) in customTableTitles" :key="index">
+      <template v-for="item in customTableTitles" :key="item.label">
         <el-table-column class="data-column">
           <template #header>
             <span class="data-column__span">{{$t(item.label)}}</span>

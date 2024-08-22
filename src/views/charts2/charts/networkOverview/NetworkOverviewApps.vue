@@ -75,7 +75,7 @@
               <div class="body__apps" :class="{'body__apps-no-grid': providerOptions.length === 0}">
                 <loading :loading="loadingBody"></loading>
                 <chart-no-data v-if="providerOptions.length === 0 && !loadingBody" test-id="noData"></chart-no-data>
-                <div class="body__app" v-else :class="{'provide-show': app.provideShow}" v-for="(app, index) in providerOptions" :key="index"  @click="appCheckedChange(app, 0)" :test-id="`provide${index}`">
+                <div class="body__app" v-else :class="{'provide-show': app.provideShow}" v-for="(app, index) in providerOptions" :key="app.value"  @click="appCheckedChange(app, 0)" :test-id="`provide${index}`">
                   <div class="body__app-content">
                     <div class="body__app-left">
                       <span><i class="cn-icon" :class="app.icon" :test-id="`provide-icon${index}`"></i></span>
@@ -95,7 +95,7 @@
               <div class="body__apps" :class="{'body__apps-no-grid': appOptions.length === 0}">
                 <loading :loading="loadingBody"></loading>
                 <chart-no-data v-if="appOptions.length === 0 && !loadingBody"></chart-no-data>
-                <div class="body__app" v-else :class="{'app-show': app.appShow}" v-for="(app, index) in appOptions" :key="index" @click="appCheckedChange(app, 1)" :test-id="`app${index}`">
+                <div class="body__app" v-else :class="{'app-show': app.appShow}" v-for="(app, index) in appOptions" :key="app.name" @click="appCheckedChange(app, 1)" :test-id="`app${index}`">
                   <div class="body__app-content">
                     <div class="body__app-left">
                       <span><i class="cn-icon" :class="app.icon" :test-id="`app-icon${index}`"></i></span>
