@@ -35,7 +35,7 @@
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-time2"></i>
                 <span>{{$t('detection.lastTime')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{dateFormatByAppearance(detection.startTime) || '-'}}</span>
+                <span>{{dateFormatByAppearance(detection.endTime) || '-'}}</span>
               </div>
             </div>
           </div>

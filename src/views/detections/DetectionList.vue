@@ -16,7 +16,7 @@
               :pageObj="pageObj"
               :eventFlag="eventFlag"
               :ref="`detectionRow${index}`"
-              :index="data.eventId"
+              :index="index"
               @switchCollapse="switchCollapse"
               :q="q"
           ></detection-row>

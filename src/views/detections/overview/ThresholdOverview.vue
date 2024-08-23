@@ -9,11 +9,17 @@
       </div>
       <div class="overview__title">{{ $t('overall.summary') }}</div>
       <div class="overview__row overview__row__display">
+        <div class="row__content1 row__display">
+          <div v-for="(item, index) in markLineData" :key="item.label" class="row__mark__line" @click="highLightMarkLine(index)">
+            <div class="mark__line__text">{{ item.label }}: {{ item.yAxis }}</div>
+            <div class="mark__line__block" :style="{background: item.itemStyle.color}"></div>
+          </div>
+        </div>
         <div class="row__content1">
           <div class="row__content__charts" :id="`myChart${detection.eventId}`"></div>
         </div>
         <div class="row__content1" v-if="seriesDataNum>1">
-          <div class="charts__visual__map"></div>
+          <div class="charts__visual__map" :style="`background: linear-gradient(to right, ${mapColor});`"></div>
         </div>
       </div>
 

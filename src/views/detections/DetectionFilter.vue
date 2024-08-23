@@ -9,13 +9,17 @@
         <div class="filter__body" style="position: relative">
           <div class="filter__body-item"
                v-for="(data, i) in filter.data.slice(0, filter.showIndex)"
-               :key="i"
+               :key="data.value"
                @click="clickFilterItem(data.label, filter.column, index)">
             <div class="filter__body-item-left">
               <div class="filter__body-item-left-index">{{ i+1 }}</div>
               <div class="filter__body-item-left-label">
-                <el-tooltip :content="data.label" placement="top" effect="light" :disabled="disabledLabel && !data.unDisabled">
-                    <span @mouseenter="handleMouse(`filter${index}${i}`)" :id="`filter${index}${i}`">
+                <el-tooltip placement="top" effect="light" :disabled="disabledLabel && !data.unDisabled">
+                  <template #content>
+                    <div v-if="data.tooltip" v-html="data.tooltip"></div>
+                    <div v-else>{{ data.label }}</div>
+                  </template>
+                  <span @mouseenter="handleMouse(`filter${index}${i}`)" :id="`filter${index}${i}`">
                       <span v-if="data.values">{{ data.values }}</span>
                       <span v-else>{{ data.label }}</span>
                     </span>

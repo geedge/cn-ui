@@ -1,4 +1,4 @@
-import { detectionEventType, detectionRuleType, EN, storageKey, unitTypes, ZH } from '@/utils/constants'
+import { detectionEventType, detectionRuleType, EN, storageKey, ZH } from '@/utils/constants'
 import { getMillisecond, getSecond } from '@/utils/date-util'
 import axios from 'axios'
 import { api } from '@/utils/api'
@@ -23,7 +23,9 @@ export default {
       isGroup: 0,
       myChart: null,
       lineOption: lineOption,
-      seriesDataNum: 0
+      seriesDataNum: 0,
+      mapColor: '',
+      markLineData: []
     }
   },
   computed: {
@@ -79,7 +81,9 @@ export default {
         }
         axios.get(api.detection.event.detailTimeDistribution, { params: timeParams }).then(res => {
           if (res.status === 200) {
-            this.timeData = res.data.data.result
+            const timeData = res.data.data.result
+            timeData.sort((a, b) => a.statTime - b.statTime)
+            this.timeData = timeData
           }
         }).catch(e => {
           this.$message.error(this.errorMsgHandler(e))
@@ -102,6 +106,11 @@ export default {
           if (this.detection.ruleType === detectionRuleType.threshold.key) {
             const data = res.data.data.result
             if (data && data.length > 0) {
+              this.mapColor = ''
+              data.forEach(item => {
+                this.mapColor += getSeverityNumberColor(item.severity) + ','
+              })
+              this.mapColor = this.mapColor.slice(0, -1)
               this.handleLineChart(data)
             }
           } else {
@@ -164,11 +173,13 @@ export default {
             itemStyle: { color: getSeverityNumberColor(item.severity) },
             label: getSeverityByCode(item.severity)
           })
+          this.markLineData = markLineData
           this.lineOption.series[0].markLine = {
             silent: true,
             symbol: 'none',
             data: markLineData,
             label: {
+              show: false,
               position: 'insideStartTop',
               color: '#999',
               formatter (params) {
@@ -179,7 +190,6 @@ export default {
         }
       })
       this.lineOption.series[0].data = seriesData
-      this.lineOption.series[0].color = getSeverityNumberColor(data[0].severity) || '#ff9a79'
 
       this.seriesDataNum = seriesData.length
       if (this.seriesDataNum <= 1) {
@@ -190,6 +200,21 @@ export default {
       }
       this.myChart = markRaw(echarts.init(document.getElementById('myChart' + this.detection.eventId)))
       this.myChart.setOption(this.lineOption)
+    },
+    /** 高亮markLine */
+    highLightMarkLine (index) {
+      // this.myChart.dispatchAction({
+      //   type: 'highlight',
+      //   seriesName: 'markLine', // 系列索引，根据实际情况修改
+      //   dataIndex: index // 数据索引，表示哪一条markLine会被高亮
+      // })
+
+      // // 如果之后需要取消高亮，可以使用下面的代码
+      // myChart.dispatchAction({
+      //   type: 'downplay',
+      //   seriesIndex: 0, // 系列索引，根据实际情况修改
+      //   dataIndex: dataIndex // 数据索引，表示哪一条markLine的高亮状态将被取消
+      // });
     }
   }
 }

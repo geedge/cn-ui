@@ -40,14 +40,7 @@ export default {
   data () {
     return {
       timeLine: [],
-      myTimeData: [
-        { eventId: '1111111', lastTime: 1722391500, startTime: 1722391500 },
-        { eventId: '2222222', lastTime: 1722391920, startTime: 1722391920 },
-        { eventId: '3333333', lastTime: 1722391920, startTime: 1722391920 },
-        { eventId: '444', lastTime: 1722392340, startTime: 1722392340 },
-        { eventId: '555', lastTime: 1722392580, startTime: 1722392580 },
-        { eventId: '666', lastTime: 1722392880, startTime: 1722392880 }
-      ],
+      myTimeData: [],
       activeCircle: 0,
       lineWidth: 520, // 时间轴宽度
       isTransform: false // 时间轴label是否旋转标识，文字高度超出16即为换行，将文字旋转角度
@@ -109,11 +102,7 @@ export default {
           myTimeRange.push({ time: obj.time, time1: obj.time1, stamp: new Date(obj.time1).getTime(), lastStamp: new Date(obj.time1).getTime() - showTimeInterval * 60 * 1000, showFlag: obj.showFlag, isYear: obj.isYear })
         }
       }
-
       this.timeLine = myTimeRange
-      // if (e === 'init') {
-      //   this.$emit('change', timeObj)
-      // }
     },
     // 按时间间隔格式化时间
     formatTime (timestamp, showTimeInterval, timeInterval) {
@@ -121,7 +110,6 @@ export default {
       const minute = date.getMinutes()
       // const remainder = minute % showTimeInterval
       const remainder1 = minute % timeInterval
-      // if (remainder === 0) {
       // 零点，显示年月日
       if (date.getHours() === 0 && minute === 0) {
         const month = date.getMonth() + 1
@@ -148,7 +136,6 @@ export default {
         }
         return obj
       }
-      // }
     },
     // 获取间隔时间，如一小时最小间隔时间1分钟，3小时间隔2分钟
     getTimeInterval (timeFilter) {
@@ -261,11 +248,12 @@ export default {
 
         if (index === 0) {
           let marginLeft = this.lineWidth - ((item.itemDiffTime / item.diffTime) * this.lineWidth)
-          marginLeft = Math.round(marginLeft) + 38 + 'px' // 30px的左边距+小球半径8px
+          marginLeft = Math.round(marginLeft) + 27 + 'px' // 20px的左边距+小球半径7px
           item.marginLeft = marginLeft
         } else {
+          // 从第二个开始计算距离上一个球的距离，并减去上一个球的直径
           let marginLeft = ((this.myTimeData[index - 1].itemDiffTime - item.itemDiffTime) / item.diffTime) * this.lineWidth
-          marginLeft = (Math.round(marginLeft) - 43) + 'px'
+          marginLeft = (Math.round(marginLeft) - 14) + 'px'
           item.marginLeft = marginLeft
         }
       })

@@ -431,8 +431,18 @@ export default {
             count: r.count,
             fields: r.keyFields,
             values: r.keyValues,
-            unDisabled: true
+            unDisabled: true,
+            tooltip: ''
           }))
+          this.filterData[2].data.forEach(item => {
+            const valueList = item.values.split(',')
+            const fieldList = item.fields.split(',')
+            let tooltip = ''
+            fieldList.forEach((ite, ind) => {
+              tooltip += `${ite}: ${valueList[ind]}<br>`
+            })
+            item.tooltip = tooltip
+          })
           this.isCheckFilterByQ(params, 2)
           const { showMore, showIndex, showDisabled } = this.computeFilterPage(this.filterData[2].data)
           this.filterData[2].showMore = showMore
@@ -450,7 +460,7 @@ export default {
           data.sort(reverseSortBy('count'))
           data = data.slice(0, 5)
           offenderIpOption.series[0].data = data.map(d => {
-            return [d.count, `${d.keyValues},${d.keyFields}`, d.keyValues, d.keyFields]
+            return [d.count, `${d.keyValues}`, d.keyValues, d.keyFields]
           }).reverse()
           detectionChart.setOption(offenderIpOption)
 

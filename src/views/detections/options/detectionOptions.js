@@ -306,7 +306,13 @@ export const activeAttackBar = {
       overflow: 'truncate'
     },
     formatter: function (param, index, callback) {
-      return `${param.value[3]},${param.value[2]}: ${unitConvert(param.value[0], 'number').join(' ')}`
+      const valueList = param.value[2].split(',')
+      const fieldList = param.value[3].split(',')
+      let tooltip = ''
+      fieldList.forEach((ite, ind) => {
+        tooltip += `${ite}: ${valueList[ind]}<br>`
+      })
+      return tooltip
     },
     show: true,
     className: 'nz-chart-tooltip',
@@ -457,7 +463,7 @@ export const metricOption = {
         width: 1,
         type: 'dashed'
       },
-      color: '#ec836c',
+      color: '#E48F3E',
       data: [],
       showSymbol: false
     }
