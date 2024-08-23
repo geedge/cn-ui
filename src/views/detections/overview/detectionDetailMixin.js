@@ -82,7 +82,7 @@ export default {
         axios.get(api.detection.event.detailTimeDistribution, { params: timeParams }).then(res => {
           if (res.status === 200) {
             const timeData = res.data.data.result
-            timeData.sort((a, b) => a.statTime - b.statTime)
+            timeData.sort((a, b) => a.endTime - b.endTime)
             this.timeData = timeData
           }
         }).catch(e => {
@@ -133,7 +133,7 @@ export default {
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
-        eventId: e,
+        eventId: e.eventId,
         ruleType: this.detection.ruleType,
         resource: this.q,
         isGroup: this.isGroup
@@ -148,6 +148,11 @@ export default {
             const detailData = data[0]
             if (detailData?.eventInfo) {
               detailData.eventInfoList = JSON.parse(detailData.eventInfo)
+            }
+            if (!detailData.startTime) {
+              detailData.startTime = e.startTime
+              detailData.endTime = e.endTime
+              detailData.durationS = e.endTime - e.startTime
             }
             this.myDetection = { ...this.myDetection, ...detailData }
           }
@@ -165,7 +170,7 @@ export default {
       const seriesData = []
       const markLineData = []
       data.forEach(item => {
-        seriesData.push([getMillisecond(JSON.parse(item.startTime)), item.recordsNum])
+        seriesData.push([getMillisecond(JSON.parse(item.startTime)), item.recordsNum, getSeverityNumberColor(item.severity)])
         const obj = markLineData.find(d => d.yAxis === item.thresholdNum)
         if (!obj) {
           markLineData.push({

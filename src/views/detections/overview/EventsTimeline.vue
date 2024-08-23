@@ -1,8 +1,8 @@
 <template>
   <div class="events-timeline">
     <div class="timeline__circle">
-      <div v-for="(item, index) in myTimeData" :key="item.statTime">
-        <el-tooltip :content="changeTimestampToTime(item.statTime)" placement="top" effect="light">
+      <div v-for="(item, index) in myTimeData" :key="item.endTime">
+        <el-tooltip :content="changeTimestampToTime(item.endTime)" placement="top" effect="light">
           <div
               :class="index===activeCircle ? 'circle__item-active' : 'circle__item'"
               :style="`margin-left: ${item.marginLeft};`"
@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="timeline__line margin-l-30"></div>
-    <div class="timeline-container margin-l-30" id="timeline-container">
+    <div class="timeline-container margin-l-25" id="timeline-container">
       <div v-for="item in timeLine" :key="item.time" :style="{width: item.isYear ? '5px' : 'auto'}">
         <div v-if="item.showFlag" :class="handleTransformClass(item.isYear)">{{ item.time }}</div>
       </div>
@@ -218,7 +218,12 @@ export default {
     // 时间轴红点的点击事件，添加防抖处理
     onChange: throttle(function (e, index) {
       this.activeCircle = index
-      this.$emit('change', e.eventId)
+      const param = {
+        eventId: e.eventId,
+        startTime: e.startTime,
+        endTime: e.endTime / 1000
+      }
+      this.$emit('change', param)
     }, 500),
     // onChange (e, index) {
     //   this.activeCircle = index
@@ -236,8 +241,8 @@ export default {
       this.myTimeData = this.$_.cloneDeep(this.timeData)
       this.activeCircle = this.myTimeData.length - 1
       this.myTimeData.forEach((item, index) => {
-        item.statTime = getMillisecond(item.statTime)
-        item.lastTime = this.$_.cloneDeep(item.statTime)
+        item.endTime = getMillisecond(item.endTime)
+        item.lastTime = this.$_.cloneDeep(item.endTime)
         let minutes = new Date(item.lastTime).getMinutes()
         let hours = new Date(item.lastTime).getHours()
         minutes = minutes < 10 ? '0' + minutes : minutes
@@ -248,7 +253,7 @@ export default {
 
         if (index === 0) {
           let marginLeft = this.lineWidth - ((item.itemDiffTime / item.diffTime) * this.lineWidth)
-          marginLeft = Math.round(marginLeft) + 27 + 'px' // 20px的左边距+小球半径7px
+          marginLeft = Math.round(marginLeft) + 34 + 'px' // 20px的左边距+小球直径14px
           item.marginLeft = marginLeft
         } else {
           // 从第二个开始计算距离上一个球的距离，并减去上一个球的直径
@@ -335,6 +340,10 @@ export default {
 
   .margin-l-30 {
     margin-left: 30px;
+  }
+
+  .margin-l-25 {
+    margin-left: 25px;
   }
 }
 </style>

@@ -26,7 +26,7 @@
         <div class="row__label">{{ $t('overall.duration') }}</div>
         <div class="row__content">
           <i class="cn-icon cn-icon-duration row__content__icon"></i>
-          {{ unitConvert(parseInt(detection.durationS), 'time', 's', null, 0).join(' ') || '-' }}
+          {{ unitConvert(parseInt(myDetection.durationS), 'time', 's', null, 0).join(' ') || '-' }}
         </div>
       </div>
       <div class="overview__row">
