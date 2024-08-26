@@ -24,7 +24,7 @@ export default {
       myChart: null,
       lineOption: lineOption,
       seriesDataNum: 0,
-      mapColor: '',
+      mapColor: [],
       markLineData: []
     }
   },
@@ -106,11 +106,10 @@ export default {
           if (this.detection.ruleType === detectionRuleType.threshold.key) {
             const data = res.data.data.result
             if (data && data.length > 0) {
-              this.mapColor = ''
+              this.mapColor = []
               data.forEach(item => {
-                this.mapColor += getSeverityNumberColor(item.severity) + ','
+                this.mapColor.push(getSeverityNumberColor(item.severity))
               })
-              this.mapColor = this.mapColor.slice(0, -1)
               this.handleLineChart(data)
             }
           } else {

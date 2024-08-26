@@ -500,7 +500,7 @@ export const lineOption = {
       name: 'match',
       data: [],
       type: 'line',
-      color: '#ff9a79',
+      color: '#2E7AFE',
       symbol: 'none',
       markLine: {
         silent: true,
@@ -519,7 +519,7 @@ export const lineOption = {
     trigger: 'axis',
     formatter: function (params) {
       const param = JSON.parse(JSON.stringify(params[0]))
-      param.marker = param.marker.replace('#ff9a79', param.data[2])
+      param.marker = param.marker.replace('#2E7AFE', param.data[2])
       const str = `<div style="display: flex;justify-content: space-between"><div>${param.marker}${param.seriesName}</div><div>${param.data[1]}</div></div>`
       return `${param.axisValueLabel}<br />${str}`
     },
