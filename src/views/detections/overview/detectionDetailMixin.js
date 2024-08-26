@@ -84,6 +84,9 @@ export default {
             const timeData = res.data.data.result
             timeData.sort((a, b) => a.endTime - b.endTime)
             this.timeData = timeData
+            const detailData = JSON.parse(JSON.stringify(timeData)).pop()
+            detailData.durationS = detailData.endTime - detailData.startTime
+            this.myDetection = { ...this.myDetection, ...detailData }
           }
         }).catch(e => {
           this.$message.error(this.errorMsgHandler(e))
@@ -119,7 +122,7 @@ export default {
               if (detailData?.eventInfo) {
                 detailData.eventInfoList = JSON.parse(detailData.eventInfo)
               }
-              this.myDetection = { ...detailData, ...this.detection }
+              this.myDetection = { ...this.myDetection, ...detailData }
             }
           }
         }
