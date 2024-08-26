@@ -452,6 +452,15 @@ export const enumerateData = [
       { code: _this.$t('overall.low'), code1: 'overall.low', value: 'low' },
       { code: _this.$t('overall.info'), code1: 'overall.info', value: 'info' }
     ]
+  },
+  {
+    name: 'ruleType',
+    data: [
+      { code: 'indicator_match', value: 1 },
+      { code: 'threshold', value: 2 },
+      { code: 'sequence', value: 3 },
+      { code: 'unordered_sequence', value: 4 }
+    ]
   }
 ]
 

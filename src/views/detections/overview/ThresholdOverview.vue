@@ -14,7 +14,7 @@
         </div>
         <div class="row__content1" v-if="seriesDataNum>1">
           <div class="charts__visual__map">
-            <div v-for="(item, index) in mapColor" :key="index" :style="`background: ${item};`"></div>
+            <div v-for="item in mapColor" :key="item.startTime" :style="`background: ${item.color};width:${item.width};`"></div>
           </div>
         </div>
         <div class="row__content1 row__display">

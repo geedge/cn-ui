@@ -13,7 +13,7 @@ const strReg = {
   value: /^[\da-zA-Z\u4E00-\u9FA5\u3040-\u309F\u0800-\u4e00\u0400-\u04FF\u2000-\u206F\s.'-_%]$/
 }
 const operatorList = ['=', ' in ', ' IN ', ' like ', ' LIKE ', 'HAS(', 'has(']
-const enumList = ['status', 'eventType', 'severity']
+const enumList = ['status', 'eventType', 'severity', 'ruleType']
 
 // ipv4校验
 const regexIPv4 = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/

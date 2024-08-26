@@ -109,10 +109,7 @@ export default {
           if (this.detection.ruleType === detectionRuleType.threshold.key) {
             const data = res.data.data.result
             if (data && data.length > 0) {
-              this.mapColor = []
-              data.forEach(item => {
-                this.mapColor.push(getSeverityNumberColor(item.severity))
-              })
+              this.handleMapColor(data)
               this.handleLineChart(data)
             }
           } else {
@@ -145,6 +142,7 @@ export default {
           const data = res.data.data.result
           if (data && data.length > 0) {
             if (this.detection.ruleType === detectionRuleType.threshold.key) {
+              this.handleMapColor(data)
               this.handleLineChart(data)
             }
             const detailData = data[0]
@@ -222,6 +220,22 @@ export default {
       //   seriesIndex: 0, // 系列索引，根据实际情况修改
       //   dataIndex: dataIndex // 数据索引，表示哪一条markLine的高亮状态将被取消
       // });
+    },
+    /** 计算折线图色条的分布情况 */
+    handleMapColor (data) {
+      const diffTime = this.$_.cloneDeep(data).pop().startTime - data[0].startTime
+      this.mapColor = []
+      data.forEach((item, index) => {
+        let width = 0
+        if (index > 0) {
+          width = ((item.startTime - data[index - 1].startTime) / diffTime) * 550
+        }
+        this.mapColor.push({
+          color: getSeverityNumberColor(item.severity),
+          width: width + 'px',
+          startTime: item.startTime
+        })
+      })
     }
   }
 }
