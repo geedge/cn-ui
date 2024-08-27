@@ -489,6 +489,7 @@ export const lineOption = {
       show: false
     },
     scale: true,
+    min: 0,
     axisLabel: {
       formatter: function (value) {
         switch (true) {
