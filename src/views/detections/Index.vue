@@ -631,7 +631,7 @@ export default {
     },
     pageSize (val) {
       this.pageObj.pageSize = val || 20
-      this.search(this.metaList, this.q)
+      this.search({ metaList: this.metaList, q: this.q })
     },
     pageNo (val) {
       // 初始化时，mounted和pageNo都会调用列表接口，且pageNo先执行，
@@ -639,7 +639,7 @@ export default {
       if (!this.initFlag) {
         this.pageObj.pageNo = val || 1
         this.pageObj.resetPageNo = false
-        this.search(this.metaList, this.q)
+        this.search({ metaList: this.metaList, q: this.q })
       }
     },
     // 点击上一页箭头
@@ -857,7 +857,7 @@ export default {
       }
     },
     timeFilter () {
-      this.search(this.metaList, this.q)
+      this.search({ metaList: this.metaList, q: this.q })
     }
   },
   beforeUnmount () {
