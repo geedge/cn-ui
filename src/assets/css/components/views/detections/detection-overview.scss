@@ -176,6 +176,11 @@ $color-regular: var(--el-text-color-regular);
   .overview__left-new {
     flex: 0 0 100%;
   }
+
+  .detection-detail__loading {
+    width: 100%;
+    padding-bottom: 60px;
+  }
 }
 .overview__row-timeline {
   display: flex;

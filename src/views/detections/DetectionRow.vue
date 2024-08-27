@@ -34,15 +34,17 @@
               </div>
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-time2"></i>
-                <span>{{$t('detection.list.endTime')}}&nbsp;:&nbsp;&nbsp;</span>
+                <span v-if="parseInt(detection.status) === 0">{{$t('detection.lastTime')}}&nbsp;:&nbsp;&nbsp;</span>
+                <span v-if="parseInt(detection.status) === 1">{{$t('detection.list.endTime')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>{{dateFormatByAppearance(detection.endTime) || '-'}}</span>
               </div>
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-duration"></i>
                 <span>{{$t('overall.duration')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>
+                <span v-if="parseInt(detection.durationS) > 10">
                   {{unitConvert(parseInt(detection.durationS), 'time', 's', null, 0).join(' ') || '-'}}
                 </span>
+                <span v-if="parseInt(detection.durationS) <= 10">{{ $t('detection.list.lastingSeconds')}}</span>
                 <div v-if="parseInt(detection.status) === 0" class="margin-l-10 detection-row-active">{{$t('detections.active')}}</div>
               </div>
             </div>

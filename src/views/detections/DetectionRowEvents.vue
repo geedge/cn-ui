@@ -34,7 +34,8 @@
               </div>
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-time2"></i>
-                <span>{{$t('detection.lastTime')}}&nbsp;:&nbsp;&nbsp;</span>
+                <span v-if="parseInt(detection.status) === 0">{{$t('detection.lastTime')}}&nbsp;:&nbsp;&nbsp;</span>
+                <span v-if="parseInt(detection.status) === 1">{{$t('detection.list.endTime')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>{{dateFormatByAppearance(detection.endTime) || '-'}}</span>
               </div>
             </div>

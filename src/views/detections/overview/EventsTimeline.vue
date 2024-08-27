@@ -35,14 +35,17 @@ export default {
     timeFilter: {
       type: Object
     },
-    timeData: Array
+    timeData: Array,
+    lineWidth: { // 时间轴宽度
+      type: Number,
+      default: 520
+    }
   },
   data () {
     return {
       timeLine: [],
       myTimeData: [],
       activeCircle: 0,
-      lineWidth: 520, // 时间轴宽度
       isTransform: false // 时间轴label是否旋转标识，文字高度超出16即为换行，将文字旋转角度
     }
   },

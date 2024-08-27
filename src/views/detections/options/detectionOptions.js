@@ -487,6 +487,25 @@ export const lineOption = {
   yAxis: {
     splitLine: {
       show: false
+    },
+    scale: true,
+    axisLabel: {
+      formatter: function (value) {
+        switch (true) {
+          case (value < 1000): {
+            return value
+          }
+          case ((value / (1000)) >= 1): {
+            return (value / (1000)).toFixed(1) + 'k'
+          }
+          case (value / (10000)) >= 1: {
+            return (value / (10000)).toFixed(1) + 'w'
+          }
+          case (value / (10000000)) >= 1: {
+            return (value / (10000000)).toFixed(1) + 'kw'
+          }
+        }
+      }
     }
   },
   grid: {

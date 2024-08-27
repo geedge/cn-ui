@@ -16,7 +16,7 @@
       <div v-for="(obj, index) in myDetection.eventInfoList" :key="obj.stage_id">
         <div class="overview__title margin-t-18">{{ $t('detection.detail.stage') }}{{ index + 1 }}</div>
         <div v-for="(item, fields) in obj" :key="fields">
-          <div class="overview__row" v-if="fields !== 'stage_id'">
+          <div class="overview__row" v-if="fields !== 'stage_id' && fields !== 'recv_time'">
             <div class="row__label row__label__capitalize">{{ fields }}</div>
             <div class="row__content" v-if="item">
               <div v-if="$_.isNumber(item)">
@@ -35,7 +35,7 @@
           <div class="row__label">Time</div>
           <div class="row__content">
             <i class="cn-icon cn-icon-time2 row__content__icon"></i>
-            {{ myDetection.startTime ? dateFormatByAppearance(myDetection.startTime) : '-' }}
+            {{ obj.recv_time ? dateFormatByAppearance(obj.recv_time) : '-' }}
           </div>
         </div>
       </div>

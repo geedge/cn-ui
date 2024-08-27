@@ -6,6 +6,7 @@ import { getSeverityNumberColor, lineOption } from '@/views/detections/options/d
 import { markRaw } from 'vue'
 import * as echarts from 'echarts'
 import { getSeverityByCode } from '@/utils/tools'
+import Loading from '@/components/common/Loading'
 
 export default {
   props: {
@@ -25,8 +26,14 @@ export default {
       lineOption: lineOption,
       seriesDataNum: 0,
       mapColor: [],
-      markLineData: []
+      markLineData: [],
+      mapWidth: 550, // 折线图底部色条宽度
+      lineWidth: 520, // 时间轴宽度
+      loading: true
     }
+  },
+  components: {
+    Loading
   },
   computed: {
     // 下拉详情的描述
@@ -67,6 +74,7 @@ export default {
   },
   methods: {
     initData () {
+      this.loading = true
       this.myDetection = this.detection
       if (this.eventFlag === detectionEventType.aggregation) {
         this.isGroup = 1
@@ -90,6 +98,8 @@ export default {
           }
         }).catch(e => {
           this.$message.error(this.errorMsgHandler(e))
+        }).finally(() => {
+          this.loading = false
         })
       } else {
         this.isGroup = 0
@@ -115,7 +125,7 @@ export default {
           } else {
             const data = res.data.data.result
             if (data && data.length > 0) {
-              const detailData = res.data.data.result.pop()
+              const detailData = this.$_.cloneDeep(res.data.data.result).pop()
               if (detailData?.eventInfo) {
                 detailData.eventInfoList = JSON.parse(detailData.eventInfo)
               }
@@ -126,9 +136,12 @@ export default {
       }).catch(e => {
         console.error(e)
         this.$message.error(this.errorMsgHandler(e))
+      }).finally(() => {
+        this.loading = false
       })
     },
     changeTimeline (e) {
+      this.loading = true
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
@@ -160,6 +173,8 @@ export default {
       }).catch(e => {
         console.error(e)
         this.$message.error(this.errorMsgHandler(e))
+      }).finally(() => {
+        this.loading = false
       })
     },
     // 挂载echarts折线图
@@ -194,6 +209,32 @@ export default {
           }
         }
       })
+
+      // 计算折线图左侧宽度
+      const maxValue = Math.max(...data.map(obj => obj.recordsNum))
+      if (maxValue >= 1000) {
+        let yAxisLabel = '' // y轴显示的值
+        if ((maxValue / (1000)) >= 1) {
+          yAxisLabel = (maxValue / (1000)).toFixed(1) + 'k'
+        } else if ((maxValue / (10000)) >= 1) {
+          yAxisLabel = (maxValue / (10000)).toFixed(1) + 'w'
+        } else if ((maxValue / (10000000)) >= 1) {
+          yAxisLabel = (maxValue / (10000000)).toFixed(1) + 'kw'
+        }
+
+        const labelLength = yAxisLabel.length - 4
+        if (labelLength > 0) {
+          // 默认显示最大的9.9w，即距离左边距30px，超出部分的每个字符8px宽度
+          this.lineOption.grid.left = (30 + labelLength * 8) + 'px'
+          this.mapWidth = 550 - (labelLength * 8)
+          this.lineWidth = 520 - (labelLength * 8)
+        }
+      } else {
+        this.lineOption.grid.left = '30px'
+        this.mapWidth = 550
+        this.lineWidth = 520
+      }
+
       this.lineOption.series[0].data = seriesData
 
       this.seriesDataNum = seriesData.length
@@ -228,7 +269,7 @@ export default {
       data.forEach((item, index) => {
         let width = 0
         if (index > 0) {
-          width = ((item.startTime - data[index - 1].startTime) / diffTime) * 550
+          width = ((item.startTime - data[index - 1].startTime) / diffTime) * this.mapWidth
         }
         this.mapColor.push({
           color: getSeverityNumberColor(item.severity),
