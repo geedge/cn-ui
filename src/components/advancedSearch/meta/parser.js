@@ -1573,9 +1573,10 @@ export default class Parser {
             for (let i = 0; i < obj.doc.data.length; i++) {
               const item1 = obj.doc.data[i]
               if (item.indexOf(item1.code) > -1) {
+                if (item.indexOf('unordered_sequence') > -1) {
+                  searchList[index] = searchList[index].replace(new RegExp('unordered_sequence', 'g'), 4)
+                }
                 searchList[index] = searchList[index].replace(new RegExp(item1.code, 'g'), item1.value)
-                // 匹配到code，终止匹配
-                break
               } else {
                 // 该操作是避免中文参数切换到英文环境时，code经i18n转为英文，匹配不到中文参数的情况
                 Object.keys(store.state.i18nObj).forEach(lang => {
