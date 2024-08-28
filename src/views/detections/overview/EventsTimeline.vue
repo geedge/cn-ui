@@ -224,7 +224,8 @@ export default {
       const param = {
         eventId: e.eventId,
         startTime: e.startTime,
-        endTime: e.endTime / 1000
+        endTime: e.endTime / 1000,
+        eventStatus: e.eventStatus
       }
       this.$emit('change', param)
     }, 500),

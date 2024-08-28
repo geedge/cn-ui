@@ -1,5 +1,5 @@
 import { detectionEventType, detectionRuleType, EN, storageKey, ZH } from '@/utils/constants'
-import { getMillisecond, getSecond } from '@/utils/date-util'
+import { dateFormatByAppearance, getMillisecond, getSecond } from '@/utils/date-util'
 import axios from 'axios'
 import { api } from '@/utils/api'
 import { getSeverityNumberColor, lineOption } from '@/views/detections/options/detectionOptions'
@@ -7,6 +7,7 @@ import { markRaw } from 'vue'
 import * as echarts from 'echarts'
 import { getSeverityByCode } from '@/utils/tools'
 import Loading from '@/components/common/Loading'
+import unitConvert from '@/utils/unit-convert'
 
 export default {
   props: {
@@ -73,6 +74,8 @@ export default {
     this.initData()
   },
   methods: {
+    dateFormatByAppearance,
+    unitConvert,
     initData () {
       this.loading = true
       this.myDetection = this.detection
@@ -162,11 +165,14 @@ export default {
             if (detailData?.eventInfo) {
               detailData.eventInfoList = JSON.parse(detailData.eventInfo)
             }
-            if (!detailData.startTime) {
+            if (detailData.startTime && detailData.endTime) {
+              detailData.durationS = detailData.endTime - detailData.startTime
+            } else {
               detailData.startTime = e.startTime
               detailData.endTime = e.endTime
               detailData.durationS = e.endTime - e.startTime
             }
+            detailData.status = detailData.eventStatus || e.eventStatus
             this.myDetection = { ...this.myDetection, ...detailData }
           }
         }
