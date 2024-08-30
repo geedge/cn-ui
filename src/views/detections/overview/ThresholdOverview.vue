@@ -1,5 +1,8 @@
 <template>
-  <div class="detection-detail-overview">
+  <div class="detection-detail__loading" v-if="loading">
+    <loading :loading="loading" class="detail__loading"></loading>
+  </div>
+  <div class="detection-detail-overview" v-if="!loading">
     <div class="overview__left overview__left-new">
       <div class="overview__title">{{ $t('overall.remark') }}</div>
       <div class="overview__row">
@@ -42,7 +45,7 @@
       <div class="overview__title">{{ $t('overall.summary') }}</div>
       <div class="overview__row overview__row__display">
         <div class="row__content1">
-          <div class="row__content__charts" :id="`myChart${detection.eventId}`"></div>
+          <div class="row__content__charts" :ref="`myChart${myDetection.eventId}`" :id="`myChart${myDetection.eventId}`"></div>
         </div>
         <div class="row__content1" v-if="seriesDataNum>1">
           <div class="charts__visual__map">

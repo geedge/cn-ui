@@ -1,5 +1,8 @@
 <template>
-  <div class="detection-detail-overview">
+  <div class="detection-detail__loading" v-if="loading">
+    <loading :loading="loading" class="detail__loading"></loading>
+  </div>
+  <div class="detection-detail-overview" v-if="!loading">
     <div class="overview__left overview__left-new">
       <div class="overview__title">{{ $t('overall.remark') }}</div>
       <div class="overview__row">

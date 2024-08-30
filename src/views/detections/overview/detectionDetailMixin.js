@@ -106,6 +106,7 @@ export default {
         })
       } else {
         this.isGroup = 0
+        this.loading = false
       }
 
       const params = {
@@ -123,7 +124,9 @@ export default {
             const data = res.data.data.result
             if (data && data.length > 0) {
               this.handleMapColor(data)
-              this.handleLineChart(data)
+              this.$nextTick(() => {
+                this.handleLineChart(data)
+              })
             }
           } else {
             const data = res.data.data.result
@@ -140,7 +143,7 @@ export default {
         console.error(e)
         this.$message.error(this.errorMsgHandler(e))
       }).finally(() => {
-        this.loading = false
+        // this.loading = false
       })
     },
     changeTimeline (e) {
@@ -159,7 +162,9 @@ export default {
           if (data && data.length > 0) {
             if (this.detection.ruleType === detectionRuleType.threshold.key) {
               this.handleMapColor(data)
-              this.handleLineChart(data)
+              this.$nextTick(() => {
+                this.handleLineChart(data)
+              })
             }
             const detailData = data[0]
             if (detailData?.eventInfo) {
@@ -174,6 +179,7 @@ export default {
             }
             detailData.status = detailData.eventStatus || e.eventStatus
             this.myDetection = { ...this.myDetection, ...detailData }
+            this.myDetection.eventId = e.eventId
           }
         }
       }).catch(e => {
@@ -188,6 +194,15 @@ export default {
       if (this.myChart) {
         this.myChart.dispose()
       }
+      const chartDom = this.$refs['myChart' + this.myDetection.eventId]
+      if (!chartDom) {
+        const timer = setTimeout(() => {
+          clearTimeout(timer)
+          this.handleLineChart(data)
+        }, 200)
+        return true
+      }
+      this.myChart = markRaw(echarts.init(chartDom))
       const seriesData = []
       const markLineData = []
       data.forEach(item => {
@@ -250,7 +265,6 @@ export default {
       } else {
         this.lineOption.series[0].symbol = 'none'
       }
-      this.myChart = markRaw(echarts.init(document.getElementById('myChart' + this.detection.eventId)))
       this.myChart.setOption(this.lineOption)
     },
     /** 高亮markLine */
@@ -283,6 +297,11 @@ export default {
           startTime: item.startTime
         })
       })
+    }
+  },
+  beforeUnmount () {
+    if (this.myChart) {
+      this.myChart.dispose()
     }
   }
 }
