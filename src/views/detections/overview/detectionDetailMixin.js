@@ -30,7 +30,8 @@ export default {
       markLineData: [],
       mapWidth: 550, // 折线图底部色条宽度
       lineWidth: 520, // 时间轴宽度
-      loading: true
+      loading: true,
+      activeIndex: -1
     }
   },
   components: {
@@ -163,6 +164,7 @@ export default {
             if (this.detection.ruleType === detectionRuleType.threshold.key) {
               this.handleMapColor(data)
               this.$nextTick(() => {
+                this.activeIndex = e.index
                 this.handleLineChart(data)
               })
             }

@@ -39,6 +39,10 @@ export default {
     lineWidth: { // 时间轴宽度
       type: Number,
       default: 520
+    },
+    activeIndex: { // 时间轴宽度
+      type: Number,
+      default: -1
     }
   },
   data () {
@@ -73,6 +77,7 @@ export default {
   methods: {
     changeTimestampToTime,
     initDate (e) {
+      this.activeCircle = this.activeIndex
       // 切换页面进来时，timeFilter时间戳为秒而非毫秒
       const timeFilter = {
         startTime: getMillisecond(this.timeFilter.startTime),
@@ -225,7 +230,8 @@ export default {
         eventId: e.eventId,
         startTime: e.startTime,
         endTime: e.endTime / 1000,
-        eventStatus: e.eventStatus
+        eventStatus: e.eventStatus,
+        index: index
       }
       this.$emit('change', param)
     }, 500),
@@ -243,7 +249,7 @@ export default {
     },
     handleTimelineCircle (timeFilter) {
       this.myTimeData = this.$_.cloneDeep(this.timeData)
-      this.activeCircle = this.myTimeData.length - 1
+      this.activeCircle = this.activeIndex > -1 ? this.activeIndex : this.myTimeData.length - 1
       this.myTimeData.forEach((item, index) => {
         item.endTime = getMillisecond(item.endTime)
         item.lastTime = this.$_.cloneDeep(item.endTime)
