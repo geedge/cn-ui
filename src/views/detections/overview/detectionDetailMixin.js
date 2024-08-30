@@ -161,10 +161,10 @@ export default {
         if (res.status === 200) {
           const data = res.data.data.result
           if (data && data.length > 0) {
+            this.activeIndex = e.index
             if (this.detection.ruleType === detectionRuleType.threshold.key) {
               this.handleMapColor(data)
               this.$nextTick(() => {
-                this.activeIndex = e.index
                 this.handleLineChart(data)
               })
             }

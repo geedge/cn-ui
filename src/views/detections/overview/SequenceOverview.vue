@@ -78,7 +78,7 @@
         <div class="overview__title overview__title__margin">{{ $t('detection.timeOfOccurrences') }}</div>
         <div class="overview__row">
           <div class="row__content1">
-            <events-timeline :timeFilter="timeFilter" :timeData="timeData" @change="changeTimeline"></events-timeline>
+            <events-timeline :timeFilter="timeFilter" :timeData="timeData" :activeIndex="activeIndex" @change="changeTimeline"></events-timeline>
           </div>
         </div>
       </div>
