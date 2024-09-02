@@ -31,7 +31,9 @@ export default {
       mapWidth: 550, // 折线图底部色条宽度
       lineWidth: 520, // 时间轴宽度
       loading: true,
-      activeIndex: -1
+      activeIndex: -1,
+      loadingTop: 0,
+      isExpire: false
     }
   },
   components: {
@@ -94,13 +96,20 @@ export default {
         axios.get(api.detection.event.detailTimeDistribution, { params: timeParams }).then(res => {
           if (res.status === 200) {
             const timeData = res.data.data.result
-            timeData.sort((a, b) => a.endTime - b.endTime)
-            this.timeData = timeData
-            const detailData = JSON.parse(JSON.stringify(timeData)).pop()
-            detailData.durationS = detailData.endTime - detailData.startTime
-            this.myDetection = { ...this.myDetection, ...detailData }
+            if (timeData && timeData.length > 0) {
+              this.isExpire = false
+              timeData.sort((a, b) => a.endTime - b.endTime)
+              this.timeData = timeData
+              const detailData = JSON.parse(JSON.stringify(timeData)).pop()
+              detailData.durationS = detailData.endTime - detailData.startTime
+              this.myDetection = { ...this.myDetection, ...detailData }
+            } else {
+              this.isExpire = true
+              this.$message.error(this.$t('detection.detail.dataExpired'))
+            }
           }
         }).catch(e => {
+          console.error(e)
           this.$message.error(this.errorMsgHandler(e))
         }).finally(() => {
           this.loading = false
@@ -128,6 +137,9 @@ export default {
               this.$nextTick(() => {
                 this.handleLineChart(data)
               })
+            } else {
+              this.isExpire = true
+              this.$message.error(this.$t('detection.detail.dataExpired'))
             }
           } else {
             const data = res.data.data.result
@@ -149,6 +161,15 @@ export default {
     },
     changeTimeline (e) {
       this.loading = true
+
+      if (this.detection.ruleType === 1) {
+        this.loadingTop = 210
+      } else if (this.detection.ruleType === 2) {
+        this.loadingTop = 250
+      } else if (this.detection.ruleType === 3 || this.detection.ruleType === 4) {
+        this.loadingTop = 300
+      }
+
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
@@ -287,18 +308,27 @@ export default {
     /** 计算折线图色条的分布情况 */
     handleMapColor (data) {
       const diffTime = this.$_.cloneDeep(data).pop().startTime - data[0].startTime
+      const totalWidth = this.countTotalWidth(data, diffTime, this.mapWidth)
+      if (Math.abs(this.mapWidth - totalWidth) >= 1) {
+        this.countTotalWidth(data, diffTime, 600)
+      }
+    },
+    countTotalWidth (data, diffTime, width) {
       this.mapColor = []
+      let totalWidth = 0
       data.forEach((item, index) => {
-        let width = 0
+        let itemWidth = 0
         if (index > 0) {
-          width = ((item.startTime - data[index - 1].startTime) / diffTime) * this.mapWidth
+          itemWidth = ((item.startTime - data[index - 1].startTime) / diffTime) * width
+          totalWidth = totalWidth + JSON.parse(itemWidth.toFixed(1))
         }
         this.mapColor.push({
           color: getSeverityNumberColor(item.severity),
-          width: width + 'px',
+          width: itemWidth + 'px',
           startTime: item.startTime
         })
       })
+      return totalWidth
     }
   },
   beforeUnmount () {

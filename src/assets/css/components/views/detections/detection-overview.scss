@@ -175,6 +175,14 @@ $color-regular: var(--el-text-color-regular);
   }
   .overview__left-new {
     flex: 0 0 100%;
+
+    .data-expired {
+      width: 100%;
+      height: 300px;
+      line-height: 300px;
+      color: var(--el-text-color-disabled);
+      text-align: center;
+    }
   }
 }
 .overview__row-timeline {
@@ -327,12 +335,10 @@ $color-regular: var(--el-text-color-regular);
 
 .detection-detail__loading {
   width: 100%;
-  height: 200px;
   position: relative;
 
   .detail__loading {
     position: absolute;
-    top: -100px;
     width: 100%;
   }
 }

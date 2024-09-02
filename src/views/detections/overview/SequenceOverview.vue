@@ -1,8 +1,8 @@
 <template>
   <div class="detection-detail__loading" v-if="loading">
-    <loading :loading="loading" class="detail__loading"></loading>
+    <loading :loading="loading" class="detail__loading" :style="`top:${loadingTop}px;`"></loading>
   </div>
-  <div class="detection-detail-overview" v-if="!loading">
+  <div class="detection-detail-overview">
     <div class="overview__left overview__left-new">
       <div class="overview__title">{{ $t('overall.remark') }}</div>
       <div class="overview__row">
@@ -10,75 +10,82 @@
           <div v-html="handleDescription"></div>
         </div>
       </div>
-      <div class="overview__title">{{ $t('overall.fields') }}</div>
-      <div class="overview__row">
-        <div class="row__label">{{ $t('detection.list.eventSeverity') }}</div>
-        <div class="row__content">{{ getSeverityByCode(myDetection.severity) || '-' }}</div>
-      </div>
-      <div class="overview__row">
-        <div class="row__label">{{ $t('detection.list.startTime') }}</div>
-        <div class="row__content">
-          <i class="cn-icon cn-icon-time2 row__content__icon"></i>
-          {{ dateFormatByAppearance(myDetection.startTime) || '-' }}
+      <div v-if="isExpire">
+        <div class="data-expired">
+          {{ $t('detection.detail.dataExpired') }}
         </div>
       </div>
-      <div class="overview__row" v-if="myDetection.endTime">
-        <div class="row__label" v-if="parseInt(detection.status)===0">{{$t('detection.lastTime')}}</div>
-        <div class="row__label" v-if="parseInt(detection.status)===1">{{$t('detection.list.endTime')}}</div>
-        <div class="row__content">
-          <i class="cn-icon cn-icon-time2 row__content__icon"></i>
-          {{ dateFormatByAppearance(myDetection.endTime) || '-' }}
+      <div v-else>
+        <div class="overview__title">{{ $t('overall.fields') }}</div>
+        <div class="overview__row">
+          <div class="row__label">{{ $t('detection.list.eventSeverity') }}</div>
+          <div class="row__content">{{ getSeverityByCode(myDetection.severity) || '-' }}</div>
         </div>
-      </div>
-      <div class="overview__row">
-        <div class="row__label">{{ $t('overall.duration') }}</div>
-        <div class="row__content">
-          <i class="cn-icon cn-icon-duration row__content__icon"></i>
-          <div v-if="parseInt(myDetection.durationS) > 10">
-            {{unitConvert(parseInt(myDetection.durationS), 'time', 's', null, 0).join(' ') || '-'}}
+        <div class="overview__row">
+          <div class="row__label">{{ $t('detection.list.startTime') }}</div>
+          <div class="row__content">
+            <i class="cn-icon cn-icon-time2 row__content__icon"></i>
+            {{ dateFormatByAppearance(myDetection.startTime) || '-' }}
           </div>
-          <div v-if="parseInt(myDetection.durationS) <= 10">{{ $t('detection.list.lastingSeconds')}}</div>
         </div>
-      </div>
-      <div class="overview__row" v-if="myDetection.status === 0">
-        <div class="row__label">{{ $t('overall.status') }}</div>
-        <div class="row__content">
-          <div class="detection-row-active">{{ $t('detections.active') }}</div>
+        <div class="overview__row" v-if="myDetection.endTime">
+          <div class="row__label" v-if="parseInt(detection.status)===0">{{$t('detection.lastTime')}}</div>
+          <div class="row__label" v-if="parseInt(detection.status)===1">{{$t('detection.list.endTime')}}</div>
+          <div class="row__content">
+            <i class="cn-icon cn-icon-time2 row__content__icon"></i>
+            {{ dateFormatByAppearance(myDetection.endTime) || '-' }}
+          </div>
         </div>
-      </div>
+        <div class="overview__row">
+          <div class="row__label">{{ $t('overall.duration') }}</div>
+          <div class="row__content">
+            <i class="cn-icon cn-icon-duration row__content__icon"></i>
+            <div v-if="parseInt(myDetection.durationS) > 10">
+              {{unitConvert(parseInt(myDetection.durationS), 'time', 's', null, 0).join(' ') || '-'}}
+            </div>
+            <div v-if="parseInt(myDetection.durationS) <= 10">{{ $t('detection.list.lastingSeconds')}}</div>
+          </div>
+        </div>
+        <div class="overview__row" v-if="myDetection.status === 0">
+          <div class="row__label">{{ $t('overall.status') }}</div>
+          <div class="row__content">
+            <div class="detection-row-active">{{ $t('detections.active') }}</div>
+          </div>
+        </div>
 
-      <div v-for="(obj, index) in myDetection.eventInfoList" :key="obj.stage_id">
-        <div class="overview__title margin-t-18">{{ $t('detection.detail.stage') }}{{ index + 1 }}</div>
-        <div v-for="(item, fields) in obj" :key="fields">
-          <div class="overview__row" v-if="fields !== 'stage_id' && fields !== 'recv_time'">
-            <div class="row__label row__label__capitalize">{{ fields }}</div>
-            <div class="row__content" v-if="item">
-              <div v-if="$_.isNumber(item)">
-                <div v-if="item > 1000000000">
-                  <i class="cn-icon cn-icon-time2 row__content__icon"></i>
-                  {{ dateFormatByAppearance(item) }}
+        <div v-for="(obj, index) in myDetection.eventInfoList" :key="obj.stage_id">
+          <div class="overview__title margin-t-18">{{ $t('detection.detail.stage') }}{{ index + 1 }}</div>
+          <div v-for="(item, fields) in obj" :key="fields">
+            <div class="overview__row" v-if="fields !== 'stage_id' && fields !== 'recv_time'">
+              <div class="row__label row__label__capitalize">{{ fields }}</div>
+              <div class="row__content" v-if="item">
+                <div v-if="$_.isNumber(item)">
+                  <div v-if="item > 1000000000">
+                    <i class="cn-icon cn-icon-time2 row__content__icon"></i>
+                    {{ dateFormatByAppearance(item) }}
+                  </div>
+                  <div v-else>{{ item }}</div>
                 </div>
                 <div v-else>{{ item }}</div>
               </div>
-              <div v-else>{{ item }}</div>
+              <div class="row__content" v-else>-</div>
             </div>
-            <div class="row__content" v-else>-</div>
+          </div>
+          <div class="overview__row">
+            <div class="row__label">Time</div>
+            <div class="row__content">
+              <i class="cn-icon cn-icon-time2 row__content__icon"></i>
+              {{ obj.recv_time ? dateFormatByAppearance(obj.recv_time) : '-' }}
+            </div>
           </div>
         </div>
-        <div class="overview__row">
-          <div class="row__label">Time</div>
-          <div class="row__content">
-            <i class="cn-icon cn-icon-time2 row__content__icon"></i>
-            {{ obj.recv_time ? dateFormatByAppearance(obj.recv_time) : '-' }}
-          </div>
-        </div>
-      </div>
 
-      <div v-if="eventFlag===detectionEventType.aggregation">
-        <div class="overview__title overview__title__margin">{{ $t('detection.timeOfOccurrences') }}</div>
-        <div class="overview__row">
-          <div class="row__content1">
-            <events-timeline :timeFilter="timeFilter" :timeData="timeData" :activeIndex="activeIndex" @change="changeTimeline"></events-timeline>
+        <div v-if="eventFlag===detectionEventType.aggregation">
+          <div class="overview__title overview__title__margin">{{ $t('detection.timeOfOccurrences') }}</div>
+          <div class="overview__row">
+            <div class="row__content1">
+              <events-timeline :timeFilter="timeFilter" :timeData="timeData" :activeIndex="activeIndex" @change="changeTimeline"></events-timeline>
+            </div>
           </div>
         </div>
       </div>
