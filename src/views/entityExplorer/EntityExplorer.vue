@@ -207,7 +207,7 @@ import EntityList from '@/views/entityExplorer/entityList/EntityList'
 import { defaultPageSize, riskLevelMapping } from '@/utils/constants'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { getNowTime, getSecond } from '@/utils/date-util'
+import { getNowDate, getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
 import _ from 'lodash'
 import Loading from '@/components/common/Loading'
@@ -413,9 +413,10 @@ export default {
       return result
     },
     search (param) {
-      // todo 下版本08版本删除 ---- start
-      if (param && param.q.indexOf("QUERY('") > -1) {
-        this.$message.error(this.$t('overall.versionNotSupportThisFormat'))
+      // 如果不是最新时间，则获取当前时间
+      if (!param.isNowDate) {
+        const myTimeFilter = getNowDate(this.$_.cloneDeep(this.timeFilter))
+        this.reload(myTimeFilter.startTime, myTimeFilter.endTime, myTimeFilter.dateRangeValue)
         return true
       }
       // 下版本08版本删除 ---- end
@@ -936,7 +937,7 @@ export default {
   watch: {
     timeFilter () {
       const keywordList = this.getKeywordListByMetaList(this.metaList)
-      this.search({ metaList: this.metaList, q: this.q, str: this.str, keywordList: keywordList })
+      this.search({ metaList: this.metaList, q: this.q, str: this.str, keywordList: keywordList, isNowDate: true })
     }
   },
   setup () {

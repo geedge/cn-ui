@@ -129,7 +129,7 @@ import DetectionFilter from '@/views/detections/DetectionFilter'
 import DetectionList from '@/views/detections/DetectionList'
 import Pagination from '@/components/common/Pagination'
 import { defaultPageSize, detectionPageType, detectionEventType } from '@/utils/constants'
-import { getNowTime, getSecond, getMillisecond } from '@/utils/date-util'
+import { getNowTime, getSecond, getMillisecond, getNowDate } from '@/utils/date-util'
 import { ref, shallowRef } from 'vue'
 import * as echarts from 'echarts'
 import {
@@ -569,6 +569,12 @@ export default {
       this.timeFilter = { startTime: s, endTime: e, dateRangeValue: v.value }
     },
     search (param) {
+      // 如果不是最新时间，则获取当前时间
+      if (!param.isNowDate) {
+        const myTimeFilter = getNowDate(this.$_.cloneDeep(this.timeFilter))
+        this.reload(myTimeFilter.startTime, myTimeFilter.endTime, myTimeFilter.dateRangeValue)
+        return true
+      }
       let q
       let metaList
       if (param) {
@@ -857,7 +863,7 @@ export default {
       }
     },
     timeFilter () {
-      this.search({ metaList: this.metaList, q: this.q })
+      this.search({ metaList: this.metaList, q: this.q, isNowDate: true })
     }
   },
   beforeUnmount () {

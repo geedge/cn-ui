@@ -209,3 +209,15 @@ export function getDurationsTimeByType (number, type) {
   }
   return `P${T}${number}${switchValueByDateType(type)}`
 }
+
+export function getNowDate (timeFilter) {
+  if (timeFilter?.dateRangeValue > -1) {
+    return {
+      startTime: (new Date()).getTime() - (timeFilter.dateRangeValue * 60 * 1000),
+      endTime: (new Date()).getTime(),
+      dateRangeValue: { value: timeFilter.dateRangeValue }
+    }
+  } else {
+    return timeFilter
+  }
+}
