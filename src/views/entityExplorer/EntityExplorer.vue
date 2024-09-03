@@ -413,13 +413,6 @@ export default {
       return result
     },
     search (param) {
-      // 如果不是最新时间，则获取当前时间
-      if (!param.isNowDate) {
-        const myTimeFilter = getNowDate(this.$_.cloneDeep(this.timeFilter))
-        this.reload(myTimeFilter.startTime, myTimeFilter.endTime, myTimeFilter.dateRangeValue)
-        return true
-      }
-      // 下版本08版本删除 ---- end
       let q
       let metaList
       if (param) {
@@ -465,6 +458,12 @@ export default {
         hideRelated: this.isHideRelatedEntities
       })
 
+      // 如果不是最新时间，则获取当前时间
+      if (!param.isNowDate) {
+        const myTimeFilter = getNowDate(this.$_.cloneDeep(this.timeFilter))
+        this.reload(myTimeFilter.startTime, myTimeFilter.endTime, myTimeFilter.dateRangeValue)
+        return true
+      }
       if (!this.showList) {
         // 首页进入搜索时重载页面，视觉上进入列表页面
         this.$router.push({
