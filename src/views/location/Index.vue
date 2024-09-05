@@ -530,7 +530,7 @@ export default {
         // const response = await axios.get(api.location.density, { params })
         // const densityData = response.data.data
         const densityData = testData
-        // 按值的大小分为5组，并计算各组数量和颜色
+        // 按值的大小分组，并计算各组数量和颜色
         this.pieValueRamp = this.calculateValueRamp(densityData)
         const option = _.cloneDeep(pieOption)
         option.color = this.pieColorRamp.map(c => `rgb(${c},.9)`)
@@ -946,7 +946,7 @@ export default {
       const result = []
       if (max) {
         if (max.number < 10) {
-          for (let i = 1; i <= 5; i++) {
+          for (let i = 1; i <= this.pieColorRamp.length; i++) {
             const item = {
               start: i * 2 - 1,
               end: i * 2,
@@ -958,10 +958,10 @@ export default {
         } else {
           const maxLength = String(max.number).length
           const maxLegend = Math.ceil(max.number / Math.pow(10, maxLength - 1)) * Math.pow(10, maxLength - 1)
-          for (let i = 1; i <= 5; i++) {
+          for (let i = 1; i <= this.pieColorRamp.length; i++) {
             const item = {
-              start: maxLegend * (i - 1) / 5 + 1,
-              end: maxLegend * i / 5,
+              start: maxLegend * (i - 1) / this.pieColorRamp.length + 1,
+              end: maxLegend * i / this.pieColorRamp.length,
               color: this.pieColorRamp[i - 1]
             }
             item.count = data.filter(d => d.number >= item.start && d.number <= item.end).length
@@ -1842,7 +1842,8 @@ export default {
     // const pieColorRamp = ['186,224,255', '105,177,255', '22,119,255', '0,62,179', '0,29,102']
     // const pieColorRamp = ['156,174,29', '241,198,0', '89,202,242', '63,133,186', '37,55,128']
     // const pieColorRamp = ['196,214,59', '190,230,255', '135,206,250', '63,133,186', '37,55,128']
-    const pieColorRamp = ['196,214,59', '135,206,250', '63,133,186', '45,65,135', '34,7,90']
+    // const pieColorRamp = ['196,214,59', '135,206,250', '63,133,186', '45,65,135', '34,7,90']
+    const pieColorRamp = ['135,206,250', '63,133,186', '45,65,135', '34,7,90']
     const pieValueRamp = ref([])
     const subscribersList = ref([])
     const searchValueListShow = ref([])
