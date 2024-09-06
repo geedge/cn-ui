@@ -55,7 +55,7 @@
             <div class="chart__drawing" id="populationDensityChart"></div>
             <div class="chart__legend">
               <div v-for="legend in pieValueRamp" class="legend-item" :key="legend.color">
-                <div class="legend-icon" :style="`background:rgba(${legend.color},.9);`"></div>
+                <div class="legend-icon" :style="`background:rgba(${legend.color},.7);`"></div>
                 <div class="legend-range" >{{legend.start}}~{{legend.end}}</div>
                 <div class="legend-count">{{legend.count}}</div>
               </div>
@@ -352,7 +352,7 @@
             :size="700"
             :with-header="false"
             destroy-on-close>
-      <my-follow-box :timeFilter="timeFilter" :level="mapLevel" @close="closeRightBox" @handleFollow="handleFollow" @handleCancleFollowBatch="handleCancleFollowBatch"/>
+      <my-follow-box :timeFilter="timeFilter" :level="mapLevel" @close="closeRightBox" @handleFollow="handleFollow" @handleCancelFollowBatch="handleCancelFollowBatch"/>
     </el-drawer>
   </div>
 </template>
@@ -485,7 +485,7 @@ export default {
         layout: {},
         paint: {
           'fill-color': ['get', 'color'],
-          'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 1, 0.6]
+          'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.7, 0.3]
         }
       })
       // 六边形的鼠标事件
@@ -533,7 +533,7 @@ export default {
         // 按值的大小分组，并计算各组数量和颜色
         this.pieValueRamp = this.calculateValueRamp(densityData)
         const option = _.cloneDeep(pieOption)
-        option.color = this.pieColorRamp.map(c => `rgb(${c},.9)`)
+        option.color = this.pieColorRamp.map(c => `rgb(${c},.7)`)
         option.series[0].name = this.$t('location.populationDensity')
         option.series[0].data = this.pieValueRamp.map((r, i) => ({
           name: `${r.start}~${r.end}`,
@@ -1499,7 +1499,7 @@ export default {
       }
     },
     //针对我的关注列表的批量取消关注操作
-    async handleCancleFollowBatch() {
+    async handleCancelFollowBatch() {
       this.closeRightBox()
       this.curPageNum = 1
       this.subscribersList = []
@@ -1731,7 +1731,7 @@ export default {
         const color = this.currentPolygon.color.split(',')
         color[0] = color[0].split('[')[1]
         color[2] = color[2].split(']')[0]
-        return `rgba(${color.join(',')},.8)`
+        return `rgba(${color.join(',')},.7)`
       } else if (this.tooltip.type === this.tooltipType.human) {
         return 'var(--el-color-business)'
       } else if (this.tooltip.type === this.tooltipType.baseStation) {
