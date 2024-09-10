@@ -2655,7 +2655,7 @@ export const reg = {
 }
 
 export const defaultMapConfig = {
-  center: [116.38, 39.82], // 默认地图中心
+  center: [116.38, 39.82], // 默认地图中心-北京
   maxZoom: 14, // 最大缩放等级
   minZoom: 3, // 最小缩放等级
   mapLevel: 2, // 数据精度 1、2、3，1最大

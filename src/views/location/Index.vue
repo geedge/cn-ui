@@ -528,7 +528,7 @@ export default {
       this.loading.pieLoading = true
       try {
         const response = await axios.get(api.location.density, { params })
-        const densityData = response.data.data
+        const densityData = response.data.data.filter(d => d.hexId)
         // const densityData = testData
         // 按值的大小分组，并计算各组数量和颜色
         this.pieValueRamp = this.calculateValueRamp(densityData)
@@ -634,62 +634,7 @@ export default {
       this.loading.baseStationLoading = true
       try {
         // const response = await axios.get(api.location.baseStation)
-        const response = [
-          {
-            cid: '000448',
-            longitude: 116.38,
-            latitude: 39.9,
-            areaCode: 100001,
-            networkCode: 1885,
-            communicationType: '5G',
-            location: 'China, Beijing, Beijing'
-          },
-          {
-            cid: '000051',
-            longitude: 116.39,
-            latitude: 39.9,
-            areaCode: 100004,
-            networkCode: 1885,
-            communicationType: '5G',
-            location: 'China, Beijing, Beijing'
-          },
-          {
-            cid: '000079',
-            longitude: 116.383,
-            latitude: 39.886,
-            areaCode: 100002,
-            networkCode: 1885,
-            communicationType: '5G',
-            location: 'China, Beijing, Beijing'
-          },
-          {
-            cid: '000080',
-            longitude: 116.378,
-            latitude: 39.902,
-            areaCode: 100003,
-            networkCode: 1885,
-            communicationType: '5G',
-            location: 'China, Beijing, Beijing'
-          },
-          {
-            cid: '006605',
-            longitude: 116.369,
-            latitude: 39.91,
-            areaCode: 100027,
-            networkCode: 1885,
-            communicationType: '4G',
-            location: 'China, Beijing, Beijing'
-          },
-          {
-            cid: '006606',
-            longitude: 116.38,
-            latitude: 39.91,
-            areaCode: 100005,
-            networkCode: 1885,
-            communicationType: '4G',
-            location: 'China, Beijing, Beijing'
-          }
-        ]
+        const response = [{ cid: '414-06-15261-3', latitude: 17.182549, longitude: 95.972018, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11755-1', latitude: 17.182845, longitude: 95.969483, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12955-2', latitude: 17.181968, longitude: 95.96975, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13698-6', latitude: 17.181413, longitude: 95.969861, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11553-2', latitude: 17.183569, longitude: 95.971931, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-15971-1', latitude: 17.183807, longitude: 95.972561, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13287-2', latitude: 17.184677124023, longitude: 95.97038269043, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11755-3', latitude: 17.18879699707, longitude: 95.97038269043, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13651-1', latitude: 17.180557250977, longitude: 95.977249145508, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11421-2', latitude: 17.179871, longitude: 95.979309, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12504-1', latitude: 17.173573, longitude: 95.978783, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13651-3', latitude: 17.173690795898, longitude: 95.989608764648, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13518-1', latitude: 17.170944213867, longitude: 95.990982055664, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11646-1', latitude: 17.169570922852, longitude: 95.99235534668, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11643-2', latitude: 17.165451049805, longitude: 95.995101928711, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11709-1', latitude: 17.143478393555, longitude: 95.999221801758, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11553-3', latitude: 17.135239, longitude: 96.001511, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12955-3', latitude: 17.126575, longitude: 96.00721, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13287-1', latitude: 17.120132446289, longitude: 96.010208129883, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12503-1', latitude: 17.120132446289, longitude: 96.007461547852, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11588-1', latitude: 17.120132446289, longitude: 96.008834838867, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11835-1', latitude: 17.118759155273, longitude: 96.008834838867, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11452-2', latitude: 17.117385864258, longitude: 96.010208129883, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12962-2', latitude: 17.114639282227, longitude: 96.012954711914, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11769-4', latitude: 17.11051940918, longitude: 96.015701293945, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11758-3', latitude: 17.109146118164, longitude: 96.015701293945, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11253-2', latitude: 17.111206, longitude: 96.019822, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12823-2', latitude: 17.106399536133, longitude: 96.019821166992, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-15277-4', latitude: 17.105026245117, longitude: 96.019821166992, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11704-2', latitude: 17.103652954102, longitude: 96.021194458008, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13908-1', latitude: 17.103652954102, longitude: 96.022567749023, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11385-1', latitude: 17.103652954102, longitude: 96.023941040039, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12496-1', latitude: 17.102279663086, longitude: 96.025314331055, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-15984-3', latitude: 17.102279663086, longitude: 96.02668762207, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11904-1', latitude: 17.10090637207, longitude: 96.029434204102, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-15984-2', latitude: 17.102279663086, longitude: 96.033554077148, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11385-2', latitude: 17.099533081055, longitude: 96.033554077148, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11714-1', latitude: 17.10090637207, longitude: 96.039047241211, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12462-2', latitude: 17.10090637207, longitude: 96.040420532227, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13908-4', latitude: 17.10090637207, longitude: 96.041793823242, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11103-5', latitude: 17.10090637207, longitude: 96.043167114258, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13213-3', latitude: 17.10090637207, longitude: 96.044540405273, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13213-1', latitude: 17.10090637207, longitude: 96.045913696289, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11253-1', latitude: 17.10090637207, longitude: 96.047286987305, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12823-3', latitude: 17.103922, longitude: 96.053436, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11769-1', latitude: 17.106399536133, longitude: 96.055526733398, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11758-2', latitude: 17.106399536133, longitude: 96.059646606445, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-15277-3', latitude: 17.106399536133, longitude: 96.063766479492, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12962-3', latitude: 17.10604, longitude: 96.064735 }]
         return response // response.data.data.list
       } catch (e) {
         this.errorMsgHandler(e)
@@ -716,22 +661,6 @@ export default {
       }
       return []
     },
-    async queryCityByLngLat (lng, lat) {
-      const params = {
-        longitude: lng,
-        latitude: lat
-      }
-      try {
-        const response = await axios.get(api.location.geoLocation, { params })
-        return response.data.data
-      } catch (e) {
-        this.errorMsgHandler(e)
-        console.error(e)
-      } finally {
-        this.loading.timeBarLoading = false
-      }
-      return {}
-    },
     async queryTraceTracking () {
       if (this.trackingSubscribers.length > 0) {
         this.loading.trackingMapLoading = true
@@ -744,6 +673,7 @@ export default {
           const response = await axios.get(api.location.tracking, { params })
           const trackingSubscribers = _.cloneDeep(this.trackingSubscribers)
           if (response.data.data.result) {
+            // 过滤掉无位置的无效数据
             response.data.data.result.forEach(item => {
               item.trackRecords = item.trackRecords.filter(t => t.hexId)
             })
