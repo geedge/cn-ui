@@ -130,6 +130,14 @@
                   <div class="item__value">{{item.subscriberId}}</div>
                 </div>
                 <div class="body__item">
+                  <div class="item__label">IMEI</div>
+                  <div class="item__value">{{item.imei || '-'}}</div>
+                </div>
+                <div class="body__item">
+                  <div class="item__label">IMSI</div>
+                  <div class="item__value">{{item.imsi || '-'}}</div>
+                </div>
+                <div class="body__item">
                   <div class="item__label">{{$t('location.group')}}</div>
                   <div class="item__value">Terrorist</div>
                 </div>
