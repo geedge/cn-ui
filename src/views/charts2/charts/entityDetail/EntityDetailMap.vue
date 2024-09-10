@@ -533,6 +533,9 @@ export default {
         const response = await axios.get(api.location.tracking, { params })
         this.trackingMapLoading = false
         if (response.data.data.result) {
+          response.data.data.result.forEach(item => {
+            item.trackRecords = item.trackRecords.filter(t => t.hexId)
+          })
           this.trackingNoData = false
           this.showTrackingError = false
           const find = response.data.data.result.find(item => item.subscriberId === this.trackingSubscriber.subscriberId)
