@@ -505,7 +505,7 @@ export default {
       this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
 
       /* 右侧默认显示普通列表 */
-      this.initSubscriberList()
+      await this.initSubscriberList()
       /* 右上角折线图 */
       await this.renderActiveSubscribersLine()
     },
@@ -618,7 +618,7 @@ export default {
       } finally {
         this.loading.subscriberLoading = false
       }
-    },*/
+    }, */
     async queryHexagon () {
       const params = {
         ...this.boundaryBox,
@@ -656,9 +656,13 @@ export default {
       this.loading.timeBarLoading = true
       const params = {
         ...this.minuteTimeFilter,
-        level: this.mapLevel
+        level: this.mapLevel,
+        pageSize: -1
       }
       try {
+        if (this.subscribersList.length > 0) {
+          await this.querySubscriberActiveStatus(this.subscribersList)
+        }
         const response = await axios.get(api.location.followedSubscriber, { params })
         return response.data.data.list
       } catch (e) {
@@ -1044,6 +1048,15 @@ export default {
       }
     },
     async hexagonVisualRangeChange (e) {
+      const currentZoom = this.mapChart.getZoom()
+      console.info(`current zoom: ${currentZoom}`)
+      if (currentZoom < 11) {
+        this.hideBaseStation()
+        this.hideFollowed()
+      } else {
+        this.showBaseStation()
+        this.showFollowed()
+      }
       if (this.updateBoundaryBox()) {
         const oldSourceData = this.mapChart.getSource('hexGrid')._data
         const hexagonData = await this.queryHexagon()
@@ -1161,6 +1174,7 @@ export default {
       }
     },
     reload (startTime, endTime, dateRangeValue) {
+      this.curPageNum = 1
       this.timeFilter = { startTime: getSecond(startTime), endTime: getSecond(endTime), dateRangeValue: dateRangeValue }
       const { query } = this.$route
       this.$store.commit('setTimeRangeArray', [this.timeFilter.startTime, this.timeFilter.endTime])
@@ -1236,6 +1250,7 @@ export default {
       }
     },
     timeRefreshChange () {
+      this.curPageNum = 1
       // 不是自选时间
       if (this.$refs.dateTimeRange) {
         if (!this.$refs.dateTimeRange.isCustom) {
@@ -1275,6 +1290,26 @@ export default {
       if (subscriber.subscriberId !== this.currentShowSubscriber.subscriberId) {
         this.currentShowSubscriber = subscriber
       }
+    },
+    hideBaseStation () {
+      this.baseStationMarkers.forEach(bs => {
+        bs.addClassName && bs.addClassName('map-marker--hidden')
+      })
+    },
+    showBaseStation () {
+      this.baseStationMarkers.forEach(bs => {
+        bs.addClassName && bs.removeClassName('map-marker--hidden')
+      })
+    },
+    hideFollowed () {
+      this.humanMarkers.forEach(human => {
+        human.addClassName && human.addClassName('map-marker--hidden')
+      })
+    },
+    showFollowed () {
+      this.humanMarkers.forEach(human => {
+        human.addClassName && human.removeClassName('map-marker--hidden')
+      })
     },
     // 关注列表的添加、删除追踪
     addOrRemoveTrackingSubscriber (subscriber) {
@@ -1377,7 +1412,7 @@ export default {
         startTime: this.timeFilter.startTime,
         endTime: this.timeFilter.endTime,
         pageNo: this.curPageNum++,
-        pageSize: 10,
+        pageSize: 20,
         params: '',
         isFollowed: this.isChecked ? 1 : 0
       }
@@ -1394,15 +1429,20 @@ export default {
       }
       try {
         this.loading.subscriberLoading = true
+        // 根据顶部的时间条件查列表，再根据底部时间轴的时间时间来查列表里的subscriber是否在线
+        // 加载新数据、时间轴变化时，重新查在线状态
         await axios.get(api.location.list, { params }).then(async response => {
           if (response.status === 200) {
             if (response.data.data.length === 0 && this.curPageNum > 1) {
               this.curPageNum--
             } else {
+              await this.querySubscriberActiveStatus(response.data.data)
               if (params.pageNo === 1) {
                 this.subscribersList = response.data.data
               } else {
-                this.subscribersList = this.subscribersList.concat(response.data.data)
+                response.data.data.forEach(d => {
+                  this.subscribersList.push(d)
+                })
               }
             }
           }
@@ -1414,9 +1454,33 @@ export default {
         this.loading.subscriberLoading = false
       }
     },
-    //针对我的关注列表的单条记录的关注和取消关注
-    async handleFollow(item) {
-      let subscriber = this.subscribersList.find(subscriber => subscriber.subscriberId === item.subscriberId)
+    async querySubscriberActiveStatus (subscriberList) {
+      const subscriberIds = subscriberList.map(d => d.subscriberId)
+      const timelineParams = {
+        startTime: this.minuteTimeFilter.startTime,
+        endTime: this.minuteTimeFilter.endTime,
+        level: this.mapLevel,
+        subscriberIds: subscriberIds.map(id => `'${id}'`).join(',')
+      }
+      await axios.get(api.location.tracking, { params: timelineParams }).then(async response2 => {
+        subscriberList.forEach(item => {
+          const find = response2.data.data.result.find(d => {
+            if (d.subscriberId === item.subscriberId) {
+              const hasHexIdArr = d.trackRecords.filter(t => t.hexId)
+              if (hasHexIdArr.length > 0) {
+                return true
+              }
+            }
+            return false
+          })
+          item.active = find ? 1 : 0
+        })
+        console.info(subscriberList)
+      })
+    },
+    // 针对我的关注列表的单条记录的关注和取消关注
+    async handleFollow (item) {
+      const subscriber = this.subscribersList.find(subscriber => subscriber.subscriberId === item.subscriberId)
       if (subscriber) {
         if (item.isFollowed === 1) {
           /* 刷新右侧列表 */
@@ -1439,12 +1503,12 @@ export default {
         }
       }
     },
-    //针对我的关注列表的批量取消关注操作
-    async handleCancelFollowBatch() {
+    // 针对我的关注列表的批量取消关注操作
+    async handleCancelFollowBatch () {
       this.closeRightBox()
       this.curPageNum = 1
       this.subscribersList = []
-      //刷新右下角列表
+      // 刷新右下角列表
       await this.initSubscriberList()
       // 刷新地图上的人
       this.humanMarkers.forEach(marker => {
@@ -1697,7 +1761,7 @@ export default {
     }
   },
   async mounted () {
-    /*const result = []
+    /* const result = []
     const startLat = 39.5
     const startLng = 115.8
     const endLat = 40.3
@@ -1732,7 +1796,7 @@ export default {
 
       // 将Map中的值（即对象）转换回数组
       return Array.from(uniqueObjects.values())
-    }*/
+    } */
     await this.initMap()
     this.debounceMinuteChange = _.debounce(this.minuteTimeFilterChange, 500)
     this.debounceOnResize = _.debounce(this.onResize, 500)
