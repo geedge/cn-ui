@@ -4,7 +4,7 @@
       <el-slider v-model="currentTime" @change="onChange" :step="1" :max="timeLine.length>0?timeLine.length-1:99" :format-tooltip="formatTooltip"/>
     </div>
     <div class="time-line-container">
-      <div v-for="item in timeLine" :key="item.time">
+      <div v-for="item in timeLine" :key="item.stamp">
         <div v-if="item.showFlag" style="color: #666;">{{ item.time }}</div>
       </div>
     </div>
@@ -111,7 +111,8 @@ export default {
         const month = date.getMonth() + 1
         const day = date.getDate()
         const obj = {
-          time: `${date.getFullYear()}-${month < 10 ? ('0' + month) : month}-${day < 10 ? ('0' + day) : day}`,
+          // time: `${date.getFullYear()}-${month < 10 ? ('0' + month) : month}-${day < 10 ? ('0' + day) : day}`,
+          time: `${month < 10 ? ('0' + month) : month}-${day < 10 ? ('0' + day) : day}`,
           time1: changeTimestampToTime(timestamp).substring(0, changeTimestampToTime(timestamp).length - 3),
           showFlag: false
         }

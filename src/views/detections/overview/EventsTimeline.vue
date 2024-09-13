@@ -12,7 +12,7 @@
     </div>
     <div class="timeline__line margin-l-30"></div>
     <div class="timeline-container margin-l-25" id="timeline-container">
-      <div v-for="item in timeLine" :key="item.time" :style="{width: item.isYear ? '5px' : 'auto'}">
+      <div v-for="item in timeLine" :key="item.stamp" :style="{width: item.isYear ? '5px' : 'auto'}">
         <div v-if="item.showFlag" :class="handleTransformClass(item.isYear)">{{ item.time }}</div>
       </div>
     </div>
