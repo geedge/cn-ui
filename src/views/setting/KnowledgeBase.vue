@@ -149,9 +149,9 @@ export default {
           this.batchDeleteObjs.push(data)
         }
       } else {
-        const cancleObjIndex = this.batchDeleteObjs.findIndex(item => item.knowledgeId === data.knowledgeId)
-        if (cancleObjIndex > -1) {
-          this.batchDeleteObjs.splice(cancleObjIndex, 1)
+        const cancelObjIndex = this.batchDeleteObjs.findIndex(item => item.knowledgeId === data.knowledgeId)
+        if (cancelObjIndex > -1) {
+          this.batchDeleteObjs.splice(cancelObjIndex, 1)
         }
       }
       if (this.batchDeleteObjs.length === 1) {

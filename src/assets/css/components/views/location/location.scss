@@ -190,6 +190,7 @@ $color-highlight: #CC4444;
           height: 30px;
           border: 2px solid $color-white;
           z-index: 2;
+          display: flex !important;
 
           &.map-marker--human svg {
             width: 21px;
@@ -208,6 +209,7 @@ $color-highlight: #CC4444;
           border: 2px solid $color-white;
           background-color: $color-highlight;
           z-index: 3;
+          display: flex !important;
 
           svg {
             width: 21px;

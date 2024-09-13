@@ -48,7 +48,7 @@
           </template>
         </template>
         <template v-else-if="item.prop === 'isFollowed'" >
-          <span class="follow-cursor" v-if="scope.row[item.prop] === 1" @click="cancleFollow(scope.row)"><i class="cn-icon cn-icon-follow-fill"></i></span>
+          <span class="follow-cursor" v-if="scope.row[item.prop] === 1" @click="cancelFollow(scope.row)"><i class="cn-icon cn-icon-follow-fill"></i></span>
           <span class="follow-cursor" v-else @click="follow(scope.row)"><i class="cn-icon cn-icon-follow"></i></span>
         </template>
         <span v-else>{{scope.row[item.prop] || '-'}}</span>
@@ -109,10 +109,10 @@ export default {
     }
   },
   methods: {
-    cancleFollow(item) {
+    cancelFollow(item) {
       axios.delete(api.location.follow + '?subscriberIds=' + item.subscriberId).then(res => {
         if (res.status === 200) {
-          this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancleFollow.success') })
+          this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancelFollow.success') })
           /* 刷新列表 */
           item.isFollowed = 0
           this.$refs.dataTable.toggleRowSelection(item, false)

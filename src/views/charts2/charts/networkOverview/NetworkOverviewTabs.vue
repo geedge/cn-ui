@@ -753,7 +753,7 @@ export default {
       this.changeUrlTabState()
       this.getChartData(queryParams)
     },
-    cancleSortArrow () {
+    cancelSortArrow () {
       // 取消表格排序高亮的箭头
       if (this.column.prop) {
         // const table = this.$refs['dataTable_' + this.index]
@@ -810,7 +810,7 @@ export default {
       this.toggleLoading(true)
       this.$nextTick(() => {
         // 取消表格排序高亮的箭头
-        this.cancleSortArrow()
+        this.cancelSortArrow()
         // 设置默认排序
         if (this.tableSortColumn) {
           const refName = 'dataTable_' + this.tableSortTab
@@ -1694,7 +1694,7 @@ export default {
           item.order = ''
         })
       }
-      this.cancleSortArrow()
+      this.cancelSortArrow()
       this.column = {}
       this.index = 0
       this.tableSortColumn = ''

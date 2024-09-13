@@ -72,6 +72,7 @@
           </div>
           <div class="chart-line__drawing" id="activeSubscribersChart"></div>
         </div>
+        <!-- subscriber list -->
         <div class="analysis-statistics__title">
           {{$t('location.subscribers')}}
           <simple-loading :loading="loading.subscriberLoading" placement="right" size="small"></simple-loading>
@@ -1048,15 +1049,9 @@ export default {
       }
     },
     async hexagonVisualRangeChange (e) {
-      const currentZoom = this.mapChart.getZoom()
-      console.info(`current zoom: ${currentZoom}`)
-      if (currentZoom < 11) {
-        this.hideBaseStation()
-        this.hideFollowed()
-      } else {
-        this.showBaseStation()
-        this.showFollowed()
-      }
+      this.currentZoom = this.mapChart.getZoom()
+      console.info(`current zoom: ${this.currentZoom}`)
+
       if (this.updateBoundaryBox()) {
         const oldSourceData = this.mapChart.getSource('hexGrid')._data
         const hexagonData = await this.queryHexagon()
@@ -1225,13 +1220,13 @@ export default {
     subscriberListMouseEnter (subscriber) {
       const target = this.humanMarkers.find(m => subscriber.subscriberId === m.subscriberId)
       if (target) {
-        target.getElement().classList.add('map-marker--hover')
+        target.addClassName && target.addClassName('map-marker--hover')
       }
     },
     subscriberListMouseLeave (subscriber) {
       const target = this.humanMarkers.find(m => subscriber.subscriberId === m.subscriberId)
       if (target) {
-        target.getElement().classList.remove('map-marker--hover')
+        target.removeClassName && target.removeClassName('map-marker--hover')
       }
     },
     async scrollList (e) {
@@ -1298,7 +1293,7 @@ export default {
     },
     showBaseStation () {
       this.baseStationMarkers.forEach(bs => {
-        bs.addClassName && bs.removeClassName('map-marker--hidden')
+        bs.removeClassName && bs.removeClassName('map-marker--hidden')
       })
     },
     hideFollowed () {
@@ -1308,7 +1303,7 @@ export default {
     },
     showFollowed () {
       this.humanMarkers.forEach(human => {
-        human.addClassName && human.removeClassName('map-marker--hidden')
+        human.removeClassName && human.removeClassName('map-marker--hidden')
       })
     },
     // 关注列表的添加、删除追踪
@@ -1521,7 +1516,7 @@ export default {
     cancelFollowSubscribers (item) {
       axios.delete(api.location.follow + '?subscriberIds=' + item.subscriberId).then(res => {
         if (res.status === 200) {
-          this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancleFollow.success') })
+          this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancelFollow.success') })
           /* 刷新右侧列表 */
           item.isFollowed = 0
           // 删除地图中对应的人
@@ -1541,7 +1536,7 @@ export default {
       if (item.isFollowed === 1) {
         axios.delete(api.location.follow + '?subscriberIds=' + item.subscriberId).then(res => {
           if (res.status === 200) {
-            this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancleFollow.success') })
+            this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancelFollow.success') })
             // 删除地图中对应的人
             this.humanMarkers.forEach(marker => {
               if (marker.subscriberId === item.subscriberId) {
@@ -1569,6 +1564,13 @@ export default {
             this.humanMarkers = []
             const mapFollowedSubscriberData = await this.queryMapFollowedSubscriber()
             this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
+            if (this.currentZoom < 11) {
+              this.hideBaseStation()
+              this.hideFollowed()
+            } else {
+              this.showBaseStation()
+              this.showFollowed()
+            }
           } else {
             this.$message.error(res.data.message)
           }
@@ -1727,6 +1729,15 @@ export default {
     'loading.baseStationLoading': {
       handler (n) {
         this.loading.mapLoading = n || this.loading.timeBarLoading || this.loading.hexagonLoading
+      }
+    },
+    currentZoom (n, o) {
+      if (o && n < 11) {
+        this.hideBaseStation()
+        this.hideFollowed()
+      } else {
+        this.showBaseStation()
+        this.showFollowed()
       }
     }
   },
@@ -1932,6 +1943,7 @@ export default {
       loading, // 控制组件内各处loading图标
       maxZoom: mapConfig.maxZoom, // 地图最小缩放比例
       minZoom: mapConfig.minZoom, // 地图最大缩放比例
+      currentZoom: ref(null),
       mapLevel: mapConfig.mapLevel, // 地图精度  1、2、3
       unitTypes,
       defaultZoom: mapConfig.defaultZoom, // 地图默认缩放比例

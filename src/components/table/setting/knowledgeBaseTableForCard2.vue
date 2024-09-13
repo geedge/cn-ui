@@ -221,7 +221,7 @@
           </el-form>
         </div>
         <div class="dialog-footer">
-          <el-button @click="cancle">{{ $t('overall.cancel') }}</el-button>
+          <el-button @click="cancel">{{ $t('overall.cancel') }}</el-button>
           <el-button type="primary" @click="submitConfirm">{{ $t('tip.confirm') }}</el-button>
         </div>
       </template>
@@ -550,7 +550,7 @@ export default {
     submit () {
       this.$refs.knowledgeUpload.submit()
     },
-    cancle () {
+    cancel () {
       this.showAddUpdateDialog = false
     },
     clickCard (data, event) {
@@ -698,7 +698,7 @@ export default {
       this.switchKnowledgeId = id
       return false
     },
-    cancleSwitch () {
+    cancelSwitch () {
       this.showConfirmSwitch = false
     },
     switchLearning () {

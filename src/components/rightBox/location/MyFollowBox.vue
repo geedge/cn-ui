@@ -13,9 +13,9 @@
             :api="url"
     >
       <template #top-tool-left>
-        <button id="cancleFollows" class="business-button business-button--light margin-r-10" 
-                :disabled="disableCancle" @click="cancleFollowBatch">
-          <span>{{ $t('location.cancleFollow') }}</span>
+        <button id="cancelFollows" class="business-button business-button--light margin-r-10"
+                :disabled="disableCancel" @click="cancelFollowBatch">
+          <span>{{ $t('location.cancelFollow') }}</span>
         </button>
       </template>
       <template #default>
@@ -64,7 +64,7 @@ export default {
     return {
       url:  api.location.followedSubscriber,
       tableId: 'myFollowTable',
-      disableCancle: true
+      disableCancel: true
     }
   },
   mounted () {
@@ -113,9 +113,9 @@ export default {
           this.batchDeleteObjs.push(obj)
         }
       })
-      this.disableCancle = this.batchDeleteObjs.length < 1
+      this.disableCancel = this.batchDeleteObjs.length < 1
     },
-    cancleFollowBatch() {
+    cancelFollowBatch() {
       const ids = []
       if (this.batchDeleteObjs && this.batchDeleteObjs.length > 0) {
         this.batchDeleteObjs.forEach(item => {
@@ -125,7 +125,7 @@ export default {
       this.toggleLoading(true)
       axios.delete(api.location.follow + '?subscriberIds=' + ids.join(',')).then(response => {
         if (response.status === 200) {
-          this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancleFollow.success') })
+          this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancelFollow.success') })
           this.batchDeleteObjs.forEach(item => {
             item.isFollowed = 0
           })
@@ -136,7 +136,7 @@ export default {
         this.$message.error(e.response.data.message)
       }).finally(() => {
         this.toggleLoading(false)
-        this.$emit('handleCancleFollowBatch', this.batchDeleteObjs)
+        this.$emit('handleCancelFollowBatch', this.batchDeleteObjs)
       })
     },
     /* 关闭弹框 */
