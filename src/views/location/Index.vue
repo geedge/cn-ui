@@ -921,7 +921,7 @@ export default {
       const featureCollection = { type: 'FeatureCollection' }
       if (tab === 'locationMap') {
         featureCollection.features = data.map((d, i) => ({
-          id: i + 1,
+          id: parseInt(d.hexId, 16),
           type: 'Feature',
           geometry: {
             type: 'Polygon',
@@ -935,6 +935,7 @@ export default {
             color: this.getHexagonFillColor(d.number)
           }
         }))
+        console.info('featureCollection', featureCollection)
       } else if (tab === 'traceTracking') {
         // 对hexId去重，将重复的hexId的时间合并
         const hexagons = []
@@ -992,6 +993,7 @@ export default {
       }
     },
     hoverTrigger (source, id, hover) {
+      console.info(source, id)
       this.mapChart.setFeatureState({ source, id }, { hover })
     },
     bindHexagonEvents () {
@@ -1039,6 +1041,7 @@ export default {
           // 去掉上一块的高亮
           this.hoverTrigger('hexGrid', this.currentPolygon.id, false)
         }
+        console.info(features)
         this.currentPolygon = features[0].properties
         this.currentPolygon.id = features[0].id
         this.tooltip.x = originalEvent.clientX + 15
@@ -1063,7 +1066,6 @@ export default {
       }
     },
     compareSourceData (oldData, newData) {
-      let lastId = _.maxBy(oldData.features, d => Number(d.id))
       newData.features.forEach(n => {
         const find = oldData.features.find(o => o.properties.hexId === n.properties.hexId)
         if (find) {
@@ -1072,7 +1074,7 @@ export default {
             find.properties.color = n.properties.color
           }
         } else {
-          oldData.features.push({ ...n, id: ++lastId })
+          oldData.features.push({ ...n })
         }
       })
       return oldData
@@ -1470,7 +1472,6 @@ export default {
           })
           item.active = find ? 1 : 0
         })
-        console.info(subscriberList)
       })
     },
     // 针对我的关注列表的单条记录的关注和取消关注
