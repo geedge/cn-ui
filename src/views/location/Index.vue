@@ -891,28 +891,21 @@ export default {
       const max = _.maxBy(data, d => Number(d.number))
       const result = []
       if (max) {
-        if (max.number < 10) {
-          for (let i = 1; i <= this.pieColorRamp.length; i++) {
-            const item = {
-              start: i * 2 - 1,
-              end: i * 2,
-              color: this.pieColorRamp[i - 1]
-            }
-            item.count = data.filter(d => d.number >= item.start && d.number <= item.end).length
-            result.push(item)
-          }
+        let step
+        if (max.number <= 1000) {
+          step = 20
         } else {
-          const maxLength = String(max.number).length
-          const maxLegend = Math.ceil(max.number / Math.pow(10, maxLength - 1)) * Math.pow(10, maxLength - 1)
-          for (let i = 1; i <= this.pieColorRamp.length; i++) {
-            const item = {
-              start: maxLegend * (i - 1) / this.pieColorRamp.length + 1,
-              end: maxLegend * i / this.pieColorRamp.length,
-              color: this.pieColorRamp[i - 1]
-            }
-            item.count = data.filter(d => d.number >= item.start && d.number <= item.end).length
-            result.push(item)
+          step = 100
+        }
+        const maxLegend = Math.ceil((max.number) / step) * step
+        for (let i = 1; i <= this.pieColorRamp.length; i++) {
+          const item = {
+            start: maxLegend * (i - 1) / this.pieColorRamp.length + 1,
+            end: maxLegend * i / this.pieColorRamp.length,
+            color: this.pieColorRamp[i - 1]
           }
+          item.count = data.filter(d => d.number >= item.start && d.number <= item.end).length
+          result.push(item)
         }
       }
       return result
@@ -935,7 +928,6 @@ export default {
             color: this.getHexagonFillColor(d.number)
           }
         }))
-        console.info('featureCollection', featureCollection)
       } else if (tab === 'traceTracking') {
         // 对hexId去重，将重复的hexId的时间合并
         const hexagons = []
@@ -993,7 +985,6 @@ export default {
       }
     },
     hoverTrigger (source, id, hover) {
-      console.info(source, id)
       this.mapChart.setFeatureState({ source, id }, { hover })
     },
     bindHexagonEvents () {
@@ -1041,7 +1032,6 @@ export default {
           // 去掉上一块的高亮
           this.hoverTrigger('hexGrid', this.currentPolygon.id, false)
         }
-        console.info(features)
         this.currentPolygon = features[0].properties
         this.currentPolygon.id = features[0].id
         this.tooltip.x = originalEvent.clientX + 15
@@ -1418,7 +1408,7 @@ export default {
         const levelField = this.mapLevelField.find(item => item.level === this.mapLevel)
         paramArray.push(levelField ? levelField.field + "='" + this.curHexId + "'" : '')
       }
-      if (this.curSearchValue && this.curSearchValue !== '') {
+      if (this.curSearchValue) {
         paramArray.push(" (subscriber_id like '%" + this.curSearchValue + "%' or phone_number like '%" + this.curSearchValue + "%') ")
       }
       if (paramArray.length > 0) {
