@@ -360,7 +360,8 @@
             class="common-right-box"
             :size="700"
             :with-header="false"
-            destroy-on-close>
+            destroy-on-close
+    >
       <my-follow-box :timeFilter="timeFilter" :level="mapLevel" @close="closeRightBox" @handleFollow="handleFollow" @handleCancelFollowBatch="handleCancelFollowBatch"/>
     </el-drawer>
   </div>

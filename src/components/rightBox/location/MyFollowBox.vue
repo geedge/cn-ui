@@ -11,6 +11,7 @@
             :tableId="tableId"
             v-model:custom-table-title="tools.customTableTitle"
             :api="url"
+            style="height: calc(100% - 60px)"
     >
       <template #top-tool-left>
         <button id="cancelFollows" class="business-button business-button--light margin-r-10"
