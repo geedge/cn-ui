@@ -1565,7 +1565,7 @@ export default {
             this.humanMarkers = []
             const mapFollowedSubscriberData = await this.queryMapFollowedSubscriber()
             this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
-            if (this.currentZoom < 11) {
+            if (this.currentZoom && this.currentZoom < 11) {
               this.hideBaseStation()
               this.hideFollowed()
             } else {
