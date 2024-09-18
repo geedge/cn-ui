@@ -823,6 +823,9 @@ export default {
             if (marker.subscriberId === this.highlightSubscriber.subscriberId) {
               el.classList.add('map-marker--highlight')
             }
+            if (this.currentZoom && this.currentZoom < 11) {
+              el.classList.add('map-marker--hidden')
+            }
             el.innerHTML = svg
             // 鼠标事件，控制tooltip显示和marker尺寸
             this.bindMarkerEvent(el, marker, type)
@@ -834,6 +837,9 @@ export default {
           } else if (type === this.tooltipType.baseStation) {
             const el = document.createElement('div')
             el.className = `map-marker map-marker--${type}`
+            if (this.currentZoom && this.currentZoom < 11) {
+              el.classList.add('map-marker--hidden')
+            }
             el.innerHTML = svg
             // 鼠标事件，控制tooltip显示和marker尺寸
             this.bindMarkerEvent(el, marker, type)
@@ -1224,8 +1230,11 @@ export default {
     },
     async scrollList (e) {
       if (!this.isChecked) {
-        const obj = document.getElementById('locationMap-subscriber-scroll')
-        const scrollTop = obj.scrollTop
+        const dom = document.getElementById('locationMap-subscriber-scroll')
+        if (dom.scrollTop + dom.clientHeight >= dom.scrollHeight && !this.loading.subscriberLoading) {
+          await this.initSubscriberList()
+        }
+        /* const scrollTop = obj.scrollTop
         const scroll = scrollTop - this.preScrollTop
         this.preScrollTop = scrollTop
         // 向下滚动才进行加载数据
@@ -1234,7 +1243,7 @@ export default {
             obj.scrollHeight !== 0 &&
             !this.loading.subscriberLoading) {
           await this.initSubscriberList()
-        }
+        } */
       }
     },
     timeRefreshChange () {
