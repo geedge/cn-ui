@@ -56,7 +56,7 @@
             <div class="chart__legend">
               <div v-for="legend in pieValueRamp" class="legend-item" :key="legend.color">
                 <div class="legend-icon" :style="`background:rgba(${legend.color},.7);`"></div>
-                <div class="legend-range" >{{legend.start}}~{{legend.end}}</div>
+                <div class="legend-range" >{{legend.name}}</div>
                 <div class="legend-count">{{legend.count}}</div>
               </div>
             </div>
@@ -546,7 +546,6 @@ export default {
         option.color = this.pieColorRamp.map(c => `rgb(${c},.7)`)
         option.series[0].name = this.$t('location.populationDensity')
         option.series[0].data = this.pieValueRamp.map((r, i) => ({
-          name: `${r.start}~${r.end}`,
           value: r.count
         }))
         this.pieOption = option
@@ -912,6 +911,11 @@ export default {
             color: this.pieColorRamp[i - 1]
           }
           item.count = data.filter(d => d.number >= item.start && d.number <= item.end).length
+          if (i === this.pieColorRamp.length) {
+            item.name = `>${item.start - 1}`
+          } else {
+            item.name = `${item.start}~${item.end}`
+          }
           result.push(item)
         }
       }
@@ -968,7 +972,13 @@ export default {
       return featureCollection
     },
     getHexagonFillColor (number) {
-      const ramp = this.pieValueRamp.filter(r => Number(number) >= r.start && Number(number) <= r.end)
+      const ramp = this.pieValueRamp.filter((r, i) => {
+        if (i < this.pieValueRamp.length - 1) {
+          return Number(number) >= r.start && Number(number) <= r.end
+        } else {
+          return Number(number) >= r.start
+        }
+      })
       if (ramp.length > 0) {
         return ramp[0].color.split(',').map(n => Number(n))
       }
@@ -1686,6 +1696,7 @@ export default {
       }
     },
     async timeFilter (n) {
+      this.boundaryBoxExtreme = {}
       if (this.activeTab === 'locationMap') {
         this.unbindHexagonEvents()
         this.mapChart.getLayer('hexagon') && this.mapChart.removeLayer('hexagon')
