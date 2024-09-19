@@ -335,7 +335,7 @@ export default {
         ]
         return response // response.data.data.list
       } catch (e) {
-        this.errorMsgHandler(e)
+        this.$message.error(this.errorMsgHandler(e))
         console.error(e)
       } finally {
         // this.loading.baseStationLoading = false
