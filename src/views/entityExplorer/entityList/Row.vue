@@ -12,8 +12,7 @@
         <!--标签-->
         <div class="cn-entity__header my__display1">
           <template v-if="entityData.entityType">
-            <span v-if="entityData.entityType==='subscriber_id'" v-high-light="keywordList">{{ entityData.phone_number }}</span>
-            <span v-else v-high-light="keywordList">{{ entityData.entityValue || 'Unknown' }}</span>
+            <span v-high-light="keywordList">{{ entityData.entityValue || 'Unknown' }}</span>
           </template>
           <span v-show="entityData.isRelated" class="cn-entity__header-icon">
             <el-popover
@@ -94,14 +93,14 @@
               </template>
               <template v-else-if="entityData.entityType === 'subscriber_id'">
                 <div class="basic-info__item">
-                  <i class="cn-icon cn-icon-account-info"></i>
-                  <span class="row-item-label">{{ $t('entity.subscriberId') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value" v-high-light="keywordList">{{ $_.get(entityData, 'entityValue', '-') || '-' }}</span>
+                  <i class="cn-icon cn-icon-shoujihaoma"></i>
+                  <span class="row-item-label">MSISDN&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value" v-high-light="keywordList">{{ $_.get(entityData, 'phone_number', '-') || '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-location"></i>
                   <span class="row-item-label">{{ $t('overall.location') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value">{{$_.get(entityData, 'subscriber_longitude', '-') || '-'}},&nbsp;{{$_.get(entityData, 'subscriber_latitude', '-') || '-'}}</span>
+                  <span class="row-item-value">{{locationHandler(entityData)}}</span>
                 </div>
               </template>
               <!-- 通用字段 -->
@@ -235,6 +234,21 @@ export default {
         } else {
           return '-'
         }
+      }
+    },
+    locationHandler () {
+      return function (item) {
+        const result = []
+        if (item.country) {
+          result.push(item.country)
+        }
+        if (item.superAdministrativeArea) {
+          result.push(item.superAdministrativeArea)
+        }
+        if (item.administrativeArea) {
+          result.push(item.administrativeArea)
+        }
+        return result.length > 0 ? result.join(', ') : '-'
       }
     }
   },

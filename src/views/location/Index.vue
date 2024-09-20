@@ -111,8 +111,8 @@
                 </div>
                 <div class="header__right">
                   <div class="header-msisdn">
-                    <div class="header__title">MSISDN</div>
-                    <div class="header__content">{{$_.get(item, 'phoneNumber', '-') || '-'}}</div>
+                    <div class="header__title">ID</div>
+                    <div class="header__content">{{$_.get(item, 'subscriberId', '-') || '-'}}</div>
                   </div>
                   <div class="header__operation">
                     <div class="trajectory-text" @click.stop="addOrRemoveTrackingSubscriber(item)">
@@ -127,8 +127,8 @@
               </div>
               <div class="subscriber__body">
                 <div class="body__item">
-                  <div class="item__label">ID</div>
-                  <div class="item__value">{{item.subscriberId}}</div>
+                  <div class="item__label">MSISDN</div>
+                  <div class="item__value">{{item.phoneNumber}}</div>
                 </div>
                 <div class="body__item">
                   <div class="item__label">IMEI</div>
@@ -137,6 +137,10 @@
                 <div class="body__item">
                   <div class="item__label">IMSI</div>
                   <div class="item__value">{{item.imsi || '-'}}</div>
+                </div>
+                <div class="body__item">
+                  <div class="item__label">APN</div>
+                  <div class="item__value">{{item.apn || '-'}}</div>
                 </div>
                 <div class="body__item">
                   <div class="item__label">{{$t('location.group')}}</div>
@@ -172,8 +176,8 @@
                 </div>
                 <div class="header__right">
                   <div class="header-msisdn">
-                    <div class="header__title">MSISDN</div>
-                    <div class="header__content">{{$_.get(subscriber, 'phoneNumber', '-') || '-'}}</div>
+                    <div class="header__title">ID</div>
+                    <div class="header__content">{{$_.get(subscriber, 'subscriberId', '-') || '-'}}</div>
                   </div>
                   <div class="header__operation">
                     <div class="cancel-follow" @click.stop="removeTrackingSubscriber(subscriber)">
@@ -184,8 +188,8 @@
               </div>
               <div class="subscriber__body">
                 <div class="body__item">
-                  <div class="item__label">ID</div>
-                  <div class="item__value">{{subscriber.subscriberId}}</div>
+                  <div class="item__label">MSISDN</div>
+                  <div class="item__value">{{subscriber.phoneNumber}}</div>
                 </div>
                 <div class="body__item">
                   <div class="item__label">{{$t('entities.group')}}</div>
@@ -238,8 +242,8 @@
                               <div class="circle-line"></div>
                             </div>
                             <div class="item-content">
-                              <div>
-                                <span>{{$t('overall.location')}}: </span><span class="item__value">{{locationHandler(record)}}</span>
+                              <div style="width: 217px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden">
+                                <span>{{$t('overall.location')}}: </span><span class="item__value" :title="locationHandler(record)">{{locationHandler(record)}}</span>
                               </div>
                               <div>
                                 <span>{{ $t('location.timeOfArrival') }}: </span><span class="item__value">{{dateFormatByAppearance(Number(record.time))}}</span>
@@ -283,12 +287,12 @@
         </div>
         <div class="header__title">
           <template v-if="tooltip.type === tooltipType.hexagon">HEX</template>
-          <template v-else-if="tooltip.type === tooltipType.human">MSISDN</template>
+          <template v-else-if="tooltip.type === tooltipType.human">ID</template>
           <template v-else-if="tooltip.type === tooltipType.baseStation">CID</template>
         </div>
         <div class="header__content">
           <template v-if="tooltip.type === tooltipType.hexagon">{{currentPolygon.hexId}}</template>
-          <template v-else-if="tooltip.type === tooltipType.human">{{currentSubscriber.phoneNumber || '-'}}</template>
+          <template v-else-if="tooltip.type === tooltipType.human">{{currentSubscriber.subscriberId || '-'}}</template>
           <template v-else-if="tooltip.type === tooltipType.baseStation">{{currentBaseStation.cid}}</template>
         </div>
       </div>
@@ -317,8 +321,8 @@
         </template>
         <template v-else-if="tooltip.type === tooltipType.human">
           <div class="body__item">
-            <div class="item__label">ID</div>
-            <div class="item__value">{{currentSubscriber.subscriberId}}</div>
+            <div class="item__label">MSISDN</div>
+            <div class="item__value">{{currentSubscriber.phoneNumber}}</div>
           </div>
           <div class="body__item">
             <div class="item__label">{{$t('entities.group')}}</div>
@@ -560,6 +564,7 @@ export default {
         if (this.pieChart && this.pieChart.clear) {
           this.pieChart.clear()
         }
+        this.pieValueRamp = []
         console.error(e)
       } finally {
         this.loading.pieLoading = false
@@ -597,6 +602,8 @@ export default {
         if (this.lineChart && this.lineChart.clear) {
           this.lineChart.clear()
         }
+        this.activeCount = ''
+        this.activeCountChain = ''
         console.error(e)
       } finally {
         this.loading.lineLoading = false
@@ -770,6 +777,14 @@ export default {
         this.loading.trackingMapLoading = false
       }
     },
+    moveToCenter (records) {
+      const maxLongitude = _.maxBy(records, d => Number(d.subscriberLongitude))
+      const maxLatitude = _.maxBy(records, d => Number(d.subscriberLatitude))
+      const minLongitude = _.minBy(records, d => Number(d.subscriberLongitude))
+      const minLatitude = _.minBy(records, d => Number(d.subscriberLatitude))
+      const center = [(maxLongitude.subscriberLongitude + minLongitude.subscriberLongitude) / 2, (maxLatitude.subscriberLatitude + minLatitude.subscriberLatitude) / 2]
+      this.mapChart.panTo(center, { duration: 500 })
+    },
     renderTrackingHexagon () {
       if (!this.currentShowSubscriber) {
         return true
@@ -807,11 +822,12 @@ export default {
             'line-width': 3
           }
         })
+        this.moveToCenter(currentShowSubscriberRecords)
         // 最后所在地的图标
         const coordinate = h3ToGeo(currentShowSubscriberRecords[0].hexId)
         this.renderTrackingMarker([coordinate[1], coordinate[0]])
-        this.bindTrackingHexagonEvents()
       }
+      this.bindTrackingHexagonEvents()
     },
     renderMarker (data, type) {
       let svg
@@ -1031,11 +1047,13 @@ export default {
       this.mapChart.on('mouseenter', 'trackingHexagon', this.trackingHexagonMouseEnter)
       this.mapChart.on('mouseleave', 'trackingHexagon', this.trackingHexagonMouseLeave)
       this.mapChart.on('mousemove', 'trackingHexagon', this.trackingHexagonMouseMove)
+      this.mapChart.on('zoomend', this.trackingHexagonZoomEnd)
     },
     unbindTrackingHexagonEvents () {
       this.mapChart.off('mouseenter', 'trackingHexagon', this.trackingHexagonMouseEnter)
       this.mapChart.off('mouseleave', 'trackingHexagon', this.trackingHexagonMouseLeave)
       this.mapChart.off('mousemove', 'trackingHexagon', this.trackingHexagonMouseMove)
+      this.mapChart.off('zoomend', this.trackingHexagonZoomEnd)
     },
     hexagonMouseEnter () {
       this.tooltip.mouseIsInPolygon = true
@@ -1100,6 +1118,15 @@ export default {
       this.tooltip.mouseIsInPolygon = false
       // 去掉上一块的高亮
       this.hoverTrigger('trackingHexGrid', this.currentPolygon.id, false)
+    },
+    trackingHexagonZoomEnd () {
+      this.currentZoom = this.mapChart.getZoom()
+      console.info(`current zoom: ${this.currentZoom}`)
+      if (this.currentZoom && this.currentZoom < 11) {
+        this.hideBaseStation()
+      } else {
+        this.showBaseStation()
+      }
     },
     trackingHexagonMouseMove (e) {
       const { originalEvent, features } = e

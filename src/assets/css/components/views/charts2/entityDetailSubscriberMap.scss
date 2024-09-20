@@ -108,6 +108,10 @@ $color-highlight: #CC4444;
             height: 21px;
           }
         }
+
+        &.map-marker--hidden {
+          display: none;
+        }
       }
 
       .map-tracking-marker {

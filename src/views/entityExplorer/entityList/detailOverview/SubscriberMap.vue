@@ -106,6 +106,7 @@ import { defaultMapConfig, storageKey, unitTypes } from '@/utils/constants'
 import { h3ToGeo, h3ToGeoBoundary } from 'h3-js'
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import Loading from '@/components/common/Loading'
+import _ from 'lodash'
 const humanSvg = '<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M366.689524 690.468571l87.283809 83.821715-75.434666 195.486476c-10.971429 27.794286-43.105524 42.081524-72.265143 32.036571-29.159619-10.24-44.080762-41.252571-33.450667-69.241904L366.689524 690.468571zM203.824762 476.306286l51.785143-95.183238a162.279619 162.279619 0 0 1 59.245714-59.977143c119.710476-68.266667 134.777905-67.291429 149.942857-66.218667l80.798476 5.168762c24.868571 0.975238 42.081524 7.314286 125.025524 124.14781a21.26019 21.26019 0 0 0 14.092191 8.289523l99.132952 14.482286c12.873143 1.852952 24.478476 8.582095 32.182857 18.67581a45.494857 45.494857 0 0 1 8.825905 35.108571 46.665143 46.665143 0 0 1-19.504762 30.866286 50.468571 50.468571 0 0 1-36.571429 8.435809l-99.181714-14.433524a119.954286 119.954286 0 0 1-79.774476-47.640381c-4.388571-6.241524-7.558095-11.361524-11.849143-16.579047l-63.634286 193.487238 88.405334 84.845714c12.970667 12.385524 23.698286 29.013333 30.232381 45.494857l67.876571 190.366477c5.022476 13.409524 4.193524 28.233143-2.291809 41.057523a54.613333 54.613333 0 0 1-32.182858 27.160381c-5.851429 2.048-12.092952 3.120762-18.383238 3.169524a58.075429 58.075429 0 0 1-53.930666-36.181333l-67.876572-190.366476c-1.024-2.096762-2.096762-3.120762-3.218285-5.168762L365.616762 623.177143a84.894476 84.894476 0 0 1-24.868572-80.700953l34.523429-146.919619c-3.413333 2.340571-7.070476 4.388571-10.776381 6.290286a58.806857 58.806857 0 0 0-22.674286 22.723048L290.133333 519.801905a49.834667 49.834667 0 0 1-43.105523 24.819809 59.977143 59.977143 0 0 1-22.674286-5.12 46.518857 46.518857 0 0 1-20.48-63.146666z m209.67619-360.448C420.08381 58.465524 473.86819 17.066667 533.650286 23.30819 593.383619 29.549714 636.537905 81.13981 630.00381 138.48381c-6.534095 57.392762-60.269714 98.840381-120.05181 92.550095-59.782095-6.241524-102.985143-57.782857-96.451048-115.175619z"></path></svg>'
 const baseStationSvg = '<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M164.901926 519.585185a391.35763 391.35763 0 0 1-30.151111-152.38637c0-52.527407 10.05037-105.054815 30.151111-152.348445 15.094519-47.29363 45.283556-89.353481 80.516741-126.103703L174.990222 15.17037C129.706667 62.464 94.511407 114.991407 69.328593 178.062222 44.183704 241.095111 34.133333 304.165926 34.133333 367.198815c0 63.070815 10.05037 131.375407 35.19526 189.174518 25.182815 57.799111 60.378074 115.598222 105.661629 162.891852l70.428445-73.576296c-35.233185-36.788148-65.422222-78.810074-80.516741-126.103704z" p-id="8786"></path><path d="M255.469037 477.563259c15.094519 36.788148 35.195259 68.266667 60.340148 94.549334l70.428445-73.576297a233.168593 233.168593 0 0 1-40.201482-57.761185c-5.044148-26.282667-10.088296-47.29363-10.088296-73.576296 0-26.244741 5.044148-47.29363 15.094518-68.266667 5.006222-26.282667 20.100741-42.097778 35.19526-63.070815l-70.428445-73.576296c-25.144889 26.282667-45.24563 57.799111-60.340148 94.587259-15.094519 36.788148-20.100741 73.576296-20.100741 110.364445 0 36.788148 5.006222 73.53837 20.100741 110.326518zM436.527407 367.198815c0 43.538963 33.792 78.810074 75.472593 78.810074s75.472593-35.271111 75.472593-78.810074c0-43.501037-33.792-78.810074-75.472593-78.810074s-75.472593 35.271111-75.472593 78.810074zM637.76237 498.574222l70.428445 73.576297c25.144889-26.282667 45.24563-57.837037 60.340148-94.58726 15.094519-36.788148 20.100741-73.576296 20.100741-110.364444 0-36.788148-5.006222-73.576296-20.100741-110.364445-15.094519-36.750222-35.195259-68.266667-60.340148-94.549333l-70.428445 73.576296c15.094519 15.739259 30.189037 36.788148 40.201482 57.799111 10.088296 21.010963 15.132444 47.29363 15.132444 68.266667 0 26.282667-5.044148 47.331556-15.094518 68.342519-10.05037 31.516444-25.144889 47.29363-40.239408 68.266666z" p-id="8787"></path><path d="M954.671407 178.062222C929.488593 114.991407 894.293333 62.464 849.009778 15.17037L778.619259 88.746667c35.233185 36.788148 60.378074 78.810074 80.516741 126.103703 20.100741 47.255704 30.151111 99.821037 30.151111 152.348445 0 52.565333-10.05037 105.092741-30.151111 152.38637-20.100741 47.29363-45.283556 89.315556-80.516741 126.103704l70.428445 73.576296c45.283556-47.29363 80.478815-99.858963 105.661629-162.891852 25.144889-63.070815 35.195259-126.103704 35.19526-189.174518 0-63.032889-10.05037-131.337481-35.19526-189.136593zM210.185481 1024h603.629038L512 551.10163 210.185481 1024z m186.102519-105.054815L512 740.238222l115.674074 178.631111h-231.348148z"></path></svg>'
 
@@ -218,32 +219,7 @@ export default {
       // this.loading.baseStationLoading = true
       try {
         // const response = await axios.get(api.location.baseStation)
-        const response = [
-          {
-            longitude: 116.38,
-            latitude: 39.9
-          },
-          {
-            longitude: 116.39,
-            latitude: 39.9
-          },
-          {
-            longitude: 116.383,
-            latitude: 39.886
-          },
-          {
-            longitude: 116.378,
-            latitude: 39.902
-          },
-          {
-            longitude: 116.369,
-            latitude: 39.91
-          },
-          {
-            longitude: 116.38,
-            latitude: 39.91
-          }
-        ]
+        const response = [{ cid: '414-06-15261-3', latitude: 17.182549, longitude: 95.972018, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11755-1', latitude: 17.182845, longitude: 95.969483, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12955-2', latitude: 17.181968, longitude: 95.96975, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13698-6', latitude: 17.181413, longitude: 95.969861, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11553-2', latitude: 17.183569, longitude: 95.971931, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-15971-1', latitude: 17.183807, longitude: 95.972561, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13287-2', latitude: 17.184677124023, longitude: 95.97038269043, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11755-3', latitude: 17.18879699707, longitude: 95.97038269043, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13651-1', latitude: 17.180557250977, longitude: 95.977249145508, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11421-2', latitude: 17.179871, longitude: 95.979309, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12504-1', latitude: 17.173573, longitude: 95.978783, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13651-3', latitude: 17.173690795898, longitude: 95.989608764648, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13518-1', latitude: 17.170944213867, longitude: 95.990982055664, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11646-1', latitude: 17.169570922852, longitude: 95.99235534668, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11643-2', latitude: 17.165451049805, longitude: 95.995101928711, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11709-1', latitude: 17.143478393555, longitude: 95.999221801758, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11553-3', latitude: 17.135239, longitude: 96.001511, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12955-3', latitude: 17.126575, longitude: 96.00721, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13287-1', latitude: 17.120132446289, longitude: 96.010208129883, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12503-1', latitude: 17.120132446289, longitude: 96.007461547852, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11588-1', latitude: 17.120132446289, longitude: 96.008834838867, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11835-1', latitude: 17.118759155273, longitude: 96.008834838867, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11452-2', latitude: 17.117385864258, longitude: 96.010208129883, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12962-2', latitude: 17.114639282227, longitude: 96.012954711914, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11769-4', latitude: 17.11051940918, longitude: 96.015701293945, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11758-3', latitude: 17.109146118164, longitude: 96.015701293945, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11253-2', latitude: 17.111206, longitude: 96.019822, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12823-2', latitude: 17.106399536133, longitude: 96.019821166992, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-15277-4', latitude: 17.105026245117, longitude: 96.019821166992, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11704-2', latitude: 17.103652954102, longitude: 96.021194458008, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13908-1', latitude: 17.103652954102, longitude: 96.022567749023, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11385-1', latitude: 17.103652954102, longitude: 96.023941040039, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12496-1', latitude: 17.102279663086, longitude: 96.025314331055, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-15984-3', latitude: 17.102279663086, longitude: 96.02668762207, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11904-1', latitude: 17.10090637207, longitude: 96.029434204102, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-15984-2', latitude: 17.102279663086, longitude: 96.033554077148, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11385-2', latitude: 17.099533081055, longitude: 96.033554077148, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11714-1', latitude: 17.10090637207, longitude: 96.039047241211, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12462-2', latitude: 17.10090637207, longitude: 96.040420532227, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13908-4', latitude: 17.10090637207, longitude: 96.041793823242, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11103-5', latitude: 17.10090637207, longitude: 96.043167114258, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13213-3', latitude: 17.10090637207, longitude: 96.044540405273, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-13213-1', latitude: 17.10090637207, longitude: 96.045913696289, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11253-1', latitude: 17.10090637207, longitude: 96.047286987305, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12823-3', latitude: 17.103922, longitude: 96.053436, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11769-1', latitude: 17.106399536133, longitude: 96.055526733398, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-11758-2', latitude: 17.106399536133, longitude: 96.059646606445, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-15277-3', latitude: 17.106399536133, longitude: 96.063766479492, areaCode: 100027, networkCode: 1574, communicationType: '4G', location: 'Myanmar, Yangon, Yangon' }, { cid: '414-06-12962-3', latitude: 17.10604, longitude: 96.064735 }]
         return response // response.data.data.list
       } catch (e) {
         this.errorMsgHandler(e)
@@ -266,6 +242,14 @@ export default {
       })
       overwriteUrl(newUrl)
     },
+    moveToCenter (records) {
+      const maxLongitude = _.maxBy(records, d => Number(d.subscriberLongitude))
+      const maxLatitude = _.maxBy(records, d => Number(d.subscriberLatitude))
+      const minLongitude = _.minBy(records, d => Number(d.subscriberLongitude))
+      const minLatitude = _.minBy(records, d => Number(d.subscriberLatitude))
+      const center = [(maxLongitude.subscriberLongitude + minLongitude.subscriberLongitude) / 2, (maxLatitude.subscriberLatitude + minLatitude.subscriberLatitude) / 2]
+      this.mapChart.panTo(center, { duration: 500 })
+    },
     async queryTraceTracking () {
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
@@ -280,15 +264,20 @@ export default {
         const response = await axios.get(api.location.tracking, { params })
         this.trackingMapLoading = false
         if (response.data.data.result) {
+          response.data.data.result.forEach(item => {
+            item.trackRecords = item.trackRecords.filter(t => t.hexId)
+          })
           this.trackingNoData = false
           this.showTrackingError = false
           const find = response.data.data.result.find(item => item.subscriberId === this.trackingSubscriber.subscriberId)
+
           if (find) {
             this.trackingSubscriber.trackRecords = find.trackRecords
           } else {
             this.trackingSubscriber.trackRecords = []
           }
           this.trackingSubscriber.show = false
+          this.moveToCenter(find.trackRecords)
         } else {
           this.trackingSubscriber.trackRecords = []
         }
@@ -461,10 +450,30 @@ export default {
       this.currentShowSubscriber = subscriber
       this.tooltip.showMarkerTooltip = false
     },
+    trackingHexagonZoomEnd () {
+      this.currentZoom = this.mapChart.getZoom()
+      console.info(`current zoom: ${this.currentZoom}`)
+      if (this.currentZoom && this.currentZoom < 11) {
+        this.hideBaseStation()
+      } else {
+        this.showBaseStation()
+      }
+    },
     unbindTrackingHexagonEvents () {
       this.mapChart.off('mouseenter', this.trackingHexagonMouseEnter)
       this.mapChart.off('mouseleave', this.trackingHexagonMouseLeave)
       this.mapChart.off('mousemove', this.trackingHexagonMouseMove)
+      this.mapChart.off('zoomend', this.trackingHexagonZoomEnd)
+    },
+    hideBaseStation () {
+      this.baseStationMarkers.forEach(bs => {
+        bs.addClassName && bs.addClassName('map-marker--hidden')
+      })
+    },
+    showBaseStation () {
+      this.baseStationMarkers.forEach(bs => {
+        bs.removeClassName && bs.removeClassName('map-marker--hidden')
+      })
     },
     renderTrackingMarker (coordinates) {
       const el = document.createElement('div')
@@ -603,6 +612,7 @@ export default {
       this.mapChart.on('mouseenter', 'trackingHexagon', this.trackingHexagonMouseEnter)
       this.mapChart.on('mouseleave', 'trackingHexagon', this.trackingHexagonMouseLeave)
       this.mapChart.on('mousemove', 'trackingHexagon', this.trackingHexagonMouseMove)
+      this.mapChart.on('zoomend', this.trackingHexagonZoomEnd)
     },
     hoverTrigger (source, id, hover) {
       this.mapChart.setFeatureState({ source, id }, { hover })
@@ -651,7 +661,6 @@ export default {
       showTooltip: false,
       type: ''
     })
-    const myChart = shallowRef({})
     const trackingSubscriber = ref({
       subscriberId: '',
       show: false,
@@ -687,7 +696,6 @@ export default {
       timeFilter,
       currentPoint,
       tooltip,
-      myChart,
       maxZoom: mapConfig.maxZoom, // 地图最小缩放比例
       minZoom: mapConfig.minZoom, // 地图最大缩放比例
       mapLevel: mapConfig.mapLevel, // 地图精度  1、2、3

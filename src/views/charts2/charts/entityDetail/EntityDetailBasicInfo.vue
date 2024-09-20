@@ -204,7 +204,7 @@ export default {
                 break
               }
               case 'subscriber': {
-                this.detailCards.find(c => c.name === 'iphoneNumber').value = res.data.phone_number
+                this.detailCards.find(c => c.name === 'phoneNumber').value = res.data.phone_number
                 this.detailCards.find(c => c.name === 'imei').value = res.data.imei
                 this.detailCards.find(c => c.name === 'imsi').value = res.data.imsi
                 this.detailCards.find(c => c.name === 'apn').value = res.data.apn
@@ -483,10 +483,10 @@ export default {
       }
       case 'subscriber': {
         detailCards.value = _.concat(detailCards.value,
-          { icon: 'cn-icon cn-icon-shoujihaoma', name: 'iphoneNumber', label: i18n.global.t('entities.iphoneNumber'), value: '' },
-          { icon: 'cn-icon cn-icon-IMEI', name: 'imei', label: i18n.global.t('entities.imei'), value: '' },
-          { icon: 'cn-icon cn-icon-IMSI', name: 'imsi', label: i18n.global.t('entities.imsi'), value: '' },
-          { icon: 'cn-icon cn-icon-APN', name: 'apn', label: i18n.global.t('entities.apn'), value: '' }
+          { icon: 'cn-icon cn-icon-shoujihaoma', name: 'phoneNumber', label: 'MSISDN', value: '' },
+          { icon: 'cn-icon cn-icon-IMEI', name: 'imei', label: 'IMEI', value: '' },
+          { icon: 'cn-icon cn-icon-IMSI', name: 'imsi', label: 'IMSI', value: '' },
+          { icon: 'cn-icon cn-icon-APN', name: 'apn', label: 'APN', value: '' }
         )
       }
     }

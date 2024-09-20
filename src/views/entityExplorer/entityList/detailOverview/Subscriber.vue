@@ -3,12 +3,24 @@
     <div class="overview__title">{{$t('overall.basicInfo')}}</div>
     <div class="overview__content">
       <div class="overview__row">
-        <div class="row__label row__label--width130">{{ $t('entity.subscriberId') }}</div>
-        <div class="row__content">{{$_.get(entity, 'entityValue', '-') || '-'}}</div>
+        <div class="row__label row__label--width130">MSISDN</div>
+        <div class="row__content">{{$_.get(entity, 'phone_number', '-') || '-'}}</div>
+      </div>
+      <div class="overview__row">
+        <div class="row__label row__label--width130">IMEI</div>
+        <div class="row__content">{{$_.get(entity, 'imei', '-') || '-'}}</div>
+      </div>
+      <div class="overview__row">
+        <div class="row__label row__label--width130">IMSI</div>
+        <div class="row__content">{{$_.get(entity, 'imsi', '-') || '-'}}</div>
+      </div>
+      <div class="overview__row">
+        <div class="row__label row__label--width130">APN</div>
+        <div class="row__content">{{$_.get(entity, 'apn', '-') || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.location')}}</div>
-        <div class="row__content" v-high-light="keywordList">{{$_.get(entity, 'subscriber_longitude', '-') || '-'}},&nbsp;{{$_.get(entity, 'subscriber_latitude', '-') || '-'}}</div>
+        <div class="row__content" v-high-light="keywordList">{{locationHandler(entity)}}</div>
       </div>
     </div>
   </div>
@@ -235,6 +247,23 @@ export default {
     },
     queryRelated () {
       this.getRelatedServerDataOne(this.relatedServerAppUrl)
+    }
+  },
+  computed: {
+    locationHandler () {
+      return function (item) {
+        const result = []
+        if (item.country) {
+          result.push(item.country)
+        }
+        if (item.superAdministrativeArea) {
+          result.push(item.superAdministrativeArea)
+        }
+        if (item.administrativeArea) {
+          result.push(item.administrativeArea)
+        }
+        return result.length > 0 ? result.join(', ') : '-'
+      }
     }
   },
   mounted () {
