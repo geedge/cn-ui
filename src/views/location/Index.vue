@@ -506,12 +506,14 @@ export default {
       this.unbindHexagonEvents()
       this.bindHexagonEvents()
 
-      /* 地图上的人 */
-      const mapFollowedSubscriberData = await this.queryMapFollowedSubscriber()
-      this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
-
       /* 右侧默认显示普通列表 */
       await this.initSubscriberList()
+
+      /* 地图上的人 */
+      // const mapFollowedSubscriberData = await this.queryMapFollowedSubscriber()
+      // this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
+      this.renderMarker(this.subscribersList, this.tooltipType.human)
+
       /* 右上角折线图 */
       await this.renderActiveSubscribersLine()
     },
@@ -675,9 +677,12 @@ export default {
       }
       try {
         if (this.subscribersList.length > 0) {
-          await this.querySubscriberActiveStatus(this.subscribersList)
+          await this.setSubscriberActiveStatus(this.subscribersList)
         }
         const response = await axios.get(api.location.followedSubscriber, { params })
+        response.data.data.list.forEach(d => {
+          d.isFollowed = 1
+        })
         return response.data.data.list
       } catch (e) {
         this.$message.error(this.errorMsgHandler(e))
@@ -838,22 +843,31 @@ export default {
       }
       try {
         data.forEach(marker => {
-          if (type === this.tooltipType.human && marker.subscriberDto) {
+          if (type === this.tooltipType.human && (marker.subscriberDto || marker.subscriberLatitude)) {
             const el = document.createElement('div')
             el.className = `map-marker map-marker--${type}`
             if (marker.subscriberId === this.highlightSubscriber.subscriberId) {
               el.classList.add('map-marker--highlight')
             }
+            // 非关注的用户，默认隐藏图标，鼠标移到列表后才显示
             if (this.currentZoom && this.currentZoom < 11) {
               el.classList.add('map-marker--hidden')
+            }
+            if (!marker.isFollowed) {
+              el.classList.add('map-marker--unfollowed')
             }
             el.innerHTML = svg
             // 鼠标事件，控制tooltip显示和marker尺寸
             this.bindMarkerEvent(el, marker, type)
+            const position = marker.subscriberDto
+              ? [marker.subscriberDto.subscriberLongitude, marker.subscriberDto.subscriberLatitude]
+              : [marker.subscriberLongitude, marker.subscriberLatitude]
             const mapMarker = new maplibregl.Marker({ element: el })
-              .setLngLat([marker.subscriberDto.subscriberLongitude, marker.subscriberDto.subscriberLatitude])
+              .setLngLat(position)
               .addTo(this.mapChart)
             mapMarker.subscriberId = marker.subscriberId
+            mapMarker.isFollowed = marker.isFollowed
+            mapMarker.active = marker.active
             this.humanMarkers.push(mapMarker)
           } else if (type === this.tooltipType.baseStation) {
             const el = document.createElement('div')
@@ -1189,6 +1203,7 @@ export default {
           this.humanMarkers.forEach(m => {
             m.getElement().classList.remove('map-marker--highlight')
           })
+          console.info(markerData, this.highlightSubscriber)
           if (this.highlightSubscriber.subscriberId !== markerData.subscriberId) {
             el.classList.add('map-marker--highlight')
             this.highlightSubscriber = markerData
@@ -1348,7 +1363,7 @@ export default {
     },
     showFollowed () {
       this.humanMarkers.forEach(human => {
-        human.removeClassName && human.removeClassName('map-marker--hidden')
+        human.isFollowed && human.removeClassName && human.removeClassName('map-marker--hidden')
       })
     },
     // 关注列表的添加、删除追踪
@@ -1476,7 +1491,7 @@ export default {
             if (response.data.data.length === 0 && this.curPageNum > 1) {
               this.curPageNum--
             } else {
-              await this.querySubscriberActiveStatus(response.data.data)
+              await this.setSubscriberActiveStatus(response.data.data)
               if (params.pageNo === 1) {
                 this.subscribersList = response.data.data
               } else {
@@ -1484,6 +1499,11 @@ export default {
                   this.subscribersList.push(d)
                 })
               }
+              /*// 给所有active的subscriber添加marker
+              const toRenderMarkerSubscribers = response.data.data.filter(r => {
+                return !this.humanMarkers.some(m => m.subscriberId === r.subscriberId)
+              })
+              this.renderMarker(toRenderMarkerSubscribers, this.tooltipType.human)*/
             }
           }
         })
@@ -1494,7 +1514,8 @@ export default {
         this.loading.subscriberLoading = false
       }
     },
-    async querySubscriberActiveStatus (subscriberList) {
+    async setSubscriberActiveStatus (subscriberList) {
+      this.loading.timeBarLoading = true
       const subscriberIds = subscriberList.map(d => d.subscriberId)
       const timelineParams = {
         startTime: this.minuteTimeFilter.startTime,
@@ -1502,19 +1523,28 @@ export default {
         level: this.mapLevel,
         subscriberIds: subscriberIds.map(id => `'${id}'`).join(',')
       }
-      await axios.get(api.location.tracking, { params: timelineParams }).then(async response2 => {
+      await axios.get(api.location.tracking, { params: timelineParams }).then(async response => {
         subscriberList.forEach(item => {
-          const find = response2.data.data.result.find(d => {
+          const find = response.data.data.result.find(d => {
             if (d.subscriberId === item.subscriberId) {
               const hasHexIdArr = d.trackRecords.filter(t => t.hexId)
               if (hasHexIdArr.length > 0) {
+                item.subscriberLatitude = hasHexIdArr[0].subscriberLatitude
+                item.subscriberLongitude = hasHexIdArr[0].subscriberLongitude
+                item.hexId = hasHexIdArr[0].hexId
                 return true
+              } else {
+                item.subscriberLatitude = null
+                item.subscriberLongitude = null
+                item.hexId = null
               }
             }
             return false
           })
           item.active = find ? 1 : 0
         })
+      }).finally(() => {
+        this.loading.timeBarLoading = false
       })
     },
     // 针对我的关注列表的单条记录的关注和取消关注
@@ -1525,37 +1555,42 @@ export default {
           /* 刷新右侧列表 */
           subscriber.isFollowed = 1
           // 刷新地图上的人
-          this.humanMarkers.forEach(marker => {
-            marker.remove && marker.remove()
-          })
-          this.humanMarkers = []
-          const mapFollowedSubscriberData = await this.queryMapFollowedSubscriber()
-          this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
+          const find = this.humanMarkers.find(m => m.subscriberId === subscriber.subscriberId)
+          if (find) {
+            find.removeClassName && find.removeClassName('map-marker--unfollowed')
+          }
+          // 变更地图上图标的class
+          if (this.currentZoom && this.currentZoom < 11) {
+            this.hideBaseStation()
+            this.hideFollowed()
+          } else {
+            this.showBaseStation()
+            this.showFollowed()
+          }
         } else {
           subscriber.isFollowed = 0
-          // 删除地图中对应的人
-          this.humanMarkers.forEach(marker => {
-            if (marker.subscriberId === subscriber.subscriberId) {
-              marker.remove()
-            }
-          })
+          // 刷新地图上的人
+          const find = this.humanMarkers.find(m => m.subscriberId === subscriber.subscriberId)
+          if (find) {
+            find.addClassName && find.addClassName('map-marker--unfollowed')
+          }
+          // 变更地图上图标的class
+          if (this.currentZoom && this.currentZoom < 11) {
+            this.hideBaseStation()
+            this.hideFollowed()
+          } else {
+            this.showBaseStation()
+            this.showFollowed()
+          }
         }
       }
     },
     // 针对我的关注列表的批量取消关注操作
-    async handleCancelFollowBatch () {
+    async handleCancelFollowBatch (items) {
       this.closeRightBox()
-      this.curPageNum = 1
-      this.subscribersList = []
-      // 刷新右下角列表
-      await this.initSubscriberList()
-      // 刷新地图上的人
-      this.humanMarkers.forEach(marker => {
-        marker.remove && marker.remove()
+      items.forEach(item => {
+        this.handleFollow(item)
       })
-      this.humanMarkers = []
-      const mapFollowedSubscriberData = await this.queryMapFollowedSubscriber()
-      this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
     },
     cancelFollowSubscribers (item) {
       axios.delete(api.location.follow + '?subscriberIds=' + item.subscriberId).then(res => {
@@ -1566,7 +1601,8 @@ export default {
           // 删除地图中对应的人
           this.humanMarkers.forEach(marker => {
             if (marker.subscriberId === item.subscriberId) {
-              marker.remove()
+              marker.isFollowed = null
+              marker.addClassName && marker.addClassName('map-marker--unfollowed')
             }
           })
         } else {
@@ -1581,14 +1617,20 @@ export default {
         axios.delete(api.location.follow + '?subscriberIds=' + item.subscriberId).then(res => {
           if (res.status === 200) {
             this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancelFollow.success') })
-            // 删除地图中对应的人
-            this.humanMarkers.forEach(marker => {
-              if (marker.subscriberId === item.subscriberId) {
-                marker.remove()
-              }
-            })
             /* 刷新右侧列表 */
             item.isFollowed = 0
+            // 变更地图上图标的class
+            const find = this.humanMarkers.find(m => m.subscriberId === item.subscriberId)
+            if (find) {
+              find.addClassName && find.addClassName('map-marker--unfollowed')
+            }
+            if (this.currentZoom && this.currentZoom < 11) {
+              this.hideBaseStation()
+              this.hideFollowed()
+            } else {
+              this.showBaseStation()
+              this.showFollowed()
+            }
           } else {
             this.$message.error(res.data.message)
           }
@@ -1601,13 +1643,11 @@ export default {
             this.$message({ duration: 2000, type: 'success', message: this.$t('location.follow.success') })
             /* 刷新右侧列表 */
             item.isFollowed = 1
-            // 刷新地图上的人
-            this.humanMarkers.forEach(marker => {
-              marker.remove && marker.remove()
-            })
-            this.humanMarkers = []
-            const mapFollowedSubscriberData = await this.queryMapFollowedSubscriber()
-            this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
+            // 变更地图上图标的class
+            const find = this.humanMarkers.find(m => m.subscriberId === item.subscriberId)
+            if (find) {
+              find.removeClassName && find.removeClassName('map-marker--unfollowed')
+            }
             if (this.currentZoom && this.currentZoom < 11) {
               this.hideBaseStation()
               this.hideFollowed()
@@ -1651,15 +1691,14 @@ export default {
       // 避免初始化时请求，造成人的图标会闪一下
       if (this.initFlag) {
         this.initFlag = false
+        return
       }
       this.humanMarkers.forEach(marker => {
         marker.remove && marker.remove()
       })
       this.humanMarkers = []
-      const mapFollowedSubscriberData = await this.queryMapFollowedSubscriber()
-      if (mapFollowedSubscriberData.length > 0) {
-        this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
-      }
+      await this.setSubscriberActiveStatus(this.subscribersList)
+      this.renderMarker(this.subscribersList, this.tooltipType.human)
     },
     onResize () {
       this.$nextTick(() => {
@@ -1731,6 +1770,7 @@ export default {
     async timeFilter (n) {
       this.boundaryBoxExtreme = {}
       if (this.activeTab === 'locationMap') {
+        this.initFlag = true
         this.unbindHexagonEvents()
         this.mapChart.getLayer('hexagon') && this.mapChart.removeLayer('hexagon')
         this.mapChart.getSource('hexGrid') && this.mapChart.removeSource('hexGrid')
@@ -1803,14 +1843,16 @@ export default {
     locationHandler () {
       return function (item) {
         const result = []
-        if (item.country) {
-          result.push(item.country)
-        }
-        if (item.superAdministrativeArea) {
-          result.push(item.superAdministrativeArea)
-        }
-        if (item.administrativeArea) {
-          result.push(item.administrativeArea)
+        if (item) {
+          if (item.country) {
+            result.push(item.country)
+          }
+          if (item.superAdministrativeArea) {
+            result.push(item.superAdministrativeArea)
+          }
+          if (item.administrativeArea) {
+            result.push(item.administrativeArea)
+          }
         }
         return result.length > 0 ? result.join(', ') : '-'
       }

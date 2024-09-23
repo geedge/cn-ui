@@ -217,7 +217,7 @@ $color-highlight: #CC4444;
           }
         }
 
-        &.map-marker--hidden {
+        &.map-marker--hidden, &.map-marker--unfollowed {
           display: none;
         }
       }
