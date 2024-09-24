@@ -186,10 +186,10 @@ export default {
 
         switch (this.entity.entityType) {
           case entityType.ip: {
-            const len1 = res[0].status === 200 ? res0.data.result.length : 0
-            const len2 = res[1].status === 200 ? res1.data.result.length : 0
+            const len1 = res[0].status === 200 ? res0.data.result && res0.data.result.length : 0
+            const len2 = res[1].status === 200 ? res1.data.result && res1.data.result.length : 0
             this.initSetTag(entityDetailTabsName.relatedEntity, len1 + len2)
-            const behaviorPatternData = res[2].status === 200 ? res[2].data.data.result : 0
+            const behaviorPatternData = res[2].status === 200 ? res[2].data.data.result && res[2].data.data.result : 0
             let behaviorPatternLen = 0
             if (behaviorPatternData && behaviorPatternData[0]) {
               const dataObject = behaviorPatternData[0]
@@ -205,20 +205,20 @@ export default {
           }
           case entityType.domain: {
             const res2 = res[2].data
-            const len1 = res[0].status === 200 ? res0.data.result.length : 0
-            const len2 = res[1].status === 200 ? res1.data.result.length : 0
-            const len3 = res[2].status === 200 ? res2.data.result.length : 0
+            const len1 = res[0].status === 200 ? res0.data.result && res0.data.result.length : 0
+            const len2 = res[1].status === 200 ? res1.data.result && res1.data.result.length : 0
+            const len3 = res[2].status === 200 ? res2.data.result && res2.data.result.length : 0
             this.initSetTag(entityDetailTabsName.relatedEntity, len1 + len2 + len3)
             break
           }
           case entityType.app: {
-            const len1 = res[0].status === 200 ? res0.data.result.length : 0
-            const len2 = res[1].status === 200 ? res1.data.result.length : 0
+            const len1 = res[0].status === 200 ? res0.data.result && res0.data.result.length : 0
+            const len2 = res[1].status === 200 ? res1.data.result && res1.data.result.length : 0
             this.initSetTag(entityDetailTabsName.relatedEntity, len1 + len2)
             break
           }
           case entityType.subscriber: {
-            const len1 = res[0].status === 200 ? res0.data.result.length : 0
+            const len1 = res[0].status === 200 ? res0.data.result && res0.data.result.length : 0
             // const len2 = res[1].status === 200 ? res1.data.result.length : 0
             this.initSetTag(entityDetailTabsName.relatedEntity, len1)
             break
