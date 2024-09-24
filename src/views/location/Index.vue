@@ -1688,11 +1688,6 @@ export default {
       }
     },
     async minuteTimeFilterChange () {
-      // 避免初始化时请求，造成人的图标会闪一下
-      if (this.initFlag) {
-        this.initFlag = false
-        return
-      }
       this.humanMarkers.forEach(marker => {
         marker.remove && marker.remove()
       })
@@ -1753,6 +1748,11 @@ export default {
     },
     // 时间轴改变时，重新查询人marker
     async minuteTimeFilter (n) {
+      // 避免初始化时请求，造成人的图标会闪一下
+      if (this.initFlag) {
+        this.initFlag = false
+        return
+      }
       this.debounceMinuteChange?.()
     },
     // 切换追踪的用户
