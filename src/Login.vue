@@ -141,7 +141,7 @@ export default {
         this.loading = false
         this.blockOperation.query = false
         if (_.get(e, 'response.data.code', 0) === 518005) {
-          this.$message.error(this.$t('Incorrect username or password'))
+          this.$message.error(this.$t('tip.incorrectUsernameOrPassword'))
         } else {
           this.$message.error(this.errorMsgHandler(e))
         }
