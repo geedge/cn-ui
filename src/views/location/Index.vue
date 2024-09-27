@@ -1363,7 +1363,7 @@ export default {
     },
     showFollowed () {
       this.humanMarkers.forEach(human => {
-        human.isFollowed && human.removeClassName && human.removeClassName('map-marker--hidden')
+        human.removeClassName && human.removeClassName('map-marker--hidden')
       })
     },
     // 关注列表的添加、删除追踪
