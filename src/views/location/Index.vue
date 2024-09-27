@@ -1203,7 +1203,6 @@ export default {
           this.humanMarkers.forEach(m => {
             m.getElement().classList.remove('map-marker--highlight')
           })
-          console.info(markerData, this.highlightSubscriber)
           if (this.highlightSubscriber.subscriberId !== markerData.subscriberId) {
             el.classList.add('map-marker--highlight')
             this.highlightSubscriber = markerData
@@ -1258,7 +1257,7 @@ export default {
         }
       }
     },
-    // subscriber列表点击后将地图上的人图标保持特殊高亮
+    // subscriber列表点击后将地图上的人图标保持特殊高亮，并移动地图中心至图标点
     subscriberListClick (subscriber) {
       // 先删除当前所有高亮的
       this.humanMarkers.forEach(m => {
@@ -1271,6 +1270,7 @@ export default {
         const target = this.humanMarkers.find(m => subscriber.subscriberId === m.subscriberId)
         if (target) {
           target.getElement().classList.add('map-marker--highlight')
+          this.mapChart.panTo(target.getLngLat(), { duration: 500 })
         }
       }
     },

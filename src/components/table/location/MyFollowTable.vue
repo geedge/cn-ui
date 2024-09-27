@@ -90,7 +90,7 @@ export default {
           show: true,
           minWidth: 150
         }, {
-          label: this.$t('location.isActive'),
+          label: this.$t('overall.status'),
           prop: 'active',
           show: true,
           minWidth: 80
