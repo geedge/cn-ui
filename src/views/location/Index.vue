@@ -1111,17 +1111,28 @@ export default {
       }
     },
     compareSourceData (oldData, newData) {
+      // 创建一个哈希表来存储oldData中每个feature的hexId和它的索引位置
+      const oldDataMap = new Map()
+      oldData.features.forEach((feature, index) => {
+        oldDataMap.set(feature.properties.hexId, { feature, index })
+      })
+
       newData.features.forEach(n => {
-        const find = oldData.features.find(o => o.properties.hexId === n.properties.hexId)
-        if (find) {
-          if (Number(n.properties.number) > Number(find.properties.number)) {
-            find.properties.number = n.properties.number
-            find.properties.color = n.properties.color
+        const hexId = n.properties.hexId
+        if (oldDataMap.has(hexId)) {
+          // 如果在oldData中找到匹配的hexId
+          const { feature: oldFeature } = oldDataMap.get(hexId)
+          if (Number(n.properties.number) > Number(oldFeature.properties.number)) {
+            // 更新number和color属性
+            oldFeature.properties.number = n.properties.number
+            oldFeature.properties.color = n.properties.color
           }
         } else {
+          // 如果没有找到，添加新的feature到oldData
           oldData.features.push({ ...n })
         }
       })
+
       return oldData
     },
     trackingHexagonMouseEnter () {
