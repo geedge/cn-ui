@@ -218,6 +218,6 @@ export function getNowDate (timeFilter) {
       dateRangeValue: { value: timeFilter.dateRangeValue }
     }
   } else {
-    return timeFilter
+    return { ...timeFilter, dateRangeValue: { value: timeFilter.dateRangeValue } }
   }
 }
