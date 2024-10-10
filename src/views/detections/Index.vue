@@ -569,6 +569,12 @@ export default {
       this.timeFilter = { startTime: s, endTime: e, dateRangeValue: v.value }
     },
     search (param) {
+      // 如果不是最新时间，则获取当前时间
+      if (!param.isNowDate) {
+        const myTimeFilter = getNowDate(this.$_.cloneDeep(this.timeFilter))
+        this.reload(myTimeFilter.startTime, myTimeFilter.endTime, myTimeFilter.dateRangeValue)
+        return true
+      }
       let q
       let metaList
       if (param) {
@@ -606,12 +612,6 @@ export default {
         mode: mode
       })
       overwriteUrl(newUrl)
-      // 如果不是最新时间，则获取当前时间
-      if (!param.isNowDate) {
-        const myTimeFilter = getNowDate(this.$_.cloneDeep(this.timeFilter))
-        this.reload(myTimeFilter.startTime, myTimeFilter.endTime, myTimeFilter.dateRangeValue)
-        return true
-      }
       this.queryFilter(this.q)
       this.queryList(this.q)
     },
