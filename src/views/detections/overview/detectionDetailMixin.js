@@ -233,7 +233,7 @@ export default {
         const obj = markLineData.find(d => d.yAxis === item.thresholdValue)
         if (!obj) {
           markLineData.push({
-            yAxis: item.thresholdNum,
+            yAxis: item.thresholdValue,
             itemStyle: { color: getSeverityNumberColor(item.severity) },
             label: getSeverityByCode(item.severity)
           })
