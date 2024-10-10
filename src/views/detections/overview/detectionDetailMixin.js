@@ -229,8 +229,8 @@ export default {
       const seriesData = []
       const markLineData = []
       data.forEach(item => {
-        seriesData.push([getMillisecond(JSON.parse(item.startTime)), item.recordsNum, getSeverityNumberColor(item.severity)])
-        const obj = markLineData.find(d => d.yAxis === item.thresholdNum)
+        seriesData.push([getMillisecond(JSON.parse(item.startTime)), item.metricValue, getSeverityNumberColor(item.severity)])
+        const obj = markLineData.find(d => d.yAxis === item.thresholdValue)
         if (!obj) {
           markLineData.push({
             yAxis: item.thresholdNum,
@@ -255,7 +255,7 @@ export default {
       })
 
       // 计算折线图左侧宽度
-      const maxValue = Math.max(...data.map(obj => obj.recordsNum))
+      const maxValue = Math.max(...data.map(obj => obj.metricValue))
       if (maxValue >= 1000) {
         let yAxisLabel = '' // y轴显示的值
         if ((maxValue / (1000)) >= 1) {

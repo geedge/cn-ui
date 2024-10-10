@@ -316,8 +316,8 @@ if (openMock) {
           severity: 'high',
           keyFields: 'domain',
           keyValues: 'test.com',
-          thresholdNum: 3,
-          recordsNum: 5,
+          thresholdValue: 3,
+          metricValue: 5,
           reset: 60,
           startTime: 169780543432,
           endTime: 169790486213
