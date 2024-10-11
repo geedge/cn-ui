@@ -458,12 +458,6 @@ export default {
         hideRelated: this.isHideRelatedEntities
       })
 
-      // 如果不是最新时间，则获取当前时间
-      if (!param.isNowDate) {
-        const myTimeFilter = getNowDate(this.$_.cloneDeep(this.timeFilter))
-        this.reload(myTimeFilter.startTime, myTimeFilter.endTime, myTimeFilter.dateRangeValue)
-        return true
-      }
       if (!this.showList) {
         // 首页进入搜索时重载页面，视觉上进入列表页面
         this.$router.push({
@@ -499,10 +493,18 @@ export default {
       const keywordList = this.getKeywordListByMetaList(this.metaList)
       if (this.initFlag) {
         if (val !== 20) {
-          this.search({ metaList: this.metaList, q: this.q, str: this.str, keywordList: keywordList })
+          if (this.timeFilter.dateRangeValue > -1) {
+            this.timeFilter = getNowDate(this.$_.cloneDeep(this.timeFilter))
+          } else {
+            this.search({ metaList: this.metaList, q: this.q, str: this.str, keywordList: keywordList })
+          }
         }
       } else {
-        this.search({ metaList: this.metaList, q: this.q, str: this.str, keywordList: keywordList })
+        if (this.timeFilter.dateRangeValue > -1) {
+          this.timeFilter = getNowDate(this.$_.cloneDeep(this.timeFilter))
+        } else {
+          this.search({ metaList: this.metaList, q: this.q, str: this.str, keywordList: keywordList })
+        }
       }
     },
     pageNo (val) {
@@ -510,7 +512,11 @@ export default {
         this.pageObj.pageNo = val
         this.pageObj.resetPageNo = false
         const keywordList = this.getKeywordListByMetaList(this.metaList)
-        this.search({ metaList: this.metaList, q: this.q, str: this.str, keywordList: keywordList })
+        if (this.timeFilter.dateRangeValue > -1) {
+          this.timeFilter = getNowDate(this.$_.cloneDeep(this.timeFilter))
+        } else {
+          this.search({ metaList: this.metaList, q: this.q, str: this.str, keywordList: keywordList })
+        }
       }
     },
     // 点击上一页箭头
@@ -894,9 +900,15 @@ export default {
     hideRelatedEntities (e) {
       this.isHideRelatedEntities = e
       this.reloadUrl({ hideRelated: e })
-      this.queryList({ q: this.q, ...this.pageObj, ...this.timeFilter })
+      const keywordList = this.getKeywordListByMetaList(this.metaList)
+      if (this.timeFilter.dateRangeValue > -1) {
+        this.timeFilter = getNowDate(this.$_.cloneDeep(this.timeFilter))
+      } else {
+        this.search({ metaList: this.metaList, q: this.q, str: this.str, keywordList: keywordList })
+      }
+      /* this.queryList({ q: this.q, ...this.pageObj, ...this.timeFilter })
       this.queryFilterNew({ q: this.q, ...this.pageObj, ...this.timeFilter })
-      this.queryCount({ q: this.q, ...this.pageObj, ...this.timeFilter })
+      this.queryCount({ q: this.q, ...this.pageObj, ...this.timeFilter }) */
     }
   },
   mounted () {
@@ -936,7 +948,7 @@ export default {
   watch: {
     timeFilter () {
       const keywordList = this.getKeywordListByMetaList(this.metaList)
-      this.search({ metaList: this.metaList, q: this.q, str: this.str, keywordList: keywordList, isNowDate: true })
+      this.search({ metaList: this.metaList, q: this.q, str: this.str, keywordList: keywordList })
     }
   },
   setup () {
