@@ -569,12 +569,6 @@ export default {
       this.timeFilter = { startTime: s, endTime: e, dateRangeValue: v.value }
     },
     search (param) {
-      // 如果不是最新时间，则获取当前时间
-      if (!param.isNowDate) {
-        const myTimeFilter = getNowDate(this.$_.cloneDeep(this.timeFilter))
-        this.reload(myTimeFilter.startTime, myTimeFilter.endTime, myTimeFilter.dateRangeValue)
-        return true
-      }
       let q
       let metaList
       if (param) {
@@ -637,7 +631,11 @@ export default {
     },
     pageSize (val) {
       this.pageObj.pageSize = val || 20
-      this.search({ metaList: this.metaList, q: this.q })
+      if (this.timeFilter.dateRangeValue > -1) {
+        this.timeFilter = getNowDate(this.$_.cloneDeep(this.timeFilter))
+      } else {
+        this.search({ metaList: this.metaList, q: this.q })
+      }
     },
     pageNo (val) {
       // 初始化时，mounted和pageNo都会调用列表接口，且pageNo先执行，
@@ -645,7 +643,11 @@ export default {
       if (!this.initFlag) {
         this.pageObj.pageNo = val || 1
         this.pageObj.resetPageNo = false
-        this.search({ metaList: this.metaList, q: this.q })
+        if (this.timeFilter.dateRangeValue > -1) {
+          this.timeFilter = getNowDate(this.$_.cloneDeep(this.timeFilter))
+        } else {
+          this.search({ metaList: this.metaList, q: this.q })
+        }
       }
     },
     // 点击上一页箭头
@@ -767,8 +769,13 @@ export default {
       })
       overwriteUrl(newUrl)
       this.filterData[3].show = e === detectionEventType.single
-      this.queryFilter(this.q)
-      this.queryList(this.q)
+      if (this.timeFilter.dateRangeValue > -1) {
+        this.timeFilter = getNowDate(this.$_.cloneDeep(this.timeFilter))
+      } else {
+        this.search({ metaList: this.metaList, q: this.q })
+      }
+      /* this.queryFilter(this.q)
+      this.queryList(this.q) */
     }
   },
   mounted () {
@@ -863,7 +870,7 @@ export default {
       }
     },
     timeFilter () {
-      this.search({ metaList: this.metaList, q: this.q, isNowDate: true })
+      this.search({ metaList: this.metaList, q: this.q })
     }
   },
   beforeUnmount () {
