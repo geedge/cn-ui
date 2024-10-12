@@ -1499,8 +1499,10 @@ export default {
         // 加载新数据、时间轴变化时，重新查在线状态
         await axios.get(api.location.list, { params }).then(async response => {
           if (response.status === 200) {
+            this.subscribersList = []
             if (response.data.data.length === 0 && this.curPageNum > 1) {
               this.curPageNum--
+              this.loading.timeBarLoading = false
             } else {
               await this.setSubscriberActiveStatus(response.data.data)
               if (params.pageNo === 1) {
