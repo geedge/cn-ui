@@ -67,9 +67,12 @@ export default {
     const queryCondition = ref(query.queryCondition || '')
 
     // 获取url携带的range、startTime、endTime
-    const rangeParam = query.topAppRange
+    /*const rangeParam = query.topAppRange
     const startTimeParam = query.topAppStartTime
-    const endTimeParam = query.topAppEndTime
+    const endTimeParam = query.topAppEndTime*/
+    const rangeParam = query.range
+    const startTimeParam = query.startTime
+    const endTimeParam = query.endTime
 
     // 优先级：url > config.js > 默认值。
     const dateRangeValue = rangeParam ? parseInt(rangeParam) : (DEFAULT_TIME_FILTER_RANGE.entity.subscriberTopApp || 60)

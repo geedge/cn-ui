@@ -74,7 +74,7 @@
         </div>
         <!-- subscriber list -->
         <div class="analysis-statistics__title">
-          {{$t('location.subscribers')}}
+          <span>{{$t('location.subscribers')}}&nbsp;&nbsp;{{subscribersTotalCount}}</span>
           <simple-loading :loading="loading.subscriberLoading" placement="right" size="small"></simple-loading>
         </div>
         <div class="analysis-statistics__search">
@@ -111,7 +111,18 @@
                 </div>
                 <div class="header__right">
                   <div class="header-msisdn">
-                    <div class="header__title">ID</div>
+                    <div class="header__title">
+                      <span>ID</span>
+                      <el-tooltip
+                          effect="light"
+                          trigger="hover"
+                          :content="$t('entity.jumpToEntityDetails')"
+                          placement="right"
+                          popper-class="panel-tooltip"
+                      >
+                        <i class="cn-icon cn-icon-jump-to" @click="jumpEntityDetail(item)" v-show="item.showJumpToEntity"></i>
+                      </el-tooltip>
+                    </div>
                     <div class="header__content">{{$_.get(item, 'subscriberId', '-') || '-'}}</div>
                   </div>
                   <div class="header__operation">
@@ -692,6 +703,19 @@ export default {
       }
       return []
     },
+    jumpEntityDetail (subscriber) {
+      const { href } = this.$router.resolve({
+        path: '/entity/detail',
+        query: {
+          entityType: 'subscriber',
+          entityName: subscriber.subscriberId,
+          startTime: this.timeFilter.startTime,
+          endTime: this.timeFilter.endTime,
+          range: this.timeFilter.dateRangeValue
+        }
+      })
+      window.open(href, '_blank')
+    },
     async queryTraceTracking () {
       if (this.trackingSubscribers.length > 0) {
         this.loading.trackingMapLoading = true
@@ -791,6 +815,7 @@ export default {
       this.mapChart.panTo(center, { duration: 500 })
     },
     renderTrackingHexagon () {
+      this.bindTrackingHexagonEvents()
       if (!this.currentShowSubscriber) {
         return true
       }
@@ -832,7 +857,6 @@ export default {
         const coordinate = h3ToGeo(currentShowSubscriberRecords[0].hexId)
         this.renderTrackingMarker([coordinate[1], coordinate[0]])
       }
-      this.bindTrackingHexagonEvents()
     },
     renderMarker (data, type) {
       let svg
@@ -1286,12 +1310,14 @@ export default {
       }
     },
     subscriberListMouseEnter (subscriber) {
+      subscriber.showJumpToEntity = true
       const target = this.humanMarkers.find(m => subscriber.subscriberId === m.subscriberId)
       if (target) {
         target.addClassName && target.addClassName('map-marker--hover')
       }
     },
     subscriberListMouseLeave (subscriber) {
+      subscriber.showJumpToEntity = false
       const target = this.humanMarkers.find(m => subscriber.subscriberId === m.subscriberId)
       if (target) {
         target.removeClassName && target.removeClassName('map-marker--hover')
@@ -1497,6 +1523,11 @@ export default {
         this.loading.subscriberLoading = true
         // 根据顶部的时间条件查列表，再根据底部时间轴的时间时间来查列表里的subscriber是否在线
         // 加载新数据、时间轴变化时，重新查在线状态
+        await axios.get(api.location.totalCount, { params }).then(async response => {
+          if (response.status === 200) {
+            this.subscribersTotalCount = response.data.data[0].count
+          }
+        })
         await axios.get(api.location.list, { params }).then(async response => {
           if (response.status === 200) {
             this.subscribersList = []
@@ -1962,6 +1993,7 @@ export default {
     const pieColorRamp = ['135,206,250', '63,133,186', '45,65,135', '34,7,90']
     const pieValueRamp = ref([])
     const subscribersList = ref([])
+    const subscribersTotalCount = ref(0)
     const searchValueListShow = ref([])
     const boundaryBox = ref({}) // minLongitude、maxLongitude、minLatitude、maxLatitude
     const boundaryBoxExtreme = ref({}) // minLongitude、maxLongitude、minLatitude、maxLatitude
@@ -2020,6 +2052,7 @@ export default {
       pieColorRamp, // 六边形颜色坡度
       pieValueRamp, // 饼图数值坡度，动态获取
       subscribersList, // Location用户列表
+      subscribersTotalCount, // Location用户总数
       boundaryBox, // 查六边形数据的经纬度范围，minLongitude、maxLongitude、minLatitude、maxLatitude
       boundaryBoxExtreme, // boundaryBox的历史极值，用来判断当前boundaryBox下是否需要查数据
       mapChart, // 地图对象

@@ -105,7 +105,7 @@
 <!--        :loading="loadingMap"-->
 <!--        @getCurrentTimeRange="getCurrentTimeRange"-->
 <!--    ></chart>-->
-    <subscriber-map :entity="entity"></subscriber-map>
+    <subscriber-map :entity="entity" :time-filter="timeFilter"></subscriber-map>
   </div>
 </template>
 

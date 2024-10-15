@@ -641,7 +641,8 @@ export default {
               })
             }
           }).catch(e => {
-            this.$message.error(e.response.data.message)
+            this.$message.error(this.errorMsgHandler(e))
+            console.error(e)
           }).finally(() => {
             this.newFilterData[index].loading = false
             this.newFilterData[index].firstLoad = false
@@ -672,8 +673,10 @@ export default {
         } else {
           this.$message.error(response.data.message)
         }
-      }).catch(() => {
+      }).catch(e => {
         this.listData = []
+        this.$message.error(this.errorMsgHandler(e))
+        console.error(e)
       }).finally(() => {
         this.listLoading = false
       })
@@ -696,6 +699,7 @@ export default {
         }
       }).catch(e => {
         console.error(e)
+        this.$message.error(this.errorMsgHandler(e))
         this.summaryCount = { totalCount: 0, domainCount: 0, ipCount: 0, appCount: 0, subscriberCount: 0 }
       }).finally(() => {
         this.loadingCount = false
@@ -712,6 +716,9 @@ export default {
         if (response.status === 200) {
           this.pageObj.total = response.data.data.result
         }
+      }).catch(e => {
+        this.$message.error(this.errorMsgHandler(e))
+        console.error(e)
       })
     },
     handleQ (params) {
@@ -739,8 +746,9 @@ export default {
           this.entityAppTotal = response.data.data.appCount
           this.entitySubscriberTotal = response.data.data.subscriberCount
         }
-      }).catch((e) => {
-        this.$message.error(e.response.data.message)
+      }).catch(e => {
+        this.$message.error(this.errorMsgHandler(e))
+        console.error(e)
       }).finally(() => {
         this.loadingDomain = false
         this.loadingIp = false
@@ -756,7 +764,8 @@ export default {
           this.entitySubscriberActive = response.data.data.subscriberCount
         }
       }).catch((e) => {
-        this.$message.error(e.response.data.message)
+        this.$message.error(this.errorMsgHandler(e))
+        console.error(e)
       }).finally(() => {
         this.loadingDomainActive = false
         this.loadingIpActive = false
@@ -853,7 +862,9 @@ export default {
           }
         })
         this.$store.commit('setScoreBase', scoreBase)
-      }).catch(() => {
+      }).catch(e => {
+        this.$message.error(this.errorMsgHandler(e))
+        console.error(e)
       }).finally(() => {
       })
     },

@@ -273,11 +273,11 @@ export default {
 
           if (find) {
             this.trackingSubscriber.trackRecords = find.trackRecords
+            this.moveToCenter(find.trackRecords)
           } else {
             this.trackingSubscriber.trackRecords = []
           }
           this.trackingSubscriber.show = false
-          this.moveToCenter(find.trackRecords)
         } else {
           this.trackingSubscriber.trackRecords = []
         }
@@ -482,6 +482,7 @@ export default {
       this.trackingHumanMarker = new maplibregl.Marker({ element: el }).setLngLat(coordinates).addTo(this.mapChart)
     },
     renderTrackingHexagon () {
+      this.bindTrackingHexagonEvents()
       if (!this.currentShowSubscriber) {
         return true
       }
@@ -521,7 +522,6 @@ export default {
         // 最后所在地的图标
         const coordinate = h3ToGeo(currentShowSubscriberRecords[0].hexId)
         this.renderTrackingMarker([coordinate[1], coordinate[0]])
-        this.bindTrackingHexagonEvents()
       }
     },
     mapLineDataConverter () {
@@ -649,12 +649,13 @@ export default {
       }
     }
   },
-  setup () {
-    const dateRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.subscriberMap || 60
+  setup (props) {
+    /* const dateRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.subscriberMap || 60
     const timeFilter = ref({ dateRangeValue })
     const { startTime, endTime } = getNowTime(dateRangeValue)
     timeFilter.value.startTime = startTime
-    timeFilter.value.endTime = endTime
+    timeFilter.value.endTime = endTime */
+    const timeFilter = ref(_.cloneDeep(props.timeFilter))
 
     const currentPoint = ref({})
     const tooltip = ref({

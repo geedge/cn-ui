@@ -380,6 +380,7 @@ export const api = {
     count: apiVersion + '/locationIntelligence/active/count',
     baseStation: apiVersion + '/locationIntelligence/baseStation',
     list: apiVersion + '/locationIntelligence/list',
+    totalCount: apiVersion + '/locationIntelligence/list/count',
     followedSubscriber: apiVersion + '/locationIntelligence/followed/subscribers',
     tracking: apiVersion + '/locationIntelligence/trace/tracking',
     follow: apiVersion + '/locationIntelligence/follow',

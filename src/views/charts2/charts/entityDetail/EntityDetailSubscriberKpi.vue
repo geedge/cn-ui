@@ -140,9 +140,12 @@ export default {
     const queryCondition = ref(query.queryCondition || '')
 
     // 获取url携带的range、startTime、endTime
-    const rangeParam = query.kpiRange
+    /*const rangeParam = query.kpiRange
     const startTimeParam = query.kpiStartTime
-    const endTimeParam = query.kpiEndTime
+    const endTimeParam = query.kpiEndTime*/
+    const rangeParam = query.range
+    const startTimeParam = query.startTime
+    const endTimeParam = query.endTime
 
     // 优先级：url > config.js > 默认值。
     const dateRangeValue = rangeParam ? parseInt(rangeParam) : (DEFAULT_TIME_FILTER_RANGE.entity.subscriberKpi || 60)

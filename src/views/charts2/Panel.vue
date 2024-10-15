@@ -7,18 +7,18 @@
           <div class="circle-icon"  v-else-if="score <= 4" :class="{'data-score-yellow': score <= 4}" ></div>
           <div class="circle-icon"  v-else-if="score <= 6" :class="{'data-score-green': score <= 6}" ></div>
           Score:{{score}}
-          </div>
-          <div v-if="showEntityDetail" class="panel-show-detail">
-            <el-tooltip
-                effect="light"
-                trigger="hover"
-                :content="$t('entity.jumpToEntityDetails')"
-                placement="right"
-                popper-class="panel-tooltip"
-            >
-              <i class="cn-icon cn-icon-jump-to" @click="jumpEntityDetail"></i>
-            </el-tooltip>
-          </div>
+        </div>
+        <div v-if="showEntityDetail" class="panel-show-detail">
+          <el-tooltip
+              effect="light"
+              trigger="hover"
+              :content="$t('entity.jumpToEntityDetails')"
+              placement="right"
+              popper-class="panel-tooltip"
+          >
+            <i class="cn-icon cn-icon-jump-to" @click="jumpEntityDetail"></i>
+          </el-tooltip>
+        </div>
       </div>
       <div class="panel__tools">
         <el-select
@@ -528,7 +528,10 @@ export default {
         path: '/entity/detail',
         query: {
           entityType: this.entityType,
-          entityName: this.entityValue
+          entityName: this.entityValue,
+          startTime: this.timeFilter.startTime,
+          endTime: this.timeFilter.endTime,
+          range: this.timeFilter.dateRangeValue
         }
       })
       window.open(href, '_blank')
