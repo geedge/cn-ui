@@ -87,12 +87,21 @@
                     @input="debounceSearch"></el-input>
         </div>
         <div class="analysis-statistics__condition">
-          <div class="hexId-tag">
+          <el-input id="searchValue3"
+                    ref="searchValue3"
+                    size="small"
+                    placeholder="HexId"
+                    v-model="curHexId"
+                    v-show="activeTab === 'locationMap'"
+                    style="width: 140px"
+                    @input="debounceSearch"
+          ></el-input>
+<!--          <div class="hexId-tag">
             <el-tag v-if="curHexId !== ''" key="hexId" closable type="info" @close="clearHexId" disable-transitions>
               HexId:{{ curHexId }}
             </el-tag>
-          </div>
-          <el-checkbox v-model="isChecked" @change="showFollowedSubscribers" :label="$t('location.onlyFollowed')" size="small" />
+          </div>-->
+          <el-checkbox v-model="onlyShowFollowed" @change="showFollowedSubscribers" :label="$t('location.onlyFollowed')" size="small" />
         </div>
         <div class="analysis-statistics__subscribers">
           <template v-for="item in subscribersList" :key="item.subscriberId">
@@ -403,6 +412,8 @@ import TimeLine from '@/components/common/TimeLine.vue'
 import SimpleLoading from '@/components/common/SimpleLoading.vue'
 import MyFollowBox from '@/components/rightBox/location/MyFollowBox'
 import dataListMixin from '@/mixins/data-list'
+import * as turf from '@turf/turf'
+import { generateRectanglePolygon } from '@/utils/geo-utils'
 
 // import testData from './test'
 
@@ -433,7 +444,7 @@ export default {
         itemSize: 50, // 一个滚动item高度
         containerHeight: 300 // 滚动列表
       },
-      isChecked: false,
+      onlyShowFollowed: false,
       curHexId: '',
       busy: false,
       preScrollTop: 0
@@ -523,7 +534,7 @@ export default {
       /* 地图上的人 */
       // const mapFollowedSubscriberData = await this.queryMapFollowedSubscriber()
       // this.renderMarker(mapFollowedSubscriberData, this.tooltipType.human)
-      this.renderMarker(this.subscribersList, this.tooltipType.human)
+      // this.renderMarker(this.subscribersList, this.tooltipType.human)
 
       /* 右上角折线图 */
       await this.renderActiveSubscribersLine()
@@ -868,6 +879,7 @@ export default {
       try {
         data.forEach(marker => {
           if (type === this.tooltipType.human && (marker.subscriberDto || marker.subscriberLatitude)) {
+
             const el = document.createElement('div')
             el.className = `map-marker map-marker--${type}`
             if (marker.subscriberId === this.highlightSubscriber.subscriberId) {
@@ -877,7 +889,7 @@ export default {
             if (this.currentZoom && this.currentZoom < 11) {
               el.classList.add('map-marker--hidden')
             }
-            if (!marker.isFollowed) {
+            if (!marker.isFollowed && this.onlyShowFollowed) {
               el.classList.add('map-marker--unfollowed')
             }
             el.innerHTML = svg
@@ -928,7 +940,21 @@ export default {
         minLongitude: boundaryBox.getWest(),
         minLatitude: boundaryBox.getSouth()
       }
-      if (Object.keys(this.boundaryBoxExtreme).length === 0) {
+      let needUpdateData = false
+      if (!this.boundaryBoxExtreme) {
+        this.boundaryBoxExtreme = generateRectanglePolygon(this.boundaryBox.minLongitude, this.boundaryBox.minLatitude, this.boundaryBox.maxLongitude, this.boundaryBox.maxLatitude)
+        needUpdateData = true
+      } else {
+        const polygon = generateRectanglePolygon(this.boundaryBox.minLongitude, this.boundaryBox.minLatitude, this.boundaryBox.maxLongitude, this.boundaryBox.maxLatitude)
+        const union = turf.union(turf.featureCollection([this.boundaryBoxExtreme, polygon]))
+        // 如果合并后面积变大了，说明有新的区域，需要渲染
+        if (turf.area(union) > turf.area(this.boundaryBoxExtreme)) {
+          this.boundaryBoxExtreme = union
+          needUpdateData = true
+        }
+      }
+      return needUpdateData
+      /* if (Object.keys(this.boundaryBoxExtreme).length === 0) {
         this.boundaryBoxExtreme = _.cloneDeep(this.boundaryBox)
         return true
       } else {
@@ -950,7 +976,7 @@ export default {
           this.boundaryBoxExtreme.minLatitude = this.boundaryBox.minLatitude
         }
         return needUpdateData
-      }
+      } */
     },
     // 先使用min=0的等宽分组法，若后续出现特大或特小的异常值导致等宽分组效果不理想，考虑用分位数分组法
     calculateValueRamp (data) {
@@ -1324,9 +1350,10 @@ export default {
       }
     },
     async scrollList (e) {
-      if (!this.isChecked) {
+      if (!this.onlyShowFollowed) {
         const dom = document.getElementById('locationMap-subscriber-scroll')
         if (dom.scrollTop + dom.clientHeight >= dom.scrollHeight && !this.loading.subscriberLoading) {
+          this.curPageNum++
           await this.initSubscriberList()
         }
         /* const scrollTop = obj.scrollTop
@@ -1453,7 +1480,7 @@ export default {
     },
     // 地图上点击多边形
     hexagonClick (e) {
-      if (this.tooltip.type === this.tooltipType.hexagon) {
+      /*if (this.tooltip.type === this.tooltipType.hexagon) {
         this.removeHighlightHexagon()
         // 点击时已经高亮的话，取消过滤条件
         if (this.curHexId === this.currentPolygon.hexId) {
@@ -1466,34 +1493,46 @@ export default {
         this.curPageNum = 1
         this.subscribersList = []
         this.initSubscriberList()
+      }*/
+      // 点击时已经高亮的话，取消过滤条件
+      if (this.curHexId === this.currentPolygon.hexId) {
+        this.curHexId = ''
+      } else {
+        this.curHexId = this.currentPolygon.hexId
       }
     },
     addHighlightHexagon () {
-      const featureCollection = { type: 'FeatureCollection' }
-      featureCollection.features = [{
-        id: 9920447175, // 随便写个数
-        type: 'Feature',
-        geometry: {
-          type: 'Polygon',
-          coordinates: [
-            h3ToGeoBoundary(this.curHexId, true)
-          ]
-        }
-      }]
-      this.mapChart.addSource('highlightHexGrid', {
-        type: 'geojson',
-        data: featureCollection
-      })
-      this.mapChart.addLayer({
-        id: 'highlightHexagon',
-        type: 'line',
-        source: 'highlightHexGrid',
-        layout: {},
-        paint: {
-          'line-color': 'rgb(255,255,255)',
-          'line-width': 3
-        }
-      })
+      // 先在地图上找是否存在色块，存在则创建高亮色块
+      const sourceData = this.mapChart.getSource('hexGrid')._data
+      const find = sourceData.features.find(d => d.properties.hexId === this.curHexId)
+      console.info(find)
+      if (find) {
+        const featureCollection = { type: 'FeatureCollection' }
+        featureCollection.features = [{
+          id: 9920447175, // 随便写个数
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [
+              h3ToGeoBoundary(this.curHexId, true)
+            ]
+          }
+        }]
+        this.mapChart.addSource('highlightHexGrid', {
+          type: 'geojson',
+          data: featureCollection
+        })
+        this.mapChart.addLayer({
+          id: 'highlightHexagon',
+          type: 'line',
+          source: 'highlightHexGrid',
+          layout: {},
+          paint: {
+            'line-color': 'rgb(255,255,255)',
+            'line-width': 3
+          }
+        })
+      }
     },
     removeHighlightHexagon () {
       this.mapChart.getLayer('highlightHexagon') && this.mapChart.removeLayer('highlightHexagon')
@@ -1503,10 +1542,10 @@ export default {
       const params = {
         startTime: this.timeFilter.startTime,
         endTime: this.timeFilter.endTime,
-        pageNo: this.curPageNum++,
+        pageNo: this.curPageNum,
         pageSize: 20,
         params: '',
-        isFollowed: this.isChecked ? 1 : 0
+        isFollowed: this.onlyShowFollowed ? 1 : 0
       }
       const paramArray = []
       if (this.curHexId) {
@@ -1530,10 +1569,11 @@ export default {
         })
         await axios.get(api.location.list, { params }).then(async response => {
           if (response.status === 200) {
-            this.subscribersList = []
             if (response.data.data.length === 0 && this.curPageNum > 1) {
-              this.curPageNum--
               this.loading.timeBarLoading = false
+            } else if (response.data.data.length === 0 && this.curPageNum === 1) {
+              this.loading.timeBarLoading = false
+              this.subscribersList = []
             } else {
               await this.setSubscriberActiveStatus(response.data.data)
               if (params.pageNo === 1) {
@@ -1543,6 +1583,7 @@ export default {
                   this.subscribersList.push(d)
                 })
               }
+              this.renderMarker(response.data.data, this.tooltipType.human)
               /*// 给所有active的subscriber添加marker
               const toRenderMarkerSubscribers = response.data.data.filter(r => {
                 return !this.humanMarkers.some(m => m.subscriberId === r.subscriberId)
@@ -1812,7 +1853,7 @@ export default {
       }
     },
     async timeFilter (n) {
-      this.boundaryBoxExtreme = {}
+      this.boundaryBoxExtreme = null
       if (this.activeTab === 'locationMap') {
         this.initFlag = true
         this.unbindHexagonEvents()
@@ -1868,6 +1909,16 @@ export default {
         this.showBaseStation()
         this.showFollowed()
       }
+    },
+    async curHexId (n, o) {
+      this.removeHighlightHexagon()
+      // 如果值不为空，寻找对应色块并高亮
+      if (n) {
+        this.addHighlightHexagon()
+      }
+      this.curPageNum = 1
+      this.subscribersList = []
+      await this.initSubscriberList()
     }
   },
   computed: {
@@ -1996,7 +2047,7 @@ export default {
     const subscribersTotalCount = ref(0)
     const searchValueListShow = ref([])
     const boundaryBox = ref({}) // minLongitude、maxLongitude、minLatitude、maxLatitude
-    const boundaryBoxExtreme = ref({}) // minLongitude、maxLongitude、minLatitude、maxLatitude
+    const boundaryBoxExtreme = ref(null) // minLongitude、maxLongitude、minLatitude、maxLatitude
     const mapChart = shallowRef(null)
     const currentMarkerDom = shallowRef(null)
     const humanMarkers = shallowRef([])

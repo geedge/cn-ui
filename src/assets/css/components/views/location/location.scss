@@ -385,7 +385,7 @@ $color-highlight: #CC4444;
               }
 
               .legend-range {
-                margin-right: 40px;
+                margin-right: 30px;
                 width: 54px;
                 font-family: Helvetica;
                 font-size: 12px;
@@ -407,8 +407,9 @@ $color-highlight: #CC4444;
 
         .chart__statistics {
           display: flex;
-          height: 20px;
+          height: 30px;
           padding-left: 10px;
+          padding-bottom: 8px;
 
           .statistics-number {
             margin-right: 8px;
@@ -434,11 +435,7 @@ $color-highlight: #CC4444;
         }
 
         .chart-line__drawing {
-          height: calc(100% - 32px);
-        }
-
-        #activeSubscribersChart {
-          height: calc(100% - 52px);
+          height: calc(100% - 60px);
         }
       }
 
