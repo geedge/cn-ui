@@ -879,7 +879,6 @@ export default {
       try {
         data.forEach(marker => {
           if (type === this.tooltipType.human && (marker.subscriberDto || marker.subscriberLatitude)) {
-
             const el = document.createElement('div')
             el.className = `map-marker map-marker--${type}`
             if (marker.subscriberId === this.highlightSubscriber.subscriberId) {
@@ -1480,7 +1479,7 @@ export default {
     },
     // 地图上点击多边形
     hexagonClick (e) {
-      /*if (this.tooltip.type === this.tooltipType.hexagon) {
+      /* if (this.tooltip.type === this.tooltipType.hexagon) {
         this.removeHighlightHexagon()
         // 点击时已经高亮的话，取消过滤条件
         if (this.curHexId === this.currentPolygon.hexId) {
@@ -1493,12 +1492,14 @@ export default {
         this.curPageNum = 1
         this.subscribersList = []
         this.initSubscriberList()
-      }*/
+      } */
       // 点击时已经高亮的话，取消过滤条件
-      if (this.curHexId === this.currentPolygon.hexId) {
-        this.curHexId = ''
-      } else {
-        this.curHexId = this.currentPolygon.hexId
+      if (this.tooltip.type === this.tooltipType.hexagon) {
+        if (this.curHexId === this.currentPolygon.hexId) {
+          this.curHexId = ''
+        } else {
+          this.curHexId = this.currentPolygon.hexId
+        }
       }
     },
     addHighlightHexagon () {
@@ -1584,11 +1585,11 @@ export default {
                 })
               }
               this.renderMarker(response.data.data, this.tooltipType.human)
-              /*// 给所有active的subscriber添加marker
+              /* // 给所有active的subscriber添加marker
               const toRenderMarkerSubscribers = response.data.data.filter(r => {
                 return !this.humanMarkers.some(m => m.subscriberId === r.subscriberId)
               })
-              this.renderMarker(toRenderMarkerSubscribers, this.tooltipType.human)*/
+              this.renderMarker(toRenderMarkerSubscribers, this.tooltipType.human) */
             }
           }
         })
