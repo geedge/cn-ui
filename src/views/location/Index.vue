@@ -187,6 +187,8 @@
             <div
                 class="analysis-statistics__subscriber"
                 :class="currentShowSubscriber && currentShowSubscriber.subscriberId === subscriber.subscriberId ? 'analysis-statistics__subscriber--active' : ''"
+                @mouseenter="subscriber.showJumpToEntity = true"
+                @mouseleave="subscriber.showJumpToEntity = false"
                 @click="changeCurrentShowSubscriber(subscriber)">
               <div class="subscriber__header" :class="trackingSubscriberRecordMap[subscriber.subscriberId] && trackingSubscriberRecordMap[subscriber.subscriberId].length > 0 ? '' : 'subscriber__header-inactive'">
                 <div class="header__icon">
@@ -196,7 +198,18 @@
                 </div>
                 <div class="header__right">
                   <div class="header-msisdn">
-                    <div class="header__title">ID</div>
+                    <div class="header__title">
+                      <span>ID</span>
+                      <el-tooltip
+                          effect="light"
+                          trigger="hover"
+                          :content="$t('entity.jumpToEntityDetails')"
+                          placement="right"
+                          popper-class="panel-tooltip"
+                      >
+                        <i class="cn-icon cn-icon-jump-to" @click="jumpEntityDetail(subscriber)" v-show="subscriber.showJumpToEntity"></i>
+                      </el-tooltip>
+                    </div>
                     <div class="header__content">{{$_.get(subscriber, 'subscriberId', '-') || '-'}}</div>
                   </div>
                   <div class="header__operation">
