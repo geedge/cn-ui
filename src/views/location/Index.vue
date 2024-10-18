@@ -44,10 +44,28 @@
       <div class="map-time-line">
         <time-line v-if="activeTab === 'locationMap'" :timeFilter="timeFilter" @change="mapTimeLineChange"></time-line>
       </div>
-      <!-- 右侧数据栏-map -->
-      <div class="analysis-statistics" id="locationMap-subscriber-scroll" v-show="activeTab === 'locationMap'"
-           @scroll="scrollList" >
-        <!-- 饼图 -->
+      <!-- 左右侧控制箭头 -->
+      <el-icon
+          class="analysis-statistics-arrow analysis-statistics-arrow--left"
+          :class="leftExpanded ? 'analysis-statistics-arrow--left-expanded' : ''"
+          @click="leftExpanded = !leftExpanded"
+      >
+        <ArrowLeft v-if="leftExpanded"/>
+        <ArrowRight v-else />
+      </el-icon>
+      <el-icon
+          class="analysis-statistics-arrow analysis-statistics-arrow--right"
+          :class="rightExpanded ? 'analysis-statistics-arrow--right-expanded' : ''"
+          @click="rightExpanded = !rightExpanded"
+      >
+        <ArrowRight v-if="rightExpanded"/>
+        <ArrowLeft v-else />
+      </el-icon>
+      <!-- 左侧统计栏 -->
+      <div class="analysis-statistics analysis-statistics--left-drawer"
+           :class="`analysis-statistics--${leftExpanded ? 'expanded' : 'collapsed'}`"
+           v-show="activeTab === 'locationMap'">
+        <!-- 饼图-地图色块统计 -->
         <div class="analysis-statistics__chart">
           <simple-loading size="small" placement="top-end" :loading="loading.pieLoading"></simple-loading>
           <div class="chart__header">{{$t('location.populationDensity')}}</div>
@@ -62,7 +80,7 @@
             </div>
           </div>
         </div>
-        <!-- 折线图 -->
+        <!-- 折线图-活跃subscriber -->
         <div class="analysis-statistics__chart">
           <simple-loading size="small" placement="top-end" :loading="loading.lineLoading"></simple-loading>
           <div class="chart__header">{{$t('location.activeSubscribers')}}</div>
@@ -72,6 +90,19 @@
           </div>
           <div class="chart-line__drawing" id="activeSubscribersChart"></div>
         </div>
+        <!-- 单值图-基站数量 -->
+        <div class="analysis-statistics__chart">
+          <simple-loading size="small" placement="top-end" :loading="loading.baseStationLoading"></simple-loading>
+          <div class="chart__header">{{$t('location.totalBaseStation')}}</div>
+          <div class="chart__value">{{baseStationMarkers.length}}</div>
+        </div>
+      </div>
+      <!-- 右侧数据栏-map -->
+      <div class="analysis-statistics analysis-statistics--right-drawer"
+           :class="`analysis-statistics--${rightExpanded ? 'expanded' : 'collapsed'}`"
+           id="locationMap-subscriber-scroll"
+           v-show="activeTab === 'locationMap'"
+           @scroll="scrollList" >
         <!-- subscriber list -->
         <div class="analysis-statistics__title">
           <span>{{$t('location.subscribers')}}&nbsp;&nbsp;{{subscribersTotalCount}}</span>
@@ -177,7 +208,9 @@
               </div>
             </div>
           </template>
+          <div style="height: 45px;"></div>
         </div>
+        <div style="position: absolute; bottom: 0; height: 40px; width: 100%; background-color: rgba(255,255,255,.8);"></div>
       </div>
       <!-- 右侧数据栏-trace -->
       <div class="analysis-statistics" id="subscribersBlock" v-show="activeTab === 'traceTracking'">
@@ -1277,6 +1310,7 @@ export default {
             m.getElement().classList.remove('map-marker--highlight')
           })
           if (this.highlightSubscriber.subscriberId !== markerData.subscriberId) {
+            this.rightExpanded = true
             el.classList.add('map-marker--highlight')
             this.highlightSubscriber = markerData
             // 将滚动条跳转到对应位置
@@ -1512,6 +1546,7 @@ export default {
           this.curHexId = ''
         } else {
           this.curHexId = this.currentPolygon.hexId
+          this.rightExpanded = true
         }
       }
     },
@@ -1933,6 +1968,14 @@ export default {
       this.curPageNum = 1
       this.subscribersList = []
       await this.initSubscriberList()
+    },
+    leftExpanded (n, o) {
+      if (n) {
+        setTimeout(() => {
+          this.pieChart.resize && this.pieChart.resize()
+          this.lineChart.resize && this.lineChart.resize()
+        }, 300)
+      }
     }
   },
   computed: {
@@ -2113,6 +2156,8 @@ export default {
       timeFilter,
       minuteTimeFilter, // 底下时间轴的时间
       searchValueListShow, // 搜索框下拉列表
+      leftExpanded: ref(false), // 左右侧栏是否展开
+      rightExpanded: ref(false),
       tooltip, // 控制鼠标悬浮框
       pieColorRamp, // 六边形颜色坡度
       pieValueRamp, // 饼图数值坡度，动态获取

@@ -148,6 +148,7 @@ $color-highlight: #CC4444;
         left: 0;
         bottom: unset;
         right: unset;
+        z-index: 0;
       }
 
       .map-marker {
@@ -189,7 +190,7 @@ $color-highlight: #CC4444;
           width: 30px;
           height: 30px;
           border: 2px solid $color-white;
-          z-index: 2;
+          z-index: 1;
           display: flex !important;
 
           &.map-marker--human svg {
@@ -208,7 +209,7 @@ $color-highlight: #CC4444;
           height: 30px;
           border: 2px solid $color-white;
           background-color: $color-highlight;
-          z-index: 3;
+          z-index: 2;
           display: flex !important;
 
           svg {
@@ -252,17 +253,77 @@ $color-highlight: #CC4444;
     .map-time-line {
       position: absolute;
       bottom: 0;
-      left: -6px;
-      width: calc(100% - 318px);
+      width: 100%;
+      z-index: 10;
     }
 
+    .analysis-statistics-arrow {
+      position: fixed;
+      top: calc(50vh + 60px);
+      height: 30px;
+      background-color: #FFFFFF;
+      border-radius: 7px;
+      transform: translateY(-50%);
+      color: var(--el-text-color-secondary);
+      z-index: 1;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all .3s;
+
+      &:hover {
+        color: var(--el-text-color-primary);
+      }
+
+      &.analysis-statistics-arrow--left {
+        left: 25px;
+
+        &.analysis-statistics-arrow--left-expanded {
+          left: 355px;
+        }
+      }
+      &.analysis-statistics-arrow--right {
+        right: 25px;
+
+        &.analysis-statistics-arrow--right-expanded {
+          right: 355px;
+        }
+      }
+    }
     .analysis-statistics {
       width: 330px;
-      overflow-y: scroll;
-      padding-right: 5px;
+      overflow: hidden;
+      transition: transform .3s;
+      z-index: 3;
+
+      &.analysis-statistics--expanded {
+        transform: scaleX(1);
+      }
+      &.analysis-statistics--collapsed {
+        transform: scaleX(0);
+        overflow-y: hidden;
+
+        & > div {
+          visibility: hidden;
+        }
+      }
+      &.analysis-statistics--left-drawer, &.analysis-statistics--right-drawer {
+        position: fixed;
+        top: 149px;
+        height: calc(100vh - 170px);
+        background-color: #FFFFFF;
+      }
+      &.analysis-statistics--left-drawer {
+        left: 20px;
+        transform-origin: left;
+        padding-right: 10px;
+      }
+      &.analysis-statistics--right-drawer {
+        right: 20px;
+        transform-origin: right;
+      }
       .analysis-statistics__search {
         margin-bottom: 10px;
-        padding-left: 20px;
+        padding-left: 10px;
         .el-select {
           .search-active {
             float: left;
@@ -334,7 +395,7 @@ $color-highlight: #CC4444;
         display: flex;
         justify-content: space-between;
         margin-bottom: 10px;
-        padding-left: 20px;
+        padding-left: 10px;
         font-size: 16px;
         color: $color-text-primary;
         .el-checkbox__label {
@@ -343,7 +404,7 @@ $color-highlight: #CC4444;
         }
       }
       .analysis-statistics__chart {
-        margin: 0 0 10px 20px;
+        margin-bottom: 10px;
         height: 148px;
         background: rgba(113, 113, 113, 0.06);
         border: 1px solid var(--el-border-color-light);
@@ -437,12 +498,21 @@ $color-highlight: #CC4444;
         .chart-line__drawing {
           height: calc(100% - 60px);
         }
+
+        .chart__value {
+          font-size: 32px;
+          height: calc(100% - 32px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transform: translateY(-8px);
+        }
       }
 
       .analysis-statistics__title {
         position: relative;
         margin-bottom: 10px;
-        padding-left: 20px;
+        padding-left: 10px;
         font-size: 16px;
         color: $color-text-primary;
         display: flex;
@@ -461,7 +531,9 @@ $color-highlight: #CC4444;
       }
 
       .analysis-statistics__subscribers {
-        padding-left: 20px;
+        padding: 0 5px 0 10px;
+        overflow-y: scroll;
+        height: calc(100% - 102px);
 
         .analysis-statistics__subscriber {
           margin-bottom: 10px;
@@ -770,7 +842,7 @@ $color-highlight: #CC4444;
     box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.5);
     border-radius: 2px;
     min-width: 185px;
-    z-index: 3;
+    z-index: 1;
 
     /*&.geo-analysis__hexagon-tooltip--hexagon {
     }*/
