@@ -321,7 +321,28 @@ $color-highlight: #CC4444;
         right: 20px;
         transform-origin: right;
       }
-      .analysis-statistics__search {
+      .analysis-statistics__search-list {
+        padding-left: 10px;
+        margin-bottom: 10px;
+
+        .el-input {
+          margin-bottom: 10px;
+          width: 306px;
+
+          .el-input-group__prepend {
+            background-color: #FFF;
+            padding: 0 8px;
+          }
+        }
+        .business-button {
+          display: flex;
+          height: 24px;
+          justify-content: center;
+          align-items: center;
+          font-size: 12px;
+        }
+      }
+      /*.analysis-statistics__search {
         margin-bottom: 10px;
         padding-left: 10px;
         .el-select {
@@ -390,7 +411,7 @@ $color-highlight: #CC4444;
             line-height: 16px;
           }
         }
-      }
+      }*/
       .analysis-statistics__condition {
         display: flex;
         justify-content: space-between;
@@ -533,7 +554,6 @@ $color-highlight: #CC4444;
       .analysis-statistics__subscribers {
         padding: 0 5px 0 10px;
         overflow-y: scroll;
-        height: calc(100% - 102px);
 
         .analysis-statistics__subscriber {
           margin-bottom: 10px;

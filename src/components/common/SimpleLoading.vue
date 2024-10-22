@@ -1,6 +1,6 @@
 <template>
   <Transition name="fade">
-    <div class="simple-loading" :class="placementClass" v-show="loading">
+    <div class="simple-loading" :class="placementClass" v-show="loading" :style="style">
       <div class="simple-loading__box" :class="sizeClass">
         <div class="simple-loading__inner">
           <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
@@ -22,6 +22,10 @@ export default {
     placement: {
       type: String,
       default: 'center' // top/top-start/top-end/bottom/bottom-start/bottom-end/left/left-start/left-end/right/right-start/right-end/center
+    },
+    style: {
+      type: String,
+      default: ''
     }
   },
   data () {
