@@ -398,6 +398,18 @@
             <div class="item__value">{{currentSubscriber.phoneNumber}}</div>
           </div>
           <div class="body__item">
+            <div class="item__label">IMEI</div>
+            <div class="item__value">{{currentSubscriber.imei}}</div>
+          </div>
+          <div class="body__item">
+            <div class="item__label">IMSI</div>
+            <div class="item__value">{{currentSubscriber.imsi}}</div>
+          </div>
+          <div class="body__item">
+            <div class="item__label">APN</div>
+            <div class="item__value">{{currentSubscriber.apn}}</div>
+          </div>
+          <div class="body__item">
             <div class="item__label">{{$t('entities.group')}}</div>
             <div class="item__value">Terrorist</div>
           </div>
@@ -407,7 +419,7 @@
           </div>
           <div class="body__item">
             <div class="item__label">{{$t('overall.location')}}</div>
-            <div class="item__value">{{locationHandler(currentSubscriber.subscriberDto)}}</div>
+            <div class="item__value">{{locationHandler(currentSubscriber)}}</div>
           </div>
           <div class="body__tracking" @click="trackSubscriber(currentSubscriber)">{{$t('location.traceTracking')}}</div>
         </template>
@@ -905,7 +917,7 @@ export default {
       }
       try {
         data.forEach(marker => {
-          if (type === this.tooltipType.human && (marker.subscriberDto || marker.subscriberLatitude)) {
+          if (type === this.tooltipType.human && marker.subscriberLatitude) {
             const el = document.createElement('div')
             el.className = `map-marker map-marker--${type}`
             if (marker.subscriberId === this.highlightSubscriber.subscriberId) {
@@ -921,9 +933,7 @@ export default {
             el.innerHTML = svg
             // 鼠标事件，控制tooltip显示和marker尺寸
             this.bindMarkerEvent(el, marker, type)
-            const position = marker.subscriberDto
-              ? [marker.subscriberDto.subscriberLongitude, marker.subscriberDto.subscriberLatitude]
-              : [marker.subscriberLongitude, marker.subscriberLatitude]
+            const position = [marker.subscriberLongitude, marker.subscriberLatitude]
             const mapMarker = new maplibregl.Marker({ element: el })
               .setLngLat(position)
               .addTo(this.mapChart)
@@ -1257,6 +1267,7 @@ export default {
     },
     bindMarkerEvent (el, markerData, type) {
       el.addEventListener('mouseenter', e => {
+        console.info(this.currentSubscriber)
         this.currentMarkerDom = el
         if (type === this.tooltipType.human) {
           this.currentSubscriber = markerData
