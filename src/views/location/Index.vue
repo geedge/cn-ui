@@ -49,6 +49,7 @@
           class="analysis-statistics-arrow analysis-statistics-arrow--left"
           :class="leftExpanded ? 'analysis-statistics-arrow--left-expanded' : ''"
           @click="leftExpanded = !leftExpanded"
+          v-show="activeTab === 'locationMap'"
       >
         <ArrowLeft v-if="leftExpanded"/>
         <ArrowRight v-else />
@@ -57,6 +58,7 @@
           class="analysis-statistics-arrow analysis-statistics-arrow--right"
           :class="rightExpanded ? 'analysis-statistics-arrow--right-expanded' : ''"
           @click="rightExpanded = !rightExpanded"
+          v-show="activeTab === 'locationMap'"
       >
         <ArrowRight v-if="rightExpanded"/>
         <ArrowLeft v-else />
@@ -220,7 +222,7 @@
         <div style="position: absolute; bottom: 0; height: 40px; width: 100%; background-color: rgba(255,255,255,.8);"></div>
       </div>
       <!-- 右侧数据栏-trace -->
-      <div class="analysis-statistics" id="subscribersBlock" v-show="activeTab === 'traceTracking'">
+      <div class="analysis-statistics" :style="activeTab === 'traceTracking' ? 'overflow-y: scroll' : ''" id="subscribersBlock" v-show="activeTab === 'traceTracking'">
         <div class="analysis-statistics__no-tracking-tip" v-if="trackingSubscribers.length === 0" @click="activeTab = 'locationMap'">{{$t('location.noTrackingYet')}}</div>
         <div class="analysis-statistics__subscribers">
           <template v-for="(subscriber, index) in trackingSubscribers" :key="subscriber.subscriberId">
@@ -608,6 +610,27 @@ export default {
       await this.renderActiveSubscribersLine()
     },
     async initTraceTrackingTab () {
+      if (this.idFromUrl) {
+        const find = this.trackingSubscribers.find(s => s.subscriberId === this.idFromUrl)
+        if (find) {
+          this.currentShowSubscriber = find
+        } else {
+          const queryResult = await axios.get(`${api.entity.basicInfo}/subscriber?resource=${this.idFromUrl}`)
+          const newRecord = {
+            ...queryResult.data.data,
+            subscriberId: this.idFromUrl,
+            phoneNumber: queryResult.data.data.phone_number,
+            show: true,
+            showLine: true,
+            scrollStartIndex: 1,
+            scrollEndIndex: 6,
+            startOffset: 0,
+            listHeight: 0
+          }
+          this.trackingSubscribers.push(newRecord)
+          this.currentShowSubscriber = newRecord
+        }
+      }
       await this.queryTraceTracking()
       // 如果未指定展示谁的轨迹，则默认取追踪用户中的第一个
       if (!this.currentShowSubscriber && this.trackingSubscribers.length > 0) {
@@ -1192,7 +1215,7 @@ export default {
           this.showBaseStation()
         }
       } else if (this.activeTab === 'locationMap') {
-        if (this.currentZoom >= 9 && this.updateBoundaryBox()) {
+        if (this.currentZoom >= 9 && this.mapChart.getSource('hexGrid') && this.updateBoundaryBox()) {
           const oldSourceData = this.mapChart.getSource('hexGrid')._data
           const hexagonData = await this.queryHexagon()
           // 将查到的h3hexagon数据转为geojson
@@ -2104,10 +2127,11 @@ export default {
       }
     }
     const { query } = useRoute()
-    // 获取url携带的range、startTime、endTime
+    // 获取url携带的range、startTime、endTime、id(subscriberId)
     const rangeParam = query.range
     const startTimeParam = query.startTime
     const endTimeParam = query.endTime
+    const idParam = query.sid
 
     // 优先级：url > config.js > 默认值。
     const dateRangeValue = rangeParam ? parseInt(rangeParam) : (DEFAULT_TIME_FILTER_RANGE.dashboard || 60)
@@ -2205,10 +2229,11 @@ export default {
       activeTab,
       dropDownValue,
       timeFilter,
+      idFromUrl: ref(idParam), // 从url获取的subscriberId
       minuteTimeFilter, // 底下时间轴的时间
       searchList, // 搜索框下拉列表
       leftExpanded: ref(false), // 左右侧栏是否展开
-      rightExpanded: ref(true),
+      rightExpanded: ref(false),
       tooltip, // 控制鼠标悬浮框
       pieColorRamp, // 六边形颜色坡度
       pieValueRamp, // 饼图数值坡度，动态获取
