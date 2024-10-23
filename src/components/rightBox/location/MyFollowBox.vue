@@ -63,7 +63,7 @@ export default {
   },
   data () {
     return {
-      url:  api.location.followedSubscriber,
+      url: api.location.followedSubscriber,
       tableId: 'myFollowTable',
       disableCancel: true
     }

@@ -47,6 +47,9 @@
             <span>-</span>
           </template>
         </template>
+        <template v-else-if="item.prop === 'subscriberDto.phoneNumber'">
+          {{scope.row.subscriberDto ? scope.row.subscriberDto.phoneNumber : '-'}}
+        </template>
         <template v-else-if="item.prop === 'isFollowed'" >
           <span class="follow-cursor" v-if="scope.row[item.prop] === 1" @click="cancelFollow(scope.row)"><i class="cn-icon cn-icon-follow-fill"></i></span>
           <span class="follow-cursor" v-else @click="follow(scope.row)"><i class="cn-icon cn-icon-follow"></i></span>
@@ -85,7 +88,7 @@ export default {
           show: true,
           minWidth: 100
         }, {
-          label: this.$t('location.phoneNumber'),
+          label: 'MSISDN',
           prop: 'subscriberDto.phoneNumber',
           show: true,
           minWidth: 150
