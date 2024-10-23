@@ -1390,21 +1390,10 @@ export default {
     async scrollList (e) {
       if (!this.onlyShowFollowed) {
         const dom = document.getElementById('locationMap-subscriber-scroll')
-        console.info(dom.scrollTop + dom.clientHeight, dom.scrollHeight)
         if (dom.scrollTop + dom.clientHeight >= dom.scrollHeight && !this.loading.subscriberLoading) {
           this.curPageNum++
           await this.initSubscriberList()
         }
-        /* const scrollTop = obj.scrollTop
-        const scroll = scrollTop - this.preScrollTop
-        this.preScrollTop = scrollTop
-        // 向下滚动才进行加载数据
-        if (scroll >= 0 && (obj.scrollHeight - obj.scrollTop - obj.clientHeight <= 10) &&
-            (obj.scrollHeight - obj.scrollTop - obj.clientHeight > 1) &&
-            obj.scrollHeight !== 0 &&
-            !this.loading.subscriberLoading) {
-          await this.initSubscriberList()
-        } */
       }
     },
     timeRefreshChange () {
@@ -1585,10 +1574,6 @@ export default {
           paramArray.push(`${s.name} like '%${s.value}%'`)
         }
       })
-      /*if (this.curSearchValue) {
-        paramArray.push(" (subscriber_id like '%" + this.curSearchValue + "%' or phone_number like '%" + this.curSearchValue + "%') ")
-      }*/
-
       if (paramArray.length > 0) {
         params.params = paramArray.join(' and ')
       }
@@ -1717,13 +1702,6 @@ export default {
           this.$message({ duration: 2000, type: 'success', message: this.$t('location.cancelFollow.success') })
           /* 刷新右侧列表 */
           item.isFollowed = 0
-          // 删除地图中对应的人
-          this.humanMarkers.forEach(marker => {
-            if (marker.subscriberId === item.subscriberId) {
-              marker.isFollowed = null
-              marker.addClassName && marker.addClassName('map-marker--unfollowed')
-            }
-          })
         } else {
           this.$message.error(res.data.message)
         }
@@ -1792,6 +1770,10 @@ export default {
     async showFollowedSubscribers () {
       this.curPageNum = 1
       this.subscribersList = []
+      this.humanMarkers.forEach(marker => {
+        marker.remove && marker.remove()
+      })
+      this.humanMarkers = []
       await this.initSubscriberList()
     },
     async searchSubscribers () {
