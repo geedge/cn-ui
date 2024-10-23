@@ -551,7 +551,6 @@ export default {
           return { cancel: () => { } }
         })
       }
-
       this.mapChart.on('load', async function () {
         // 加载地图上的基站，基站不随tab的切换而改变
         const baseStationData = await _this.queryBaseStation()
@@ -562,6 +561,10 @@ export default {
         } else if (_this.activeTab === 'traceTracking') {
           await _this.initTraceTrackingTab()
         }
+        _this.mapChart.off('moveend', _this.debounceVisualChange)
+        _this.mapChart.off('zoomend', _this.debounceVisualChange)
+        _this.mapChart.on('moveend', _this.debounceVisualChange)
+        _this.mapChart.on('zoomend', _this.debounceVisualChange)
       })
     },
     async initLocationMapTab () {
@@ -581,7 +584,9 @@ export default {
         id: 'hexagon',
         type: 'fill',
         source: 'hexGrid',
-        layout: {},
+        layout: {
+          visibility: this.currentZoom >= 9 ? 'visible' : 'none'
+        },
         paint: {
           'fill-color': ['get', 'color'],
           'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.7, 0.4]
@@ -1131,29 +1136,23 @@ export default {
       this.mapChart.on('mouseenter', 'hexagon', this.hexagonMouseEnter)
       this.mapChart.on('mouseleave', 'hexagon', this.hexagonMouseLeave)
       this.mapChart.on('mousemove', 'hexagon', this.hexagonMouseMove)
-      this.mapChart.on('moveend', this.debounceVisualChange)
-      this.mapChart.on('zoomend', this.debounceVisualChange)
       this.mapChart.on('click', 'hexagon', this.hexagonClick)
     },
     unbindHexagonEvents () {
       this.mapChart.off('mouseenter', 'hexagon', this.hexagonMouseEnter)
       this.mapChart.off('mouseleave', 'hexagon', this.hexagonMouseLeave)
       this.mapChart.off('mousemove', 'hexagon', this.hexagonMouseMove)
-      this.mapChart.off('moveend', this.debounceVisualChange)
-      this.mapChart.off('zoomend', this.debounceVisualChange)
       this.mapChart.off('click', 'hexagon', this.hexagonClick)
     },
     bindTrackingHexagonEvents () {
       this.mapChart.on('mouseenter', 'trackingHexagon', this.trackingHexagonMouseEnter)
       this.mapChart.on('mouseleave', 'trackingHexagon', this.trackingHexagonMouseLeave)
       this.mapChart.on('mousemove', 'trackingHexagon', this.trackingHexagonMouseMove)
-      this.mapChart.on('zoomend', this.trackingHexagonZoomEnd)
     },
     unbindTrackingHexagonEvents () {
       this.mapChart.off('mouseenter', 'trackingHexagon', this.trackingHexagonMouseEnter)
       this.mapChart.off('mouseleave', 'trackingHexagon', this.trackingHexagonMouseLeave)
       this.mapChart.off('mousemove', 'trackingHexagon', this.trackingHexagonMouseMove)
-      this.mapChart.off('zoomend', this.trackingHexagonZoomEnd)
     },
     hexagonMouseEnter () {
       this.tooltip.mouseIsInPolygon = true
@@ -1186,14 +1185,22 @@ export default {
       this.currentZoom = this.mapChart.getZoom()
       console.info(`current zoom: ${this.currentZoom}`)
 
-      if (this.updateBoundaryBox()) {
-        const oldSourceData = this.mapChart.getSource('hexGrid')._data
-        const hexagonData = await this.queryHexagon()
-        // 将查到的h3hexagon数据转为geojson
-        const polygonSourceData = this.hexagonDataConverter(hexagonData, 'locationMap')
-        // 对比新旧数据，同个hexId新数据number大于旧数据的，将旧数据覆盖；新hexId直接添加；
-        const newSourceData = this.compareSourceData(oldSourceData, polygonSourceData)
-        this.mapChart.getSource('hexGrid').setData(newSourceData)
+      if (this.activeTab === 'traceTracking') {
+        if (this.currentZoom && this.currentZoom < 11) {
+          this.hideBaseStation()
+        } else {
+          this.showBaseStation()
+        }
+      } else if (this.activeTab === 'locationMap') {
+        if (this.currentZoom >= 9 && this.updateBoundaryBox()) {
+          const oldSourceData = this.mapChart.getSource('hexGrid')._data
+          const hexagonData = await this.queryHexagon()
+          // 将查到的h3hexagon数据转为geojson
+          const polygonSourceData = this.hexagonDataConverter(hexagonData, 'locationMap')
+          // 对比新旧数据，同个hexId新数据number大于旧数据的，将旧数据覆盖；新hexId直接添加；
+          const newSourceData = this.compareSourceData(oldSourceData, polygonSourceData)
+          this.mapChart.getSource('hexGrid').setData(newSourceData)
+        }
       }
     },
     compareSourceData (oldData, newData) {
@@ -1267,7 +1274,6 @@ export default {
     },
     bindMarkerEvent (el, markerData, type) {
       el.addEventListener('mouseenter', e => {
-        console.info(this.currentSubscriber)
         this.currentMarkerDom = el
         if (type === this.tooltipType.human) {
           this.currentSubscriber = markerData
@@ -1458,6 +1464,14 @@ export default {
         human.removeClassName && human.removeClassName('map-marker--hidden')
       })
     },
+    hideHexagon () {
+      this.mapChart.getLayer('hexagon') && this.mapChart.setLayoutProperty('hexagon', 'visibility', 'none')
+      this.mapChart.getLayer('highlightHexagon') && this.mapChart.setLayoutProperty('highlightHexagon', 'visibility', 'none')
+    },
+    showHexagon () {
+      this.mapChart.getLayer('hexagon') && this.mapChart.setLayoutProperty('hexagon', 'visibility', 'visible')
+      this.mapChart.getLayer('highlightHexagon') && this.mapChart.setLayoutProperty('highlightHexagon', 'visibility', 'visible')
+    },
     // 关注列表的添加、删除追踪
     addOrRemoveTrackingSubscriber (subscriber) {
       const find = this.trackingSubscribers.find(s => s.subscriberId === subscriber.subscriberId)
@@ -1543,7 +1557,9 @@ export default {
           id: 'highlightHexagon',
           type: 'line',
           source: 'highlightHexGrid',
-          layout: {},
+          layout: {
+            visibility: this.currentZoom >= 9 ? 'visible' : 'none'
+          },
           paint: {
             'line-color': 'rgb(255,255,255)',
             'line-width': 3
@@ -1966,12 +1982,19 @@ export default {
       }
     },
     currentZoom (n, o) {
+      // zoom 小于11隐藏 marker
       if (o && n < 11) {
         this.hideBaseStation()
         this.hideFollowed()
       } else {
         this.showBaseStation()
         this.showFollowed()
+      }
+      // zoom 小于9隐藏色块
+      if (o && n < 9) {
+        this.hideHexagon()
+      } else {
+        this.showHexagon()
       }
     },
     leftExpanded (n, o) {
@@ -2214,7 +2237,7 @@ export default {
       loading, // 控制组件内各处loading图标
       maxZoom: mapConfig.maxZoom, // 地图最小缩放比例
       minZoom: mapConfig.minZoom, // 地图最大缩放比例
-      currentZoom: ref(null),
+      currentZoom: ref(mapConfig.defaultZoom),
       mapLevel: mapConfig.mapLevel, // 地图精度  1、2、3
       unitTypes,
       defaultZoom: mapConfig.defaultZoom, // 地图默认缩放比例
