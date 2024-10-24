@@ -1,4 +1,4 @@
-import { detectionEventType, detectionRuleType, EN, storageKey, ZH } from '@/utils/constants'
+import { detectionEventType, detectionRuleType, EN, storageKey, ZH, unitTypes } from '@/utils/constants'
 import { dateFormatByAppearance, getMillisecond, getSecond } from '@/utils/date-util'
 import axios from 'axios'
 import { api } from '@/utils/api'
@@ -28,7 +28,7 @@ export default {
       seriesDataNum: 0,
       mapColor: [],
       markLineData: [],
-      mapWidth: 550, // 折线图底部色条宽度
+      mapWidth: 523, // 折线图底部色条宽度
       lineWidth: 520, // 时间轴宽度
       loading: true,
       activeIndex: -1,
@@ -251,33 +251,46 @@ export default {
               }
             }
           }
+          this.lineOption.yAxis.axisLabel = {
+            formatter: function (value) {
+              switch (item.unit) {
+                case 1: {
+                  return unitConvert(value, unitTypes.number, '', '', 1).join(' ')
+                }
+                case 2: {
+                  return unitConvert(value, unitTypes.percent, '', '', 1).join(' ')
+                }
+                case 3: {
+                  return unitConvert(value, unitTypes.time, '', '', 1).join(' ')
+                }
+              }
+              return value
+            }
+          }
+          this.lineOption.tooltip.formatter = function (params) {
+            const param = JSON.parse(JSON.stringify(params[0]))
+            let value = ''
+            switch (item.unit) {
+              case 1: {
+                value = unitConvert(param.data[1], unitTypes.number, '', '', 1).join(' ')
+                break
+              }
+              case 2: {
+                value = unitConvert(param.data[1], unitTypes.percent, '', '', 1).join(' ')
+                break
+              }
+              case 3: {
+                value = unitConvert(param.data[1], unitTypes.time, '', '', 1).join(' ')
+                break
+              }
+              default: break
+            }
+            param.marker = param.marker.replace('#2E7AFE', param.data[2])
+            const str = `<div style="display: flex;justify-content: space-between"><div>${param.marker}&nbsp;&nbsp;${value}</div></div>`
+            return `${param.axisValueLabel}<br />${str}`
+          }
         }
       })
-
-      // 计算折线图左侧宽度
-      const maxValue = Math.max(...data.map(obj => obj.metricValue))
-      if (maxValue >= 1000) {
-        let yAxisLabel = '' // y轴显示的值
-        if ((maxValue / (1000)) >= 1) {
-          yAxisLabel = (maxValue / (1000)).toFixed(1) + 'k'
-        } else if ((maxValue / (10000)) >= 1) {
-          yAxisLabel = (maxValue / (10000)).toFixed(1) + 'w'
-        } else if ((maxValue / (10000000)) >= 1) {
-          yAxisLabel = (maxValue / (10000000)).toFixed(1) + 'kw'
-        }
-
-        const labelLength = yAxisLabel.length - 4
-        if (labelLength > 0) {
-          // 默认显示最大的9.9w，即距离左边距30px，超出部分的每个字符8px宽度
-          this.lineOption.grid.left = (30 + labelLength * 8) + 'px'
-          this.mapWidth = 550 - (labelLength * 8)
-          this.lineWidth = 520 - (labelLength * 8)
-        }
-      } else {
-        this.lineOption.grid.left = '30px'
-        this.mapWidth = 550
-        this.lineWidth = 520
-      }
 
       this.lineOption.series[0].data = seriesData
 

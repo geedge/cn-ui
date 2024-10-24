@@ -489,31 +489,13 @@ export const lineOption = {
       show: false
     },
     scale: true,
-    min: 0,
-    axisLabel: {
-      formatter: function (value) {
-        switch (true) {
-          case (value < 1000): {
-            return value
-          }
-          case ((value / (1000)) >= 1): {
-            return (value / (1000)).toFixed(1) + 'k'
-          }
-          case (value / (10000)) >= 1: {
-            return (value / (10000)).toFixed(1) + 'w'
-          }
-          case (value / (10000000)) >= 1: {
-            return (value / (10000000)).toFixed(1) + 'kw'
-          }
-        }
-      }
-    }
+    min: 0
   },
   grid: {
-    top: '12px',
-    left: '30px',
-    bottom: '30px',
-    right: '20px'
+    top: 15,
+    left: 60,
+    right: 20,
+    bottom: 30
   },
   series: [
     {
@@ -537,12 +519,6 @@ export const lineOption = {
   ],
   tooltip: {
     trigger: 'axis',
-    formatter: function (params) {
-      const param = JSON.parse(JSON.stringify(params[0]))
-      param.marker = param.marker.replace('#2E7AFE', param.data[2])
-      const str = `<div style="display: flex;justify-content: space-between"><div>${param.marker}${param.seriesName}</div><div>${param.data[1]}</div></div>`
-      return `${param.axisValueLabel}<br />${str}`
-    },
     show: true
   }
 }
