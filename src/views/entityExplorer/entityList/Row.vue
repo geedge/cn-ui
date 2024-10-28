@@ -300,7 +300,7 @@ export default {
           break
         }
       }
-      if (this.entity.entityType === 'domain' || this.entity.entityType === 'ip') {
+      if (this.entity.entityType === 'domain' || this.entity.entityType === 'ip' || this.entity.entityType === 'subscriber') {
         axios.get(`${url}?resource=${this.entity.entityValue}`).then(responese => {
           const res = responese.data
           if (responese.status === 200) {

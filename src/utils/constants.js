@@ -498,6 +498,11 @@ export const tagType = [
     label: 'Domain',
     value: 'Domain',
     name: 'domain'
+  },
+  {
+    label: 'overall.subscriber',
+    value: 'Subscriber',
+    name: 'subscriber'
   }
 ]
 

@@ -39,7 +39,7 @@
                          :disabled="!!editObject.id || (uploaded && !importedDataNoData)"
               >
                 <template v-for="type in tagType" :key="type.name">
-                  <el-option :label="type.label" :value="type.value"></el-option>
+                  <el-option :label="$t(type.label)" :value="type.value"></el-option>
                 </template>
               </el-select>
             </el-form-item>
@@ -167,7 +167,7 @@
                                    @blur="onBlurTagItem(i)"
                         >
                           <template v-for="type in tagType" :key="type.name">
-                            <el-option :label="type.label" :value="type.value"></el-option>
+                            <el-option :label="$t(type.label)" :value="type.value"></el-option>
                           </template>
                         </el-select>
                       </el-form-item>

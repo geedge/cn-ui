@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { entityDefaultColor, entityType } from '@/utils/constants'
+import {entityDefaultColor, entityType, intentColor } from '@/utils/constants'
 import { formatTags } from '@/utils/tools'
 import { generateLabel, builtTooltip, queryEntityBasicInfo, queryTags, queryRelatedEntityCount } from '@/views/entityExplorer/entityGraph/utils'
 import { api } from '@/utils/api'
@@ -57,8 +57,8 @@ export default class Node {
     const tags = await queryTags(entityType, entityName)
     let _tags = []
     formatTags(tags, entityType, _tags)
-    if (_.isArray(tags.userDefinedTags)) {
-      _tags = _.concat(_tags, tags.userDefinedTags.map(tag => ({ value: tag.tagValue, color: tag.knowledgeBase ? tag.knowledgeBase.color : entityDefaultColor })))
+    if (_.isArray(tags.tags)) {
+      _tags = _.concat(_tags, tags.tags.map(tag => ({ value: tag.name, color: intentColor[tag.intent] || entityDefaultColor })))
     }
     this.data.tags = _tags
 
