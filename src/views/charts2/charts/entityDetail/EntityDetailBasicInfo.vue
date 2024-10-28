@@ -130,13 +130,8 @@ export default {
       this.showError = false
       this.levelTwoTags = []
       const basicInfoRequest = axios.get(`${api.entity.basicInfo}/${this.entity.entityType}?resource=${this.entity.entityName}`)
-      let requestArray = []
-      if (this.entity.entityType === entityType.subscriber) {
-        requestArray = [null, basicInfoRequest]
-      } else {
-        const tagRequest = axios.get(`${api.entity.tags}/${this.entity.entityType}?resource=${this.entity.entityName}`)
-        requestArray = [tagRequest, basicInfoRequest]
-      }
+      const tagRequest = axios.get(`${api.entity.tags}/${this.entity.entityType}?resource=${this.entity.entityName}`)
+      const requestArray = [tagRequest, basicInfoRequest]
       Promise.all(requestArray).then(response => {
         const tagData = response[0]
         let tagError = ''

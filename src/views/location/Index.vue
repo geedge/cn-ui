@@ -186,6 +186,14 @@
                 </div>
               </div>
               <div class="subscriber__body">
+                <span class="subscriber-tags">
+                  <span v-for="tag in item.tags"
+                        :key="tag.value"
+                        class="subscriber-tag"
+                        :style="getTagColor(tag.color)">
+                    {{ tag.value }}
+                  </span>
+                </span>
                 <div class="body__item">
                   <div class="item__label">MSISDN</div>
                   <div class="item__value">{{item.phoneNumber}}</div>
@@ -202,14 +210,14 @@
                   <div class="item__label">APN</div>
                   <div class="item__value">{{item.apn || '-'}}</div>
                 </div>
-                <div class="body__item">
+<!--                <div class="body__item">
                   <div class="item__label">{{$t('location.group')}}</div>
                   <div class="item__value">Terrorist</div>
                 </div>
                 <div class="body__item">
                   <div class="item__label">{{$t('overall.info')}}</div>
                   <div class="item__value">Leader</div>
-                </div>
+                </div>-->
                 <div class="body__item">
                   <div class="item__label">{{$t('location.location')}}</div>
                   <div class="item__value">{{locationHandler(item)}}</div>
@@ -262,17 +270,29 @@
                 </div>
               </div>
               <div class="subscriber__body">
+                <span class="subscriber-tags">
+                  <span v-for="tag in subscriber.tags"
+                        :key="tag.value"
+                        class="subscriber-tag"
+                        :style="getTagColor(tag.color)">
+                    {{ tag.value }}
+                  </span>
+                </span>
                 <div class="body__item">
                   <div class="item__label">MSISDN</div>
-                  <div class="item__value">{{subscriber.phoneNumber}}</div>
+                  <div class="item__value">{{subscriber.phoneNumber || '-'}}</div>
                 </div>
                 <div class="body__item">
-                  <div class="item__label">{{$t('entities.group')}}</div>
-                  <div class="item__value">Terrorist</div>
+                  <div class="item__label">IMEI</div>
+                  <div class="item__value">{{subscriber.imei || '-'}}</div>
                 </div>
                 <div class="body__item">
-                  <div class="item__label">{{$t('overall.info')}}</div>
-                  <div class="item__value">Leader</div>
+                  <div class="item__label">IMSI</div>
+                  <div class="item__value">{{subscriber.imsi || '-'}}</div>
+                </div>
+                <div class="body__item">
+                  <div class="item__label">APN</div>
+                  <div class="item__value">{{subscriber.apn || '-'}}</div>
                 </div>
                 <div class="body__item">
                   <div class="item__label">{{$t('overall.location')}}</div>
@@ -372,6 +392,14 @@
         </div>
       </div>
       <div class="hexagon-tooltip__body">
+        <span class="subscriber-tags" v-if="tooltip.type === tooltipType.human">
+          <span v-for="tag in currentSubscriber.tags"
+                :key="tag.value"
+                class="subscriber-tag"
+                :style="getTagColor(tag.color)">
+            {{ tag.value }}
+          </span>
+        </span>
         <template v-if="tooltip.type === tooltipType.hexagon">
           <template v-if="activeTab === 'locationMap'">
             <div class="body__item">
@@ -397,28 +425,28 @@
         <template v-else-if="tooltip.type === tooltipType.human">
           <div class="body__item">
             <div class="item__label">MSISDN</div>
-            <div class="item__value">{{currentSubscriber.phoneNumber}}</div>
+            <div class="item__value">{{currentSubscriber.phoneNumber || '-'}}</div>
           </div>
           <div class="body__item">
             <div class="item__label">IMEI</div>
-            <div class="item__value">{{currentSubscriber.imei}}</div>
+            <div class="item__value">{{currentSubscriber.imei || '-'}}</div>
           </div>
           <div class="body__item">
             <div class="item__label">IMSI</div>
-            <div class="item__value">{{currentSubscriber.imsi}}</div>
+            <div class="item__value">{{currentSubscriber.imsi || '-'}}</div>
           </div>
           <div class="body__item">
             <div class="item__label">APN</div>
-            <div class="item__value">{{currentSubscriber.apn}}</div>
+            <div class="item__value">{{currentSubscriber.apn || '-'}}</div>
           </div>
-          <div class="body__item">
+<!--          <div class="body__item">
             <div class="item__label">{{$t('entities.group')}}</div>
             <div class="item__value">Terrorist</div>
           </div>
           <div class="body__item">
             <div class="item__label">{{$t('overall.info')}}</div>
             <div class="item__value">Leader</div>
-          </div>
+          </div>-->
           <div class="body__item">
             <div class="item__label">{{$t('overall.location')}}</div>
             <div class="item__value">{{locationHandler(currentSubscriber)}}</div>
@@ -465,13 +493,20 @@ import maplibregl from 'maplibre-gl'
 import mapStyle from '@/views/charts2/charts/entityDetail/mapStyle'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
-import { unitTypes, storageKey, defaultMapConfig, mapLevelField } from '@/utils/constants'
+import {
+  unitTypes,
+  storageKey,
+  defaultMapConfig,
+  mapLevelField,
+  intentColor,
+  entityDefaultColor
+} from '@/utils/constants'
 import * as echarts from 'echarts'
 import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
 import { pieOption } from '@/views/location/chartOption'
 import _ from 'lodash'
 import { useRoute, useRouter } from 'vue-router'
-import { urlParamsHandler, overwriteUrl, getTextRect } from '@/utils/tools'
+import { urlParamsHandler, overwriteUrl, getTagColor } from '@/utils/tools'
 import axios from 'axios'
 import { api } from '@/utils/api'
 import { h3ToGeo, h3ToGeoBoundary } from 'h3-js'
@@ -523,6 +558,7 @@ export default {
     MyFollowBox
   },
   methods: {
+    getTagColor,
     dateFormatByAppearance,
     valueToRangeValue,
     async initMap () {
@@ -626,6 +662,12 @@ export default {
             scrollEndIndex: 6,
             startOffset: 0,
             listHeight: 0
+          }
+          const queryResult2 = await axios.get(`${api.entity.tags}/subscriber?resource=${this.idFromUrl}`)
+          if (queryResult2.data.data && queryResult2.data.data.tags) {
+            newRecord.tags = queryResult2.data.data.tags.map(tag => {
+              return { value: tag.name, color: intentColor[tag.intent] || entityDefaultColor }
+            })
           }
           this.trackingSubscribers.push(newRecord)
           this.currentShowSubscriber = newRecord
@@ -1511,6 +1553,7 @@ export default {
           this.opacity = 1
         }
       }, 16)
+      console.info(this.trackingSubscribers)
     },
     // 追踪页删除追踪
     removeTrackingSubscriber (subscriber) {
@@ -1642,14 +1685,28 @@ export default {
                 })
               }
               this.renderMarker(response.data.data, this.tooltipType.human)
-              /* // 给所有active的subscriber添加marker
-              const toRenderMarkerSubscribers = response.data.data.filter(r => {
-                return !this.humanMarkers.some(m => m.subscriberId === r.subscriberId)
-              })
-              this.renderMarker(toRenderMarkerSubscribers, this.tooltipType.human) */
             }
           }
         })
+        // 异步查tag，避免阻塞
+        setTimeout(() => {
+          this.subscribersList.forEach(s => {
+            if (!s.tags) {
+              s.tags = []
+              /*s.tags = [{ value: 'testTag', color: intentColor.Info },
+                { value: 'testTag', color: intentColor.Benign }, { value: 'testTagttt', color: intentColor.Malicious }]*/
+              axios.get(`${api.entity.tags}/subscriber`, { params: { resource: s.subscriberId } }).then(response => {
+                if (response.status === 200) {
+                  if (response.data.data && response.data.data.tags) {
+                    s.tags = response.data.data.tags.map(tag => {
+                      return { value: tag.name, color: intentColor[tag.intent] || entityDefaultColor }
+                    })
+                  }
+                }
+              })
+            }
+          })
+        }, 200)
       } catch (e) {
         this.$message.error(this.errorMsgHandler(e))
         console.error(e)
@@ -1985,7 +2042,7 @@ export default {
     trackingSubscribers: {
       deep: true,
       handler (n) {
-        sessionStorage.setItem(storageKey.trackingSubscribers, JSON.stringify(n.map(item => ({ subscriberId: item.subscriberId, phoneNumber: item.phoneNumber, country: item.country, superAdministrativeArea: item.superAdministrativeArea, administrativeArea: item.administrativeArea }))))
+        sessionStorage.setItem(storageKey.trackingSubscribers, JSON.stringify(n))
       }
     },
     // 控制map loading
@@ -2131,7 +2188,7 @@ export default {
     const rangeParam = query.range
     const startTimeParam = query.startTime
     const endTimeParam = query.endTime
-    const idParam = query.sid
+    const idParam = query.subscriberId
 
     // 优先级：url > config.js > 默认值。
     const dateRangeValue = rangeParam ? parseInt(rangeParam) : (DEFAULT_TIME_FILTER_RANGE.dashboard || 60)

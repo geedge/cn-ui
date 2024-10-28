@@ -334,6 +334,7 @@ export const api = {
       subscriberBasicInfo: apiVersion + '/entity/explorer/detail/basic/subscriber', // subscriber实体响应
       domainTags: apiVersion + '/entity/explorer/detail/kb/intelligence/tag/domain', // Domain实体标签响应结果
       ipTags: apiVersion + '/entity/explorer/detail/kb/intelligence/tag/ip', // ip实体标签响应结果
+      subscriberTags: apiVersion + '/entity/explorer/detail/kb/intelligence/tag/subscriber', // ip实体标签响应结果
       domainThroughput: apiVersion + '/entity/explorer/detail/traffic/throughput/domain', // 实体流量信息
       ipThroughput: apiVersion + '/entity/explorer/detail/traffic/throughput/ip', // 实体流量信息
       appThroughput: apiVersion + '/entity/explorer/detail/traffic/throughput/app', // 实体流量信息

@@ -299,8 +299,12 @@ export default {
           url = api.entity.entityList.ipTags
           break
         }
+        case ('subscriber_id'): {
+          url = api.entity.entityList.subscriberTags
+          break
+        }
       }
-      if (this.entity.entityType === 'domain' || this.entity.entityType === 'ip' || this.entity.entityType === 'subscriber') {
+      if (this.entity.entityType === 'domain' || this.entity.entityType === 'ip' || this.entity.entityType === 'subscriber_id') {
         axios.get(`${url}?resource=${this.entity.entityValue}`).then(responese => {
           const res = responese.data
           if (responese.status === 200) {

@@ -347,7 +347,7 @@ export default {
       const { href } = this.$router.resolve({
         path: '/location/tracking',
         query: {
-          sid: this.entityValue,
+          subscriberId: this.entity.entityName,
           startTime: this.timeFilter.startTime,
           endTime: this.timeFilter.endTime,
           range: this.timeFilter.dateRangeValue

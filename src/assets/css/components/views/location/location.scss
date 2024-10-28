@@ -16,6 +16,23 @@ $color-highlight: #CC4444;
   padding: 0 20px 20px;
   position: relative;
 
+  .subscriber-tags {
+    display: flex;
+    flex-wrap: wrap;
+
+    .subscriber-tag {
+      display: flex;
+      justify-content: center;
+      margin: 0 6px 6px 0;
+      height: 20px;
+      line-height: 20px;
+      padding: 0 6px;
+      font-size: 12px;
+      border: 1px solid;
+      border-radius: 2px;
+    }
+  }
+
   .location-tabs {
     .traceTracking-tabs_label {
       display: flex;
