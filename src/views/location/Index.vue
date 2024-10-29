@@ -196,7 +196,7 @@
                 </span>
                 <div class="body__item">
                   <div class="item__label">MSISDN</div>
-                  <div class="item__value">{{item.phoneNumber}}</div>
+                  <div class="item__value">{{item.phoneNumber || '-'}}</div>
                 </div>
                 <div class="body__item">
                   <div class="item__label">IMEI</div>

@@ -472,7 +472,7 @@ if (openMock) {
       pageSize: 10,
       total: 4,
       list: [
-        { entityValue: 'test123987', entityType: 'subscriber_id' },
+        { entityValue: 'test123987', entityType: 'subscriber' },
         { entityValue: '172.217.24.66', entityType: 'ip' },
         { entityValue: 'gdbzkz.com', entityType: 'domain' },
         { entityValue: 'qqvideo', entityType: 'app' }
@@ -544,7 +544,7 @@ if (openMock) {
         }
         break
       }
-      case ('subscriber_id'): {
+      case ('subscriber'): {
         result = {
           phone_number: '1568912455',
           imei: 'r45ty5454fh',
@@ -850,7 +850,7 @@ const getEntityType = (url) => {
     entityType = 'app'
   }
   if (url.indexOf('/subscriber?') > -1) {
-    entityType = 'subscriber_id'
+    entityType = 'subscriber'
   }
   return entityType
 }
@@ -866,8 +866,8 @@ const getRelateType = (url) => {
   if (url.indexOf('/apps?') > -1) {
     entityType = 'app'
   }
-  if (url.indexOf('/subscriber_id?') > -1) {
-    entityType = 'subscriber_id'
+  if (url.indexOf('/subscriber?') > -1) {
+    entityType = 'subscriber'
   }
   return entityType
 }

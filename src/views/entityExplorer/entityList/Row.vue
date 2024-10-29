@@ -91,7 +91,7 @@
                   <span class="row-item-value">{{ entityData.category ? appRisk(entityData.category.appRisk) : '-' }}</span>
                 </div>
               </template>
-              <template v-else-if="entityData.entityType === 'subscriber_id'">
+              <template v-else-if="entityData.entityType === 'subscriber'">
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-shoujihaoma"></i>
                   <span class="row-item-label">MSISDN&nbsp;:&nbsp;&nbsp;</span>
@@ -167,7 +167,7 @@
       <div class="show-detail__block">
         <div class="new-show-detail">
           <div @click="showDetail"><i class="cn-icon cn-icon-detail"></i>{{ $t('overall.detail') }} ></div>
-          <div @click="showGraph" v-if="entity.entityType !== 'subscriber_id'"><i class="cn-icon cn-icon-graph"></i>{{ $t('entities.graph') }} ></div>
+          <div @click="showGraph" v-if="entity.entityType !== 'subscriber'"><i class="cn-icon cn-icon-graph"></i>{{ $t('entities.graph') }} ></div>
         </div>
       </div>
       <el-collapse-transition>
@@ -277,7 +277,7 @@ export default {
           url = api.entity.entityList.appBasicInfo
           break
         }
-        case ('subscriber_id'): {
+        case ('subscriber'): {
           url = api.entity.entityList.subscriberBasicInfo
           break
         }
@@ -290,6 +290,7 @@ export default {
     },
     initTagsData () {
       let url = ''
+      console.info(this.entity)
       switch (this.entity.entityType) {
         case ('domain'): {
           url = api.entity.entityList.domainTags
@@ -299,12 +300,12 @@ export default {
           url = api.entity.entityList.ipTags
           break
         }
-        case ('subscriber_id'): {
+        case ('subscriber'): {
           url = api.entity.entityList.subscriberTags
           break
         }
       }
-      if (this.entity.entityType === 'domain' || this.entity.entityType === 'ip' || this.entity.entityType === 'subscriber_id') {
+      if (this.entity.entityType === 'domain' || this.entity.entityType === 'ip' || this.entity.entityType === 'subscriber') {
         axios.get(`${url}?resource=${this.entity.entityValue}`).then(responese => {
           const res = responese.data
           if (responese.status === 200) {

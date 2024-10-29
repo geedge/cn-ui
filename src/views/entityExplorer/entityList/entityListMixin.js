@@ -39,19 +39,19 @@ export default {
     iconClass () {
       let className
       switch (this.entityData.entityType) {
-        case ('ip'): {
+        case 'ip': {
           className = 'cn-icon cn-icon-ip2'
           break
         }
-        case ('domain'): {
+        case 'domain': {
           className = 'cn-icon cn-icon-domain2'
           break
         }
-        case ('app'): {
+        case 'app': {
           className = 'cn-icon cn-icon-app2'
           break
         }
-        case ('subscriber_id'): {
+        case 'subscriber': {
           className = 'cn-icon cn-icon-pedestrian'
           break
         }
@@ -124,12 +124,8 @@ export default {
   },
   methods: {
     showDetail () {
-      let entityType = _.cloneDeep(this.entityData.entityType)
-      if (entityType === 'subscriber_id') {
-        entityType = entityType.slice(0, -3)
-      }
       const queryParam = {
-        entityType: entityType,
+        entityType: this.entityData.entityType,
         entityName: this.entityData.entityValue,
         range: this.timeFilter.dateRangeValue
       }
@@ -277,7 +273,7 @@ export default {
             this.performanceEventUrl = api.entity.entityList.appEventPerformance
             break
           }
-          case 'subscriber_id': {
+          case 'subscriber': {
             this.trafficUrl = api.entity.entityList.subscriberThroughput
             break
           }
@@ -365,7 +361,7 @@ export default {
     this.initUrl()
     setTimeout(() => {
       this.queryEntityDetailTraffic()
-      if (this.entity.entityType !== 'subscriber_id') {
+      if (this.entity.entityType !== 'subscriber') {
         this.queryNetworkQuantity()
         this.queryEventNum()
       }

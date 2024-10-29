@@ -9,7 +9,7 @@
     <template v-else-if="entity.entityType === 'app'">
       <app-overview :entity="entity" :time-filter="timeFilter" :keywordList="keywordList" @reloadEntity="getEntity" @eventNum="getEventNum"></app-overview>
     </template>
-    <template v-else-if="entity.entityType === 'subscriber_id'">
+    <template v-else-if="entity.entityType === 'subscriber'">
       <subscriber-overview :entity="entity" :time-filter="timeFilter" :keywordList="keywordList" @reloadEntity="getEntity" @eventNum="getEventNum"></subscriber-overview>
     </template>
   </div>
