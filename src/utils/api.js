@@ -379,7 +379,7 @@ export const api = {
     density: apiVersion + '/locationIntelligence/population/density',
     trend: apiVersion + '/locationIntelligence/active/trend',
     count: apiVersion + '/locationIntelligence/active/count',
-    baseStation: apiVersion + '/locationIntelligence/baseStation',
+    baseStation: apiVersion + '/cell/list',
     list: apiVersion + '/locationIntelligence/list',
     totalCount: apiVersion + '/locationIntelligence/list/count',
     followedSubscriber: apiVersion + '/locationIntelligence/followed/subscribers',

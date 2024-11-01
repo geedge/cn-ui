@@ -7,6 +7,7 @@ $color-primary: var(--el-color-primary);
 $color-human: #233447; // 以下是颜色暂无替代的
 $color-circle: #DE3434;
 $color-base-station: #585B5F;
+$color-cell: #586A7F;
 $color-search-follow: #6f6f6e;
 $color-highlight: #CC4444;
 
@@ -36,7 +37,7 @@ $color-highlight: #CC4444;
   .location-tabs {
     .traceTracking-tabs_label {
       display: flex;
-      flex-display: row;
+
 
       .traceTracking-num {
         margin-top: 5px;
@@ -175,7 +176,7 @@ $color-highlight: #CC4444;
         width: 20px;
         height: 20px;
         border-radius: 50%;
-        cursor: default;
+        cursor: pointer;
         padding: 0;
         transition: height .1s linear, width .1s linear;
 
@@ -186,7 +187,6 @@ $color-highlight: #CC4444;
 
         &.map-marker--human {
           background-color: $color-human;
-          cursor: pointer;
 
           svg {
             width: 14px;
@@ -196,6 +196,16 @@ $color-highlight: #CC4444;
 
         &.map-marker--base-station {
           background-color: $color-base-station;
+
+          svg {
+            width: 12px;
+            height: 12px;
+          }
+        }
+
+        &.map-marker--cell {
+          border: 1px solid $color-white;
+          background-color: $color-cell;
 
           svg {
             width: 12px;
@@ -215,9 +225,11 @@ $color-highlight: #CC4444;
             height: 21px;
           }
 
-          &.map-marker--base-station svg {
-            width: 18px;
-            height: 18px;
+          &.map-marker--base-station, &.map-marker--cell {
+            svg {
+              width: 18px;
+              height: 18px;
+            }
           }
         }
 
@@ -232,6 +244,14 @@ $color-highlight: #CC4444;
           svg {
             width: 21px;
             height: 21px;
+          }
+          &.map-marker--base-station {
+            background-color: $color-base-station;
+
+            svg {
+              width: 18px;
+              height: 18px;
+            }
           }
         }
 
@@ -358,77 +378,24 @@ $color-highlight: #CC4444;
           align-items: center;
           font-size: 12px;
         }
-      }
-      /*.analysis-statistics__search {
-        margin-bottom: 10px;
-        padding-left: 10px;
-        .el-select {
-          .search-active {
-            float: left;
-            border-radius: 3px;
-            width: 6px;
-            height: 6px;
-            margin-right: 10px;
-            position: relative;
-            top: 50%;
-            transform: translateY(-50%);
-            text-align: center;
+        .input-to-select {
+          .el-input__wrapper {
+            display: none;
           }
 
-          .search-value {
-            font-size: 14px;
-            margin-right: 20px;
-          }
+          .el-input-group__append {
+            width: 100%;
+            padding: 0;
 
-          .search-id {
-            color: var(--el-color-info);
-          }
-
-          .search-follow__icon {
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            color: $color-search-follow;
-            margin-right: 10px;
-            text-align: center;
-
-            i {
-              font-size: 12px;
+            .el-select {
+              .el-select__wrapper {
+                background-color: #FFFFFF;
+                box-shadow: 0 0 0 1px var(--el-input-border-color, var(--el-border-color)) inset;
+              }
             }
           }
-
-          .search-content {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            justify-content: center;
-          }
-
-          .active-icon {
-            background: $color-business;
-          }
-
-          .inactive-icon {
-            background: $color-inactive;
-          }
-
-          .search-select {
-            max-height: 250px;
-          }
-
-          .search-select .el-scrollbar__wrap {
-            max-height: 250px;
-            overflow-y: auto;
-          }
-
-          .el-select-dropdown .el-scrollbar .el-select-dropdown__wrap .el-scrollbar__view.el-select-dropdown__list .el-select-dropdown__item {
-            position: relative;
-            height: 48px;
-            line-height: 16px;
-          }
         }
-      }*/
+      }
       .analysis-statistics__condition {
         display: flex;
         justify-content: space-between;
@@ -549,12 +516,13 @@ $color-highlight: #CC4444;
 
       .analysis-statistics__title {
         position: relative;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         padding-left: 10px;
         font-size: 16px;
         color: $color-text-primary;
         display: flex;
         justify-content: space-between;
+
         .el-checkbox__label {
           font-size: 14px;
           color: $color-text-primary !important;
@@ -832,6 +800,12 @@ $color-highlight: #CC4444;
                         margin-left: 2px;
                         border-radius: 50%;
                         background-color: $color-circle;
+
+                        &.circle-circle__highlight {
+                          margin-left: 0;
+                          width: 14px;
+                          height: 14px;
+                        }
                       }
 
                       .circle-line {
@@ -879,7 +853,7 @@ $color-highlight: #CC4444;
     box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.5);
     border-radius: 2px;
     min-width: 185px;
-    z-index: 1;
+    z-index: 5;
 
     /*&.geo-analysis__hexagon-tooltip--hexagon {
     }*/
@@ -896,7 +870,18 @@ $color-highlight: #CC4444;
 
       .hexagon-tooltip__body {
         .body__item .item__label {
-          width: 140px;
+          width: 80px;
+        }
+      }
+    }
+    &.geo-analysis__hexagon-tooltip--cell {
+      .icon__box {
+        background-color: $color-cell;
+      }
+
+      .hexagon-tooltip__body {
+        .body__item .item__label {
+          width: 100px;
         }
       }
     }
