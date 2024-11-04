@@ -1103,7 +1103,7 @@ export default {
                 el.classList.add('map-marker--highlight')
               }
               // 非关注的用户，默认隐藏图标，鼠标移到列表后才显示
-              if (this.currentZoom && this.currentZoom < 6) {
+              if (this.currentZoom && this.currentZoom < 11) {
                 el.classList.add('map-marker--hidden')
               }
               if (!marker.isFollowed && this.onlyShowFollowed) {
@@ -1127,7 +1127,7 @@ export default {
                 el.classList.add('map-marker--highlight')
               }
               // 非关注的用户，默认隐藏图标，鼠标移到列表后才显示
-              if (this.currentZoom && this.currentZoom < 6) {
+              if (this.currentZoom && this.currentZoom < 11) {
                 el.classList.add('map-marker--hidden')
               }
               if (!marker.isFollowed && this.onlyShowFollowed) {
@@ -1147,7 +1147,7 @@ export default {
           } else if (type === this.tooltipType.baseStation) {
             const el = document.createElement('div')
             el.className = `map-marker map-marker--${type}`
-            if (this.currentZoom && this.currentZoom < 6) {
+            if (this.currentZoom && this.currentZoom < 11) {
               el.classList.add('map-marker--hidden')
             }
             el.innerHTML = baseStationSvg
@@ -1160,7 +1160,7 @@ export default {
           } else if (type === this.tooltipType.cell) {
             const el = document.createElement('div')
             el.className = `map-marker map-marker--${type}`
-            if (this.currentZoom && this.currentZoom < 6) {
+            if (this.currentZoom && this.currentZoom < 11) {
               el.classList.add('map-marker--hidden')
             }
             el.innerHTML = cellSvg
@@ -1376,7 +1376,7 @@ export default {
       console.info(`current zoom: ${this.currentZoom}`)
 
       if (this.activeTab === 'traceTracking') {
-        if (this.currentZoom && this.currentZoom < 6) {
+        if (this.currentZoom && this.currentZoom < 11) {
           this.hideBaseStation()
         } else {
           this.showBaseStation()
@@ -1430,7 +1430,7 @@ export default {
     trackingHexagonZoomEnd () {
       this.currentZoom = this.mapChart.getZoom()
       console.info(`current zoom: ${this.currentZoom}`)
-      if (this.currentZoom && this.currentZoom < 6) {
+      if (this.currentZoom && this.currentZoom < 11) {
         this.hideBaseStation()
       } else {
         this.showBaseStation()
@@ -1984,7 +1984,7 @@ export default {
             find.removeClassName && find.removeClassName('map-marker--unfollowed')
           }
           // 变更地图上图标的class
-          if (this.currentZoom && this.currentZoom < 6) {
+          if (this.currentZoom && this.currentZoom < 11) {
             this.hideBaseStation()
             this.hideFollowed()
           } else {
@@ -1999,7 +1999,7 @@ export default {
             find.addClassName && find.addClassName('map-marker--unfollowed')
           }
           // 变更地图上图标的class
-          if (this.currentZoom && this.currentZoom < 6) {
+          if (this.currentZoom && this.currentZoom < 11) {
             this.hideBaseStation()
             this.hideFollowed()
           } else {
@@ -2041,7 +2041,7 @@ export default {
             if (find) {
               find.addClassName && find.addClassName('map-marker--unfollowed')
             }
-            if (this.currentZoom && this.currentZoom < 6) {
+            if (this.currentZoom && this.currentZoom < 11) {
               this.hideBaseStation()
               this.hideFollowed()
             } else {
@@ -2065,7 +2065,7 @@ export default {
             if (find) {
               find.removeClassName && find.removeClassName('map-marker--unfollowed')
             }
-            if (this.currentZoom && this.currentZoom < 6) {
+            if (this.currentZoom && this.currentZoom < 11) {
               this.hideBaseStation()
               this.hideFollowed()
             } else {
@@ -2334,7 +2334,7 @@ export default {
     },
     currentZoom (n, o) {
       // zoom 小于11隐藏 marker
-      if (o && n < 6) {
+      if (o && n < 11) {
         this.hideBaseStation()
         this.hideFollowed()
       } else {
