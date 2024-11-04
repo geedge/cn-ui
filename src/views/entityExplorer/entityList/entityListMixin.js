@@ -51,7 +51,7 @@ export default {
           className = 'cn-icon cn-icon-app2'
           break
         }
-        case 'subscriber': {
+        case 'subscriber_id': {
           className = 'cn-icon cn-icon-pedestrian'
           break
         }
@@ -125,7 +125,7 @@ export default {
   methods: {
     showDetail () {
       const queryParam = {
-        entityType: this.entityData.entityType,
+        entityType: this.entityData.entityType === 'subscriber_id' ? 'subscriber' : this.entityData.entityType,
         entityName: this.entityData.entityValue,
         range: this.timeFilter.dateRangeValue
       }
@@ -273,7 +273,7 @@ export default {
             this.performanceEventUrl = api.entity.entityList.appEventPerformance
             break
           }
-          case 'subscriber': {
+          case 'subscriber_id': {
             this.trafficUrl = api.entity.entityList.subscriberThroughput
             break
           }
@@ -361,7 +361,7 @@ export default {
     this.initUrl()
     setTimeout(() => {
       this.queryEntityDetailTraffic()
-      if (this.entity.entityType !== 'subscriber') {
+      if (this.entity.entityType !== 'subscriber_id') {
         this.queryNetworkQuantity()
         this.queryEventNum()
       }
