@@ -48,7 +48,7 @@
                     <div class="scroll-list" :style="`transform: translateY(${trackingSubscriber.startOffset}px)`">
                       <div class="scroll__item"
                            v-for="(record, index) in trackingSubscriber.trackRecords.slice(trackingSubscriber.scrollStartIndex, trackingSubscriber.scrollEndIndex)"
-                           :key="record.time"
+                           :key="index"
                            @click="timelineClick(record)"
                            @mouseenter="timelineMouseEnter(trackingSubscriber, record)"
                            @mouseleave="timelineMouseLeave(trackingSubscriber, record)"
