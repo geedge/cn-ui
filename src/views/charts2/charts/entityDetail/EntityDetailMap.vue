@@ -49,7 +49,7 @@
                       <div class="scroll__item"
                            v-for="(record, index) in trackingSubscriber.trackRecords.slice(trackingSubscriber.scrollStartIndex, trackingSubscriber.scrollEndIndex)"
                            :key="record.time"
-                           @click="timelineClick(subscriber, record)"
+                           @click="timelineClick(record)"
                            @mouseenter="timelineMouseEnter(trackingSubscriber, record)"
                            @mouseleave="timelineMouseLeave(trackingSubscriber, record)"
                       >
@@ -912,7 +912,7 @@ export default {
     hoverTrigger (source, id, hover) {
       this.mapChart.setFeatureState({ source, id }, { hover })
     },
-    timelineClick (subscriber, record) {
+    timelineClick (record) {
       // 点击timeline时，将地图中心移动到该记录的位置，并高亮左侧小红圈
       this.mapChart.panTo([record.subscriberLongitude, record.subscriberLatitude], { duration: 500 })
       this.highlightTrackingTimeline = record

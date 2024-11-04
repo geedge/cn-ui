@@ -349,12 +349,12 @@
                       <div class="timeline__info">
                         <div class="info-icons">
                           <div class="icon-circle">
-                            <i class="cn-icon cn-icon-events2" v-if="trackingSubscriberRecordMap[subscriber.subscriberId].dataSource === 'Session Record'"></i>
+                            <i class="cn-icon cn-icon-events2" v-if="trackingSubscriberRecordMap[subscriber.subscriberId][0].dataSource === 'Session Record'"></i>
                             <div class="circle-circle"></div>
                           </div>
                           <div class="info-line" v-show="subscriber.showLine"></div>
                         </div>
-                        <div class="timeline__info--item" @click="timelineClick(subscriber, trackingSubscriberRecordMap[subscriber.subscriberId][0])" @mouseenter="timelineMouseEnter(subscriber, trackingSubscriberRecordMap[subscriber.subscriberId][0])" @mouseleave="timelineMouseLeave(subscriber, trackingSubscriberRecordMap[subscriber.subscriberId][0])">
+                        <div class="timeline__info--item" @click="timelineClick(trackingSubscriberRecordMap[subscriber.subscriberId][0])" @mouseenter="timelineMouseEnter(subscriber, trackingSubscriberRecordMap[subscriber.subscriberId][0])" @mouseleave="timelineMouseLeave(subscriber, trackingSubscriberRecordMap[subscriber.subscriberId][0])">
                           <div>
                             <span>{{$t('overall.location')}}: </span><span class="info--item__value">{{locationHandler(trackingSubscriberRecordMap[subscriber.subscriberId][0])}}</span>
                           </div>
@@ -374,7 +374,7 @@
                           <div class="scroll__item"
                                v-for="(record, index) in trackingSubscriberRecordMap[subscriber.subscriberId].slice(subscriber.scrollStartIndex, subscriber.scrollEndIndex)"
                                :key="index"
-                               @click="timelineClick(subscriber, record)"
+                               @click="timelineClick(record)"
                                @mouseenter="timelineMouseEnter(subscriber, record)"
                                @mouseleave="timelineMouseLeave(subscriber, record)">
                             <div class="item-icons">
@@ -1627,7 +1627,7 @@ export default {
         }
       }
     },
-    timelineClick (subscriber, record) {
+    timelineClick (record) {
       // 点击timeline时，将地图中心移动到该记录的位置，并高亮左侧小红圈
       this.mapChart.panTo([record.subscriberLongitude, record.subscriberLatitude], { duration: 500 })
       this.highlightTrackingTimeline = record
