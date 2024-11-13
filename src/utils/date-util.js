@@ -106,7 +106,9 @@ export function timestampToList (time) {
  * @returns {number}
  */
 export function millTimestampDiffFromTz () {
-  return parseInt(localStorage.getItem(storageKey.timezoneLocalOffset)) * 3600 * 1000 - window.$dayJs.tz().utcOffset() * 60 * 1000
+  const localOffset = Number(localStorage.getItem(storageKey.timezoneLocalOffset)) * 3600 * 1000
+  const serverOffset = window.$dayJs.tz().utcOffset() * 60 * 1000
+  return localOffset - serverOffset
 }
 /**
  * echarts时间类型横坐标formatter
