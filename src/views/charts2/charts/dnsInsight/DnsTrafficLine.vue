@@ -466,6 +466,19 @@ export default {
         })
       }
       lineData.splice(0, 1)
+      const totalData = lineData[0]
+      // 判断total曲线的第一个值和最后一个值，若是0，则删除
+      if (totalData.values.length > 1 && Number(totalData.values[totalData.values.length - 1][1]) === 0) {
+        lineData.forEach(r => {
+          r.values.splice(r.values.length - 1, 1)
+        })
+      }
+      if (totalData.values[0].length > 1 && Number(totalData.values[0][1]) === 0) {
+        lineData.forEach(l => {
+          l.values.splice(0, 1)
+        })
+      }
+
       const tabs = _.cloneDeep(this.tabs)
       if (val === 'Queries/s') {
         lineData.forEach((d, i) => {

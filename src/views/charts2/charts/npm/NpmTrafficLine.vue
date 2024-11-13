@@ -141,6 +141,7 @@ export default {
       }
 
       this.toggleLoading(true)
+      // 有q是下钻的
       if (params.type && params.q) {
         axios.get(api.npm.overview.trafficGraph, { params: params }).then(response => {
           const res = response.data
@@ -421,7 +422,16 @@ export default {
           }
         })
       }
+      // 删掉第一条无用数据
       lineData.splice(0, 1)
+      // 判断曲线的第一个值和最后一个值，若是0，则删除
+      if (lineData[0] && lineData[0].values.length > 1 && lineData[0].values[lineData[0].values.length - 1][1] === 0) {
+        lineData[0].values.splice(lineData[0].values.length - 1, 1)
+      }
+      if (lineData[0] && lineData[0].values.length > 1 && lineData[0].values[0][1] === 0) {
+        lineData[0].values.splice(0, 1)
+      }
+
       const tabs = _.cloneDeep(this.tabs)
       const npmQuantity = _.cloneDeep(this.npmQuantity)
       if (val === 'Sessions/s') {

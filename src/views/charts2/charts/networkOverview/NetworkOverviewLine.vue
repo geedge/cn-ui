@@ -251,13 +251,13 @@ export default {
         }
         const _this = this
         this.chartOption = stackedLineChartOption
-        const chartOption = this.chartOption.series[0]
+        const series = this.chartOption.series[0]
         // 1、堆叠图从下往上堆叠图形，数组倒序操作，目的让堆叠图图形按数组一样从上往下展示
         // 2、tooltip会跟着倒序操作，数据展示相反，tooltip处再将数组倒序回来
         echartsData = echartsData.reverse()
         this.chartOption.series = echartsData.map((t, i) => {
           return {
-            ...chartOption,
+            ...series,
             name: t.name,
             type: 'line',
             showSymbol: false,
@@ -521,8 +521,9 @@ export default {
           }
         })
       }
+      // 删掉第一条无用数据
       lineData.splice(0, 1)
-      // TODO 下面的逻辑是判断total曲线的尾部数据，从尾往前数0值的个数，若个数大于0，所有曲线都从尾部去掉相同数量的点，最多4个
+      // 判断total曲线的尾部数据，从尾往前数0值的个数，若个数大于0，所有曲线都从尾部去掉相同数量的点，最多4个
       const totalData = lineData[0]
       if (_.get(totalData, 'values', []).length > 4) {
         let count = 0
@@ -538,6 +539,12 @@ export default {
             l.values.splice(l.values.length - count, count)
           })
         }
+      }
+      // 判断total曲线的头部数据，若第一个值是0，则删除第一个值
+      if (totalData.values[0].length > 1 && totalData.values[0][1] === 0) {
+        lineData.forEach(l => {
+          l.values.splice(0, 1)
+        })
       }
 
       if (val === metricType.Sessions) {

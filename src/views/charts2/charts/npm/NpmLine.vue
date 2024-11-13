@@ -147,8 +147,26 @@ export default {
                     this.chartOptionLineData[i].values = t.values
                   })
                   const result = this.chartOptionLineData.filter(t => this.chartData.params.color.indexOf(t.color) > -1)
+                  // 判断曲线的第一个值和最后一个值，若是0，则删除
+                  if (result[0] && result[0].values.length > 1 && result[0].values[result[0].values.length - 1][1] === 0) {
+                    result.forEach(r => {
+                      r.values.splice(r.values.length - 1, 1)
+                    })
+                  }
+                  if (result[0] && result[0].values.length > 1 && result[0].values[0][1] === 0) {
+                    result.forEach(r => {
+                      r.values.splice(0, 1)
+                    })
+                  }
                   this.echartsInit(result, this.chartData, this.chartData.params.unitType)
                 } else {
+                  // 判断曲线的第一个值和最后一个值，若是0，则删除
+                  if (res.data.result[0] && res.data.result[0].values.length > 1 && res.data.result[0].values[res.data.result[0].values.length - 1][1] === 0) {
+                    res.data.result[0].values.splice(res.data.result[0].values.length - 1, 1)
+                  }
+                  if (res.data.result[0] && res.data.result[0].values.length > 1 && res.data.result[0].values[0][1] === 0) {
+                    res.data.result[0].values.splice(0, 1)
+                  }
                   this.echartsInit(res.data.result, this.chartData, this.chartData.params.unitType)
                 }
               }

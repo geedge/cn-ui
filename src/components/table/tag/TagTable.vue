@@ -377,9 +377,16 @@ export default {
     echartsInit (data, item, type) {
       const dom = document.getElementById(`chart${item.id}`)
       if (dom && item) {
-        // if (!this.myChart) {
+        // 判断所有曲线的第一个值和最后一个值，若均为0，则删除该点
+        // 判断total曲线的第一个值和最后一个值，若是0，则删除
+        if (data.length > 1 && data[data.length - 1].ipCount === 0 && data[data.length - 1].domainCount === 0) {
+          data.splice(data.length - 1, 1)
+        }
+        if (data.length > 1 && data[0].ipCount === 0 && data[0].domainCount === 0) {
+          data.splice(0, 1)
+        }
+
         this.myChart = echarts.init(dom)
-        // }
         this.chartOption = tagLineChartOption
         const series = []
         if (item.indicatorType && item.indicatorType.indexOf('IP') > -1) {
