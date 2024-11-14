@@ -1268,24 +1268,6 @@ export function getIndexByEventSeverity (type) {
   }
 }
 
-export function getQueryByFlag2 (type, condition) {
-  switch (type) {
-    case 'country':
-    case 'asn':
-    case 'province':
-    case 'city':
-    case 'isp': {
-      return `${type}='${condition[1]}'`
-    }
-    case 'idcRenter': {
-      return `idc_renter='${condition[1]}'`
-    }
-    default: {
-      return `${condition[0]}'${condition[1]}'`
-    }
-  }
-}
-
 /**
  根据语言环境获取字符所占像素px
  */
@@ -1581,9 +1563,7 @@ const tagValueHandler = (value) => {
   return find ? find.name : value
 }
 
-export const headerCellClass = (row) => {
-  return 'my-header-cell-class'
-}
+export const headerCellClass = 'my-header-cell-class'
 
 /**
  * & 被转译为&amp; 将转义后的值转为 &
@@ -1620,4 +1600,27 @@ export const getSeverityByCode = (code) => {
       return 'Info'
     }
   }
+}
+
+export function getYAxisBeginValue (data) {
+  let max
+  let min
+  data.forEach(line => {
+    line.data && line.data.forEach(value => {
+      if (max === undefined || max < value[1]) {
+        max = value[1]
+      }
+      if (min === undefined || min > value[1]) {
+        min = value[1]
+      }
+    })
+  })
+  if (_.isNumber(min) && min >= 100) {
+    const diff = max - min
+    if (diff / min < 0.5) {
+      const minMDiff = min - diff > 0.8 * min ? min - diff : 0.8 * min
+      return Math.floor(minMDiff / Math.pow(10, `${Math.floor(minMDiff)}`.length - 2)) * Math.pow(10, `${Math.floor(minMDiff)}`.length - 2)
+    }
+  }
+  return 0
 }

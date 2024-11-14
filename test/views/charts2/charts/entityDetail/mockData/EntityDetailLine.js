@@ -26,32 +26,38 @@ const mockData = {
               totalBitsRate: {
                 analysis: {
                   avg: '0'
-                }
+                },
+                values: []
               },
               inboundBitsRate: {
                 analysis: {
                   avg: '0'
-                }
+                },
+                values: []
               },
               outboundBitsRate: {
                 analysis: {
                   avg: '95229000000000000000'
-                }
+                },
+                values: []
               },
               internalBitsRate: {
                 analysis: {
                   avg: '0'
-                }
+                },
+                values: []
               },
               throughBitsRate: {
                 analysis: {
                   avg: '0'
-                }
+                },
+                values: []
               },
               other: {
                 analysis: {
                   avg: '0.01'
-                }
+                },
+                values: []
               }
             },
             {

@@ -83,7 +83,7 @@ import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
-import { getLineType, getMarkLineByLineRefer, overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import {getLineType, getMarkLineByLineRefer, getYAxisBeginValue, overwriteUrl, urlParamsHandler} from '@/utils/tools'
 import { dataForDnsTrafficLine } from '@/utils/static-data'
 export default {
   name: 'DnsTrafficLine',
@@ -292,6 +292,7 @@ export default {
               }
             }
           })
+          this.chartOption.yAxis[0].startValue = getYAxisBeginValue(this.chartOption.series)
           if (!show) {
             this.chartOption.series.forEach((t) => {
               t.markLine.label.show = false
@@ -378,6 +379,13 @@ export default {
             this.dispatchSelectAction('legendUnSelect', t.name)
           }
         })
+        const series = this.tabs.filter(tab => tab.show)
+        const yAxisStartValue = getYAxisBeginValue(series)
+        if (this.myChart) {
+          const _option = this.myChart.getOption()
+          _option.yAxis[0].startValue = yAxisStartValue
+          this.myChart.setOption(_option)
+        }
       }
       if (val === 'active') {
         this.tabs.forEach(t => {

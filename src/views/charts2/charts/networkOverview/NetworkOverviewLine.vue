@@ -72,7 +72,7 @@ import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
-import { getLineType, getMarkLineByLineRefer, overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { getLineType, getMarkLineByLineRefer, overwriteUrl, urlParamsHandler, getYAxisBeginValue } from '@/utils/tools'
 import ChartError from '@/components/common/Error'
 import { dataForNetworkOverviewLine } from '@/utils/static-data'
 
@@ -202,6 +202,7 @@ export default {
       this.toggleLoading(true)
       axios.get(url, { params: params }).then(response => {
         const res = response.data
+        console.info(res)
         if (response.status === 200) {
           this.chartDateObject = res.data.result
           this.isNoData = res.data.result.length === 0
@@ -319,6 +320,7 @@ export default {
             }
           }
         })
+        this.chartOption.yAxis[0].startValue = getYAxisBeginValue(this.chartOption.series)
         if (!show && !this.lineTab) {
           this.chartOption.series.forEach((t) => {
             t.markLine.label.show = false
@@ -423,13 +425,18 @@ export default {
             }
           })
         }
+        const series = this.tabs.filter(tab => tab.show)
+        const yAxisStartValue = getYAxisBeginValue(series)
+        const _option = this.myChart.getOption()
+        _option.yAxis[0].startValue = yAxisStartValue
+        this.myChart.setOption(_option)
       }
       if (val === 'active') {
         this.tabs.forEach(t => {
           t.invertTab = item.name === t.name ? !t.invertTab : true
           if (t.invertTab && item.name === t.name) {
             this.lineTab = this.lineTab ? '' : t.class
-            this.tabs.forEach((e) => {
+            this.tabs.forEach(e => {
               this.dispatchSelectAction('legendSelect', e.name)
             })
           }
@@ -541,12 +548,11 @@ export default {
         }
       }
       // 判断total曲线的头部数据，若第一个值是0，则删除第一个值
-      if (totalData.values[0].length > 1 && totalData.values[0][1] === 0) {
+      if (totalData && totalData.values && totalData.values[0] && totalData.values[0].length > 1 && totalData.values[0][1] === 0) {
         lineData.forEach(l => {
           l.values.splice(0, 1)
         })
       }
-
       if (val === metricType.Sessions) {
         const tabs = _.cloneDeep(this.tabsTemplate)
         lineData.forEach((d, i) => {

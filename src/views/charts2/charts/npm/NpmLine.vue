@@ -69,6 +69,7 @@ import chartMixin from '@/views/charts2/chart-mixin'
 import unitConvert from '@/utils/unit-convert'
 import ChartError from '@/components/common/Error'
 import { dataForNpmLine } from '@/utils/static-data'
+import { getYAxisBeginValue } from '@/utils/tools'
 
 export default {
   name: 'NpmLine',
@@ -135,7 +136,221 @@ export default {
 
         if (url) {
           axios.get(url, { params: params }).then(response => {
-            const res = response.data
+            const res = {
+              "data": {
+                "resultType": "matrix",
+                "result": [
+                  {
+                    "values": [
+                      [
+                        1731574080,
+                        0.0
+                      ],
+                      [
+                        1731574140,
+                        17826.96
+                      ],
+                      [
+                        1731574200,
+                        4890.96
+                      ],
+                      [
+                        1731574260,
+                        4667.6
+                      ],
+                      [
+                        1731574320,
+                        4504.24
+                      ],
+                      [
+                        1731574380,
+                        3907.2
+                      ],
+                      [
+                        1731574440,
+                        3943.2
+                      ],
+                      [
+                        1731574500,
+                        6414.4
+                      ],
+                      [
+                        1731574560,
+                        3310.24
+                      ],
+                      [
+                        1731574620,
+                        9168.4
+                      ],
+                      [
+                        1731574680,
+                        575.2
+                      ],
+                      [
+                        1731574740,
+                        2633.44
+                      ],
+                      [
+                        1731574800,
+                        8965.04
+                      ],
+                      [
+                        1731574860,
+                        622.24
+                      ],
+                      [
+                        1731574920,
+                        2636.56
+                      ],
+                      [
+                        1731574980,
+                        0.0
+                      ]
+                    ],
+                    "type": "totalBitsRate"
+                  },
+                  {
+                    "values": [
+                      [
+                        1731574080,
+                        0.0
+                      ],
+                      [
+                        1731574140,
+                        14262.96
+                      ],
+                      [
+                        1731574200,
+                        3917.2
+                      ],
+                      [
+                        1731574260,
+                        3808.4
+                      ],
+                      [
+                        1731574320,
+                        3649.84
+                      ],
+                      [
+                        1731574380,
+                        3159.2
+                      ],
+                      [
+                        1731574440,
+                        3096.8
+                      ],
+                      [
+                        1731574500,
+                        5166.0
+                      ],
+                      [
+                        1731574560,
+                        2644.16
+                      ],
+                      [
+                        1731574620,
+                        7310.16
+                      ],
+                      [
+                        1731574680,
+                        476.4
+                      ],
+                      [
+                        1731574740,
+                        2108.4
+                      ],
+                      [
+                        1731574800,
+                        7193.84
+                      ],
+                      [
+                        1731574860,
+                        501.04
+                      ],
+                      [
+                        1731574920,
+                        2124.56
+                      ],
+                      [
+                        1731574980,
+                        0.0
+                      ]
+                    ],
+                    "type": "inboundBitsRate"
+                  },
+                  {
+                    "values": [
+                      [
+                        1731574080,
+                        0.0
+                      ],
+                      [
+                        1731574140,
+                        1764.0
+                      ],
+                      [
+                        1731574200,
+                        1773.76
+                      ],
+                      [
+                        1731574260,
+                        1759.2
+                      ],
+                      [
+                        1731574320,
+                        1754.4
+                      ],
+                      [
+                        1731574380,
+                        1748.0
+                      ],
+                      [
+                        1731574440,
+                        1746.4
+                      ],
+                      [
+                        1731574500,
+                        1748.4
+                      ],
+                      [
+                        1731574560,
+                        1766.16
+                      ],
+                      [
+                        1731574620,
+                        1758.24
+                      ],
+                      [
+                        1731574680,
+                        1798.8
+                      ],
+                      [
+                        1731574740,
+                        1725.04
+                      ],
+                      [
+                        1731574800,
+                        1771.2
+                      ],
+                      [
+                        1731574860,
+                        1721.2
+                      ],
+                      [
+                        1731574920,
+                        1712.0
+                      ],
+                      [
+                        1731574980,
+                        0.0
+                      ]
+                    ],
+                    "type": "outboundBitsRate"
+                  }
+                ]
+              }
+            }
+            // const res = response.data
             if (response.status === 200) {
               this.showError = false
               this.isNoData = res.data.result.length === 0
@@ -197,8 +412,6 @@ export default {
         }
         this.chartOption = npmLineChartOption
         this.chartOption.color = this.chartData.params.color
-        // this.chartOption.color = this.chartOption.color.reverse()
-        // data = data.reverse()
 
         this.chartOption.series = data.map(t => {
           return {
@@ -225,7 +438,7 @@ export default {
             data: t.values.map((v) => [Number(v[0]) * 1000, Number(v[1]), type])
           }
         })
-
+        this.chartOption.yAxis[0].startValue = getYAxisBeginValue(this.chartOption.series)
         this.chartOption.yAxis[0].axisLabel.formatter = (value) => {
           if (type === 'percent') {
             return unitConvert(value, type)[0]
@@ -302,6 +515,7 @@ export default {
       this.legendSelectChange(legendList, legend)
     },
     legendSelectChange (legendList, legend) {
+      const showLegend = []
       if (legendList.length > 0) {
         this.chartOptionLineData.forEach(t => {
           legendList.forEach(r => {
@@ -309,6 +523,7 @@ export default {
               this.dispatchSelectAction('legendUnSelect', t.legend)
             }
             if (!t.show) {
+              showLegend.push(t.legend)
               this.dispatchSelectAction('legendSelect', t.legend)
             }
           })
@@ -317,11 +532,16 @@ export default {
         this.chartOptionLineData.forEach(t => {
           legend.forEach(r => {
             if (t.legend !== r.legend) {
+              showLegend.push(t.legend)
               this.dispatchSelectAction('legendSelect', t.legend)
             }
           })
         })
       }
+      const _option = this.myChart.getOption()
+      const _series = _option.series.filter(s => showLegend.includes(s.name))
+      _option.yAxis[0].startValue = getYAxisBeginValue(_series)
+      this.myChart.setOption(_option)
     },
     resize () {
       this.myChartArray.forEach(t => {

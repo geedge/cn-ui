@@ -30,28 +30,30 @@
 
 <script>
 import * as echarts from 'echarts'
-import { trafficLineChartOption } from '@/views/charts2/charts/options/echartOption'
+import {trafficLineChartOption} from '@/views/charts2/charts/options/echartOption'
 import unitConvert from '@/utils/unit-convert'
-import { chartColor3, chartColor4, unitTypes } from '@/utils/constants.js'
-import { ref, shallowRef } from 'vue'
-import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
+import {chartColor3, chartColor4, unitTypes} from '@/utils/constants.js'
+import {ref, shallowRef} from 'vue'
+import {stackedLineTooltipFormatter} from '@/views/charts/charts/tools'
 import axios from 'axios'
-import { api } from '@/utils/api'
-import { getSecond } from '@/utils/date-util'
+import {api} from '@/utils/api'
+import {getSecond} from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import _ from 'lodash'
 import i18n from '@/i18n'
 import chartMixin from '@/views/charts2/chart-mixin'
-import { useRoute } from 'vue-router'
+import {useRoute} from 'vue-router'
+
 import {
-  getLineType,
   getLineIndexUnit,
   getLineIndexUnit2,
+  getLineType,
+  getYAxisBeginValue,
   overwriteUrl,
   urlParamsHandler
 } from '@/utils/tools'
 import ChartError from '@/components/common/Error'
-import { dataForNpmTrafficLine } from '@/utils/static-data'
+import {dataForNpmTrafficLine} from '@/utils/static-data'
 
 export default {
   name: 'NpmTrafficLine',
@@ -293,7 +295,7 @@ export default {
               data: t.data.map(v => [Number(v[0]) * 1000, Number(v[1]), t.unitType])
             }
           })
-
+          this.chartOption.yAxis[0].startValue = getYAxisBeginValue(this.chartOption.series)
           this.chartOption.tooltip.formatter = (params) => {
             params.forEach(t => {
               this.tabs.forEach(e => {
@@ -431,7 +433,6 @@ export default {
       if (lineData[0] && lineData[0].values.length > 1 && lineData[0].values[0][1] === 0) {
         lineData[0].values.splice(0, 1)
       }
-
       const tabs = _.cloneDeep(this.tabs)
       const npmQuantity = _.cloneDeep(this.npmQuantity)
       if (val === 'Sessions/s') {
@@ -445,7 +446,7 @@ export default {
           }
         })
         this.tabs = tabs
-        this.initEchartsOption(this.tabs)
+        this.initEchartsOption(this.tabs, null)
       } else if (val !== 'Bits/s' && val !== 'Packets/s') {
         this.initLegend(lineData, npmQuantity, true)
       } else {
@@ -480,13 +481,14 @@ export default {
           e.show = true
         })
         this.tabs = newNpmData
-        this.initEchartsOption(this.tabs)
+        this.initEchartsOption(this.tabs, null)
       }
     },
     httpError (e) {
       this.isNoData = false
       this.showError = true
       this.errorMsg = this.errorMsgHandler(e)
+      console.error(e)
     },
     /**
      * echarts框选
