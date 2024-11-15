@@ -5,9 +5,9 @@
       <div class="main-container">
         <!-- 顶部工具栏 -->
         <div class="top-tools">
-          <div class="top-tool-left">
+          <div class="top-tool-left" :style="{width: showInputWidth ? showInputWidth : 'auto'}">
             <slot name="top-tool-left"></slot>
-            <div v-if="showLayout.indexOf('search') > -1" class="top-tool-search margin-r-20">
+            <div v-if="showLayout.indexOf('search') > -1" :class="showInputWidth ? 'top-tool-search1' : 'top-tool-search margin-r-20'">
               <div class="top-tool-search__display">
                 <el-input v-model="keyWord" @keyup.enter="onSearch"></el-input>
                 <button class="business-button business-button--light top-tool-btn--search" @click="onSearch">
@@ -72,6 +72,10 @@ export default {
     layout: {
       type: Array,
       default () { return [] }
+    },
+    inputWidth: {
+      type: String,
+      default () { return '' }
     }
   },
   data () {
@@ -82,6 +86,7 @@ export default {
         showCustomTableTitle: false // 自定义列弹框是否显示
       },
       showLayout: [],
+      showInputWidth: '',
       loading: true
     }
   },
@@ -102,6 +107,13 @@ export default {
       deep: true,
       handler (n) {
         this.showLayout = [...n]
+      }
+    },
+    inputWidth: {
+      immediate: true,
+      deep: true,
+      handler (n) {
+        this.showInputWidth = n
       }
     }
   }

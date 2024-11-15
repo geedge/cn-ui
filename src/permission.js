@@ -197,6 +197,16 @@ export function handleComponent (code) {
     case 'locationMap':
     case 'traceTracking':
       return () => import('@/views/location/Index')
+    case 'source':
+      return () => import('@/views/setting/sources/Sources')
+    case 'createSource':
+    case 'editSource':
+      return () => import('@/views/setting/sources/SourcesForm')
+    case 'entitySetting':
+      return () => import('@/views/setting/entitySetting/EntitySetting')
+    case 'createEntitySetting':
+    case 'editEntitySetting':
+      return () => import('@/views/setting/entitySetting/EntitySettingForm')
     default:
       return null
   }

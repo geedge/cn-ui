@@ -199,6 +199,114 @@
       }
     }
   }
+
+  .sources-dialog {
+    .el-dialog__header {
+      background-color: var(--cn-bg-color-lighter);
+      box-shadow: 0 1px 0 0 rgba(53,54,54,0.08);
+      padding: 0;
+      height: 42px;
+      line-height: 42px;
+
+      .sources-dialog__header {
+        font-family: NotoSansSChineseRegular;
+        font-size: 14px;
+        color: var(--el-text-color-primary);
+        letter-spacing: 0;
+        font-weight: 400;
+        padding-left: 10px;
+      }
+
+      .el-dialog__headerbtn {
+        width: 42px;
+        height: 42px;
+
+        .el-dialog__close {
+          color: var(--el-text-color-primary);
+        }
+      }
+    }
+
+
+    .sources-dialog__body {
+      padding: 20px 30px 10px 30px;
+      display: flex;
+      flex-direction: column;
+
+      .dialog__body-upload {
+        width: 420px;
+        height: 124px;
+        background: var(--cn-bg-color-lighter);
+        border: 1px solid var(--el-border-color-light);
+        border-radius: 4px;
+        margin-bottom: 10px;
+
+        .el-upload-dragger {
+          height: 124px;
+          border: 1px solid var(--el-border-color-light);
+        }
+
+        .upload-icon {
+          font-size: 24px;
+          color: var(--el-text-color-primary);
+        }
+
+        .el-upload__text {
+          color: var(--el-text-color-primary);
+        }
+      }
+
+      .dialog__body-tip {
+        width: 420px;
+        height: 142px;
+        background: var(--el-color-business-light-9);
+        border-radius: 4px;
+        padding: 10px;
+
+        .tip__text {
+          font-family: NotoSansSChineseRegular;
+          font-size: 12px;
+          color: var(--el-text-color-regular);
+          letter-spacing: 0;
+          font-weight: 400;
+        }
+      }
+    }
+
+    .el-dialog__footer {
+      padding: 0;
+
+      .sources-dialog__footer {
+        height: 52px;
+        line-height: 52px;
+        border-top: 1px solid var(--el-border-color-light);
+
+        .cancel-btn {
+          width: 80px;
+          height: 28px;
+          margin-right: 20px;
+          color: var(--el-text-color-primary);
+          background: var(--el-fill-color-light);
+          border: 1px solid var(--el-border-color-dark);
+          border-radius: 2px;
+          cursor: pointer;
+        }
+
+        .upload-btn {
+          width: 80px;
+          height: 28px;
+          margin-right: 20px;
+          color: var(--el-color-white);
+          margin-left: 0 !important;
+          background-color: var(--el-color-business);
+          border: none;
+          outline: none;
+          border-radius: 2px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
 }
 .type-tag {
   display: inline-block;

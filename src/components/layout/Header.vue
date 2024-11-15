@@ -138,6 +138,7 @@
         class="cn-menu"
         :with-header="false"
         :show-close="false"
+        @close="closeDrawer"
     >
       <div class="cn-menu__left" v-if="otherMenu">
         <div class="left-menu" v-for="menu in otherMenu" :key="menu.id" @click="jumpOther(menu.route,'','',0)">
@@ -146,7 +147,7 @@
           <i class="cn-icon cn-icon-right"></i>
         </div>
       </div>
-      <div class="cn-menu__middle" >
+      <div class="cn-menu__middle" v-if="!isShowSetting">
         <div class="middle-menus middle-menus--network-analytics">
           <div class="middle-menus__header">{{ $t('overall.networkAnalytics') }}</div>
           <div class="middle-menus__body" v-if="networkAnalyticsMenu && networkAnalyticsMenu.children">
@@ -178,6 +179,27 @@
             </div>
             <div>
               <template v-for="(menu, index) in locationIntelligenceMenu.children" :key="menu.name">
+                <div class="middle-menu" v-if="index >= 5 && index < 10" @click="jump(menu.route,'','',2)">
+                  {{ $t(menu.i18n || menu.name) }}
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cn-menu__middle" v-if="isShowSetting">
+        <div class="middle-menus middle-menus--network-analytics">
+          <div class="middle-menus__header">{{ $t('overall.setting') }}</div>
+          <div class="middle-menus__body" v-if="settingMenu && settingMenu.children">
+            <div style="width: 260px;">
+              <template v-for="(menu, index) in settingMenu.children" :key="menu.name">
+                <div class="middle-menu" v-if="index < 5" @click="jump(menu.route,'','',2)">
+                  {{ $t(menu.i18n || menu.name) }}
+                </div>
+              </template>
+            </div>
+            <div>
+              <template v-for="(menu, index) in settingMenu.children" :key="menu.name">
                 <div class="middle-menu" v-if="index >= 5 && index < 10" @click="jump(menu.route,'','',2)">
                   {{ $t(menu.i18n || menu.name) }}
                 </div>
@@ -336,15 +358,20 @@ export default {
       wholeScreenRouterMapping,
       logo: 'images/logo-header.svg',
       ZH,
-      EN
+      EN,
+      isShowSetting: false
     }
   },
   computed: {
     networkAnalyticsMenu () {
+      console.log('-------', this.$store.getters.menuList)
       return this.$store.getters.menuList.find(menu => menu.code === 'networkAnalytics')
     },
     locationIntelligenceMenu () {
       return this.$store.getters.menuList.find(menu => menu.code === 'locationIntelligence')
+    },
+    settingMenu () {
+      return this.$store.getters.menuList.find(menu => menu.code === 'setting')
     },
     otherMenu () {
       return this.$store.getters.menuList.filter(menu => ['locationIntelligence', 'networkAnalytics', 'I18N', 'entityDetail', 'entityGraph', 'detectionPolicy'].indexOf(menu.code) === -1)
@@ -755,6 +782,11 @@ export default {
     },
     // 仅处理除panel外的相关路径的导航
     async jumpOther (route, index) {
+      console.log('route', route, index)
+      if (route === '/setting') {
+        this.isShowSetting = true
+        return true
+      }
       route = route.replace('redirect:', '')
       this.showMenu = false
       if (route === this.route && index > 0) { // 当前只有一级菜单时，点击不进行刷新，重新跳转
@@ -893,6 +925,12 @@ export default {
       if (obj.scrollTop + obj.clientHeight === obj.scrollHeight) {
         this.initDropdownList()
       }
+    },
+    closeDrawer () {
+      const timer = setTimeout(() => {
+        this.isShowSetting = false
+        clearTimeout(timer)
+      }, 400)
     }
   }
 }

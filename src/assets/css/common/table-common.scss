@@ -53,7 +53,7 @@
       border: 1px solid var(--el-border-color-light);
     }
 
-    .top-tool-search {
+    .top-tool-search, .top-tool-search1 {
       .top-tool-search__display {
         display: flex;
       }
@@ -80,6 +80,13 @@
 
       .el-input {
         width: 214px !important;
+      }
+    }
+
+    .top-tool-search1 {
+      width: 100%;
+      .el-input {
+        width: 100% !important;
       }
     }
 

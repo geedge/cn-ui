@@ -1,0 +1,124 @@
+<template>
+  <el-table
+      id="userTable"
+      ref="dataTable"
+      :data="tableData"
+      tooltip-effect="light"
+      empty-text=" "
+      @header-dragend="dragend"
+      @sort-change="tableDataSort"
+      @selection-change="selectionChange"
+  >
+    <el-table-column
+        :resizable="false"
+        align="center"
+        type="selection"
+        :selectable="checkSelectable"
+        width="55">
+    </el-table-column>
+    <el-table-column
+        v-for="(item, index) in customTableTitles"
+        :key="item.prop+index"
+        :fixed="item.fixed"
+        :label="item.label"
+        :min-width="`${item.minWidth}`"
+        :prop="item.prop"
+        :resizable="true"
+        :sort-orders="['ascending', 'descending']"
+        :sortable="item.sortable"
+        :width="`${item.width}`"
+    >
+      <template #header>
+        <span class="data-column__span">{{ item.label }}</span>
+        <div class="col-resize-area"></div>
+      </template>
+      <template #default="scope" :column="item">
+        <template v-if="item.prop === 'createdTime' || item.prop === 'updateTime'">
+          <template v-if="scope.row[item.prop]">
+            {{ dateFormatByAppearance(scope.row[item.prop]) || '-' }}
+          </template>
+          <template v-else><span>-</span></template>
+        </template>
+        <span v-else>{{ scope.row[item.prop] || '-' }}</span>
+      </template>
+    </el-table-column>
+    <template v-slot:empty>
+      <div class="table-no-data" v-if="isNoData">
+        <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
+      </div>
+    </template>
+  </el-table>
+</template>
+
+<script>
+import table from '@/mixins/table'
+import { dateFormatByAppearance } from '@/utils/date-util'
+
+export default {
+  name: 'SourcesTable',
+  props: {
+    isNoData: {
+      type: Boolean,
+      default: false
+    }
+  },
+  mixins: [table],
+  data () {
+    return {
+      tableTitle: [ // 原始table列
+        {
+          label: 'ID',
+          prop: 'id',
+          show: true,
+          minWidth: 50,
+          sortable: 'custom'
+        },
+        {
+          label: this.$t('setting.source'),
+          prop: 'source',
+          show: true,
+          sortable: 'custom',
+          minWidth: 200
+        },
+        {
+          label: this.$t('setting.entityTypes'),
+          prop: 'entityTypes',
+          show: true,
+          minWidth: 200
+        },
+        {
+          label: this.$t('setting.relationTypes'),
+          prop: 'relationTypes',
+          show: true,
+          minWidth: 200
+        },
+        {
+          label: this.$t('config.user.createTime'),
+          prop: 'createTime',
+          show: true,
+          minWidth: 200
+        },
+        {
+          label: this.$t('overall.updateTime'),
+          prop: 'updateTime',
+          show: true
+        }
+      ]
+    }
+  },
+  computed: {
+    uploadParams () {
+      return {
+        indicatorType: 'IP'
+      }
+    }
+  },
+  methods: {
+    dateFormatByAppearance,
+    // 禁止勾选buildIn为1的项，即禁止修改、删除admin的账号
+    checkSelectable (row) {
+      return row.buildIn !== 1
+    }
+  }
+}
+</script>
