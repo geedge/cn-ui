@@ -290,7 +290,6 @@ export default {
     },
     initTagsData () {
       let url = ''
-      console.info(this.entity)
       switch (this.entity.entityType) {
         case ('domain'): {
           url = api.entity.entityList.domainTags
