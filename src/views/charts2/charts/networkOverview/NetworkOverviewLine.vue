@@ -202,7 +202,6 @@ export default {
       this.toggleLoading(true)
       axios.get(url, { params: params }).then(response => {
         const res = response.data
-        console.info(res)
         if (response.status === 200) {
           this.chartDateObject = res.data.result
           this.isNoData = res.data.result.length === 0
@@ -425,11 +424,13 @@ export default {
             }
           })
         }
-        const series = this.tabs.filter(tab => tab.show)
-        const yAxisStartValue = getYAxisBeginValue(series)
-        const _option = this.myChart.getOption()
-        _option.yAxis[0].startValue = yAxisStartValue
-        this.myChart.setOption(_option)
+        if (this.myChart) {
+          const series = this.tabs.filter(tab => tab.show)
+          const yAxisStartValue = getYAxisBeginValue(series)
+          const _option = this.myChart.getOption()
+          _option.yAxis[0].startValue = yAxisStartValue
+          this.myChart.setOption(_option)
+        }
       }
       if (val === 'active') {
         this.tabs.forEach(t => {

@@ -186,7 +186,6 @@ export default {
     }
   },
   mounted () {
-    console.info(this.node)
     this.handleDetailData(this.node)
   },
   setup (props) {
