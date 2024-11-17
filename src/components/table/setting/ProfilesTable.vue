@@ -33,7 +33,7 @@
         <div class="col-resize-area"></div>
       </template>
       <template #default="scope" :column="item">
-        <template v-if="item.prop === 'createdTime' || item.prop === 'updateTime'">
+        <template v-if="item.prop === 'ctime' || item.prop === 'utime'">
           <template v-if="scope.row[item.prop]">
             {{ dateFormatByAppearance(scope.row[item.prop]) || '-' }}
           </template>
@@ -94,23 +94,16 @@ export default {
         },
         {
           label: this.$t('config.user.createTime'),
-          prop: 'createTime',
+          prop: 'ctime',
           show: true,
           minWidth: 200
         },
         {
           label: this.$t('overall.updateTime'),
-          prop: 'updateTime',
+          prop: 'utime',
           show: true
         }
       ]
-    }
-  },
-  computed: {
-    uploadParams () {
-      return {
-        indicatorType: 'IP'
-      }
     }
   },
   methods: {

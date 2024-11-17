@@ -64,8 +64,7 @@ import dataListMixin from '@/mixins/data-list'
 import Loading from '@/components/common/Loading'
 import cnDataList from '@/components/table/CnDataList'
 import ProfilesTable from '@/components/table/setting/ProfilesTable'
-import { profilesList } from '@/utils/static-data'
-import axios from '_axios@0.21.4@axios'
+import axios from 'axios'
 
 export default {
   name: 'EntitySetting',
@@ -136,11 +135,6 @@ export default {
       }
 
       if (!this.isInit) {
-        // this.tableData = profilesList
-        // this.pageObj.total = profilesList.length
-        // this.isNoData = !this.tableData || this.tableData.length === 0
-        // this.toggleLoading(false)
-        console.log('params', this.searchLabel)
         axios.get(listUrl, { params: this.searchLabel }).then(response => {
           if (response.status === 200) {
             this.$nextTick(() => {
@@ -185,31 +179,11 @@ export default {
           type: 'warning'
         }).then(() => {
           this.toggleLoading(true)
-          axios.delete(api.setting.profiles.profiles + '?id=' + ids).then(response => {
+          axios.delete(api.setting.profiles.profiles + '?ids=' + ids).then(response => {
             if (response.status === 200) {
               this.delFlag = true
-              this.$message({
-                duration: 2000,
-                type: 'success',
-                message: this.$t('tip.deleteSuccess')
-              })
-              let params = null
-              if (this.intent) {
-                params = { intent: this.intent }
-              }
-              if (this.category) {
-                params = {
-                  ...params,
-                  category: this.category
-                }
-              }
-              if (this.name) {
-                params = {
-                  ...params,
-                  name: this.name
-                }
-              }
-              this.getTableData(params)
+              this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
+              this.getTableData()
             } else {
               this.$message.error(response.data.message)
             }

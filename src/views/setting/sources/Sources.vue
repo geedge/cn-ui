@@ -140,23 +140,7 @@ export default {
                 type: 'success',
                 message: this.$t('tip.deleteSuccess')
               })
-              let params = null
-              if (this.intent) {
-                params = { intent: this.intent }
-              }
-              if (this.category) {
-                params = {
-                  ...params,
-                  category: this.category
-                }
-              }
-              if (this.name) {
-                params = {
-                  ...params,
-                  name: this.name
-                }
-              }
-              this.getTableData(params)
+              this.getTableData()
             } else {
               this.$message.error(response.data.message)
             }

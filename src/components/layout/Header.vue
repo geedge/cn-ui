@@ -364,7 +364,6 @@ export default {
   },
   computed: {
     networkAnalyticsMenu () {
-      console.log('-------', this.$store.getters.menuList)
       return this.$store.getters.menuList.find(menu => menu.code === 'networkAnalytics')
     },
     locationIntelligenceMenu () {
@@ -782,7 +781,6 @@ export default {
     },
     // 仅处理除panel外的相关路径的导航
     async jumpOther (route, index) {
-      console.log('route', route, index)
       if (route === '/setting') {
         this.isShowSetting = true
         return true

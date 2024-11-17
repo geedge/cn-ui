@@ -20,13 +20,13 @@
             </template>
             <div class="form-collapse-content">
               <el-form ref="sourceForm" :model="editObj" label-position="top" :rules="sourceRules">
-                <el-form-item :label="$t('setting.source')" prop="source_id" class="form-setting__block margin-b-20">
-                  <el-select v-model="editObj.source_id" class="form-setting__select" placeholder=" ">
+                <el-form-item :label="$t('setting.source')" prop="sourceId" class="form-setting__block margin-b-20">
+                  <el-select v-model="editObj.sourceId" class="form-setting__select" placeholder=" ">
                     <el-option
                         v-for="item in sourceOption"
-                        :key="item.source_id"
-                        :label="item.label"
-                        :value="item.source_id"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
                     />
                   </el-select>
                 </el-form-item>
@@ -209,7 +209,7 @@ export default {
       activeNames: ['1'],
       intervalList: [],
       sourceRules: {
-        source_id: [{ required: true, message: this.$t('validate.required'), trigger: 'change' }]
+        sourceId: [{ required: true, message: this.$t('validate.required'), trigger: 'change' }]
       },
       mappingRules: {
         type: [{ required: true, message: this.$t('validate.required'), trigger: 'change' }],
@@ -270,7 +270,7 @@ export default {
 
     const editObj = ref({
       id: '',
-      source_id: '',
+      sourceId: '',
       entities: [],
       schemaMappingData: {
         data: [
@@ -303,12 +303,36 @@ export default {
   methods: {
     switchStatus,
     initSourceData () {
-      this.sourceOption = [
-        { source_id: '1', value: 'ip_metric1', label: 'IP metric1' },
-        { source_id: '2', value: 'ip_metric2', label: 'IP metric2' },
-        { source_id: '3', value: 'ip_metric3', label: 'IP metric3' },
-        { source_id: '4', value: 'ip_metric4', label: 'IP metric4' }
-      ]
+      axios.get(api.setting.source.source).then(response => {
+        if (response.status === 200) {
+          if (!response.data.data) {
+            throw new Error('No data found, id: ' + this.ruleId)
+          }
+          this.sourceOption = response.data.data.list
+          if (this.sourceOption && this.sourceOption.length > 0) {
+            this.sourceOption.forEach((item, index) => {
+              if (typeof item.fields === 'string') {
+                this.sourceOption[index].fieldsList = JSON.parse(item.fields)
+              }
+              if (typeof item.lookups === 'string') {
+                this.sourceOption[index].lookupsList = JSON.parse(item.lookups)
+              }
+            })
+          }
+        } else {
+          console.error(response.data)
+        }
+      }).catch(e => {
+        console.error(e)
+        this.$message.error(this.errorMsgHandler(e))
+        this.$router.push({
+          path: '/setting/entitySetting',
+          query: {
+            pageNo: this.pageNoForTable ? Number(this.pageNoForTable) : 1,
+            t: +new Date()
+          }
+        })
+      })
     },
     /** 编辑时获取详情 */
     getDetailInfo () {
@@ -318,11 +342,22 @@ export default {
             throw new Error('No data found, id: ' + this.ruleId)
           }
           this.myLoading = false
-          this.editObj = {
-            ...response.data.data,
-            ruleId: this.ruleId
+          this.editObj = { ...this.editObj, ...response.data.data, ruleId: this.ruleId }
+
+          if (this.editObj.entities && typeof this.editObj.entities === 'string') {
+            const entities = JSON.parse(this.editObj.entities)
+            entities.forEach(item => {
+              const list = []
+              for (const [key, value] of Object.entries(item.mapping)) {
+                list.push({ field: key, source: value.toString() })
+              }
+              item.list = list
+            })
+            this.editObj.schemaMappingData.data = entities
           }
-          this.ruleObj = this.$_.cloneDeep(this.editObj.ruleConfigObj)
+          if (this.editObj.relations && typeof this.editObj.relations === 'string') {
+            this.editObj.relationData.data = JSON.parse(this.editObj.relations)
+          }
           this.activeNames = ['1', '2']
         } else {
           console.error(response.data)
@@ -425,7 +460,6 @@ export default {
       } else {
         this.isCloseMappingItem = this.editObj.schemaMappingData.data[0].list.length > 1
       }
-      console.log('shuzu', this.editObj.schemaMappingData.data)
     },
     /** 删除relation的子项 **/
     deleteRelationItem (index) {
@@ -442,21 +476,16 @@ export default {
       return name
     },
     visibleFromEntity (index) {
-      console.log('visible---from', this.editObj.relationData.data, index)
     },
     changeFromEntity (index) {
-      console.log('from---data', this.editObj.relationData.data)
       this.editObj.relationData.data[index].fromDisabled = true
     },
     changeToEntity (index) {
-      console.log('to---data', this.editObj.relationData.data)
       this.editObj.relationData.data[index].toDisabled = true
     },
     handleToEntityData (index) {
-      console.log('index', index)
       if (index && index >= 0) {
-        const obj = this.editObj.relationData.data[index]
-        console.log('obj', obj)
+        // const obj = this.editObj.relationData.data[index]
       }
       return this.editObj.schemaMappingData.data
     },
@@ -497,27 +526,20 @@ export default {
       const valid3 = await this.$refs.relationForm.validate((valid) => {
         return valid
       })
-      console.log('obj', this.editObj)
-      const formObj = this.$_.cloneDeep(this.editObj)
-      formObj.schemaMappingData.data.forEach((item) => {
-        const obj = {}
-        item.list.forEach(ite => {
-          obj[ite.field] = ite.source
-        })
-        item.mapping = this.$_.cloneDeep(obj)
-      })
-      console.log('formObj', formObj)
       if (valid1 && valid2 && valid3) {
         this.myLoading = true
-        if (!this.ruleId) {
-          const formObj = this.$_.cloneDeep(this.editObj)
-          formObj.schemaMappingData.data.forEach((item) => {
-            const obj = {}
-            item.list.forEach(ite => {
-              obj[ite.field] = ite.source
-            })
-            item.mapping = this.$_.cloneDeep(obj)
+        const formObj = this.$_.cloneDeep(this.editObj)
+        formObj.schemaMappingData.data.forEach((item) => {
+          const obj = {}
+          item.list.forEach(ite => {
+            obj[ite.field] = ite.source
           })
+          item.mapping = this.$_.cloneDeep(obj)
+        })
+        formObj.entities = JSON.stringify(formObj.schemaMappingData.data)
+        formObj.relations = JSON.stringify(formObj.relationData.data)
+
+        if (!this.ruleId) {
           // post调用是新增，put是编辑
           axios.post(api.setting.profiles.profiles, formObj).then(response => {
             if (response.status === 200) {
@@ -540,7 +562,7 @@ export default {
             this.myLoading = false
           })
         } else {
-          axios.put(api.setting.profiles.profiles, 'formObj').then(response => {
+          axios.put(api.setting.profiles.profiles, formObj).then(response => {
             if (response.status === 200) {
               this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
 
@@ -581,14 +603,14 @@ export default {
         queryInfo.name = this.settingObj.name
       }
 
-      if (this.settingObj.editFlag || this.ruleObj.editFlag) {
-        this.confirmMessage(queryInfo)
-      } else {
-        this.$router.push({
-          path: '/setting/entitySetting',
-          query: queryInfo
-        })
-      }
+      // if (this.settingObj.editFlag || this.ruleObj.editFlag) {
+      //   this.confirmMessage(queryInfo)
+      // } else {
+      // }
+      this.$router.push({
+        path: '/setting/entitySetting',
+        query: queryInfo
+      })
     },
     confirmMessage (queryInfo) {
       ElMessageBox.confirm(this.$t('tip.leavePage'), {
