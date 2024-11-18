@@ -18,7 +18,7 @@
           </button>
           <button id="tag-edit" class="business-button business-button--light tag__btn margin-r-10"
                   :disabled="disableEdit"
-                  @click="editTag">
+                  @click="editSource">
             <i class="cn-icon-edit cn-icon"></i>
             <span>{{ $t('overall.edit') }}</span>
           </button>
@@ -38,7 +38,7 @@
               :custom-table-title="tools.customTableTitle"
               :height="mainTableHeight"
               :table-data="tableData"
-              @delete="delItem"
+              @delete="del"
               @edit="edit"
               @download="download"
               @preview="preview"
@@ -209,7 +209,7 @@ export default {
       this.object = u
       this.rightBox.show = true
     },
-    editTag () {
+    editSource () {
       if (this.batchDeleteObjs.length === 0) {
         this.$alert(this.$t('tip.pleaseSelectForEdit'), {
           confirmButtonText: this.$t('tip.yes'),

@@ -18,7 +18,7 @@
           </button>
           <button id="tag-edit" class="business-button business-button--light tag__btn margin-r-10"
                   :disabled="disableEdit"
-                  @click="editTag">
+                  @click="editEntity">
             <i class="cn-icon-edit cn-icon"></i>
             <span>{{ $t('overall.edit') }}</span>
           </button>
@@ -202,7 +202,7 @@ export default {
         }).catch(() => {})
       }
     },
-    editTag () {
+    editEntity () {
       if (this.batchDeleteObjs.length === 0) {
         this.$alert(this.$t('tip.pleaseSelectForEdit'), {
           confirmButtonText: this.$t('tip.yes'),

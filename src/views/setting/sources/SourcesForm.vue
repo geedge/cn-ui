@@ -53,7 +53,7 @@
                   <el-input :ref="`default-${index}`" v-model="item.default" />
                 </div>
               </el-form-item>
-              <i class="cn-icon cn-icon-close remove-btn" v-if="sourceObj.fieldsData.data.length > 1" @click="removeFieldItem(index)"></i>
+              <i class="cn-icon cn-icon-close remove-btn" @click="removeFieldItem(index)"></i>
             </div>
           </div>
 
@@ -113,7 +113,7 @@
                   <el-input v-model="item.output_field" :placeholder="$t('setting.outputFieldName')" />
                 </div>
               </el-form-item>
-              <i class="cn-icon cn-icon-close remove-btn" v-if="sourceObj.lookupsData.data.length > 1" @click="removeLookupItem(index)"></i>
+              <i class="cn-icon cn-icon-close remove-btn" @click="removeLookupItem(index)"></i>
             </div>
           </div>
 
@@ -142,10 +142,10 @@
       <div class="form-setting__block margin-b-20">
         <div class="block-title">{{ $t('overall.status') }}</div>
         <el-switch
-            v-model="sourceObj.enable"
+            v-model="sourceObj.is_valid"
             :active-value="1"
             :inactive-value="0"
-            :active-text="$t(switchStatus(sourceObj.enable))"/>
+            :active-text="$t(switchStatus(sourceObj.is_valid))"/>
       </div>
     </div>
 
@@ -324,9 +324,16 @@ export default {
         return valid
       })
       if (valid1 && valid2 && valid3) {
-        this.myLoading = true
         this.sourceObj.fields = JSON.stringify(this.sourceObj.fieldsData.data)
         this.sourceObj.lookups = JSON.stringify(this.sourceObj.lookupsData.data)
+        if (this.sourceObj.fieldsData.data.length === 0 && this.sourceObj.lookupsData.data.length === 0) {
+          ElMessageBox.alert(`${this.$t('detection.create.informationFilled')}`, this.$t('overall.tip'), {
+            confirmButtonText: 'OK',
+            callback: () => {}
+          })
+          return true
+        }
+        this.myLoading = true
         if (!this.sourceId) {
           // post调用是新增，put是编辑
           axios.post(api.setting.source.source, this.sourceObj).then(response => {
@@ -432,8 +439,18 @@ export default {
       })
     },
     removeFieldItem (i) {
-      this.addEditFlag = false
-      this.sourceObj.fieldsData.data.splice(i, 1)
+      // 如果lookups里存在filed的字段，则进行提示
+      const name = this.sourceObj.fieldsData.data[i].name
+      const obj = this.sourceObj.lookupsData.data.find(d => d.lookup_field === name && name)
+      if (obj) {
+        ElMessageBox.alert(`${name}  ${this.$t('setting.deleteFieldTip')}`, this.$t('overall.tip'), {
+          confirmButtonText: 'OK',
+          callback: () => {}
+        })
+      } else {
+        this.addEditFlag = false
+        this.sourceObj.fieldsData.data.splice(i, 1)
+      }
     },
     removeLookupItem (i) {
       this.addEditFlag = false
@@ -465,7 +482,7 @@ export default {
         data: [{ function: '', lookup_field: '', output_type: '', output_field: '' }]
       },
       description: '',
-      enable: 1
+      is_valid: 1
     }
     const sourceObj = ref(_.cloneDeep(blankObject))
     return {

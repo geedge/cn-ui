@@ -33,13 +33,18 @@
         <div class="col-resize-area"></div>
       </template>
       <template #default="scope" :column="item">
-        <template v-if="item.prop === 'ctime' || item.prop === 'utime'">
+        <template v-if="item.prop === 'create_time' || item.prop === 'update_time'">
           <template v-if="scope.row[item.prop]">
             {{ dateFormatByAppearance(scope.row[item.prop]) || '-' }}
           </template>
           <template v-else><span>-</span></template>
         </template>
-        <span v-else>{{ scope.row[item.prop] || '-' }}</span>
+        <template v-if="item.prop === 'entitySource'">
+          {{ scope.row[item.prop].name || '-' }}
+        </template>
+        <template v-if="item.prop === 'entities' || item.prop === 'relations'">
+          {{ handleListTypes(scope.row[item.prop]) }}
+        </template>
       </template>
     </el-table-column>
     <template v-slot:empty>
@@ -75,32 +80,32 @@ export default {
         },
         {
           label: this.$t('setting.source'),
-          prop: 'source',
+          prop: 'entitySource',
           show: true,
           sortable: 'custom',
           minWidth: 200
         },
         {
           label: this.$t('setting.entityTypes'),
-          prop: 'entityTypes',
+          prop: 'entities',
           show: true,
           minWidth: 200
         },
         {
           label: this.$t('setting.relationTypes'),
-          prop: 'relationTypes',
+          prop: 'relations',
           show: true,
           minWidth: 200
         },
         {
           label: this.$t('config.user.createTime'),
-          prop: 'ctime',
+          prop: 'create_time',
           show: true,
           minWidth: 200
         },
         {
           label: this.$t('overall.updateTime'),
-          prop: 'utime',
+          prop: 'update_time',
           show: true
         }
       ]
@@ -111,6 +116,21 @@ export default {
     // 禁止勾选buildIn为1的项，即禁止修改、删除admin的账号
     checkSelectable (row) {
       return row.buildIn !== 1
+    },
+    handleListTypes (data) {
+      let str = ''
+      if (data && typeof data === 'string') {
+        data = JSON.parse(data)
+        data.forEach(item => {
+          if (!str) {
+            str = item.type + ','
+          } else if (str.indexOf(item.type) < 0) {
+            str += item.type + ','
+          }
+        })
+        str = str.slice(0, -1)
+      }
+      return str
     }
   }
 }

@@ -21,12 +21,13 @@
             <div class="form-collapse-content">
               <el-form ref="sourceForm" :model="editObj" label-position="top" :rules="sourceRules">
                 <el-form-item :label="$t('setting.source')" prop="sourceId" class="form-setting__block margin-b-20">
-                  <el-select v-model="editObj.sourceId" class="form-setting__select" placeholder=" ">
+                  <el-select v-model="editObj.sourceId" class="form-setting__select" placeholder="" @change="onChangeSource" @visible-change="visibleSource($event)">
                     <el-option
                         v-for="item in sourceOption"
                         :key="item.id"
                         :label="item.name"
                         :value="item.id"
+                        :disabled="item.disabled"
                     />
                   </el-select>
                 </el-form-item>
@@ -38,16 +39,19 @@
                 <div class="form-content__block" v-for="(item, index) in editObj.schemaMappingData.data" :key="index">
                   <div class="block-header">
                     <div>{{ item.name }}</div>
-                    <div>{{ $t('setting.source') }}</div>
+                    <div class="block-header__menu">
+                      <div>{{ $t('setting.sourceField') }}</div>
+                      <div>{{ $t('setting.entityField') }}</div>
+                    </div>
                   </div>
                   <div class="block-body" v-for="(ite, ind) in item.list" :key="index+'-'+ind">
                     <el-form-item :prop="`data.${index}.list.${ind}.field`" :rules="mappingRules.type">
                       <el-select v-model="ite.field" class="block-body__select" placeholder="">
                         <el-option
                             v-for="obj in mappingFieldOption"
-                            :key="obj.value"
-                            :label="obj.label"
-                            :value="obj.value"
+                            :key="obj.name"
+                            :label="obj.name"
+                            :value="obj.name"
                         />
                       </el-select>
                     </el-form-item>
@@ -55,15 +59,16 @@
                     <el-form-item :prop="`data.${index}.list.${ind}.source`" :rules="mappingRules.source">
                       <el-select v-model="ite.source" class="block-body__select" placeholder="">
                         <el-option
-                            v-for="obj in mappingSourceOption"
-                            :key="obj.value"
-                            :label="obj.label"
-                            :value="obj.value"
+                            v-for="obj in settingFields[item.type]"
+                            :key="obj.fieldName"
+                            :label="obj.fieldName"
+                            :value="obj.fieldName"
                         />
                       </el-select>
                     </el-form-item>
                     <i class="cn-icon cn-icon-add mapping-item-add" @click="addMappingListItem(index, ind)"></i>
-                    <i class="cn-icon cn-icon-close mapping-item-close" v-if="isCloseMappingItem" @click="deleteMappingItem(index, ind)"></i>
+                    <i class="cn-icon cn-icon-close mapping-item-close" @click="deleteMappingItem(index, ind)"></i>
+<!--                    <i class="cn-icon cn-icon-close mapping-item-close" v-if="isCloseMappingItem" @click="deleteMappingItem(index, ind)"></i>-->
                   </div>
                 </div>
               </el-form>
@@ -111,36 +116,39 @@
             <div class="form-collapse-content">
               <el-form :model="editObj.relationData" ref="relationForm">
                 <div class="form-content__block">
-                  <div class="block-body" v-for="(item, index) in editObj.relationData.data" :key="index">
+                  <div class="block-body1" v-for="(item, index) in editObj.relationData.data" :key="index">
                     <el-form-item :prop="`data.${index}.from_entity_index`" :rules="relationRules">
                       <el-select
                           v-model="item.from_entity_index"
-                          :disabled="item.fromDisabled"
-                          :class="item.fromDisabled ? 'relation-field__select-disabled' : 'relation-field__select'"
+                          class="relation-field__select"
                           placeholder=""
-                          @visible-change="visibleFromEntity(index)"
+                          @visible-change="visibleFromEntity($event, index)"
                           @change="changeFromEntity(index)">
                         <el-option
                             v-for="obj in editObj.schemaMappingData.data"
                             :key="obj.index"
                             :label="obj.name"
                             :value="obj.index"
+                            :disabled="obj.disabled"
                         />
                       </el-select>
                     </el-form-item>
-                    <div class="block-body-equal">=</div>
+                    <div class="block-body-equal">
+                      <i class="cn-icon cn-icon-mutual"></i>
+                    </div>
                     <el-form-item :prop="`data.${index}.to_entity_index`" :rules="relationRules">
                       <el-select
                           v-model="item.to_entity_index"
-                          :disabled="item.toDisabled"
-                          :class="item.toDisabled ? 'relation-field__select-disabled' : 'relation-field__select'"
+                          class="relation-field__select"
                           placeholder=""
+                          @visible-change="visibleToEntity($event, index)"
                           @change="changeToEntity(index)">
                         <el-option
                             v-for="obj in editObj.schemaMappingData.data"
                             :key="obj.index"
                             :label="obj.name"
                             :value="obj.index"
+                            :disabled="obj.disabled"
                         />
                       </el-select>
                     </el-form-item>
@@ -174,10 +182,10 @@
       <div class="switch__block margin-20">
         <div class="block-title">{{ $t('overall.status') }}</div>
         <el-switch
-            v-model="editObj.enable"
+            v-model="editObj.is_valid"
             :active-value="1"
             :inactive-value="0"
-            :active-text="$t(switchStatus(editObj.enable))"/>
+            :active-text="$t(switchStatus(editObj.is_valid))"/>
       </div>
     </div>
 
@@ -201,6 +209,7 @@ import { ref } from 'vue'
 import Loading from '@/components/common/Loading'
 import { ElMessageBox } from 'element-plus'
 import { toUpperCaseByString, switchStatus } from '@/utils/tools'
+import { settingFields } from '@/utils/constants'
 
 export default {
   name: 'EntitySettingForm',
@@ -217,11 +226,7 @@ export default {
       },
       relationRules: { required: true, message: this.$t('validate.required'), trigger: 'change' },
       sourceOption: [],
-      mappingFieldOption: [
-        { value: 'IP_address', label: 'IP_address' },
-        { value: 'Port', label: 'Port' },
-        { value: 'ASN', label: 'ASN' }
-      ],
+      mappingFieldOption: [],
       mappingSourceOption: [
         { value: 'dns_server_role', label: 'dns_server_role' },
         { value: 'ip_addr', label: 'ip_addr' },
@@ -232,7 +237,7 @@ export default {
         { label: 'Domain', value: 'Domain' },
         { label: 'APP', value: 'APP' }
       ],
-      isCloseMappingItem: false, // 删除mapping标识
+      isCloseMappingItem: true, // 删除mapping标识
       showMappingType: false,
       mappingItemType: '', // 添加mapping映射类型
       typeList: [
@@ -248,7 +253,8 @@ export default {
         { value: 'CARRY_APP_DOMAIN', label: 'CARRY_APP_DOMAIN' },
         { value: 'VISIT_SUBSCRIBER_APP', label: 'VISIT_SUBSCRIBER_APP' },
         { value: 'CALL_SUBSCRIBER_SUBSCRIBER', label: 'CALL_SUBSCRIBER_SUBSCRIBER' }
-      ]
+      ],
+      settingFields
     }
   },
   components: {
@@ -289,7 +295,7 @@ export default {
       relationData: {
         data: [{ from_entity_index: '', to_entity_index: '', type: '', fromDisabled: false, toDisabled: false }]
       },
-      enable: 1
+      is_valid: 1
     })
 
     return {
@@ -432,33 +438,63 @@ export default {
     },
     /** 删除mapping下的子项 **/
     deleteMappingItem (index, ind) {
-      const type = this.editObj.schemaMappingData.data[index].type
-      if (this.editObj.schemaMappingData.data[index].list.length > 1) {
-        this.editObj.schemaMappingData.data[index].list.splice(ind, 1)
+      const currentIndex = this.editObj.schemaMappingData.data[index].index
+      const obj = this.editObj.relationData.data.find(d => d.from_entity_index === currentIndex || d.to_entity_index === currentIndex)
+      if (obj) {
+        const name = this.editObj.schemaMappingData.data[index].name
+        ElMessageBox.alert(`${name}  ${this.$t('setting.deleteMappingTip')}`, this.$t('overall.tip'), {
+          confirmButtonText: 'OK',
+          callback: () => {}
+        })
       } else {
-        this.editObj.schemaMappingData.data.splice(index, 1)
-      }
-
-      this.editObj.schemaMappingData.data.forEach((item, index) => {
-        item.index = index + 1
-      })
-
-      // 删除同类型的，name需要重新排序
-      const list = this.editObj.schemaMappingData.data.filter(d => d.type === type)
-      if (list && list.length > 0) {
-        if (list.length === 1) {
-          list[0].name = this.handleMappingName(list[0].type)
+        const type = this.editObj.schemaMappingData.data[index].type
+        if (this.editObj.schemaMappingData.data[index].list.length > 1) {
+          this.editObj.schemaMappingData.data[index].list.splice(ind, 1)
         } else {
-          list.forEach((item, i) => {
-            item.name = this.handleMappingName(item.type, i)
+          this.editObj.schemaMappingData.data.splice(index, 1)
+        }
+
+        this.editObj.schemaMappingData.data.forEach((item, index) => {
+          item.index = index + 1
+        })
+
+        // 删除同类型的，name需要重新排序
+        const list = this.editObj.schemaMappingData.data.filter(d => d.type === type)
+        if (list && list.length > 0) {
+          if (list.length === 1) {
+            list[0].name = this.handleMappingName(list[0].type)
+          } else {
+            list.forEach((item, i) => {
+              item.name = this.handleMappingName(item.type, i)
+            })
+          }
+        }
+        // if (this.editObj.schemaMappingData.data.length > 1) {
+        //   this.isCloseMappingItem = true
+        // } else {
+        //   this.isCloseMappingItem = this.editObj.schemaMappingData.data[0].list.length > 1
+        // }
+        let usedFlag = false
+        if (this.editObj.schemaMappingData.data.length > 0) {
+          this.editObj.schemaMappingData.data.forEach(item => {
+            const obj1 = item.list.find(d => d.field)
+            if (obj1 && !usedFlag) {
+              usedFlag = true
+            }
+          })
+        } else {
+          usedFlag = false
+        }
+
+        if (usedFlag && this.editObj.sourceId) {
+          this.sourceOption.forEach(item => {
+            item.disabled = item.id !== this.editObj.sourceId
+          })
+        } else if (!usedFlag) {
+          this.sourceOption.forEach(item => {
+            item.disabled = false
           })
         }
-      }
-
-      if (this.editObj.schemaMappingData.data.length > 1) {
-        this.isCloseMappingItem = true
-      } else {
-        this.isCloseMappingItem = this.editObj.schemaMappingData.data[0].list.length > 1
       }
     },
     /** 删除relation的子项 **/
@@ -475,19 +511,75 @@ export default {
       }
       return name
     },
-    visibleFromEntity (index) {
+    /** relation第一个下拉框出现时的操作 */
+    visibleFromEntity (callback, index) {
+      if (callback) {
+        // true出现下拉框，false隐藏下拉框
+        const item = this.editObj.relationData.data[index]
+        if (!item.from_entity_index && !item.to_entity_index) {
+          // from和to都为空的话，不禁选
+          this.editObj.schemaMappingData.data.forEach(ite => {
+            ite.disabled = false
+          })
+        } else if (item.to_entity_index) {
+          // to已经选择，则禁选to本身的index和to相关联的index
+          const obj = this.editObj.schemaMappingData.data.find(d => d.index === item.to_entity_index)
+          obj.disabled = true
+          const filterList = this.editObj.relationData.data.filter(d => d.from_entity_index === item.to_entity_index || d.to_entity_index === item.to_entity_index)
+          filterList.forEach(ite => {
+            const obj1 = this.editObj.schemaMappingData.data.find(d => d.index === ite.to_entity_index)
+            const obj2 = this.editObj.schemaMappingData.data.find(d => d.index === ite.from_entity_index)
+            if (obj1) {
+              obj1.disabled = true
+            }
+            if (obj2) {
+              obj2.disabled = true
+            }
+          })
+        }
+      } else {
+        this.editObj.schemaMappingData.data.forEach(ite => {
+          ite.disabled = false
+        })
+      }
+    },
+    /** relation第二个下拉框出现时的操作 */
+    visibleToEntity (callback, index) {
+      if (callback) {
+        // true出现下拉框，false隐藏下拉框
+        const item = this.editObj.relationData.data[index]
+        if (!item.from_entity_index && !item.to_entity_index) {
+          // from和to都为空的话，不禁选
+          this.editObj.schemaMappingData.data.forEach(ite => {
+            ite.disabled = false
+          })
+        } else if (item.from_entity_index) {
+          // from已经选择，则禁选from本身的index和from相关联的index
+          const obj = this.editObj.schemaMappingData.data.find(d => d.index === item.from_entity_index)
+          obj.disabled = true
+          const filterList = this.editObj.relationData.data.filter(d => d.from_entity_index === item.from_entity_index || d.to_entity_index === item.from_entity_index)
+          filterList.forEach(ite => {
+            const obj1 = this.editObj.schemaMappingData.data.find(d => d.index === ite.from_entity_index)
+            const obj2 = this.editObj.schemaMappingData.data.find(d => d.index === ite.to_entity_index)
+            if (obj1) {
+              obj1.disabled = true
+            }
+            if (obj2) {
+              obj2.disabled = true
+            }
+          })
+        }
+      } else {
+        this.editObj.schemaMappingData.data.forEach(ite => {
+          ite.disabled = false
+        })
+      }
     },
     changeFromEntity (index) {
       this.editObj.relationData.data[index].fromDisabled = true
     },
     changeToEntity (index) {
       this.editObj.relationData.data[index].toDisabled = true
-    },
-    handleToEntityData (index) {
-      if (index && index >= 0) {
-        // const obj = this.editObj.relationData.data[index]
-      }
-      return this.editObj.schemaMappingData.data
     },
     /** 获取Rule Definition折叠板form数据 */
     getRuleObj (data) {
@@ -592,6 +684,7 @@ export default {
         }
       }
     },
+    /** 底部返回按钮 */
     cancel () {
       const { query } = this.$route
       const queryInfo = {
@@ -628,6 +721,51 @@ export default {
         })
       }).catch(() => {
       })
+    },
+    /** 切换source数据源 */
+    onChangeSource (id) {
+      const obj = this.sourceOption.find(d => d.id === id)
+      if (obj) {
+        const fieldList = obj.fieldsList
+        const myLookupsList = []
+        obj.lookupsList.forEach(item => {
+          myLookupsList.push({ name: item.output_field })
+        })
+        this.mappingFieldOption = fieldList.concat(myLookupsList)
+      } else {
+        this.mappingFieldOption = []
+      }
+    },
+    visibleSource (callback) {
+      if (callback) {
+        // 如果relation中有数据，则禁选source
+        const obj = this.editObj.relationData.data.find(d => d.from_entity_index || d.to_entity_index)
+        if (obj && this.editObj.sourceId) {
+          this.sourceOption.forEach(item => {
+            item.disabled = item.id !== this.editObj.sourceId
+          })
+        }
+        let usedFlag = false
+        if (this.editObj.schemaMappingData.data.length > 0) {
+          this.editObj.schemaMappingData.data.forEach(item => {
+            const obj1 = item.list.find(d => d.field)
+            if (obj1 && !usedFlag) {
+              usedFlag = true
+            }
+          })
+        } else {
+          usedFlag = false
+        }
+        if (usedFlag && this.editObj.sourceId) {
+          this.sourceOption.forEach(item => {
+            item.disabled = item.id !== this.editObj.sourceId
+          })
+        } else if (!usedFlag) {
+          this.sourceOption.forEach(item => {
+            item.disabled = false
+          })
+        }
+      }
     }
   }
 }

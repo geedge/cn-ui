@@ -390,7 +390,7 @@ export const api = {
   setting: {
     source: {
       source: apiVersion + '/entity/sources', // get列表查询，delete删除，post新增，put修改
-      sourceUpload: apiVersion + 'entity/sources/upload' // 文件上传，post
+      sourceUpload: apiVersion + '/entity/sources/upload' // 文件上传，post
     },
     profiles: {
       profiles: apiVersion + '/entity/profiles' // get列表查询，delete删除，post新增，put修改

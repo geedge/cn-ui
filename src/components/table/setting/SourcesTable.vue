@@ -33,14 +33,14 @@
         <div class="col-resize-area"></div>
       </template>
       <template #default="scope" :column="item">
-        <template v-if="item.prop === 'createdTime'">
+        <template v-if="item.prop === 'create_time'">
           <template v-if="scope.row[item.prop]">
             {{ dateFormatByAppearance(scope.row[item.prop]) || '-' }}
           </template>
           <template v-else><span>-</span></template>
         </template>
         <template v-else-if="item.prop === 'option'">
-          <i class="cn-icon cn-icon-upload" style="cursor: pointer;" @click="dialogVisible=true"></i>
+          <i class="cn-icon cn-icon-upload" style="cursor: pointer;" @click="clickOption(scope.row)"></i>
         </template>
         <span v-else>{{ scope.row[item.prop] || '-' }}</span>
       </template>
@@ -58,7 +58,7 @@
     </template>
     <div class="sources-dialog__body">
       <div class="dialog__body-upload">
-<!--        <loading :loading="uploadLoading"></loading>-->
+        <loading :loading="uploadLoading"></loading>
         <el-upload :action="uploadUrl"
                    :headers="uploadHeaders"
                    :data="uploadParams"
@@ -107,6 +107,7 @@ import unitConvert from '@/utils/unit-convert'
 import { ElMessageBox } from 'element-plus'
 import { ref } from 'vue'
 import { api } from '@/utils/api'
+import Loading from '@/components/common/Loading'
 
 export default {
   name: 'SourcesTable',
@@ -119,6 +120,7 @@ export default {
   mixins: [table],
   data () {
     return {
+      sourceId: '',
       tableTitle: [ // 原始table列
         {
           label: 'ID',
@@ -142,7 +144,7 @@ export default {
         },
         {
           label: this.$t('config.user.createTime'),
-          prop: 'createdTime',
+          prop: 'create_time',
           show: true,
           minWidth: 150
         },
@@ -153,13 +155,14 @@ export default {
         }
       ],
       dialogVisible: false,
-      uploadUrl: api.setting.source.sourceUpload,
+      uploadUrl: BASE_CONFIG.baseUrl + api.setting.source.sourceUpload,
       uploadHeaders: {
         'Cn-Authorization': localStorage.getItem(storageKey.token)
       },
       fileList: [],
       fileTypeLimit: '.csv',
       language: localStorage.getItem(storageKey.language) || EN,
+      uploadLoading: false,
       tipsInfo: {
         en: [
           { value: 0, label: 'You can now integrate data to our platform using two methods:' },
@@ -173,18 +176,27 @@ export default {
           { value: 2, label: '2. Kafka 直接传输：将您的数据发送到我们服务器上的特定 Kafka 主题，确保每条消息都包含带有 source_id 的标头。' },
           { value: 3, label: '有关 Kafka 服务器的信息，请联系您的管理员。' }
         ]
-      }
+      },
+      uploadFileSizeLimit: 1024 * 1024 * 1024,
+      isClick: true
     }
+  },
+  components: {
+    Loading
   },
   computed: {
     uploadParams () {
       return {
-        indicatorType: 'IP'
+        id: this.sourceId
       }
     }
   },
   methods: {
     dateFormatByAppearance,
+    clickOption (item) {
+      this.sourceId = item.id
+      this.dialogVisible = true
+    },
     // 禁止勾选buildIn为1的项，即禁止修改、删除admin的账号
     checkSelectable (row) {
       return row.buildIn !== 1
