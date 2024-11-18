@@ -196,6 +196,7 @@ export default {
     clickOption (item) {
       this.sourceId = item.id
       this.dialogVisible = true
+      this.fileTypeLimit = `.${item.dataFormat}`
     },
     // 禁止勾选buildIn为1的项，即禁止修改、删除admin的账号
     checkSelectable (row) {
@@ -256,7 +257,7 @@ export default {
     beforeUpload (file) {
       return new Promise((resolve, reject) => {
         // 判断后缀，仅支持.csv
-        if (!_.endsWith(file.name, '.csv')) {
+        if (!_.endsWith(file.name, this.fileTypeLimit)) {
           this.$message.error(this.$t('validate.fileTypeLimit', { types: this.fileTypeLimit }))
           this.fileList = []
           reject(new Error(this.$t('validate.fileTypeLimit', { types: this.fileTypeLimit })))
@@ -303,9 +304,6 @@ export default {
       }
       this.uploadLoading = false
       this.$message.error(this.$t('tip.uploadFailed', { msg: errorMsg }))
-    },
-    downloadTemplate () {
-      window.open('/assets/tagTemplate.csv', '_blank')
     }
   },
   setup () {

@@ -364,6 +364,7 @@ export default {
           if (this.editObj.relations && typeof this.editObj.relations === 'string') {
             this.editObj.relationData.data = JSON.parse(this.editObj.relations)
           }
+          this.onChangeSource(this.editObj.sourceId)
           this.activeNames = ['1', '2']
         } else {
           console.error(response.data)
@@ -383,8 +384,7 @@ export default {
     onContinue () {
       this.$refs.mappingForm.validate(valid => {
         if (valid) {
-          // this.editObj.schemaMappingData.data[index].list.push({ field: '', source: '' })
-          // this.isCloseMappingItem = true
+          this.activeNames = ['1', '2']
         }
       })
     },
@@ -619,7 +619,6 @@ export default {
         return valid
       })
       if (valid1 && valid2 && valid3) {
-        this.myLoading = true
         const formObj = this.$_.cloneDeep(this.editObj)
         formObj.schemaMappingData.data.forEach((item) => {
           const obj = {}
@@ -630,7 +629,14 @@ export default {
         })
         formObj.entities = JSON.stringify(formObj.schemaMappingData.data)
         formObj.relations = JSON.stringify(formObj.relationData.data)
-
+        if (formObj.schemaMappingData.data.length === 0 && formObj.relationData.data.length === 0) {
+          ElMessageBox.alert(this.$t('detection.create.informationFilled'), this.$t('overall.tip'), {
+            confirmButtonText: 'OK',
+            callback: () => {}
+          })
+          return true
+        }
+        this.myLoading = true
         if (!this.ruleId) {
           // post调用是新增，put是编辑
           axios.post(api.setting.profiles.profiles, formObj).then(response => {

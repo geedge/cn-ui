@@ -327,7 +327,7 @@ export default {
         this.sourceObj.fields = JSON.stringify(this.sourceObj.fieldsData.data)
         this.sourceObj.lookups = JSON.stringify(this.sourceObj.lookupsData.data)
         if (this.sourceObj.fieldsData.data.length === 0 && this.sourceObj.lookupsData.data.length === 0) {
-          ElMessageBox.alert(`${this.$t('detection.create.informationFilled')}`, this.$t('overall.tip'), {
+          ElMessageBox.alert(this.$t('detection.create.informationFilled'), this.$t('overall.tip'), {
             confirmButtonText: 'OK',
             callback: () => {}
           })
