@@ -106,7 +106,10 @@ export default {
   methods: {
     search (params) {
       this.name = params.q
-      params = { name: this.name }
+      params = { ids: this.name }
+      if (!params.ids) {
+        delete params.ids
+      }
       this.pageObj.pageNo = 1
       this.getTableData(params)
       this.$refs.dataTable.expandedIds = []
