@@ -180,7 +180,7 @@ export default {
   data () {
     const nameDuplicateValidator = async (rule, value, callback) => {
       let validate = true
-      if (!this.sourceObj.knowledgeId) {
+      if (!this.sourceObj.id) {
         const response = await this.getSourceList()
         if (response.status === 200) {
           const find = response.data.data.list.find(d => d.name === value)
