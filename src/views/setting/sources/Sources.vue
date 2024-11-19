@@ -105,10 +105,10 @@ export default {
   },
   methods: {
     search (params) {
-      this.name = params.q
-      params = { ids: this.name }
-      if (!params.ids) {
-        delete params.ids
+      if (this.$_.isNumber(params.q) || params.q.indexOf(',') > -1) {
+        params = { ids: params.q }
+      } else {
+        params = { name: params.q }
       }
       this.pageObj.pageNo = 1
       this.getTableData(params)
