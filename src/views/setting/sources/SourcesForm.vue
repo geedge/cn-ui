@@ -20,7 +20,7 @@
         </el-form-item>
       </el-form>
 
-      <div class="form__body__label">{{ $t('overall.fields') }}</div>
+      <div class="form__body__label"><span class="from-dot">*</span>{{ $t('overall.fields') }}</div>
       <el-form ref="fieldsForm" :model="sourceObj.fieldsData">
         <div class="form-fields__block">
           <div class="block__header">
@@ -67,7 +67,7 @@
         </div>
       </el-form>
 
-      <div class="form__body__label">{{ $t('setting.lookups') }}</div>
+      <div class="form__body__label"><span class="from-dot">*</span>{{ $t('setting.lookups') }}</div>
       <el-form ref="lookupsForm" :model="sourceObj.lookupsData">
         <div class="form-fields__block">
           <div class="block__body">
@@ -140,7 +140,7 @@
             id="role-box-input-remark"/>
 
       <div class="form-setting__block margin-b-20">
-        <div class="block-title">{{ $t('overall.status') }}</div>
+        <div class="block-title"><span class="from-dot">*</span>{{ $t('overall.status') }}</div>
         <el-switch
             v-model="sourceObj.enable"
             :active-value="1"
@@ -313,6 +313,7 @@ export default {
           this.sourceObj = { ...this.sourceObj, ...response.data.data, sourceId: this.sourceId }
           this.sourceObj.fieldsData.data = JSON.parse(this.sourceObj.fields)
           this.sourceObj.lookupsData.data = JSON.parse(this.sourceObj.lookups)
+          this.lookupsObj.lookupFieldsOption = this.sourceObj.fieldsData.data
         } else {
           console.error(response.data)
         }

@@ -33,8 +33,7 @@
                 </el-form-item>
               </el-form>
 
-              <div class="form-content__title">{{ $t('setting.schemaMapping') }}</div>
-
+              <div class="form-content__title"><span class="from-dot">*</span>{{ $t('setting.schemaMapping') }}</div>
               <el-form :model="editObj.schemaMappingData" ref="mappingForm">
                 <div class="form-content__block" v-for="(item, index) in editObj.schemaMappingData.data" :key="index">
                   <div class="block-header">
@@ -180,7 +179,7 @@
       </div>
 
       <div class="switch__block margin-20">
-        <div class="block-title">{{ $t('overall.status') }}</div>
+        <div class="block-title"><span class="from-dot">*</span>{{ $t('overall.status') }}</div>
         <el-switch
             v-model="editObj.enable"
             :active-value="1"

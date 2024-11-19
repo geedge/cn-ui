@@ -322,4 +322,10 @@ $border-color-light: var(--el-border-color-light);
     justify-content: center;
     align-items: center;
   }
+
+  .from-dot {
+    font-size: 14px;
+    color: var(--el-color-danger);
+    margin-right: 4px;
+  }
 }

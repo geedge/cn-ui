@@ -186,4 +186,10 @@ $color-text-primary: var(--el-text-color-primary);
       min-width: 74px;
     }
   }
+
+  .from-dot {
+    font-size: 14px;
+    color: var(--el-color-danger);
+    margin-right: 4px;
+  }
 }
