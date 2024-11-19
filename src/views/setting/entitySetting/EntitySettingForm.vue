@@ -21,7 +21,7 @@
             <div class="form-collapse-content">
               <el-form ref="sourceForm" :model="editObj" label-position="top" :rules="sourceRules">
                 <el-form-item :label="$t('setting.source')" prop="sourceId" class="form-setting__block margin-b-20">
-                  <el-select v-model="editObj.sourceId" class="form-setting__select" placeholder="" @change="onChangeSource" @visible-change="visibleSource($event)">
+                  <el-select v-model="editObj.sourceId" filterable class="form-setting__select" placeholder="" @change="onChangeSource" @visible-change="visibleSource($event)">
                     <el-option
                         v-for="item in sourceOption"
                         :key="item.id"
@@ -52,6 +52,7 @@
                           v-model="ite.entityField"
                           class="block-body__select"
                           placeholder=""
+                          filterable
                           @visible-change="visibleEntityFiled($event, index, ind)"
                           :disabled="ind===0">
                         <el-option
@@ -65,7 +66,7 @@
                     </el-form-item>
                     <div class="block-body-equal">=</div>
                     <el-form-item :prop="`data.${index}.list.${ind}.sourceField`" :rules="mappingRules.sourceField">
-                      <el-select v-model="ite.sourceField" class="block-body__select" placeholder="">
+                      <el-select v-model="ite.sourceField" filterable class="block-body__select" placeholder="">
                         <el-option
                             v-for="obj in mappingFieldOption"
                             :key="obj.name"
