@@ -2913,35 +2913,38 @@ export const intentColor = {
 
 export const settingFields = {
   ip: [
-    { displayName: 'IP', fieldName: 'ip' },
+    { displayName: 'IP', fieldName: 'ip', disabled: true },
     { displayName: 'Ports', fieldName: 'ports' },
     { displayName: 'L7 Protocols', fieldName: 'l7_protocols' },
-    { displayName: 'IP.Country', fieldName: 'ip.country' },
+    { displayName: 'IP.Country', fieldName: 'ip_country' },
     { displayName: 'IP.Super Admin Area', fieldName: 'ip_super_admin_area' },
     { displayName: 'IP.Admin Area', fieldName: 'ip_admin_area' },
     { displayName: 'IP.ASN', fieldName: 'ip_asn' },
-    { displayName: 'IP.ISP', fieldName: 'ip_isp' }
+    { displayName: 'IP.ISP', fieldName: 'ip_isp' },
+    { displayName: 'seen_time', fieldName: 'seen_time' }
   ],
   domain: [
-    { displayName: 'Domain', fieldName: 'domain' },
+    { displayName: 'Domain', fieldName: 'domain', disabled: true },
     { displayName: 'Domain.Category', fieldName: 'domain_category' },
-    { displayName: 'Domain.Category Group', fieldName: 'domain_category_group' }
+    { displayName: 'Domain.Category Group', fieldName: 'domain_category_group' },
+    { displayName: 'seen_time', fieldName: 'seen_time' }
   ],
   app: [
-    { displayName: 'Application', fieldName: 'app' },
+    { displayName: 'Application', fieldName: 'app', disabled: true },
     { displayName: 'APP.Category', fieldName: 'app_category' },
     { displayName: 'APP.Subcategory', fieldName: 'app_subcategory' },
-    { displayName: 'APP.Subcategory', fieldName: 'app_subcategory' }
+    { displayName: 'seen_time', fieldName: 'seen_time' }
   ],
   subscriber_id: [
-    { displayName: 'Subscriber ID', fieldName: 'subscriber_id' },
+    { displayName: 'Subscriber ID', fieldName: 'subscriber_id', disabled: true },
     { displayName: 'Subscriber.Phone Number', fieldName: 'subscriber_phone_number' },
     { displayName: 'Subscriber.IMSI', fieldName: 'subscriber_imsi' },
     { displayName: 'Subscriber.IMEI', fieldName: 'subscriber_imei' },
-    { displayName: 'Subscriber.APNs', fieldName: 'subscriber_apns' }
+    { displayName: 'Subscriber.APNs', fieldName: 'subscriber_apns' },
+    { displayName: 'seen_time', fieldName: 'seen_time' }
   ],
   cell_id: [
-    { displayName: 'Cell ID', fieldName: 'cell_id' },
+    { displayName: 'Cell ID', fieldName: 'cell_id', disabled: true },
     { displayName: 'Cell.Technology', fieldName: 'cell_technology' },
     { displayName: 'Cell.Coverage Radius', fieldName: 'cell_coverage_radius' },
     { displayName: 'Cell.Operator', fieldName: 'cell_operator' },
@@ -2957,7 +2960,8 @@ export const settingFields = {
     { displayName: 'cell_latitude', fieldName: 'cell_latitude' },
     { displayName: 'cell_longitude', fieldName: 'cell_longitude' },
     { displayName: 'cell_azimuth', fieldName: 'cell_azimuth' },
-    { displayName: 'cell_fdd_spectrum', fieldName: 'cell_fdd_spectrum' }
+    { displayName: 'cell_fdd_spectrum', fieldName: 'cell_fdd_spectrum' },
+    { displayName: 'seen_time', fieldName: 'seen_time' }
   ]
 }
 

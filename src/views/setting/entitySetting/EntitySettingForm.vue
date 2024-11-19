@@ -39,13 +39,30 @@
                   <div class="block-header">
                     <div>{{ item.name }}</div>
                     <div class="block-header__menu">
-                      <div>{{ $t('setting.sourceField') }}</div>
                       <div>{{ $t('setting.entityField') }}</div>
+                      <div>{{ $t('setting.sourceField') }}</div>
                     </div>
                   </div>
                   <div class="block-body" v-for="(ite, ind) in item.list" :key="index+'-'+ind">
-                    <el-form-item :prop="`data.${index}.list.${ind}.field`" :rules="mappingRules.type">
-                      <el-select v-model="ite.field" class="block-body__select" placeholder="">
+                    <el-form-item :prop="`data.${index}.list.${ind}.entityField`" :rules="mappingRules.entityField">
+                      <el-select
+                          v-model="ite.entityField"
+                          class="block-body__select"
+                          placeholder=""
+                          @visible-change="visibleEntityFiled($event, index, ind)"
+                          :disabled="ind===0">
+                        <el-option
+                            v-for="obj in settingFields[item.type]"
+                            :key="obj.fieldName"
+                            :label="obj.fieldName"
+                            :value="obj.fieldName"
+                            :disabled="obj.disabled"
+                        />
+                      </el-select>
+                    </el-form-item>
+                    <div class="block-body-equal">=</div>
+                    <el-form-item :prop="`data.${index}.list.${ind}.sourceField`" :rules="mappingRules.sourceField">
+                      <el-select v-model="ite.sourceField" class="block-body__select" placeholder="">
                         <el-option
                             v-for="obj in mappingFieldOption"
                             :key="obj.name"
@@ -54,20 +71,8 @@
                         />
                       </el-select>
                     </el-form-item>
-                    <div class="block-body-equal">=</div>
-                    <el-form-item :prop="`data.${index}.list.${ind}.source`" :rules="mappingRules.source">
-                      <el-select v-model="ite.source" class="block-body__select" placeholder="">
-                        <el-option
-                            v-for="obj in settingFields[item.type]"
-                            :key="obj.fieldName"
-                            :label="obj.fieldName"
-                            :value="obj.fieldName"
-                        />
-                      </el-select>
-                    </el-form-item>
                     <i class="cn-icon cn-icon-add mapping-item-add" @click="addMappingListItem(index, ind)"></i>
                     <i class="cn-icon cn-icon-close mapping-item-close" @click="deleteMappingItem(index, ind)"></i>
-<!--                    <i class="cn-icon cn-icon-close mapping-item-close" v-if="isCloseMappingItem" @click="deleteMappingItem(index, ind)"></i>-->
                   </div>
                 </div>
               </el-form>
@@ -223,8 +228,8 @@ export default {
         sourceId: [{ required: true, message: this.$t('validate.required'), trigger: 'change' }]
       },
       mappingRules: {
-        type: [{ required: true, message: this.$t('validate.required'), trigger: 'change' }],
-        source: [{ required: true, message: this.$t('validate.required'), trigger: 'change' }]
+        entityField: [{ required: true, message: this.$t('validate.required'), trigger: 'change' }],
+        sourceField: [{ required: true, message: this.$t('validate.required'), trigger: 'change' }]
       },
       relationRules: { required: true, message: this.$t('validate.required'), trigger: 'change' },
       sourceOption: [],
@@ -239,7 +244,7 @@ export default {
         { label: 'Domain', value: 'Domain' },
         { label: 'APP', value: 'APP' }
       ],
-      isCloseMappingItem: true, // 删除mapping标识
+      isCloseMappingItem: false, // 删除mapping标识
       showMappingType: false,
       mappingItemType: '', // 添加mapping映射类型
       typeList: [
@@ -287,7 +292,7 @@ export default {
             type: 'ip',
             name: 'IP',
             list: [
-              { field: '', source: '' }
+              { entityField: 'ip', sourceField: '', delFlag: false }
             ],
             mapping: {}
           }
@@ -357,8 +362,9 @@ export default {
             entities.forEach(item => {
               const list = []
               for (const [key, value] of Object.entries(item.mapping)) {
-                list.push({ field: key, source: value.toString() })
+                list.push({ entityField: value.toString(), sourceField: key, delFlag: true })
               }
+              list[0].delFlag = false
               item.list = list
             })
             this.editObj.schemaMappingData.data = entities
@@ -410,7 +416,7 @@ export default {
         index: this.editObj.schemaMappingData.data.length + 1,
         type: this.mappingItemType,
         name: name,
-        list: [{ field: '', source: '' }],
+        list: [{ entityField: settingFields[this.mappingItemType][0].fieldName, sourceField: '', delFlag: false }],
         mapping: {}
       })
       this.isCloseMappingItem = true
@@ -427,14 +433,14 @@ export default {
     },
     /** 添加schema mapping某一类型下的字段 **/
     async addMappingListItem (index, ind) {
-      const valid1 = await this.$refs.mappingForm.validateField(`data.${index}.list.${ind}.field`, (valid) => {
+      const valid1 = await this.$refs.mappingForm.validateField(`data.${index}.list.${ind}.entityField`, (valid) => {
         return valid
       })
-      const valid2 = await this.$refs.mappingForm.validateField(`data.${index}.list.${ind}.source`, (valid) => {
+      const valid2 = await this.$refs.mappingForm.validateField(`data.${index}.list.${ind}.sourceField`, (valid) => {
         return valid
       })
       if (valid1 && valid2) {
-        this.editObj.schemaMappingData.data[index].list.push({ field: '', source: '' })
+        this.editObj.schemaMappingData.data[index].list.push({ entityField: '', sourceField: '', delFlag: true })
         this.isCloseMappingItem = true
       }
     },
@@ -471,15 +477,10 @@ export default {
             })
           }
         }
-        // if (this.editObj.schemaMappingData.data.length > 1) {
-        //   this.isCloseMappingItem = true
-        // } else {
-        //   this.isCloseMappingItem = this.editObj.schemaMappingData.data[0].list.length > 1
-        // }
         let usedFlag = false
         if (this.editObj.schemaMappingData.data.length > 0) {
           this.editObj.schemaMappingData.data.forEach(item => {
-            const obj1 = item.list.find(d => d.field)
+            const obj1 = item.list.find(d => d.sourceField)
             if (obj1 && !usedFlag) {
               usedFlag = true
             }
@@ -625,7 +626,7 @@ export default {
         formObj.schemaMappingData.data.forEach((item) => {
           const obj = {}
           item.list.forEach(ite => {
-            obj[ite.field] = ite.source
+            obj[ite.entityField] = ite.sourceField
           })
           item.mapping = this.$_.cloneDeep(obj)
         })
@@ -756,7 +757,7 @@ export default {
         let usedFlag = false
         if (this.editObj.schemaMappingData.data.length > 0) {
           this.editObj.schemaMappingData.data.forEach(item => {
-            const obj1 = item.list.find(d => d.field)
+            const obj1 = item.list.find(d => d.sourceField)
             if (obj1 && !usedFlag) {
               usedFlag = true
             }
@@ -773,6 +774,24 @@ export default {
             item.disabled = false
           })
         }
+      }
+    },
+    visibleEntityFiled (callback, index, i) {
+      const item = this.editObj.schemaMappingData.data[index]
+      if (callback) {
+        const fieldNameList = []
+        item.list.forEach(ite => {
+          fieldNameList.push(ite.entityField)
+        })
+        this.settingFields[item.type].forEach(obj => {
+          if (fieldNameList.indexOf(obj.fieldName) > -1) {
+            obj.disabled = true
+          }
+        })
+      } else {
+        this.settingFields[item.type].forEach(obj => {
+          obj.disabled = false
+        })
       }
     }
   }
