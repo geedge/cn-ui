@@ -9,7 +9,7 @@
         </el-form-item>
 
         <el-form-item :label="$t('sources.dataFormat')" prop="dataFormat">
-          <el-select v-model="sourceObj.dataFormat" placeholder="" :disabled="sourceObj.id">
+          <el-select v-model="sourceObj.dataFormat" placeholder="" :disabled="sourceObj.id !== ''">
             <el-option
                 v-for="item in formatOptions"
                 :key="item.value"
