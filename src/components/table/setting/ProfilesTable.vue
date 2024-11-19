@@ -33,7 +33,7 @@
         <div class="col-resize-area"></div>
       </template>
       <template #default="scope" :column="item">
-        <template v-if="item.prop === 'create_time' || item.prop === 'update_time'">
+        <template v-if="item.prop === 'ctime' || item.prop === 'utime'">
           <template v-if="scope.row[item.prop]">
             {{ dateFormatByAppearance(scope.row[item.prop]) || '-' }}
           </template>
@@ -83,13 +83,13 @@ export default {
           prop: 'entitySource',
           show: true,
           sortable: 'custom',
-          minWidth: 200
+          minWidth: 100
         },
         {
           label: this.$t('setting.entityTypes'),
           prop: 'entities',
           show: true,
-          minWidth: 200
+          minWidth: 150
         },
         {
           label: this.$t('setting.relationTypes'),
@@ -99,14 +99,15 @@ export default {
         },
         {
           label: this.$t('config.user.createTime'),
-          prop: 'create_time',
+          prop: 'ctime',
           show: true,
-          minWidth: 200
+          minWidth: 150
         },
         {
           label: this.$t('overall.updateTime'),
-          prop: 'update_time',
-          show: true
+          prop: 'utime',
+          show: true,
+          minWidth: 150
         }
       ]
     }

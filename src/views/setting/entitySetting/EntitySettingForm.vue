@@ -182,10 +182,10 @@
       <div class="switch__block margin-20">
         <div class="block-title">{{ $t('overall.status') }}</div>
         <el-switch
-            v-model="editObj.is_valid"
+            v-model="editObj.enable"
             :active-value="1"
             :inactive-value="0"
-            :active-text="$t(switchStatus(editObj.is_valid))"/>
+            :active-text="$t(switchStatus(editObj.enable))"/>
       </div>
     </div>
 
@@ -295,7 +295,7 @@ export default {
       relationData: {
         data: [{ from_entity_index: '', to_entity_index: '', type: '', fromDisabled: false, toDisabled: false }]
       },
-      is_valid: 1
+      enable: 1
     })
 
     return {

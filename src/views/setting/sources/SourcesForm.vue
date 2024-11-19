@@ -142,10 +142,10 @@
       <div class="form-setting__block margin-b-20">
         <div class="block-title">{{ $t('overall.status') }}</div>
         <el-switch
-            v-model="sourceObj.is_valid"
+            v-model="sourceObj.enable"
             :active-value="1"
             :inactive-value="0"
-            :active-text="$t(switchStatus(sourceObj.is_valid))"/>
+            :active-text="$t(switchStatus(sourceObj.enable))"/>
       </div>
     </div>
 
@@ -482,7 +482,7 @@ export default {
         data: [{ function: '', lookup_field: '', output_type: '', output_field: '' }]
       },
       description: '',
-      is_valid: 1
+      enable: 1
     }
     const sourceObj = ref(_.cloneDeep(blankObject))
     return {

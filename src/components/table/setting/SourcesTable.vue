@@ -33,7 +33,7 @@
         <div class="col-resize-area"></div>
       </template>
       <template #default="scope" :column="item">
-        <template v-if="item.prop === 'create_time'">
+        <template v-if="item.prop === 'ctime'">
           <template v-if="scope.row[item.prop]">
             {{ dateFormatByAppearance(scope.row[item.prop]) || '-' }}
           </template>
@@ -144,7 +144,7 @@ export default {
         },
         {
           label: this.$t('config.user.createTime'),
-          prop: 'create_time',
+          prop: 'ctime',
           show: true,
           minWidth: 150
         },
