@@ -73,7 +73,10 @@
               </el-form>
 
               <div class="form-setting-type" v-if="showMappingType">
-                <div class="setting-type__text">{{ $t('setting.selectMappingType') }}</div>
+                <div class="setting-type__header">
+                  <div>{{ $t('setting.selectMappingType') }}</div>
+                  <i class="cn-icon cn-icon-close" @click="showMappingType=false"></i>
+                </div>
                 <el-select v-model="mappingItemType" placeholder="" @change="changeMappingType">
                   <el-option
                       v-for="obj in typeList"
@@ -85,7 +88,7 @@
               </div>
 
               <div class="block__footer">
-                <!--新增按钮-->
+                <!--新增mapping类型按钮-->
                 <el-button class="addFieldBtn" @click="addSchemaMappingItem">
                   <i class="cn-icon cn-icon-add add-field-btn"></i>
                   {{ $t('overall.add') }}
@@ -439,7 +442,7 @@ export default {
     deleteMappingItem (index, ind) {
       const currentIndex = this.editObj.schemaMappingData.data[index].index
       const obj = this.editObj.relationData.data.find(d => d.from_entity_index === currentIndex || d.to_entity_index === currentIndex)
-      if (obj) {
+      if (obj && this.editObj.schemaMappingData.data[index].list.length === 1) {
         const name = this.editObj.schemaMappingData.data[index].name
         ElMessageBox.alert(`${name}  ${this.$t('setting.deleteMappingTip')}`, this.$t('overall.tip'), {
           confirmButtonText: 'OK',

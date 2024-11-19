@@ -218,9 +218,19 @@ $border-color-light: var(--el-border-color-light);
           padding: 15px 12px;
           margin-bottom: 10px;
 
-          .setting-type__text {
+          .setting-type__header {
             font-size: 14px;
             margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+
+            i {
+              height: 24px;
+              line-height: 24px;
+              color: var(--el-text-color-regular);
+              font-size: 10px;
+              cursor: pointer;
+            }
           }
         }
 
