@@ -362,7 +362,7 @@ export default {
             entities.forEach(item => {
               const list = []
               for (const [key, value] of Object.entries(item.mapping)) {
-                list.push({ entityField: value.toString(), sourceField: key, delFlag: true })
+                list.push({ entityField: key, sourceField: value.toString(), delFlag: true })
               }
               list[0].delFlag = false
               item.list = list
