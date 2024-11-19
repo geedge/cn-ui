@@ -91,6 +91,8 @@ export default {
         }
       })
       this.disableEdit = this.batchDeleteObjs.length !== 1
+      // todo 该字段后续会修改
+      this.disableEdit = !!objs.flag
       this.disableDelete = this.batchDeleteObjs.length < 1
     },
     getTableData (params, isAll, isClearType) {

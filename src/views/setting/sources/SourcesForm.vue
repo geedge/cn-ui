@@ -139,14 +139,14 @@
             v-model="sourceObj.description"
             id="role-box-input-remark"/>
 
-      <div class="form-setting__block margin-b-20">
-        <div class="block-title"><span class="from-dot">*</span>{{ $t('overall.status') }}</div>
-        <el-switch
-            v-model="sourceObj.enable"
-            :active-value="1"
-            :inactive-value="0"
-            :active-text="$t(switchStatus(sourceObj.enable))"/>
-      </div>
+<!--      <div class="form-setting__block margin-b-20">-->
+<!--        <div class="block-title"><span class="from-dot">*</span>{{ $t('overall.status') }}</div>-->
+<!--        <el-switch-->
+<!--            v-model="sourceObj.enable"-->
+<!--            :active-value="1"-->
+<!--            :inactive-value="0"-->
+<!--            :active-text="$t(switchStatus(sourceObj.enable))"/>-->
+<!--      </div>-->
     </div>
 
     <div class="sources-form__footer">
@@ -154,7 +154,7 @@
         <span>{{ $t('overall.cancel') }}</span>
       </button>
       <button style="position: relative;" :class="{'disabled': blockOperation.save}"
-              :disabled="blockOperation.save" class="business-button tag__btn" @click="saveSource">
+              :disabled="sourceObj.flag" class="business-button tag__btn" @click="saveSource">
         <loading :loading="blockOperation.save"></loading>
         <span>{{ $t('overall.save') }}</span>
       </button>
@@ -349,6 +349,7 @@ export default {
           })
           return true
         }
+        delete this.sourceObj.enable
         this.myLoading = true
         if (!this.sourceId) {
           // post调用是新增，put是编辑
@@ -503,8 +504,8 @@ export default {
       lookupsData: {
         data: [{ function: '', lookup_field: '', output_type: '', output_field: '' }]
       },
-      description: '',
-      enable: 1
+      description: ''
+      // enable: 1
     }
     const sourceObj = ref(_.cloneDeep(blankObject))
     return {

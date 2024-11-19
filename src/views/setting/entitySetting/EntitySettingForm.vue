@@ -37,7 +37,10 @@
               <el-form :model="editObj.schemaMappingData" ref="mappingForm">
                 <div class="form-content__block" v-for="(item, index) in editObj.schemaMappingData.data" :key="index">
                   <div class="block-header">
-                    <div>{{ item.name }}</div>
+                    <div class="block-header__title">
+                      <div>{{ item.name }}</div>
+                      <i class="cn-icon cn-icon-close" @click="deleteMappingItem(index)"></i>
+                    </div>
                     <div class="block-header__menu">
                       <div>{{ $t('setting.entityField') }}</div>
                       <div>{{ $t('setting.sourceField') }}</div>
@@ -457,7 +460,9 @@ export default {
       } else {
         const type = this.editObj.schemaMappingData.data[index].type
         if (this.editObj.schemaMappingData.data[index].list.length > 1) {
-          this.editObj.schemaMappingData.data[index].list.splice(ind, 1)
+          if (ind >= 0) {
+            this.editObj.schemaMappingData.data[index].list.splice(ind, 1)
+          }
         } else {
           this.editObj.schemaMappingData.data.splice(index, 1)
         }
