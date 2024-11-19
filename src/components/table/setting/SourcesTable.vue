@@ -101,7 +101,7 @@
 <script>
 import table from '@/mixins/table'
 import { dateFormatByAppearance } from '@/utils/date-util'
-import { itemListHeight, storageKey, unitTypes, EN } from '@/utils/constants'
+import { storageKey, unitTypes, EN } from '@/utils/constants'
 import _ from 'lodash'
 import unitConvert from '@/utils/unit-convert'
 import { ElMessageBox } from 'element-plus'
@@ -187,7 +187,7 @@ export default {
   computed: {
     uploadParams () {
       return {
-        id: this.sourceId
+        sourceId: this.sourceId
       }
     }
   },
@@ -208,51 +208,10 @@ export default {
       }
       this.fileList = fileList.slice(-1)
     },
-    uploadSuccess (response) {
-      if (response.code === 200) {
-        this.uploaded = true
-        // 上传成功后去掉upload和preview的错误提示
-        this.uploadErrorTip = ''
-        this.previewErrorTip = ''
-        this.importedType = this.editObject.indicatorType
-        const originalImportedData = _.cloneDeep(response.data.list)
-        this.importedDataNoData = originalImportedData.length === 0
-        if (originalImportedData.length > 0) {
-          originalImportedData.forEach(data => {
-            if (data.isValid === 1) {
-              data.msg = this.$t('overall.success')
-            } else if (data.isValid === 0) {
-              if (data.errorAttribute === 'entityType') {
-                data.msg = this.$t('validate.wrongType')
-              } else if (data.errorAttribute === 'entityValue') {
-                data.msg = this.$t('validate.wrongFormat')
-              }
-            }
-          })
-        }
-        this.originalImportInfo = {
-          total: originalImportedData.length,
-          succeeded: originalImportedData.filter(d => d.isValid === 1).length,
-          failed: originalImportedData.filter(d => d.isValid !== 1).length
-        }
-        this.isLoad = false
-        originalImportedData.sort((a, b) => b.isValid - a.isValid)
-        this.importedData = this.handleSpeticalTypeData(originalImportedData)
-        this.addItemList = _.cloneDeep(this.importedData).filter(item => { return item.isValid === 1 })
-        this.updateItemList = []
-        this.deleteItemIds = this.oldItemIds
-
-        this.handleShowImportedData()
-        this.addEditFlag = false
-        this.editTagErrorTip = ''
-        this.editIndex = -1
-        this.isPreviewChange = true
-        this.stepHeights[2] = itemListHeight.hasData
-        this.stepHeightConstant.third = itemListHeight.hasData
-      } else {
-        this.uploadLoading = false
-        this.$message.error(this.$t('tip.uploadFailed', { msg: response.message }))
-      }
+    uploadSuccess () {
+      this.uploaded = false
+      this.dialogVisible = false
+      this.$message.success(this.$t('tip.success'))
     },
     beforeUpload (file) {
       return new Promise((resolve, reject) => {

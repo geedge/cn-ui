@@ -178,6 +178,20 @@ export default {
     Loading
   },
   data () {
+    const nameDuplicateValidator = async (rule, value, callback) => {
+      let validate = true
+      if (!this.sourceObj.knowledgeId) {
+        const response = await this.getSourceList()
+        if (response.status === 200) {
+          const find = response.data.data.list.find(d => d.name === value)
+          if (find) {
+            validate = false
+            callback(new Error())
+          }
+        }
+      }
+      return validate
+    }
     const nameValidator = (rule, value, callback) => {
       // 校验value包含字母、数字和下划线，并且不是全数字、全下划线和连续下划线
       const regex = /^(?=.*[a-zA-Z])(?=.*\d|^(?!\d+$))[a-zA-Z\d]+(?:_[a-zA-Z\d]+)*$/
@@ -204,7 +218,8 @@ export default {
     return {
       rules: {
         name: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
+          { validator: nameDuplicateValidator, message: this.$t('validate.duplicateRecord', { columns: `(${this.$t('config.roles.name')})` }), trigger: 'blur' }
         ],
         dataFormat: [
           { required: true, message: this.$t('validate.required'), trigger: 'change' }
@@ -460,6 +475,12 @@ export default {
     onChangeFunction (index) {
       this.sourceObj.lookupsData.data[index].output_type = ''
       // this.$refs.lookupsForm.clearValidate('output_type')
+    },
+    async getSourceList () {
+      return await axios.get(api.setting.source.source, { params: { pageSize: 999 } }).catch(e => {
+        console.error(e)
+        this.$message.error(this.errorMsgHandler(e))
+      })
     }
   },
   setup () {
