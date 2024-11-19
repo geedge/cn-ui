@@ -76,7 +76,7 @@
                       </el-select>
                     </el-form-item>
                     <i class="cn-icon cn-icon-add mapping-item-add" @click="addMappingListItem(index, ind)"></i>
-                    <i class="cn-icon cn-icon-close mapping-item-close" @click="deleteMappingItem(index, ind)"></i>
+                    <i class="cn-icon cn-icon-close mapping-item-close" @click="deleteMappingItem(index, ind)" v-if="ind > 0"></i>
                   </div>
                 </div>
               </el-form>

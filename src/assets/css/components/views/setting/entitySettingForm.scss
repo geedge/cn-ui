@@ -145,7 +145,7 @@ $border-color-light: var(--el-border-color-light);
 
             .block-header__menu {
               display: flex;
-              padding: 10px;
+              padding: 10px 10px 0 10px;
               font-weight: bold;
 
               div:nth-child(1) {
