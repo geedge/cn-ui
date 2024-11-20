@@ -140,11 +140,11 @@
         :show-close="false"
         @close="closeDrawer"
     >
-      <div class="cn-menu__left" v-if="otherMenu">
-        <div class="left-menu" v-for="menu in otherMenu" :key="menu.id" @click="jumpOther(menu.route,'','',0)">
+      <div class="cn-menu__left" v-if="otherMenu" @mouseleave="mouseleaveLeftMenu">
+        <div class="left-menu" v-for="menu in otherMenu" :key="menu.id" @click="jumpOther(menu.route,'','',0)" @mouseenter="mouseleaveItemMenu(menu.code)">
           <i :class="menu.icon"></i>
           <span>{{ $t(menu.i18n || menu.name) }}</span>
-          <i class="cn-icon cn-icon-right"></i>
+          <i class="cn-icon cn-icon-right" v-show="menu.code==='setting'"></i>
         </div>
       </div>
       <div class="cn-menu__middle" v-if="!isShowSetting">
@@ -187,7 +187,7 @@
           </div>
         </div>
       </div>
-      <div class="cn-menu__middle" v-if="isShowSetting">
+      <div class="cn-menu__middle" v-if="isShowSetting" @mouseenter="mouseleaveItemMenu('setting')" @mouseleave="mouseleaveRightMenu">
         <div class="middle-menus middle-menus--network-analytics">
           <div class="middle-menus__header">{{ $t('overall.setting') }}</div>
           <div class="middle-menus__body" v-if="settingMenu && settingMenu.children">
@@ -494,8 +494,10 @@ export default {
     const newQuery = query
     // 重刷界面后url里参数带空格的部分会被转为+，此处将+再转为空格。后续观察是否存在原本参数带+被误转的
     Object.keys(newQuery).forEach(item => {
-      if (newQuery[item] && newQuery[item].indexOf('+') > -1) {
-        newQuery[item] = newQuery[item].replaceAll('+', ' ')
+      if (newQuery[item] && _.isString(newQuery[item])) {
+        if (newQuery[item].indexOf('+') > -1) {
+          newQuery[item] = newQuery[item].replaceAll('+', ' ')
+        }
       }
     })
     const newUrl = urlParamsHandler(window.location.href, query, newQuery)
@@ -929,6 +931,15 @@ export default {
         this.isShowSetting = false
         clearTimeout(timer)
       }, 400)
+    },
+    mouseleaveLeftMenu () {
+      this.isShowSetting = false
+    },
+    mouseleaveItemMenu (code) {
+      this.isShowSetting = code === 'setting'
+    },
+    mouseleaveRightMenu () {
+      this.isShowSetting = false
     }
   }
 }

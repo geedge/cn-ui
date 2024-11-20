@@ -99,9 +99,7 @@
           cursor: pointer;
 
           &:hover {
-            span {
-              text-decoration: underline;
-            }
+            color: var(--el-color-primary);
           }
           .cn-icon:first-of-type {
             font-size: 17px;
