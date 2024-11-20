@@ -14,7 +14,7 @@
           <el-collapse-item name="1">
             <template #title>
               <div class="form-collapse-header">
-                <div :class="activeNames[0]==='1' ? 'form-collapse-header-no-active' : 'form-collapse-header-no'">1</div>
+                <div :class="activeNames.indexOf('1')>-1 ? 'form-collapse-header-no-active' : 'form-collapse-header-no'">1</div>
                 <div class="form-collapse-header-title">{{ $t('detection.create.generalSettings') }}</div>
               </div>
             </template>
@@ -118,7 +118,7 @@
           <el-collapse-item name="2">
             <template #title>
               <div class="form-collapse-header">
-                <div :class="activeNames[0]==='2' ? 'form-collapse-header-no-active' : 'form-collapse-header-no'">2
+                <div :class="activeNames.indexOf('2')>-1 ? 'form-collapse-header-no-active' : 'form-collapse-header-no'">2
                 </div>
                 <div class="form-collapse-header-title">{{ $t('setting.relation') }}</div>
               </div>
@@ -248,7 +248,6 @@ export default {
         { label: 'Domain', value: 'Domain' },
         { label: 'APP', value: 'APP' }
       ],
-      isCloseMappingItem: false, // 删除mapping标识
       showMappingType: false,
       mappingItemType: '', // 添加mapping映射类型
       typeList: [
@@ -296,7 +295,7 @@ export default {
             type: 'ip',
             name: 'IP',
             list: [
-              { entityField: 'ip', sourceField: '', delFlag: false }
+              { entityField: 'ip', sourceField: '' }
             ],
             mapping: {}
           }
@@ -366,9 +365,8 @@ export default {
             entities.forEach(item => {
               const list = []
               for (const [key, value] of Object.entries(item.mapping)) {
-                list.push({ entityField: key, sourceField: value.toString(), delFlag: true })
+                list.push({ entityField: key, sourceField: value.toString() })
               }
-              list[0].delFlag = false
               item.list = list
             })
             this.editObj.schemaMappingData.data = entities
@@ -420,10 +418,9 @@ export default {
         index: this.editObj.schemaMappingData.data.length + 1,
         type: this.mappingItemType,
         name: name,
-        list: [{ entityField: settingFields[this.mappingItemType][0].fieldName, sourceField: '', delFlag: false }],
+        list: [{ entityField: settingFields[this.mappingItemType][0].fieldName, sourceField: '' }],
         mapping: {}
       })
-      this.isCloseMappingItem = true
       this.showMappingType = false
       this.mappingItemType = ''
     },
@@ -444,35 +441,49 @@ export default {
         return valid
       })
       if (valid1 && valid2) {
-        this.editObj.schemaMappingData.data[index].list.push({ entityField: '', sourceField: '', delFlag: true })
-        this.isCloseMappingItem = true
+        const emptyIndex = this.editObj.schemaMappingData.data[index].list.findIndex(d => !d.entityField || !d.sourceField)
+        if (emptyIndex === -1) {
+          this.editObj.schemaMappingData.data[index].list.push({ entityField: '', sourceField: '' })
+        } else {
+          this.$refs.mappingForm.validateField(`data.${index}.list.${emptyIndex}.entityField`, () => null)
+          this.$refs.mappingForm.validateField(`data.${index}.list.${emptyIndex}.sourceField`, () => null)
+        }
       }
     },
     /** 删除mapping下的子项 **/
     deleteMappingItem (index, ind) {
       const currentIndex = this.editObj.schemaMappingData.data[index].index
       const obj = this.editObj.relationData.data.find(d => d.from_entity_index === currentIndex || d.to_entity_index === currentIndex)
-      if (obj && this.editObj.schemaMappingData.data[index].list.length === 1) {
-        const name = this.editObj.schemaMappingData.data[index].name
-        ElMessageBox.alert(`${name}  ${this.$t('setting.deleteMappingTip')}`, this.$t('overall.tip'), {
-          confirmButtonText: 'OK',
-          callback: () => {}
-        })
+      if (obj) {
+        // 在relation中有关联的，删除子项不提示，删除块级mapping才提示
+        if (ind >= 0) {
+          this.editObj.schemaMappingData.data[index].list.splice(ind, 1)
+        } else {
+          const name = this.editObj.schemaMappingData.data[index].name
+          ElMessageBox.alert(`${name}  ${this.$t('setting.deleteMappingTip')}`, this.$t('overall.tip'), {
+            confirmButtonText: 'OK',
+            callback: () => {}
+          })
+        }
       } else {
+        // 删除mapping同类型的，name需要重新排序，先获取type，避免删除后获取不到type
         const type = this.editObj.schemaMappingData.data[index].type
-        if (this.editObj.schemaMappingData.data[index].list.length > 1) {
-          if (ind >= 0) {
-            this.editObj.schemaMappingData.data[index].list.splice(ind, 1)
-          }
+        // 删除mapping的大块或者其子项，删除后排序index
+        if (ind >= 0) {
+          this.editObj.schemaMappingData.data[index].list.splice(ind, 1)
         } else {
           this.editObj.schemaMappingData.data.splice(index, 1)
+          this.editObj.schemaMappingData.data.forEach((item, i) => {
+            item.index = i + 1
+          })
         }
 
-        this.editObj.schemaMappingData.data.forEach((item, index) => {
-          item.index = index + 1
-        })
-
-        // 删除同类型的，name需要重新排序
+        if (this.editObj.schemaMappingData.data.length === 0) {
+          this.sourceOption.forEach(item => {
+            item.disabled = false
+          })
+          return true
+        }
         const list = this.editObj.schemaMappingData.data.filter(d => d.type === type)
         if (list && list.length > 0) {
           if (list.length === 1) {
@@ -483,6 +494,8 @@ export default {
             })
           }
         }
+
+        // 判断sourceFiled（即mapping第二列）是否引用了source，如果引用，删除mapping之后，source下拉框的禁选解除，可正常选择source
         let usedFlag = false
         if (this.editObj.schemaMappingData.data.length > 0) {
           this.editObj.schemaMappingData.data.forEach(item => {
@@ -494,7 +507,6 @@ export default {
         } else {
           usedFlag = false
         }
-
         if (usedFlag && this.editObj.sourceId) {
           this.sourceOption.forEach(item => {
             item.disabled = item.id !== this.editObj.sourceId
@@ -589,32 +601,6 @@ export default {
     },
     changeToEntity (index) {
       this.editObj.relationData.data[index].toDisabled = true
-    },
-    /** 获取Rule Definition折叠板form数据 */
-    getRuleObj (data) {
-      if (data.dataSource && data.knowledgeId && data.level) {
-        data.editFlag = false
-        data.saveFlag = true
-        this.handleActiveNames('2', this.activeNames, data.ruleNoContinue)
-      }
-      this.ruleObj = JSON.parse(JSON.stringify(data))
-    },
-    /** 自动展开收起折叠板 */
-    handleActiveNames (name, arr, flag) {
-      if (!flag) {
-        const list = arr
-        list.splice(list.indexOf(name), 1)
-        if (name === '1' && list.indexOf('2') < 0) {
-          list.push('2')
-        }
-        if (name === '2' && list.indexOf('3') < 0) {
-          list.push('3')
-        }
-        this.activeNames = []
-        list.forEach(t => {
-          this.activeNames.push(t)
-        })
-      }
     },
     /** 创建entity */
     async saveEntity () {
