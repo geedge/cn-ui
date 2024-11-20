@@ -90,9 +90,9 @@ export default {
           this.batchDeleteObjs.push(obj)
         }
       })
-      this.disableEdit = this.batchDeleteObjs.length !== 1
-      // todo 该字段后续会修改
-      this.disableEdit = !!objs.flag
+      if (this.batchDeleteObjs.length > 1) {
+        this.disableEdit = true
+      } else this.disableEdit = objs[0]?.usage > 0
       this.disableDelete = this.batchDeleteObjs.length < 1
     },
     getTableData (params, isAll, isClearType) {
