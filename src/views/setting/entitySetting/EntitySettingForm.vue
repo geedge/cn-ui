@@ -254,8 +254,8 @@ export default {
         { value: 'ip', label: 'ip' },
         { value: 'domain', label: 'domain' },
         { value: 'app', label: 'app' },
-        { value: 'subscriber_id', label: 'subscriber' },
-        { value: 'cell_id', label: 'cell' }
+        { value: 'subscriber', label: 'subscriber' },
+        { value: 'cell', label: 'cell' }
       ],
       relationTypeOption: [
         { value: 'RESOLVE_DOMAIN_IP', label: 'RESOLVE_DOMAIN_IP' },
@@ -624,7 +624,8 @@ export default {
         })
         formObj.entities = JSON.stringify(formObj.schemaMappingData.data)
         formObj.relations = JSON.stringify(formObj.relationData.data)
-        if (formObj.schemaMappingData.data.length === 0 && formObj.relationData.data.length === 0) {
+        if (formObj.schemaMappingData.data.length === 0 || formObj.relationData.data.length === 0) {
+          this.activeNames = ['1', '2']
           ElMessageBox.alert(this.$t('detection.create.informationFilled'), this.$t('overall.tip'), {
             confirmButtonText: 'OK',
             callback: () => {}
@@ -683,6 +684,12 @@ export default {
             this.myLoading = false
           })
         }
+      } else {
+        this.activeNames = ['1', '2']
+        ElMessageBox.alert(this.$t('detection.create.informationFilled'), this.$t('overall.tip'), {
+          confirmButtonText: 'OK',
+          callback: () => {}
+        })
       }
     },
     /** 底部返回按钮 */

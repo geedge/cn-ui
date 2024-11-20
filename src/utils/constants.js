@@ -2935,7 +2935,7 @@ export const settingFields = {
     { displayName: 'APP.Subcategory', fieldName: 'app_subcategory' },
     { displayName: 'seen_time', fieldName: 'seen_time' }
   ],
-  subscriber_id: [
+  subscriber: [
     { displayName: 'Subscriber ID', fieldName: 'subscriber_id', disabled: true },
     { displayName: 'Subscriber.Phone Number', fieldName: 'subscriber_phone_number' },
     { displayName: 'Subscriber.IMSI', fieldName: 'subscriber_imsi' },
@@ -2943,7 +2943,7 @@ export const settingFields = {
     { displayName: 'Subscriber.APNs', fieldName: 'subscriber_apns' },
     { displayName: 'seen_time', fieldName: 'seen_time' }
   ],
-  cell_id: [
+  cell: [
     { displayName: 'Cell ID', fieldName: 'cell_id', disabled: true },
     { displayName: 'Cell.Technology', fieldName: 'cell_technology' },
     { displayName: 'Cell.Coverage Radius', fieldName: 'cell_coverage_radius' },
