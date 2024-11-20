@@ -133,8 +133,7 @@
                           v-model="item.from_entity_index"
                           class="relation-field__select"
                           placeholder=""
-                          @visible-change="visibleFromEntity($event, index)"
-                          @change="changeFromEntity(index)">
+                          @visible-change="visibleFromEntity($event, index)">
                         <el-option
                             v-for="obj in editObj.schemaMappingData.data"
                             :key="obj.index"
@@ -152,8 +151,7 @@
                           v-model="item.to_entity_index"
                           class="relation-field__select"
                           placeholder=""
-                          @visible-change="visibleToEntity($event, index)"
-                          @change="changeToEntity(index)">
+                          @visible-change="visibleToEntity($event, index)">
                         <el-option
                             v-for="obj in editObj.schemaMappingData.data"
                             :key="obj.index"
@@ -303,7 +301,7 @@ export default {
       },
       relations: [],
       relationData: {
-        data: [{ from_entity_index: '', to_entity_index: '', type: '', fromDisabled: false, toDisabled: false }]
+        data: []
       },
       enable: 1
     })
@@ -428,7 +426,7 @@ export default {
     addRelationItem () {
       this.$refs.relationForm.validate(valid => {
         if (valid) {
-          this.editObj.relationData.data.push({ from_entity_index: '', to_entity_index: '', type: '', fromDisabled: false, toDisabled: false })
+          this.editObj.relationData.data.push({ from_entity_index: '', to_entity_index: '', type: '' })
         }
       })
     },
@@ -596,12 +594,6 @@ export default {
         })
       }
     },
-    changeFromEntity (index) {
-      this.editObj.relationData.data[index].fromDisabled = true
-    },
-    changeToEntity (index) {
-      this.editObj.relationData.data[index].toDisabled = true
-    },
     /** 创建entity */
     async saveEntity () {
       const valid1 = await this.$refs.sourceForm.validate((valid) => {
@@ -631,21 +623,7 @@ export default {
           return true
         }
 
-        if (formObj.relationData.data.length === 1) {
-          const obj = formObj.relationData.data.find(d => !d.from_entity_index && !d.to_entity_index && !d.type)
-          if (!obj) {
-            const valid3 = await this.$refs.relationForm.validate((valid) => {
-              return valid
-            })
-            if (!valid3) {
-              ElMessageBox.alert(this.$t('detection.create.informationFilled'), this.$t('overall.tip'), {
-                confirmButtonText: 'OK',
-                callback: () => {}
-              })
-              return true
-            }
-          }
-        } else if (formObj.relationData.data.length > 1) {
+        if (formObj.relationData.data.length > 0) {
           const obj = formObj.relationData.data.find(d => !d.from_entity_index || !d.to_entity_index || !d.type)
           if (obj) {
             this.activeNames = ['1', '2']
