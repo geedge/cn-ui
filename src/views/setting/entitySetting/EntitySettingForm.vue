@@ -610,10 +610,7 @@ export default {
       const valid2 = await this.$refs.mappingForm.validate((valid) => {
         return valid
       })
-      const valid3 = await this.$refs.relationForm.validate((valid) => {
-        return valid
-      })
-      if (valid1 && valid2 && valid3) {
+      if (valid1 && valid2) {
         const formObj = this.$_.cloneDeep(this.editObj)
         formObj.schemaMappingData.data.forEach((item) => {
           const obj = {}
@@ -624,13 +621,41 @@ export default {
         })
         formObj.entities = JSON.stringify(formObj.schemaMappingData.data)
         formObj.relations = JSON.stringify(formObj.relationData.data)
-        if (formObj.schemaMappingData.data.length === 0 || formObj.relationData.data.length === 0) {
+
+        if (formObj.schemaMappingData.data.length === 0) {
           this.activeNames = ['1', '2']
           ElMessageBox.alert(this.$t('detection.create.informationFilled'), this.$t('overall.tip'), {
             confirmButtonText: 'OK',
             callback: () => {}
           })
           return true
+        }
+
+        if (formObj.relationData.data.length === 1) {
+          const obj = formObj.relationData.data.find(d => !d.from_entity_index && !d.to_entity_index && !d.type)
+          if (!obj) {
+            const valid3 = await this.$refs.relationForm.validate((valid) => {
+              return valid
+            })
+            if (!valid3) {
+              ElMessageBox.alert(this.$t('detection.create.informationFilled'), this.$t('overall.tip'), {
+                confirmButtonText: 'OK',
+                callback: () => {}
+              })
+              return true
+            }
+          }
+        } else if (formObj.relationData.data.length > 1) {
+          const obj = formObj.relationData.data.find(d => !d.from_entity_index || !d.to_entity_index || !d.type)
+          if (obj) {
+            this.activeNames = ['1', '2']
+            this.$refs.relationForm.validate(() => null)
+            ElMessageBox.alert(this.$t('detection.create.informationFilled'), this.$t('overall.tip'), {
+              confirmButtonText: 'OK',
+              callback: () => {}
+            })
+            return true
+          }
         }
         this.myLoading = true
         if (!this.ruleId) {
@@ -684,12 +709,6 @@ export default {
             this.myLoading = false
           })
         }
-      } else {
-        this.activeNames = ['1', '2']
-        ElMessageBox.alert(this.$t('detection.create.informationFilled'), this.$t('overall.tip'), {
-          confirmButtonText: 'OK',
-          callback: () => {}
-        })
       }
     },
     /** 底部返回按钮 */
