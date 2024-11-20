@@ -202,7 +202,7 @@
       <button class="business-button business-button--light tag__btn" @click="cancel">
         <span>{{ $t('overall.cancel') }}</span>
       </button>
-      <button style="position: relative;" class="business-button tag__btn" @click="saveEntity">
+      <button style="position: relative;" class="business-button tag__btn" :disabled="editObj.isBuiltIn>0" @click="saveEntity">
 <!--        <loading :loading="blockOperation.save"></loading>-->
         <span>{{ $t('overall.save') }}</span>
       </button>

@@ -154,7 +154,7 @@
         <span>{{ $t('overall.cancel') }}</span>
       </button>
       <button style="position: relative;" :class="{'disabled': blockOperation.save}"
-              :disabled="sourceObj.usage>0" class="business-button tag__btn" @click="saveSource">
+              :disabled="sourceObj.usage>0 || sourceObj.isBuiltIn>0" class="business-button tag__btn" @click="saveSource">
         <loading :loading="blockOperation.save"></loading>
         <span>{{ $t('overall.save') }}</span>
       </button>

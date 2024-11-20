@@ -8,6 +8,7 @@
       @header-dragend="dragend"
       @sort-change="tableDataSort"
       @selection-change="selectionChange"
+      :row-class-name="tableRowClassName"
   >
     <el-table-column
         :resizable="false"
@@ -116,7 +117,7 @@ export default {
     dateFormatByAppearance,
     // 禁止勾选buildIn为1的项，即禁止修改、删除admin的账号
     checkSelectable (row) {
-      return row.buildIn !== 1
+      return row.isBuiltIn !== 1
     },
     handleListTypes (data) {
       let str = ''
@@ -132,6 +133,11 @@ export default {
         str = str.slice(0, -1)
       }
       return str
+    },
+    tableRowClassName (row) {
+      if (row.row.isBuiltIn === 1) {
+        return 'table-disabled-row'
+      }
     }
   }
 }

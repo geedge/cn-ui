@@ -150,3 +150,7 @@ body {
     }
   }
 }
+
+.el-table .table-disabled-row {
+  --el-table-tr-bg-color: var(--el-fill-color-light);
+}

@@ -8,6 +8,7 @@
       @header-dragend="dragend"
       @sort-change="tableDataSort"
       @selection-change="selectionChange"
+      :row-class-name="tableRowClassName"
   >
     <el-table-column
         :resizable="false"
@@ -200,7 +201,7 @@ export default {
     },
     // 禁止勾选buildIn为1的项，即禁止修改、删除admin的账号
     checkSelectable (row) {
-      return row.buildIn !== 1
+      return row.isBuiltIn !== 1
     },
     fileChange (files, fileList) {
       if (this.fileList.length > 0 && this.fileList[0].status === 'success') {
@@ -263,6 +264,11 @@ export default {
       }
       this.uploadLoading = false
       this.$message.error(this.$t('tip.uploadFailed', { msg: errorMsg }))
+    },
+    tableRowClassName (row) {
+      if (row.row.isBuiltIn === 1) {
+        return 'table-disabled-row'
+      }
     }
   },
   setup () {
