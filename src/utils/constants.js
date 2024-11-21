@@ -2921,19 +2921,22 @@ export const settingFields = {
     { displayName: 'IP.Admin Area', fieldName: 'ip_admin_area' },
     { displayName: 'IP.ASN', fieldName: 'ip_asn' },
     { displayName: 'IP.ISP', fieldName: 'ip_isp' },
-    { displayName: 'seen_time', fieldName: 'seen_time' }
+    { displayName: 'seen_time', fieldName: 'seen_time' },
+    { displayName: 'tags', fieldName: 'tags' }
   ],
   domain: [
     { displayName: 'Domain', fieldName: 'domain', disabled: true },
     { displayName: 'Domain.Category', fieldName: 'domain_category' },
     { displayName: 'Domain.Category Group', fieldName: 'domain_category_group' },
-    { displayName: 'seen_time', fieldName: 'seen_time' }
+    { displayName: 'seen_time', fieldName: 'seen_time' },
+    { displayName: 'tags', fieldName: 'tags' }
   ],
   app: [
     { displayName: 'Application', fieldName: 'app', disabled: true },
     { displayName: 'APP.Category', fieldName: 'app_category' },
     { displayName: 'APP.Subcategory', fieldName: 'app_subcategory' },
-    { displayName: 'seen_time', fieldName: 'seen_time' }
+    { displayName: 'seen_time', fieldName: 'seen_time' },
+    { displayName: 'tags', fieldName: 'tags' }
   ],
   subscriber: [
     { displayName: 'Subscriber ID', fieldName: 'subscriber_id', disabled: true },
@@ -2941,7 +2944,8 @@ export const settingFields = {
     { displayName: 'Subscriber.IMSI', fieldName: 'subscriber_imsi' },
     { displayName: 'Subscriber.IMEI', fieldName: 'subscriber_imei' },
     { displayName: 'Subscriber.APNs', fieldName: 'subscriber_apns' },
-    { displayName: 'seen_time', fieldName: 'seen_time' }
+    { displayName: 'seen_time', fieldName: 'seen_time' },
+    { displayName: 'tags', fieldName: 'tags' }
   ],
   cell: [
     { displayName: 'Cell ID', fieldName: 'cell_id', disabled: true },
@@ -2961,7 +2965,8 @@ export const settingFields = {
     { displayName: 'cell_longitude', fieldName: 'cell_longitude' },
     { displayName: 'cell_azimuth', fieldName: 'cell_azimuth' },
     { displayName: 'cell_fdd_spectrum', fieldName: 'cell_fdd_spectrum' },
-    { displayName: 'seen_time', fieldName: 'seen_time' }
+    { displayName: 'seen_time', fieldName: 'seen_time' },
+    { displayName: 'tags', fieldName: 'tags' }
   ]
 }
 

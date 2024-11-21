@@ -88,7 +88,7 @@
       }
       .cn-menu__left {
         flex: 1;
-        padding: 12px 10px 10px 20px;
+        padding: 12px 0 10px 20px;
         max-width: 290px;
         border-right: 1px solid var(--el-border-color);
 
@@ -113,6 +113,10 @@
           span {
             padding-left: 10px;
           }
+        }
+
+        .empty-menu {
+          border-top: 1px rgba(0,0,0,0) solid;
         }
       }
       .cn-menu__middle {

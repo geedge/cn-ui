@@ -146,6 +146,7 @@
           <span>{{ $t(menu.i18n || menu.name) }}</span>
           <i class="cn-icon cn-icon-right" v-show="menu.code==='setting'"></i>
         </div>
+        <div class="empty-menu" @mouseleave="mouseleaveItemMenu(null)"></div>
       </div>
       <div class="cn-menu__middle" v-if="!isShowSetting">
         <div class="middle-menus middle-menus--network-analytics">
@@ -187,7 +188,7 @@
           </div>
         </div>
       </div>
-      <div class="cn-menu__middle" v-if="isShowSetting" @mouseenter="mouseleaveItemMenu('setting')" @mouseleave="mouseleaveRightMenu">
+      <div class="cn-menu__middle" v-if="isShowSetting" @mouseenter="mouseleaveItemMenu('setting')">
         <div class="middle-menus middle-menus--network-analytics">
           <div class="middle-menus__header">{{ $t('overall.setting') }}</div>
           <div class="middle-menus__body" v-if="settingMenu && settingMenu.children">
@@ -937,9 +938,6 @@ export default {
     },
     mouseleaveItemMenu (code) {
       this.isShowSetting = code === 'setting'
-    },
-    mouseleaveRightMenu () {
-      this.isShowSetting = false
     }
   }
 }

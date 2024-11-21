@@ -67,7 +67,7 @@
         </div>
       </el-form>
 
-      <div class="form__body__label"><span class="from-dot">*</span>{{ $t('setting.lookups') }}</div>
+      <div class="form__body__label">{{ $t('setting.lookups') }}</div>
       <el-form ref="lookupsForm" :model="sourceObj.lookupsData">
         <div class="form-fields__block">
           <div class="block__body">
@@ -336,17 +336,15 @@ export default {
       const valid2 = await this.$refs.fieldsForm.validate((valid) => {
         return valid
       })
-      const valid3 = await this.$refs.lookupsForm.validate((valid) => {
-        return valid
-      })
-      if (valid1 && valid2 && valid3) {
+      if (valid1 && valid2) {
         this.sourceObj.fields = JSON.stringify(this.sourceObj.fieldsData.data)
         this.sourceObj.lookups = JSON.stringify(this.sourceObj.lookupsData.data)
-        if (this.sourceObj.fieldsData.data.length === 0 && this.sourceObj.lookupsData.data.length === 0) {
+        if (this.sourceObj.fieldsData.data.length === 0 || this.sourceObj.lookupsData.data.length > 0) {
           ElMessageBox.alert(this.$t('detection.create.informationFilled'), this.$t('overall.tip'), {
             confirmButtonText: 'OK',
             callback: () => {}
           })
+          this.$refs.lookupsForm.validate(() => null)
           return true
         }
         delete this.sourceObj.enable
@@ -502,7 +500,7 @@ export default {
       lookups: [],
       // lookups列表数据
       lookupsData: {
-        data: [{ function: '', lookup_field: '', output_type: '', output_field: '' }]
+        data: []
       },
       description: ''
       // enable: 1
