@@ -130,7 +130,9 @@ export default {
             str += item.type + ','
           }
         })
-        str = str.slice(0, -1)
+        str = str.slice(0, -1) || '-'
+      } else {
+        str = '-'
       }
       return str
     },
