@@ -141,7 +141,13 @@
         @close="closeDrawer"
     >
       <div class="cn-menu__left" v-if="otherMenu" @mouseleave="mouseleaveLeftMenu">
-        <div class="left-menu" v-for="menu in otherMenu" :key="menu.id" @click="jumpOther(menu.route,'','',0)" @mouseenter="mouseleaveItemMenu(menu.code)">
+        <div
+            class="left-menu"
+            :class="isShowSetting && menu.code==='setting' ? 'left-menu--setting' : ''"
+            v-for="menu in otherMenu"
+            :key="menu.id"
+            @click="jumpOther(menu.route,'','',0)"
+            @mouseenter="mouseleaveItemMenu(menu.code)">
           <i :class="menu.icon"></i>
           <span>{{ $t(menu.i18n || menu.name) }}</span>
           <i class="cn-icon cn-icon-right" v-show="menu.code==='setting'"></i>
@@ -188,7 +194,7 @@
           </div>
         </div>
       </div>
-      <div class="cn-menu__middle" v-if="isShowSetting" @mouseenter="mouseleaveItemMenu('setting')">
+      <div class="cn-menu__middle" v-else @mouseenter="mouseleaveItemMenu('setting')">
         <div class="middle-menus middle-menus--network-analytics">
           <div class="middle-menus__header">{{ $t('overall.setting') }}</div>
           <div class="middle-menus__body" v-if="settingMenu && settingMenu.children">

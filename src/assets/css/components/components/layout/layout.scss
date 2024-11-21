@@ -88,18 +88,21 @@
       }
       .cn-menu__left {
         flex: 1;
-        padding: 12px 0 10px 20px;
+        padding: 12px 0 10px 0;
         max-width: 290px;
         border-right: 1px solid var(--el-border-color);
 
         .left-menu {
-          padding: 8px 0;
+          padding: 8px 0 8px 20px;
           font-size: 14px;
           color: var(--el-text-color-primary);
           cursor: pointer;
 
           &:hover {
             color: var(--el-color-primary);
+          }
+          &.left-menu--setting {
+            background-color: #f0f0f0;
           }
           .cn-icon:first-of-type {
             font-size: 17px;
