@@ -41,7 +41,7 @@
           <template v-else><span>-</span></template>
         </template>
         <template v-if="item.prop === 'entitySource'">
-          {{ scope.row[item.prop].name || '-' }}
+          {{ scope.row[item.prop]?.name || '-' }}
         </template>
         <template v-if="item.prop === 'entities' || item.prop === 'relations'">
           {{ handleListTypes(scope.row[item.prop]) }}

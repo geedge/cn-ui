@@ -94,6 +94,10 @@ export default {
         this.disableEdit = true
       } else this.disableEdit = objs[0]?.usage > 0
       this.disableDelete = this.batchDeleteObjs.length < 1
+      const obj = objs.find(d => d.usage > 0)
+      if (obj) {
+        this.disableDelete = true
+      }
     },
     getTableData (params, isAll, isClearType) {
       if (isAll) {
