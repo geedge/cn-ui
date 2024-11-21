@@ -339,13 +339,24 @@ export default {
       if (valid1 && valid2) {
         this.sourceObj.fields = JSON.stringify(this.sourceObj.fieldsData.data)
         this.sourceObj.lookups = JSON.stringify(this.sourceObj.lookupsData.data)
-        if (this.sourceObj.fieldsData.data.length === 0 || this.sourceObj.lookupsData.data.length > 0) {
+        if (this.sourceObj.fieldsData.data.length === 0) {
           ElMessageBox.alert(this.$t('detection.create.informationFilled'), this.$t('overall.tip'), {
             confirmButtonText: 'OK',
             callback: () => {}
           })
-          this.$refs.lookupsForm.validate(() => null)
           return true
+        }
+        if (this.sourceObj.lookupsData.data.length > 0) {
+          const valid3 = await this.$refs.lookupsForm.validate((valid) => {
+            return valid
+          })
+          if (!valid3) {
+            ElMessageBox.alert(this.$t('detection.create.informationFilled'), this.$t('overall.tip'), {
+              confirmButtonText: 'OK',
+              callback: () => {}
+            })
+            return true
+          }
         }
         delete this.sourceObj.enable
         this.myLoading = true
