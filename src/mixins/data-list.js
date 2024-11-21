@@ -42,6 +42,7 @@ export default {
       delFlag: false,
       disableEdit: true, // 编辑按钮是否不可用，当选择多条记录的时候，编辑按钮不可用
       disableDelete: true,
+      disableView: true,
       operationWidth: '165', // 操作列宽
       loading: true,
       isNoData: false
@@ -91,9 +92,15 @@ export default {
         }
       })
       this.disableEdit = this.batchDeleteObjs.length !== 1
+      this.disableView = this.batchDeleteObjs.length !== 1
       this.disableDelete = this.batchDeleteObjs.length < 1
       const obj = objs.find(d => d.usage > 0)
       if (obj) {
+        this.disableDelete = true
+        this.disableEdit = true
+      }
+      const obj1 = objs.find(d => d.isBuiltIn > 0)
+      if (obj1) {
         this.disableDelete = true
         this.disableEdit = true
       }

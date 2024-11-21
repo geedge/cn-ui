@@ -22,6 +22,12 @@
             <i class="cn-icon-edit cn-icon"></i>
             <span>{{ $t('overall.edit') }}</span>
           </button>
+          <button id="tag-view" class="business-button business-button--light tag__btn margin-r-10 tool-btn-view"
+                  :disabled="disableView"
+                  @click="viewEntity">
+            <i class="cn-icon-preview cn-icon"></i>
+            <span>{{ $t('overall.view') }}</span>
+          </button>
           <button id="tag-delete" class="business-button business-button--light tag__btn margin-r-10"
                   :disabled="disableDelete"
                   @click="delBatch">
@@ -117,7 +123,7 @@ export default {
     },
     add () {
       this.$router.push({
-        path: '/setting/entitySetting/create',
+        path: '/setting/entityIntegration/create',
         query: {
           t: +new Date()
         }
@@ -216,10 +222,21 @@ export default {
         this.jumpToEditPage(this.batchDeleteObjs[0].id)
       }
     },
+    viewEntity () {
+      const pageNo = this.$router.currentRoute.value.query.pageNo
+      this.$router.push({
+        path: '/setting/entityIntegration/view',
+        query: {
+          t: +new Date(),
+          pageNoForTable: pageNo || 1,
+          id: this.batchDeleteObjs[0].id
+        }
+      })
+    },
     jumpToEditPage (id) {
       const pageNo = this.$router.currentRoute.value.query.pageNo
       this.$router.push({
-        path: '/setting/entitySetting/edit',
+        path: '/setting/entityIntegration/edit',
         query: {
           t: +new Date(),
           pageNoForTable: pageNo || 1,

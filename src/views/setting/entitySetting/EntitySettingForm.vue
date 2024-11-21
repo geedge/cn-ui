@@ -2,10 +2,7 @@
   <div class="es-form">
     <loading :loading="myLoading"></loading>
 
-    <div class="es-form-header">
-<!--      {{ ruleId ? $t('detection.editEventPolicies') : $t('overall.entitySetting') }}-->
-      {{ $t('overall.entitySetting') }}
-    </div>
+    <div class="es-form-header">{{ $t('overall.entitySetting') }}</div>
 
     <div class="es-form-content">
       <!--第一步：General Settings-->
@@ -202,7 +199,7 @@
       <button class="business-button business-button--light tag__btn" @click="cancel">
         <span>{{ $t('overall.cancel') }}</span>
       </button>
-      <button style="position: relative;" class="business-button tag__btn" :disabled="editObj.isBuiltIn>0" @click="saveEntity">
+      <button style="position: relative;" class="business-button tag__btn" :disabled="disabledSave" @click="saveEntity">
 <!--        <loading :loading="blockOperation.save"></loading>-->
         <span>{{ $t('overall.save') }}</span>
       </button>
@@ -268,6 +265,11 @@ export default {
   components: {
     Loading
   },
+  computed: {
+    disabledSave () {
+      return this.editObj.isBuiltIn > 0 || this.isView
+    }
+  },
   mounted () {
     this.initSourceData()
     if (this.ruleId) {
@@ -275,7 +277,7 @@ export default {
     }
   },
   setup () {
-    const { query } = useRoute()
+    const { query, name } = useRoute()
     const ruleId = ref(query.id || '')
     const pageNoForTable = ref(query.pageNoForTable || 1)
     const myLoading = ref(!!ruleId.value)
@@ -306,12 +308,14 @@ export default {
       enable: 1
     })
 
+    const isView = name === 'viewEntityIntegration'
     return {
       ruleId,
       myLoading,
       pageNoForTable,
       editObj,
-      ruleObj
+      ruleObj,
+      isView
     }
   },
   methods: {
@@ -340,7 +344,7 @@ export default {
         console.error(e)
         this.$message.error(this.errorMsgHandler(e))
         this.$router.push({
-          path: '/setting/entitySetting',
+          path: '/setting/entityIntegration',
           query: {
             pageNo: this.pageNoForTable ? Number(this.pageNoForTable) : 1,
             t: +new Date()
@@ -381,7 +385,7 @@ export default {
         console.error(e)
         this.$message.error(this.errorMsgHandler(e))
         this.$router.push({
-          path: '/setting/entitySetting',
+          path: '/setting/entityIntegration',
           query: {
             pageNo: this.pageNoForTable ? Number(this.pageNoForTable) : 1,
             t: +new Date()
@@ -643,7 +647,7 @@ export default {
               this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
 
               this.$router.push({
-                path: '/setting/entitySetting',
+                path: '/setting/entityIntegration',
                 query: {
                   t: +new Date()
                 }
@@ -673,7 +677,7 @@ export default {
                 queryInfo.name = this.settingObj.name
               }
               this.$router.push({
-                path: '/setting/entitySetting',
+                path: '/setting/entityIntegration',
                 query: queryInfo
               })
             } else {
@@ -706,7 +710,7 @@ export default {
       // } else {
       // }
       this.$router.push({
-        path: '/setting/entitySetting',
+        path: '/setting/entityIntegration',
         query: queryInfo
       })
     },
@@ -721,7 +725,7 @@ export default {
         customClass: 'del-model'
       }).then(() => {
         this.$router.push({
-          path: '/setting/entitySetting',
+          path: '/setting/entityIntegration',
           query: queryInfo
         })
       }).catch(() => {

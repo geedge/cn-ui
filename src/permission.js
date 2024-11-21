@@ -197,15 +197,17 @@ export function handleComponent (code) {
     case 'locationMap':
     case 'traceTracking':
       return () => import('@/views/location/Index')
-    case 'source':
+    case 'dataSource':
       return () => import('@/views/setting/sources/Sources')
-    case 'createSource':
-    case 'editSource':
+    case 'createDataSource':
+    case 'editDataSource':
+    case 'viewDataSource':
       return () => import('@/views/setting/sources/SourcesForm')
-    case 'entitySetting':
+    case 'entityIntegration':
       return () => import('@/views/setting/entitySetting/EntitySetting')
-    case 'createEntitySetting':
-    case 'editEntitySetting':
+    case 'createEntityIntegration':
+    case 'editEntityIntegration':
+    case 'viewEntityIntegration':
       return () => import('@/views/setting/entitySetting/EntitySettingForm')
     default:
       return null

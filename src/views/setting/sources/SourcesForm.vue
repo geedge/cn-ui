@@ -1,7 +1,7 @@
 <template>
   <div class="sources-form">
     <loading :loading="myLoading"></loading>
-    <div class="sources-form__header">{{ sourceObj.id ? $t('sources.editSource') : $t('sources.createSource') }}</div>
+    <div class="sources-form__header">{{ pageHeaderName }}</div>
     <div class="sources-form__body">
       <el-form ref="baseForm" :model="sourceObj" label-position="top" style="width: 620px" :rules="rules">
         <el-form-item :label="$t('overall.name')" prop="name">
@@ -154,7 +154,7 @@
         <span>{{ $t('overall.cancel') }}</span>
       </button>
       <button style="position: relative;" :class="{'disabled': blockOperation.save}"
-              :disabled="sourceObj.usage>0 || sourceObj.isBuiltIn>0" class="business-button tag__btn" @click="saveSource">
+              :disabled="disabledSave" class="business-button tag__btn" @click="saveSource">
         <loading :loading="blockOperation.save"></loading>
         <span>{{ $t('overall.save') }}</span>
       </button>
@@ -291,6 +291,18 @@ export default {
         output_type: '',
         output_field: ''
       }
+    }
+  },
+  computed: {
+    pageHeaderName () {
+      let name = this.$t('sources.createSource')
+      if (this.sourceObj.id) {
+        name = this.isView ? this.$t('setting.viewSource') : this.$t('sources.editSource')
+      }
+      return name
+    },
+    disabledSave () {
+      return this.sourceObj.usage > 0 || this.sourceObj.isBuiltIn > 0 || this.isView
     }
   },
   mounted () {
@@ -495,7 +507,7 @@ export default {
     }
   },
   setup () {
-    const { query } = useRoute()
+    const { query, name } = useRoute()
     const sourceId = ref(query.id || '')
     const pageNoForTable = ref(query.pageNoForTable || 1)
     const myLoading = ref(!!sourceId.value)
@@ -517,11 +529,13 @@ export default {
       // enable: 1
     }
     const sourceObj = ref(_.cloneDeep(blankObject))
+    const isView = name === 'viewDataSource'
     return {
       sourceId,
       pageNoForTable,
       myLoading,
-      sourceObj
+      sourceObj,
+      isView
     }
   }
 }

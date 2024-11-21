@@ -14,7 +14,6 @@
         :resizable="false"
         align="center"
         type="selection"
-        :selectable="checkSelectable"
         width="55">
     </el-table-column>
     <el-table-column
