@@ -393,7 +393,7 @@ export const api = {
       sourceUpload: apiVersion + '/entity/sources/upload' // 文件上传，post
     },
     profiles: {
-      profiles: apiVersion + '/entity/profiles' // get列表查询，delete删除，post新增，put修改
+      profiles: apiVersion + '/entity/integrations' // get列表查询，delete删除，post新增，put修改
     }
   }
 }

@@ -208,7 +208,7 @@ export default {
     },
     add () {
       this.$router.push({
-        path: '/setting/source/create',
+        path: '/setting/dataSource/create',
         query: {
           t: +new Date()
         }
@@ -232,7 +232,7 @@ export default {
     viewSource () {
       const pageNo = this.$router.currentRoute.value.query.pageNo
       this.$router.push({
-        path: '/setting/source/view',
+        path: '/setting/dataSource/view',
         query: {
           t: +new Date(),
           pageNoForTable: pageNo || 1,
@@ -243,7 +243,7 @@ export default {
     jumpToEditPage (id) {
       const pageNo = this.$router.currentRoute.value.query.pageNo
       this.$router.push({
-        path: '/setting/source/edit',
+        path: '/setting/dataSource/edit',
         query: {
           t: +new Date(),
           pageNoForTable: pageNo || 1,

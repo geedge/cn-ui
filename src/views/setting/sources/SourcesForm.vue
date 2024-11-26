@@ -333,7 +333,7 @@ export default {
         console.error(e)
         this.$message.error(this.errorMsgHandler(e))
         this.$router.push({
-          path: '/setting/source',
+          path: '/setting/dataSource',
           query: {
             pageNo: this.pageNoForTable ? Number(this.pageNoForTable) : 1,
             t: +new Date()
@@ -383,7 +383,7 @@ export default {
               })
 
               this.$router.push({
-                path: '/setting/source',
+                path: '/setting/dataSource',
                 query: {
                   t: +new Date()
                 }
@@ -413,7 +413,7 @@ export default {
                 queryInfo.name = this.settingObj.name
               }
               this.$router.push({
-                path: '/setting/source',
+                path: '/setting/dataSource',
                 query: queryInfo
               })
             } else {
@@ -442,7 +442,7 @@ export default {
           customClass: 'del-model'
         }).then(() => {
           this.$router.push({
-            path: '/setting/source',
+            path: '/setting/dataSource',
             query: {
               pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
               t: +new Date()
@@ -451,7 +451,7 @@ export default {
         }).catch(() => {})
       } else {
         this.$router.push({
-          path: '/setting/source',
+          path: '/setting/dataSource',
           query: {
             pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
             t: +new Date()
