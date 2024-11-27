@@ -2922,33 +2922,33 @@ export const settingFields = {
     { displayName: 'IP.ASN', fieldName: 'ip_asn' },
     { displayName: 'IP.ISP', fieldName: 'ip_isp' },
     { displayName: 'seen_time', fieldName: 'seen_time' },
-    { displayName: 'Cloud Provider', fieldName: 'Cloud Provider' },
-    { displayName: 'CDN Provider', fieldName: 'CDN Provider' },
-    { displayName: 'Category Name', fieldName: 'Category Name' },
-    { displayName: 'IoC', fieldName: 'IoC' },
-    { displayName: 'Anonymous', fieldName: 'Anonymous' }
+    { displayName: 'tags.Cloud Provider', fieldName: 'tags.Cloud Provider' },
+    { displayName: 'tags.CDN Provider', fieldName: 'tags.CDN Provider' },
+    { displayName: 'tags.Category Name', fieldName: 'tags.Category Name' },
+    { displayName: 'tags.IoC', fieldName: 'tags.IoC' },
+    { displayName: 'tags.Anonymous', fieldName: 'tags.Anonymous' }
   ],
   domain: [
     { displayName: 'Domain', fieldName: 'domain', disabled: true },
     { displayName: 'Domain.Category', fieldName: 'domain_category' },
     { displayName: 'Domain.Category Group', fieldName: 'domain_category_group' },
     { displayName: 'seen_time', fieldName: 'seen_time' },
-    { displayName: 'Cloud Provider', fieldName: 'Cloud Provider' },
-    { displayName: 'CDN Provider', fieldName: 'CDN Provider' },
-    { displayName: 'Category Name', fieldName: 'Category Name' },
-    { displayName: 'IoC', fieldName: 'IoC' },
-    { displayName: 'Anonymous', fieldName: 'Anonymous' }
+    { displayName: 'tags.Cloud Provider', fieldName: 'tags.Cloud Provider' },
+    { displayName: 'tags.CDN Provider', fieldName: 'tags.CDN Provider' },
+    { displayName: 'tags.Category Name', fieldName: 'tags.Category Name' },
+    { displayName: 'tags.IoC', fieldName: 'tags.IoC' },
+    { displayName: 'tags.Anonymous', fieldName: 'tags.Anonymous' }
   ],
   app: [
     { displayName: 'Application', fieldName: 'app', disabled: true },
     { displayName: 'APP.Category', fieldName: 'app_category' },
     { displayName: 'APP.Subcategory', fieldName: 'app_subcategory' },
     { displayName: 'seen_time', fieldName: 'seen_time' },
-    { displayName: 'Cloud Provider', fieldName: 'Cloud Provider' },
-    { displayName: 'CDN Provider', fieldName: 'CDN Provider' },
-    { displayName: 'Category Name', fieldName: 'Category Name' },
-    { displayName: 'IoC', fieldName: 'IoC' },
-    { displayName: 'Anonymous', fieldName: 'Anonymous' }
+    { displayName: 'tags.Cloud Provider', fieldName: 'tags.Cloud Provider' },
+    { displayName: 'tags.CDN Provider', fieldName: 'tags.CDN Provider' },
+    { displayName: 'tags.Category Name', fieldName: 'tags.Category Name' },
+    { displayName: 'tags.IoC', fieldName: 'tags.IoC' },
+    { displayName: 'tags.Anonymous', fieldName: 'tags.Anonymous' }
   ],
   subscriber: [
     { displayName: 'Subscriber ID', fieldName: 'subscriber_id', disabled: true },
@@ -2957,11 +2957,11 @@ export const settingFields = {
     { displayName: 'Subscriber.IMEI', fieldName: 'subscriber_imei' },
     { displayName: 'Subscriber.APNs', fieldName: 'subscriber_apns' },
     { displayName: 'seen_time', fieldName: 'seen_time' },
-    { displayName: 'Cloud Provider', fieldName: 'Cloud Provider' },
-    { displayName: 'CDN Provider', fieldName: 'CDN Provider' },
-    { displayName: 'Category Name', fieldName: 'Category Name' },
-    { displayName: 'IoC', fieldName: 'IoC' },
-    { displayName: 'Anonymous', fieldName: 'Anonymous' }
+    { displayName: 'tags.Cloud Provider', fieldName: 'tags.Cloud Provider' },
+    { displayName: 'tags.CDN Provider', fieldName: 'tags.CDN Provider' },
+    { displayName: 'tags.Category Name', fieldName: 'tags.Category Name' },
+    { displayName: 'tags.IoC', fieldName: 'tags.IoC' },
+    { displayName: 'tags.Anonymous', fieldName: 'tags.Anonymous' }
   ],
   cell: [
     { displayName: 'Cell ID', fieldName: 'cell_id', disabled: true },
@@ -2982,11 +2982,11 @@ export const settingFields = {
     { displayName: 'cell_azimuth', fieldName: 'cell_azimuth' },
     { displayName: 'cell_fdd_spectrum', fieldName: 'cell_fdd_spectrum' },
     { displayName: 'seen_time', fieldName: 'seen_time' },
-    { displayName: 'Cloud Provider', fieldName: 'Cloud Provider' },
-    { displayName: 'CDN Provider', fieldName: 'CDN Provider' },
-    { displayName: 'Category Name', fieldName: 'Category Name' },
-    { displayName: 'IoC', fieldName: 'IoC' },
-    { displayName: 'Anonymous', fieldName: 'Anonymous' }
+    { displayName: 'tags.Cloud Provider', fieldName: 'tags.Cloud Provider' },
+    { displayName: 'tags.CDN Provider', fieldName: 'tags.CDN Provider' },
+    { displayName: 'tags.Category Name', fieldName: 'tags.Category Name' },
+    { displayName: 'tags.IoC', fieldName: 'tags.IoC' },
+    { displayName: 'tags.Anonymous', fieldName: 'tags.Anonymous' }
   ]
 }
 
