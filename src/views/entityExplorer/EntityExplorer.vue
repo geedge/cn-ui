@@ -73,12 +73,12 @@
     </div>
 
     <div class="explorer-foot" v-if="!showList">
-      <div v-for="item in homeEntityList" :key="item.name">
+      <div>
         <el-divider direction="vertical"></el-divider>
         <div class="entity-overview">
           <div class="overview-left">
             <span class="overview-left-loading">
-              <span class="overview-left-loading-span">{{ item.name }}</span>
+              <span class="overview-left-loading-span">APP</span>
             </span>
           </div>
           <div class="overview-right">
@@ -86,8 +86,8 @@
               <i class="cn-icon cn-icon-proportion entity-explorer-total__icon"></i>
               <div class="right-label">{{ $t('network.total') }}</div>
               <div class="right-label-loading">
-                <loading :loading="item.loadingTotal" size="small"></loading>
-                <div class="right-value">{{ numberWithCommas(item.total) }}</div>
+                <loading :loading="loadingApp" size="small"></loading>
+                <div class="right-value">{{ numberWithCommas(entityAppTotal) }}</div>
               </div>
             </div>
 
@@ -95,17 +95,107 @@
               <i class="cn-icon cn-icon-active"></i>
               <div class="right-label">{{ $t('entity.active') }}</div>
               <div class="right-label-loading">
-                <loading :loading="item.loadingActive" size="small"></loading>
+                <loading :loading="loadingAppActive" size="small"></loading>
                 <div class="right-value-block">
-                  <span class="margin-r-6">{{ numberWithCommas(item.active) }}</span>
+                  <span class="margin-r-6">{{ numberWithCommas(entityAppActive) }}</span>
                   <span class="last-hour">{{ $t('entity.inLastHour') }}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <el-divider direction="vertical"></el-divider>
+        <div class="entity-overview">
+          <div class="overview-left">
+            <span class="overview-left-loading">
+              <span class="overview-left-loading-span">{{$t('overall.domain')}}</span>
+            </span>
+          </div>
+          <div class="overview-right">
+            <div class="right-row margin-b-6">
+              <i class="cn-icon cn-icon-proportion entity-explorer-total__icon"></i>
+              <div class="right-label">{{ $t('network.total') }}</div>
+              <div class="right-label-loading">
+                <loading :loading="loadingDomain" size="small"></loading>
+                <div class="right-value">{{ numberWithCommas(entityDomainTotal) }}</div>
+              </div>
+            </div>
+
+            <div class="right-row">
+              <i class="cn-icon cn-icon-active"></i>
+              <div class="right-label">{{ $t('entity.active') }}</div>
+              <div class="right-label-loading">
+                <loading :loading="loadingDomainActive" size="small"></loading>
+                <div class="right-value-block">
+                  <span class="margin-r-6">{{ numberWithCommas(entityDomainActive) }}</span>
+                  <span class="last-hour">{{ $t('entity.inLastHour') }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <el-divider direction="vertical"></el-divider>
+        <div class="entity-overview">
+          <div class="overview-left">
+            <span class="overview-left-loading">
+              <span class="overview-left-loading-span">IP</span>
+            </span>
+          </div>
+          <div class="overview-right">
+            <div class="right-row margin-b-6">
+              <i class="cn-icon cn-icon-proportion entity-explorer-total__icon"></i>
+              <div class="right-label">{{ $t('network.total') }}</div>
+              <div class="right-label-loading">
+                <loading :loading="loadingIp" size="small"></loading>
+                <div class="right-value">{{ numberWithCommas(entityIpTotal) }}</div>
+              </div>
+            </div>
+
+            <div class="right-row">
+              <i class="cn-icon cn-icon-active"></i>
+              <div class="right-label">{{ $t('entity.active') }}</div>
+              <div class="right-label-loading">
+                <loading :loading="loadingIpActive" size="small"></loading>
+                <div class="right-value-block">
+                  <span class="margin-r-6">{{ numberWithCommas(entityIpActive) }}</span>
+                  <span class="last-hour">{{ $t('entity.inLastHour') }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <el-divider direction="vertical"></el-divider>
+        <div class="entity-overview">
+          <div class="overview-left">
+            <span class="overview-left-loading">
+              <span class="overview-left-loading-span">{{ $t('overall.subscriber') }}</span>
+            </span>
+          </div>
+          <div class="overview-right">
+            <div class="right-row margin-b-6">
+              <i class="cn-icon cn-icon-proportion entity-explorer-total__icon"></i>
+              <div class="right-label">{{ $t('network.total') }}</div>
+              <div class="right-label-loading">
+                <loading :loading="loadingIp" size="small"></loading>
+                <div class="right-value">{{ numberWithCommas(entitySubscriberTotal) }}</div>
+              </div>
+            </div>
+
+            <div class="right-row">
+              <i class="cn-icon cn-icon-active"></i>
+              <div class="right-label">{{ $t('entity.active') }}</div>
+              <div class="right-label-loading">
+                <loading :loading="loadingSubscriberActive" size="small"></loading>
+                <div class="right-value-block">
+                  <span class="margin-r-6">{{ numberWithCommas(entitySubscriberActive) }}</span>
+                  <span class="last-hour">{{ $t('entity.inLastHour') }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <el-divider direction="vertical"></el-divider>
       </div>
-      <el-divider direction="vertical"></el-divider>
     </div>
   </div>
 </template>
@@ -121,7 +211,11 @@ import { getNowDate, getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
 import _ from 'lodash'
 import Loading from '@/components/common/Loading'
-import { overwriteUrl, urlParamsHandler, numberWithCommas } from '@/utils/tools'
+import {
+  overwriteUrl,
+  urlParamsHandler,
+  numberWithCommas
+} from '@/utils/tools'
 import Parser from '@/components/advancedSearch/meta/parser'
 import { handleErrorTip, invalidErrorTip } from '@/components/advancedSearch/meta/error'
 import { columnList } from '@/utils/static-data'
@@ -142,6 +236,23 @@ export default {
     return {
       showList: false,
       listMode: 'list', // entity列表的模式，list|block
+
+      entityAppTotal: '-',
+      entityAppNew: '-',
+      entityAppActive: '-',
+
+      entityDomainTotal: '-',
+      entityDomainNew: '-',
+      entityDomainActive: '-',
+
+      entityIpTotal: '-',
+      entityIpNew: '-',
+      entityIpActive: '-',
+
+      entitySubscriberTotal: '-',
+      entitySubscriberNew: '-',
+      entitySubscriberActive: '-',
+
       newFilterData: [
         {
           icon: 'cn-icon cn-icon-registration-country',
@@ -222,6 +333,17 @@ export default {
       str: '',
       metaList: [],
       listLoading: false,
+      // 实体详情搜索页面 底部列表
+      loadingApp: false,
+      loadingDomain: false,
+      loadingIp: false,
+      loadingSubscriber: false,
+      // Active
+      loadingAppActive: false,
+      loadingDomainActive: false,
+      loadingIpActive: false,
+      loadingSubscriberActive: false,
+
       initFlag: true, // 初始化标志，避免初始化时pageSize和pageNo会调用搜索
       timer: null, // 初始化标志的延时器，需要销毁
       summaryCount: {
@@ -232,14 +354,7 @@ export default {
         subscriberCount: 0
       },
       loadingCount: false, // 实体基数统计的loading
-      keywordList: [],
-      // 首页实体计数
-      homeEntityList: [
-        { name: 'APP', total: '-', loadingTotal: false, active: '-', loadingActive: false },
-        { name: this.$t('overall.domain'), total: '-', loadingTotal: false, active: '-', loadingActive: false },
-        { name: 'IP', total: '-', loadingTotal: false, active: '-', loadingActive: false },
-        { name: this.$t('overall.subscriber'), total: '-', loadingTotal: false, active: '-', loadingActive: false }
-      ]
+      keywordList: []
     }
   },
   methods: {
@@ -495,27 +610,22 @@ export default {
         this.newFilterData[index].loading = true
         if (req) {
           req.then(response => {
-            if (response.status === 200 && response.data.data.data) {
-              if (response.data.data.data.length >= 5) {
+            if (response.status === 200 && response.data.data.list) {
+              if (response.data.data.list.length >= 5) {
                 this.newFilterData[index].showNum = 5
               } else {
-                this.newFilterData[index].showNum = response.data.data.data.length
+                this.newFilterData[index].showNum = response.data.data.list.length
               }
               this.newFilterData[index].data = []
-              response.data.data.data.forEach(item => {
+              response.data.data.list.forEach(item => {
                 let obj = {
                   label: item.value,
                   topColumn: this.newFilterData[index].topColumn,
-                  value: item.count,
+                  value: item.uniqueEntities,
                   showNum: 5
                 }
-                for (const ite in item) {
-                  if (ite !== 'count') {
-                    obj.label = item[ite]
-                  }
-                }
                 if (index === 0) {
-                  obj.flag = item.label // 接口字段名称为'China'，svg名称为'CN'，通过countryNameIdMapping进行转换
+                  obj.flag = item.value // 接口字段名称为'China'，svg名称为'CN'，通过countryNameIdMapping进行转换
                 }
                 if (index === 4) {
                   obj = {
@@ -523,7 +633,7 @@ export default {
                     topColumn1: this.newFilterData[index].topColumn1,
                     port: item.port,
                     l7Protocol: item.l7Protocol,
-                    value: item.count,
+                    value: item.uniqueEntities,
                     showNum: 5
                   }
                 }
@@ -595,45 +705,80 @@ export default {
         this.loadingCount = false
       })
     },
-    getEntityIndexData () {
-      this.homeEntityList.forEach(item => {
-        item.loadingTotal = true
-        item.loadingActive = true
+
+    queryListTotal (params) {
+      const queryParams = {
+        ...params,
+        startTime: getSecond(params.startTime),
+        endTime: getSecond(params.endTime)
+      }
+      axios.get(api.entityListTotal, { params: queryParams }).then(response => {
+        if (response.status === 200) {
+          this.pageObj.total = response.data.data.result
+        }
+      }).catch(e => {
+        this.$message.error(this.errorMsgHandler(e))
+        console.error(e)
       })
+    },
+    handleQ (params) {
+      return Object.keys(params).map(param => {
+        return `${param}='${params[param]}'`
+      }).join(' AND ')
+    },
+
+    getEntityIndexData () {
+      // Total
+      this.loadingApp = true
+      this.loadingDomain = true
+      this.loadingIp = true
+      this.loadingSubscriber = true
+      // Active
+      this.loadingAppActive = true
+      this.loadingDomainActive = true
+      this.loadingIpActive = true
+      this.loadingSubscriberActive = true
 
       axios.get(api.entity.entityList.entityTotal).then(response => {
         if (response.status === 200) {
-          this.homeEntityList[0].total = response.data.data.appCount || '-'
-          this.homeEntityList[1].total = response.data.data.domainCount || '-'
-          this.homeEntityList[2].total = response.data.data.ipCount || '-'
-          this.homeEntityList[3].total = response.data.data.subscriberCount || '-'
-          this.homeEntityList[4].total = response.data.data.cellCount || '-'
+          this.entityDomainTotal = response.data.data.domainCount
+          this.entityIpTotal = response.data.data.ipCount
+          this.entityAppTotal = response.data.data.appCount
+          this.entitySubscriberTotal = response.data.data.subscriberCount
         }
       }).catch(e => {
         this.$message.error(this.errorMsgHandler(e))
         console.error(e)
       }).finally(() => {
-        this.homeEntityList.forEach(item => {
-          item.loadingTotal = false
-        })
+        this.loadingDomain = false
+        this.loadingIp = false
+        this.loadingApp = false
+        this.loadingSubscriber = false
       })
       // Active
       axios.get(api.entity.entityList.entityActive).then(response => {
         if (response.status === 200) {
-          this.homeEntityList[0].active = response.data.data.appCount || '-'
-          this.homeEntityList[1].active = response.data.data.domainCount || '-'
-          this.homeEntityList[2].active = response.data.data.ipCount || '-'
-          this.homeEntityList[3].active = response.data.data.subscriberCount || '-'
-          this.homeEntityList[4].active = response.data.data.cellCount || '-'
+          this.entityDomainActive = response.data.data.domainCount
+          this.entityIpActive = response.data.data.ipCount
+          this.entityAppActive = response.data.data.appCount
+          this.entitySubscriberActive = response.data.data.subscriberCount
         }
       }).catch((e) => {
         this.$message.error(this.errorMsgHandler(e))
         console.error(e)
       }).finally(() => {
-        this.homeEntityList.forEach(item => {
-          item.loadingActive = false
-        })
+        this.loadingDomainActive = false
+        this.loadingIpActive = false
+        this.loadingAppActive = false
+        this.loadingSubscriberActive = false
       })
+    },
+    setListMode (mode) {
+      this.listMode = mode
+      const newParam = {
+        listMode: mode
+      }
+      this.reloadUrl(newParam)
     },
     /**
      * 向地址栏添加/删除参数
