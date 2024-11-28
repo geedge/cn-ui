@@ -7,6 +7,7 @@ import axios from 'axios'
 import { sortByOrderNum } from '@/permission'
 import { storageKey } from '@/utils/constants'
 const apiVersion = BASE_CONFIG.apiVersion
+const apiVersion2 = BASE_CONFIG.apiVersion2
 
 export const api = {
   // 系统相关
@@ -354,24 +355,32 @@ export const api = {
       ipTrafficMap: apiVersion + '/entity/explorer/detail/traffic/map/ip', // ip流量地图
       appTrafficMap: apiVersion + '/entity/explorer/detail/traffic/map/app', // app流量地图
       summaryCount: apiVersion + '/entity/explorer/query/summaryCount', // 实体基数统计
-      aggCountry: apiVersion + '/entity/explorer/top/aggCountry', // 国家实体基数统计
-      aggIPAsn: apiVersion + '/entity/explorer/top/agg-ip-asn', // ASN实体基数统计
-      aggCity: apiVersion + '/entity/explorer/top/aggCity', // 城市实体基数统计
-      aggIPIsp: apiVersion + '/entity/explorer/top/agg-ip-isp', // ip-iap实体基数统计
-      aggPort: apiVersion + '/entity/explorer/top/aggPort', // 端口实体基数统计
-      aggDomain: apiVersion + '/entity/explorer/top/aggDomainCategory', // 域名类别实体基数统计
-      aggAppCategory: apiVersion + '/entity/explorer/top/aggAppCategory', // app类别实体基数统计
-      aggTag: apiVersion + '/entity/explorer/top/aggTag', // 标签实体基数统计
+      aggCountry: apiVersion2 + '/entity/explorer/top/aggCountry', // 国家实体基数统计
+      aggIPAsn: apiVersion2 + '/entity/explorer/top/agg-ip-asn', // ASN实体基数统计
+      aggCity: apiVersion2 + '/entity/explorer/top/aggCity', // 城市实体基数统计
+      aggIPIsp: apiVersion2 + '/entity/explorer/top/agg-ip-isp', // ip-iap实体基数统计
+      aggPort: apiVersion2 + '/entity/explorer/top/aggPort', // 端口实体基数统计
+      aggDomain: apiVersion2 + '/entity/explorer/top/aggDomainCategory', // 域名类别实体基数统计
+      aggAppCategory: apiVersion2 + '/entity/explorer/top/aggAppCategory', // app类别实体基数统计
+      aggTag: apiVersion2 + '/entity/explorer/top/aggTag', // 标签实体基数统计
       domainSecurity: apiVersion + '/entity/explorer/detail/event/security/domain', // domain安全事件详情
       ipSecurity: apiVersion + '/entity/explorer/detail/event/security/ip', // ip安全事件详情
       appSecurity: apiVersion + '/entity/explorer/detail/event/security/app', // app安全事件详情
       domainEventPerformance: apiVersion + '/entity/explorer/detail/event/performance/domain', // domain服务质量详情
       ipEventPerformance: apiVersion + '/entity/explorer/detail/event/performance/ip', // ip服务质量详情
       appEventPerformance: apiVersion + '/entity/explorer/detail/event/performance/app', // app服务质量详情
-      entityActive: apiVersion + '/entity/explorer/overview/active', // entity首页active数据概览
+      entityActive: apiVersion2 + '/entity/explorer/overview/active', // entity首页active数据概览
       entityNew: apiVersion + '/entity/explorer/overview/new', // entity首页new数据概览
-      entityTotal: apiVersion + '/entity/explorer/overview/total', // entity首页total数据概览
-      subscriberRelatedApp: apiVersion + '/entity/explorer/detail/subscriber/relate/apps' // subscriber相关app
+      entityTotal: apiVersion2 + '/entity/explorer/overview/total', // entity首页total数据概览
+      subscriberRelatedApp: apiVersion + '/entity/explorer/detail/subscriber/relate/apps', // subscriber相关app
+      aggOperator: apiVersion2 + '/entity/explorer/top/aggOperator', // cell实体基数统计
+      aggSuperAdminArea: apiVersion2 + '/entity/explorer/top/aggSuperAdminArea', // 地区实体基数统计
+      aggTechnology: apiVersion2 + '/entity/explorer/top/aggTechnology', // 通信技术实体基数统计
+      cellBasicInfo: apiVersion2 + '/entity/detail/basic/cell', // cell实体响应
+      cellThroughput: apiVersion2 + '/entity/explorer/detail/traffic/throughput/cell', // cell实体流量信息
+      cellPerformance: apiVersion2 + '/entity/explorer/detail/traffic/performance/cell', // cell网络质量
+      activeSubscriberTrend: apiVersion2 + '/entity/detail/cell/activeSubscriberTrend', // cell中活跃的subscriber趋势统计
+      activeSubscriberInfo: apiVersion2 + '/entity/detail/cell/activeSubscriberInfo' // 活跃Subscriber地图列表
     }
   },
   location: {
